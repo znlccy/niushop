@@ -1,5 +1,10 @@
 # Niushop B2C 商城系统
 
+[![OSSLab](https://img.shields.io/badge/OSSLab-开源软件实验室-blue.svg?style=flat)](http://osslab.online)
+[![mysql](https://img.shields.io/badge/mysql-5.0+-blue.svg)](https://www.mysql.com/)
+[![php](https://img.shields.io/badge/php-5.6+-blue.svg)](http://www.php.net/)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+
 <center>
     <img src="https://raw.githubusercontent.com/OSI-LTD/niushop-b2c/master/niushop-b2c.png" alt="niushop-b2c">
 </center>
@@ -21,15 +26,6 @@ Niushop 官方网址: http://www.niushop.com.cn
 3. 支持php扩展：php_curl,php_gd2,(如果配置邮箱需要添加php_openssl,php_sockets)
 4. 设置upload权限，因为系统上传相片生成二维码等需要上传的这个文件夹，需要设置这个文件夹以及子项文件夹777权限
 5. 安装完成以后删除install.php
-
-# 特色功能
-
-1. 完善的QQ、微信第三方支付、第三方用户登录机制
-2. 精细的微信模块处理
-3. 惰性加载
-4. 路由、自动加载的缓存机制
-5. 模型及关联MongoDB支持
-6. 数据库集群及数据缓冲
 
 # 开始使用
 
@@ -120,6 +116,15 @@ Niushop 开源商城目录说明:
 ├─.htaccess 伪静态
 ├─.index.php 入口文件
 ```
+
+# 特色功能
+
+1. 完善的QQ、微信第三方支付、第三方用户登录机制
+2. 精细的微信模块处理
+3. 惰性加载
+4. 路由、自动加载的缓存机制
+5. 模型及关联MongoDB支持
+6. 数据库集群及数据缓冲
 
 # 常见问题
 

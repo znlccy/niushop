@@ -1,5 +1,8 @@
 # Niushop B2C 商城系统
 
+<center>
+    <img src="https://raw.githubusercontent.com/OSI-LTD/niushop-b2c/master/niushop-b2c.png" alt="niushop-b2c">
+</center>
 
 团队十年电商经验汇集巨献！
 
@@ -19,9 +22,6 @@ Niushop 官方网址: http://www.niushop.com.cn
 4. 设置upload权限，因为系统上传相片生成二维码等需要上传的这个文件夹，需要设置这个文件夹以及子项文件夹777权限
 5. 安装完成以后删除install.php
 
-+---------------------------------------------------------------------------------------+
-+  推荐使用宝塔Linux面板搭建环境，2分钟装好面板，一键管理服务器，可实现一键部署Niushop  						+
-+  查看：https://www.bt.cn/download/linux.html?niushop                                  	+
 # 特色功能
 
 1. 完善的QQ、微信第三方支付、第三方用户登录机制

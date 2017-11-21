@@ -1,0 +1,61 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>自提点运费:</dt>
+		<dd><input id="pickup_freight" type="number" min="0" placeholder="0" onkeyup="freight_change(this);" value="{$config->pickup_freight}" style="width: 75px;"/> 元</dd>
+	</dl>
+	<dl>
+		<dt>满X免运费:</dt>
+		<dd><input id="manjian_freight" type="number" min="0" placeholder="0" onkeyup="freight_change(this);" value="{$config->manjian_freight}" style="width: 75px;"/> 元</dd>
+	</dl>
+	<dl>
+		<dt>是否启用:</dt>
+		<dd>
+			<p>
+					<input id="is_enable" type="checkbox" class="checkbox" {if condition="$config->is_enable==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">提交</button></dd>
+	</dl>
+	
+</div>
+<script>
+	function freight_change(event){
+		$price=$(event).val();
+		if($price.indexOf("-") != -1 || $price<0 || $price==''){
+			$(event).val(0);
+		}
+	}
+	function setConfigAjax(){
+		var pickup_freight = $("#pickup_freight").val();
+		var manjian_freight = $("#manjian_freight").val();
+		var is_enable = 0;
+		if($("#is_enable").is(":checked")){
+			is_enable = 1;
+		}
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/shop/pickupPointFreightAjax')}",
+			data:{
+				'pickup_freight':pickup_freight,
+				'manjian_freight':manjian_freight,
+				'is_enable' : is_enable
+			},
+			async:true,
+			success:function (data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"]);
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}
+</script>{/block}

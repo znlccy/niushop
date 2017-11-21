@@ -1,0 +1,117 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+    <style type="text/css">
+		#main{margin-top: 45px;padding-top: 3px;}
+		#main p{padding: 5px;}
+		.prompt{
+		    margin: 5px auto;
+		    background-color: #fff2c0;
+		    color: #d8af12;
+		}
+/* 		.content{text-align: center;} */
+		.content .text{
+			margin:0px 8px;
+/* 			border-bottom: 1px solid #eee; */
+		}
+		.content input{height: 30px;width: 74%;border:1px solid #ddd;padding-left: 0px;}
+		.content .buttom input[type='button']{
+		    display: block;
+		    width: 90%;
+		    margin: auto;
+		    background-color: #f03737;
+		    color: #fff;
+		    height: 32px;
+		    line-height: 32px;
+		    border-radius: 6px;
+		}
+		.circle{
+		    width: 60px;
+		    height: 60px;
+		    border-radius: 50%;
+		    border: 1px solid #F03737;
+		    text-align: center;
+	/* 	    line-height: 30px; */
+		    margin: 0 auto;
+		    padding:5px;
+		}
+		input{
+			appearance:none;
+	    	-moz-appearance:none;
+		    -webkit-appearance:none; 
+		    outline: none;
+		    -moz-outline: none;
+		    -webkit-outline: none;
+		}
+	</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+		<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)"><i class="icon-back"></i></a>
+		<div class="head-title">{:lang('integral_balance')}</div>
+	</section>
+{/block}
+{block name="main"}
+	 <div id="main" >
+	 	<p class="prompt">* {:lang('member_exchange_rate')}{$accounts}{:lang('element')}</p>
+	 	<div style="margin-top: 16px;">
+	 		<div class="circle">
+		 		<span style="color:#F03737;">{:lang('goods_integral')}</span><br/>
+		 		<span style="color:#F03737;font-size:25px;">{$conponSum}</span>
+		 	</div>
+	 		
+	 	</div>
+	 	<div class="content">
+	 		<p class="text" style="margin-top: 15px;margin-bottom: 7px;"><span>{:lang('member_exchange_points')}:</span><input type="text" max="100" min="0" id="amount" name="amount" placeholder="{:lang('please_enter_the_integral_quantity')}" style="margin: 0 5px;padding-left: 3px;box-shadow: none;"/></p>
+	 		<p style="width: 74%;float: right;color: #d8af12;margin-top: -11px;margin-bottom: 20px;">{:lang('maximum_convertibility')}{$conponSum}{:lang('goods_integral')}</p>
+	 		<p class="buttom"><input type="button" id="duih" value="{:lang('member_exchange')}"/></p>
+	 	</div>
+	 </div>
+	 
+	 <script type="text/javascript">
+	 	var conponSum='{$conponSum}';
+	 	var shopid='{$shop_id}';
+		$(function(){
+			$('.content>p.buttom>#duih').click(function(){
+				$(this).attr('disabled','disabled');
+				var flag=true;
+				var msg="";
+				var amount=$('#amount');
+				if(amount.val()==''){
+					msg="{:lang('the_points_need_to_be_redeemed_are_not_null')}";
+					flag=false;
+				}else if(Number(amount.val())>Number(conponSum)){
+					msg="{:lang('the_points_you_need_to_redeem_cannot_be_greater_than_the_points_you_have')}";
+					amount.val(conponSum);
+					flag=false;
+				}else if(Number(amount.val())<0){
+					msg="{:lang('the_points_required_to_be_redeemed_shall_not_be_less_than_0')}";
+					amount.val(0);
+					flag=false;
+				}
+				
+				if(!flag){
+					layer.msg(msg);
+					amount.focus();
+					$(this).removeAttr('disabled');
+					return false;
+				}
+				
+				 $.post("{:__URL('APP_MAIN/member/ajaxintegralexchangebalance')}",{'amount':amount.val(),'shop_id':shopid},
+						  function(data){
+						    if(data['code']>0){
+						    	layer.msg("{:lang('redeem_successfully')}");
+						    	 setTimeout(function(){
+						    		 location.href="{:__URL('APP_MAIN/member/integralwater?shop_id='.$shop_id)}"
+						            },1000);
+						    }else{
+						    	$(this).removeAttr('disabled');
+						    	layer.msg(data['message']);
+						    }
+						  },
+				  "json");//这里返回的类型有：json,html,xml,text
+			})
+		})
+	</script>
+{/block}
+{block name="bottom"}
+{/block}

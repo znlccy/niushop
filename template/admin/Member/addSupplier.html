@@ -1,0 +1,117 @@
+
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
+<style type="text/css">
+.required{color:red;margin-right:10px;}
+.total>div { text-align: left;font-size: 12px;width:100%;height: 43px;overflow:hidden;color:#666;font-weight: normal;}
+.total>div input { margin: 0 5px 0 0;} 
+.total label {float:left;text-align: left;font-size: 12px; width:12%;overflow:hidden;color:#666;font-weight: normal;}
+.total label input {margin: 0 5px 0 0;} 
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>供货商名称:</dt>
+		<dd>
+			<input type="text" id="supplier_name" value="">
+			<p class="error">请输入供货商名称</p>
+			<p class="hint">设置供货商名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>联系人姓名:</dt>
+		<dd>
+			<input type="text" id="linkman_name" value="">
+			<p class="error">请输入联系人姓名</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>联系人电话:</dt>
+		<dd>
+			<input type="text" id="linkman_tel" value="">
+			<p class="error">请输入联系人电话</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>联系地址:</dt>
+		<dd>
+			<input type="text" id="linkman_address" value="">
+			<p class="error">请输入联系地址</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述:</dt>
+		<dd>
+			<textarea id="desc"></textarea>
+			<p class="hint">供货商描述信息</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="addSupplier();">提交</button>
+</div>
+
+<script>	
+     var flag = false;//防止重复提交
+	//保存
+	function addSupplier(){
+		var supplier_name = $("#supplier_name").val();
+		var linkman_name = $("#linkman_name").val();
+		var linkman_tel = $("#linkman_tel").val();
+		var linkman_address = $("#linkman_address").val();
+		var desc = $("#desc").val();
+		if (supplier_name == '') {
+			$("#supplier_name").next().show().css("display","inline-block");
+			$("#supplier_name").focus();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+		if (linkman_name == '') {
+			$("#linkman_name").next().show().css("display","inline-block");
+			$("#linkman_name").focus();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+		if (linkman_tel == '') {
+			$("#linkman_tel").next().show().css("display","inline-block");
+			$("#linkman_tel").focus();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+		if (linkman_address == '') {
+			$("#linkman_address").next().show().css("display","inline-block");
+			$("#linkman_address").focus();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+
+		if(flag){
+			return false;
+		}
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/addSupplier')}",
+			data : {
+				'supplier_name' : supplier_name,
+				'linkman_name' : linkman_name,
+				'linkman_tel' : linkman_tel,
+				'linkman_address' : linkman_address,
+				'desc' : desc,
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"], "{:__URL('ADMIN_MAIN/member/supplierlist')}");
+				}else{
+					showMessage('error', data["message"]);
+					flag = false;
+				}
+			}
+		});
+	}
+</script>
+{/block}

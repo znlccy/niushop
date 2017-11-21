@@ -1,0 +1,399 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<link href="__TEMP__/{$style}/public/css/order/ns_order_detail.css" rel="stylesheet">
+<link href="__TEMP__/{$style}/public/css/plugin/tooltips.css" rel="stylesheet">
+<script src="__TEMP__/{$style}/public/js/plugin/jquery.pure.tooltips.js"></script>
+<style>
+.goods-items td{
+	padding:2px 5px;
+}
+
+</style>
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('member_order_details')}</li>
+				</ul>
+			</div>
+			<div style="float:left;width:50%;display: inline-block;">
+				<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee" class="order_detail">
+					<tr>
+						<td width="20%" align="right" bgcolor="#ffffff">{:lang('member_order_number')}：</td>	
+						<td align="left" bgcolor="#ffffff">{$order.order_no}</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_order_status')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order.status_name}</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_payment_method')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order.payment_type_name}</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_payment_status')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order.pay_status_name}</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_delivery_mode')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order.shipping_type_name}&nbsp;&nbsp;{$order['shipping_company_name']}</td>
+					</tr>
+					{switch name="$order.shipping_type"}
+						{case value="1"}
+						<tr>
+							<td align="right" bgcolor="#ffffff">{:lang('member_receiving_information')}：</td>
+							<td align="left" bgcolor="#ffffff">{$order['receiver_name']}，{$order['receiver_mobile']}，{$order['address']}{$order['receiver_address']}{if condition="$order['receiver_zip']!=''"}，{$order['receiver_zip']}{/if}</td>
+						</tr>
+						{/case}
+						{case value="2"}
+						<tr>
+							<td align="right" bgcolor="#ffffff">{:lang('member_self_addressed_address')}：</td>
+							<td align="left" bgcolor="#ffffff">{$order['order_pickup']['province_name']}&nbsp;{$order['order_pickup']['city_name']}&nbsp;{$order['order_pickup']['dictrict_name']}&nbsp;{$order['order_pickup']['address']}</td>
+						</tr>
+						{/case}
+					{/switch}
+				
+					{if condition="!empty($order['buyer_invoice_info'])"}
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_invoice_header')}：</td>
+						<td align="left" bgcolor="#ffffff">
+							{if condition="!empty($order['buyer_invoice_info'][0])"}
+							{$order['buyer_invoice_info'][0]}
+							{/if}
+						</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff" style="width: 22%;">{:lang('member_taxpayer_identification_number')}：</td>
+						<td align="left" bgcolor="#ffffff">
+							{if condition="!empty($order['buyer_invoice_info'][2])"}
+							{$order['buyer_invoice_info'][2]}
+							{else/}
+							-
+							{/if}
+						</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_invoice_content')}：</td>
+						<td align="left" bgcolor="#ffffff">
+							{if condition="!empty($order['buyer_invoice_info'][1])"}
+							{$order['buyer_invoice_info'][1]}
+							{/if}
+						</td>
+					</tr>
+					{/if}
+					{if condition="$order['buyer_message'] != ''"}
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_buyer_message')}：</td>
+						<td>{$order['buyer_message']}</td>
+					</tr>
+					{else/}
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_buyer_message')}：</td>
+						<td>{:lang('member_no_messages')}</td>
+					</tr>
+					{/if}
+					
+				</table>
+			</div>
+		
+			{if condition="$order.order_status eq 0"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+					<dd>{:lang('member_order_status')}： {:lang('member_submitted_and_payment')}</dd>
+				</dl>
+				<ul>
+					<li>1. {:lang('member_no_pay_yet')}。</li>
+					<li>2. {:lang('member_cancel_the_order')}。</li>
+					<li>3. {:lang('member_created_order')} {if condition="$order_buy_close_time eq '' || $order_buy_close_time eq 0 "}60{else /}{$order_buy_close_time}{/if}{:lang('member_automatically_closes')}。</li>
+				</ul>
+			</div>
+			{/if}
+			
+			{if condition="$order.order_status eq 1"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+					<dd>{:lang('member_order_status')}： {:lang('member_wait_patiently_shipment')}...</dd>
+				</dl>
+				<ul >
+					<li>1. {:lang('member_seven_days_return')}。</li>
+					<li>2. {:lang('member_customer_service_required')}。</li>
+				</ul>
+			</div>
+			{/if}
+			
+			{if condition="$order.order_status eq 2"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+				<dd>{:lang('member_order_status')}： {:lang('member_shipment_and_patient')}...</dd>
+				</dl>
+				<ul>
+					<li>1. {:lang('member_seven_days_return')}。</li>
+					<li>2、{:lang('member_customer_service_required')}。</li>
+				</ul>
+			</div>
+			{/if}
+		
+			{if condition="$order.order_status eq 3"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+				<dd>{:lang('member_order_status')}： {:lang('member_received_goods')}</dd>
+				</dl>
+				<ul>
+					<li>1、{:lang('member_contact_the_seller')}。</li>
+					<li>2、{:lang('member_customer_service_required')}。</li>
+				</ul>
+			</div>
+			{/if}
+			
+			{if condition="$order.order_status eq 4"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+				<dd>{:lang('member_order_status')}： {:lang('member_completed')}</dd>
+				</dl>
+				<ul>
+					<li>1、{:lang('member_contact_the_seller')}。</li>
+					<li>2、{:lang('member_customer_service_required')}。</li>
+				</ul>
+			</div>
+			{/if}
+			
+			{if condition="$order.order_status eq 5"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+					<dd>{:lang('member_order_status')}： {:lang('member_closed')}</dd>
+				</dl>
+				<ul></ul>
+			</div>
+			{/if}
+			
+			{if condition="$order.order_status eq -1"}
+			<div class="tab_right">
+			<dl>
+				<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+				<dd>{:lang('member_order_status')}：{:lang('member_refund')}</dd>
+				</dl>
+				<ul>
+					<li>1、{:lang('member_refund_and_contact_seller')}。</li>
+					<li>2、{:lang('member_customer_service_required')}。</li>
+				</ul>
+			</div>
+			{/if}
+			
+			{if condition="$order.order_status eq -2"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+				<dd>{:lang('member_order_status')}： {:lang('member_have_refunded')}</dd>
+				</dl>
+				<ul></ul>
+			</div>
+			{/if}
+			<br/>
+			{if condition="count($order['order_goods_no_delive']) >0"}
+			<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee" ></table>
+			<div class="blank"></div>
+			<div class="tabmenu">
+				<ul class="tab pngFix">
+					<li class="first active">{:lang('member_list_of_goods')}</li>
+				</ul>
+			</div>
+			<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee" class="goods-items">
+				<tr>
+					<th width="30%" align="center" bgcolor="#ffffff">{:lang('member_commodity_name')}</th>
+					<th width="20%" align="center" bgcolor="#ffffff">{:lang('member_attribute')}</th>
+					<th width="15%" align="center" bgcolor="#ffffff">{:lang('member_commodity_price')}</th>
+					<th width="10%" align="center" bgcolor="#ffffff">{:lang('member_quantity_purchased')}</th>
+					<th width="15%" align="center" bgcolor="#ffffff">{:lang('goods_subtotal')}</th>
+					<th width="10%" align="center" bgcolor="#ffffff">{:lang('member_distribution_status')}</th>
+				</tr>
+				{volist name="order['order_goods_no_delive']" id="goodsData"}
+				<tr>
+					<td bgcolor="#ffffff">
+						<div class="ui-centered-image" style="width: 48px; height: 48px;float: left;margin-right: 10px;">
+							<img src="{:__IMG($goodsData['picture_info']['pic_cover_micro'])}" style="max-width: 48px;max-height: 48px;">
+						</div>
+						<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsData['goods_id'])}" target="_blank">{$goodsData.goods_name}</a>
+					</td>
+					<td align="center" bgcolor="#ffffff">
+					{if condition = "$goodsData['sku_name'] neq ''"}
+						{$goodsData.sku_name}
+					{/if}
+					</td>
+					<td align="center" bgcolor="#ffffff">￥{$goodsData.price}</td>
+					<td align="center" bgcolor="#ffffff">{$goodsData.num}</td>
+					<td align="center" bgcolor="#ffffff">{$goodsData.goods_money}</td>
+					<td align="center" bgcolor="#ffffff">
+						<span>{$goodsData.shipping_status_name}</span>
+						{if condition="$goodsData['refund_status'] neq 0"}
+							<span style="color:#0D84D4;display:block;">{$goodsData['status_name']}</span>
+						{/if}
+					</td>
+				</tr>
+				{/volist}
+			</table>
+			{/if}
+			{foreach name="order['goods_packet_list']" id="vo"}
+			<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee" style="margin-top:15px;">
+				<tr>
+					<th width="30%" align="left" >
+						<span>{$vo.packet_name}</span>
+						{if condition="$vo.is_express == 1"}
+						<span>{$vo.express_name}：</span>
+						<span>{$vo.express_code}</span>
+						{/if}
+					</th>
+					<th width="20%"></th>
+					<th width="15%">
+						{if condition="$vo.is_express == 1"}
+						<a class="js-query-logistics" data-express-code="{$vo.express_code}" data-express-name="{$vo.express_name}" data-express-id="{$vo.express_id}" href="javascript:;">{:lang('member_inquiry_logistics')}</a>
+						{/if}
+					</th>
+					<th width="10%"></th>
+					<th width="15%"></th>
+					<th width="10%">{:lang('member_distribution_status')}</th>
+				</tr>
+				{volist name="vo['order_goods_list']" id="goodsvo"}
+				<tr>
+					<td bgcolor="#ffffff">
+						<div class="ui-centered-image" style="width: 48px; height: 48px;float: left;margin-right: 10px;">
+							<img src="{:__IMG($goodsvo['picture_info']['pic_cover_micro'])}" style="max-width: 48px;max-height: 48px;">
+						</div>
+						<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsvo['goods_id'])}" target="_blank">{$goodsData.goods_name}</a>
+					</td>
+					<td align="center" bgcolor="#ffffff">
+					{if condition = "$goodsvo['sku_name'] neq ''"}
+						{$goodsvo.sku_name}
+					{/if}
+					</td>
+					<td align="center" bgcolor="#ffffff">￥{$goodsvo.price}</td>
+					<td align="center" bgcolor="#ffffff">{$goodsvo.num}</td>
+					<td align="center" bgcolor="#ffffff">{$goodsvo.goods_money}</td>
+					<td align="center" bgcolor="#ffffff">{$goodsvo.shipping_status_name}</td>
+				</tr>
+				{/volist}
+			</table>
+			{/foreach}
+			<div class="blank"></div>
+			<div class="tabmenu">
+				<ul class="tab pngFix">
+					<li class="first active">{:lang('member_total_cost')}</li>
+				</ul>
+			</div>
+			<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee">
+				<tr>
+					
+				<td colspan="7" align="right" >
+					<span>{:lang('member_total_commodity_value')}：￥{$order['goods_money']}，</span>
+					
+					{if condition="$order['user_platform_money']>0"}
+					<span>{:lang('member_balance_payment')}：￥{$order['user_platform_money']}，</span>
+					{/if}
+					
+					{if condition="$order['coupon_money']>0"}
+					<span>{:lang('member_coupons')}：￥{$order['coupon_money']}，</span>
+					{/if}
+					
+					{if condition="$order['tax_money']>0"}
+					<span>{:lang('member_invoice_tax')}：￥{$order['tax_money']}，</span>
+					{/if}
+					
+					{if condition="$order['promotion_money']>0"}
+					<span>{:lang('member_full_discount')}：￥{$order['promotion_money']}，</span>
+					{/if}
+					
+					{if condition="$order['point']>0"}
+					<span>{:lang('member_use_integral')}：{$order['point']}，</span>
+					{/if}
+					
+					<span> {:lang('member_actual_payment')}：<b style="color: #f44;">￥{$order['pay_money']}</b></span>
+					<span>（{:lang('free_shipping')} ￥{$order['shipping_money']}）</span>
+				</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script>
+$(function(){
+	
+	$("li[data-href^='{:__URL('SHOP_MAIN/member/orderlist')}']").addClass('current');
+	$(".js-bread-crumb").attr("href",'{:__URL('SHOP_MAIN/member/orderlist')}');
+	$(".js-bread-crumb").text("{:lang('member_my_order')}");
+	$(".js-bread-crumb").parent().append('<span class="crumbs-arrow">&gt;</span><a href="{:__URL('SHOP_MAIN/member/orderdetail')}">{:lang('member_order_details')}</a>');
+	
+	//查询物流
+	$(".js-query-logistics").mouseover(function(){
+		$(".js-query-logistics").removeAttr("data-show");
+		$(this).attr("data-show",1);
+	});
+
+	var html = '<div class="silider-express">';
+		html += '<div class="mask-layer-loading" style="text-align:center;">';
+		html += '<img src="ADMIN_IMG/mask_load.gif"/>';
+		html += '<div style="text-align:center;margin-top:10px;">{:lang('member_effort_loading')}...</div>';
+		html += '</div>';
+		html += '</div>';
+	$('.js-query-logistics').pt({
+		content: html,
+		position : 'l',
+		open : function(res){
+			var curr_express = $(".js-query-logistics[data-show]");
+			var express_id = curr_express.attr("data-express-id");
+			var express_name = curr_express.attr("data-express-name");
+			var express_code = curr_express.attr("data-express-code");
+			if(express_id != undefined && express_name != undefined){
+				if(curr_express.attr("data-express-info") == undefined){
+					$.ajax({
+						type : "post",
+						url : "{:__URL('SHOP_MAIN/member/getordergoodsexpressmessage')}",
+						data : {"express_id":express_id},
+						success : function(data) {
+							var html = "";
+							if (data["Success"]) {
+								html += '<div class="logistics-tip">';
+									html += '<div class="title">'+express_name+'&nbsp;&nbsp;&nbsp;{:lang('member_waybill_number')}：'+express_code+'</div>';
+									html += '<div class="content">';
+										html += '<ul>';
+										for (var i = 0; i < data["Traces"].length; i++){
+											if(i==0){
+												html += '<li class="first">';
+											}else{
+												html += '<li>';
+											}
+												html += '<i class="node-icon"></i>';
+												html += '<a href="javascript:;" target="_blank">'+data["Traces"][i]["AcceptStation"]+'</a>';
+												html += '<div class="ftx-13">'+data["Traces"][i]["AcceptTime"]+'</div>';
+											html += '</li>';
+										}
+										html += '</ul>';
+									html += '</div>';
+								html += '</div>';
+							}else{
+								html += '<div class="logistics-tip"><div class="content">'+data["Reason"]+'</div></div>';
+							}
+							res.html(html);
+							curr_express.attr("data-express-info",html);//保存物流信息
+						}
+					});
+				}else{
+					res.html(curr_express.attr("data-express-info"));
+				}
+			}
+		}
+	});
+})
+</script>
+{/block}

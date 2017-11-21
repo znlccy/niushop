@@ -1,0 +1,24 @@
+<div class="all-category fl" id="nav">
+	<ul>
+	{foreach name="navigation_list" item="nav" key="k"}
+		<li class="fl" >
+			{if condition='$nav.nav_type eq 0'}
+				{if condition='$nav.is_blank eq 1'}
+					<a class="nav" target="_blank" href="{:__URL('SHOP_MAIN'.$nav['nav_url'])}"  title="{$nav.nav_title}">{$nav.nav_title}</a>
+				{else/}
+					<a class="nav" href="{:__URL('SHOP_MAIN'.$nav['nav_url'])}"  title="{$nav.nav_title}">{$nav.nav_title}</a>
+				{/if}
+			{else/}
+				{if condition='$nav.is_blank eq 1'}
+					<a class="nav" target="_blank" href="{$nav['nav_url']}"  title="{$nav.nav_title}">{$nav.nav_title}</a>
+				{else/}
+					<a class="nav" href="{$nav['nav_url']}"  title="{$nav.nav_title}">{$nav.nav_title}</a>
+				{/if}
+			{/if}
+		</li>
+	{/foreach}
+	</ul>
+	<div class="wrap-line">
+		<span style="left: 15px;"></span>
+	</div>
+</div>

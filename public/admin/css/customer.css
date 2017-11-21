@@ -1,0 +1,86 @@
+﻿@charset "utf-8";
+
+
+
+.onekey .badge{cursor:pointer;position:relative;height:20px;line-height:20px;text-align:center;
+	-webkit-border-radius:10px;
+		-moz-border-radius:10px;
+			-o-border-radius:10px;
+				border-radius:10px;
+}
+.onekey  .main{padding:20px 45px 0 45px;}
+.onekey  .ahelp{ float:right;color:#00acec;}
+.onekey  .ahelp i{margin-right:5px;}
+.onekey  .ahelp:hover{text-decoration:underline;}
+.onekey  .applyStep{list-style:none;}
+.onekey  .applyStep li{position:relative;padding:15px;margin-bottom:20px;border:1px solid #e7e7e7;
+		-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+				-o-border-radius:3px;
+					border-radius:3px;}
+.onekey  .applyStep .arrow{position:absolute;left:-11px;}
+.onekey  .applyStep a{color:#00acec;}
+.onekey  .applyStep a:hover{text-decoration:underline;}
+.onekey  .applyStep .content{margin:0;padding:0;font-size:15px;line-height:25px;color:#333;}
+.onekey  .applyStep .explanation{margin:0 0 20px 0;}
+.onekey  .applyStep .explanation05{margin:0 0 10px 0;}
+.onekey  .applyStep .explanation05-2{margin:30px 0 10px 0;}
+.onekey  .applyStep .input-label{width:auto;margin-right:15px;color:#999;font-size:12px;}
+.onekey  .applyStep .input-fare{text-align:left;}
+.onekey  .applyStep .fare{margin-bottom:0;}
+.onekey  .applyStep .title{color:#999;font-size:12px;line-height:30px;}
+.onekey  .applyStep .text{color:#00acec;font-size:12px;}
+.onekey  .applyStep .number{position:absolute;left:-60px;top:15px;width:26px;height:26px;line-height:26px;background:#55bce2;text-align:center;color:#fff;z-index:2;
+		-webkit-border-radius:13px;
+			-moz-border-radius:13px;
+				-o-border-radius:13px;
+					border-radius:13px;
+}
+.onekey  .applyStep .line{position:absolute;left:-47px;top:0;bottom:0;margin-bottom:-50px;margin-top:15px;width:3px;background:#dcdcdc;z-index:1;}
+.onekey  .controls input{margin-bottom:0;}
+
+
+.allselect{float:left;margin:11px 5px 0 0;}
+.allselect input,
+.allselect label{float:left;}
+.spread .row{margin:0;}
+.spread .span4{margin-bottom:10px;}
+.spread .span4 .date{font-size:14px;color:#ccc;text-align:right;}
+.spread .textarea{width:280px;height:200px;}
+.spread .thumbnail{padding:0;border:0;}
+.spread .pic{position:relative;display:block;height:75px;text-align:center;color:#ccc; background-position:center center; background-size:cover;
+			 -webkit-box-sizing:border-box;
+			 	-moz-box-sizing:border-box;
+					-o-box-sizing:border-box;
+						box-sizing:border-box;
+
+}
+.spread .nopic-text{float:left;width:100%;text-align:center;height:75px;line-height:75px;}
+.spread .mask-opera{display:none;position:absolute;top:0;bottom:0;left:0;right:0;
+   					background:rgba(0,0,0,.8);
+					filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#66000000', EndColorStr='#66000000');
+}
+.spread .pic:hover .mask-opera{display:block; }
+.spread .mask-opera i{display:inline-block;width:100%;line-height:75px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-style:normal;}
+.spread .uppic-group{display:block;position:relative;margin:0;overflow:hidden;height:30px;}
+.spread .upfile{position:absolute;top:0;left:0;width:100%;z-index:3;cursor:pointer; 
+			filter:alpha(opacity=0);
+				-moz-opacity:0;
+					-khtml-opacity:0;
+						opacity:0;
+}
+.spread .btnupfile{position:absolute;z-index:2;width:100%;height:30px;line-height:30px;background:#f7f7f7;border:1px solid #ccc;color:#333;font-size:14px;text-align:center;cursor:pointer; 
+			-webkit-box-sizing:border-box;
+				-moz-box-sizing:border-box;
+					-o-box-sizing:border-box;
+							box-sizing:border-box;
+}
+.spread .li-list{position:relative;padding:10px;margin:0 10px 10px 0;border:1px solid #ddd;}
+.spread .li-list.active{padding:9px;border:2px solid #d4472f;}
+.spread .add-box{padding:10px;margin:0 10px 10px 0;border:1px solid #ddd;}
+.spread .list-opera{position:absolute;top:0;bottom:0;left:0;right:0;z-index:3;
+   					background:rgba(0,0,0,.8);
+					filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#66000000', EndColorStr='#66000000');
+}
+.spread .list-opera a.del{position:absolute;top:50%;left:50%;margin:-15px 0 0 0;background:#fff;padding:5px 20px;border-radius:3px;}
+.spread .list-opera a.edit{position:absolute;top:50%;left:50%;margin:-15px 0 0 -60px;background:#fff;padding:5px 20px;border-radius:3px;}

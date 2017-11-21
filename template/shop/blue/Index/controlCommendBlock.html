@@ -1,0 +1,83 @@
+<style>
+.recommend-style{background-color:#FFF;margin-top:10px;}
+.recommend-style-nav{padding-top:10px;padding-bottom:10px;border-bottom:1px solid #eee;}
+.recommend-style-nav h2{font-weight:normal;border-left:5px  solid #0689e1;height:29px;line-height:29px;padding-left:10px;}
+.focus-img{width:99%;position: relative;height:260px;}
+.focus-img-con{position: relative;overflow:hidden;margin: 0 auto;height:260px;}
+.focus-img-con ul{position:absolute;top:0;width:2420px;}
+.focus-img-con ul li{float:left;width:241px;height:260px;}
+.focus-img-con ul li{border-right:1px solid #eee;}
+.focus-img-con ul li:last-child{}
+.focus-img-con ul li>div>div:nth-child(1){height:160px;text-align:center;margin:30px 0 5px 0;}
+.focus-img-con ul li>div>div:nth-child(1) img{max-height:100%;max-width:100%;}
+.focus-img-con ul li>div>div:nth-child(2){overflow:hidden;}
+.goods-name-css span{float:left;text-align:left;font-size:13px;height: 32px;margin-left:10px;line-height:32px;/* 	overflow: hidden;white-space: nowrap;text-overflow: ellipsis; */max-width:91%;display: -webkit-box; /** 将对象作为伸缩盒子模型显示 **/-webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/-webkit-line-clamp: 1; /** 显示的行数 **/overflow: hidden;  /** 隐藏超出的内容 **/}
+.group-name-css{float:left;}
+.group-name-css span{display:inline-block;margin-top:6px;margin-bottom:6px;padding:2px 5px;background-color:red;color:#FFF;font-size:12px;max-width:80px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;border-radius:3px;}
+.focus-img-con ul li>div>div:nth-child(3){text-align:left;padding: 0 10px;color:red;font-size:15px;}
+.change-bnt{padding:5px 10px;border:1px solid #eee;background-color:#FFF;position:absolute;top:-40px;text-align:center;}
+.change-bnt img{height:10px;width:5px;}
+.prev-bnt{right:32px;border-right:none;/* background:url(__STATIC__/lory/left.png); */}
+.next-bnt{right:0;/* background:url(__STATIC__/lory/right.png); */}
+.bnt-ico{}
+.focus-img-con ul li>div{margin:10px auto;}
+.tag-small-block{position:absolute;z-index:100;width:82px !important;/*height:29px;*/line-height:29px;/*background:url(__TEMP__/{$style}/public/images/merchandising_label.png);*/background-repeat:no-repeat;top:-10px;color:#FFF;font-size:12px;/*transform: rotate(314.8deg);-ms-transform: rotate314.8deg);-webkit-transform: rotate(314.8deg);left: -22px;*/}
+.tag-small-block span{display:block;text-align: center;position: absolute;top: 5px;width:91%;left:-16px;transform: rotate(314.8deg);-ms-transform: rotate314.8deg);-webkit-transform: rotate(314.8deg);}
+</style>
+
+<script src="__STATIC__/lory/changeImg.js"></script>
+<script type="text/javascript">
+$(function(){
+	$("#focus-img").changeImg({
+		'boxWidth':1210,
+		'changeLen':5,
+		'changeSpend':3000,
+		'autoChange':true,
+		'changeHandle':true
+	}); 
+	//$(".prev-bnt").append("<img class='bnt-ico'src='__STATIC__/lory/left.png'/>");
+	//$(".next-bnt").append("<img class='bnt-ico'src='__STATIC__/lory/right.png'/>");
+	$(".prev-bnt").hide();
+	$(".next-bnt").hide();
+});
+</script>
+{if condition = "!empty($recommend_goods_list)"}
+<div class="w1210 recommend-style">
+	<div class="recommend-style-nav">
+		<h2>商品促销</h2>
+	</div>
+	<div class="focus-img" id="focus-img">
+		
+		<div class="focus-img-con" id="focus-img-con">
+			<ul>
+				{foreach $recommend_goods_list as $k=>$v}
+				<li style="position:relative;overflow: hidden;">
+					<div>
+						<div><a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$v['goods_id'])}" target="_blank"><img src="{:__IMG($v['pic_cover_mid'])}"/></a></div>
+						<div>
+							<div class="group-name-css">
+								<!-- <span>{$v['group_name']}</span> -->
+							</div>
+							<div class="goods-name-css">
+								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$v['goods_id'])}" target="_blank"><span>{$v['goods_name']}</span></a>
+							</div>
+						</div>
+						<div>¥{$v['price']}</div>
+					</div>
+					<div class="tag-small-block" style="overflow: hidden;">
+						{if condition="$v['pic_cover']!=''"}
+						<img src="{:__IMG($v['pic_cover'])}"/>
+<!-- 						<span>{php}echo mb_substr($v['group_name'],0,4,'utf-8');{/php}</span> -->
+						{else}
+						<img src="__TEMP__/{$style}/public/images/merchandising_label.png"/>
+						<span>{php}echo mb_substr($v['group_name'],0,4,'utf-8');{/php}</span>
+						{/if}
+					</div>
+				</li>
+				{/foreach}
+				
+			</ul>
+		</div>
+	</div>
+</div>
+{/if}

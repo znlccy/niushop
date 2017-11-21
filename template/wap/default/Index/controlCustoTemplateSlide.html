@@ -1,0 +1,29 @@
+<style>
+.slick{
+	max-height: none;
+}
+</style>
+<script src="__TEMP__/{$style}/public/js/slick.js"></script>
+{if condition="$plat_adv_list['is_use'] eq 1"}
+	{if condition="$plat_adv_list['adv_list'][0]['adv_image'] neq ''"}
+	<div class="slick">
+		{foreach name="plat_adv_list['adv_list']" item="v"}
+		<div style="display:block;text-align:center;width:100%;height:{$plat_adv_list.ap_height}px;line-height:{$plat_adv_list.ap_height}px;">
+			<a href="{$v.adv_url}">
+				<img src="__UPLOAD__/{$v.adv_image}" alt="轮播图" style="height:100%;max-width:100%;display: inline-block !important;vertical-align: middle !important;">
+			</a>
+		</div>
+	{/foreach}
+	</div>
+	{/if}
+{/if}
+
+<script>
+$('.slick').slick({
+	slidesToShow: 1,
+	slidesToScroll: 1,
+	autoplay: true,
+	arrows:false,
+	autoplaySpeed: "{$custom_template_v.style_data.carousel_interval}",
+});
+</script>

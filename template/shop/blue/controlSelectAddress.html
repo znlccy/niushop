@@ -1,0 +1,16 @@
+<script src="__TEMP__/{$style}/public/js/ns_init_address.js"></script>
+<select name="province" id="selProvinces" onchange="getProvince(this,'#selCities')" class="select_addr">
+	<option value="-1">{:lang('member_select_province')}</option>
+</select>
+<select name="city" id="selCities" onchange="getSelCity(this,'#selDistricts')" class="select_addr">
+	<option value="-1">{:lang('member_select_city')}</option>
+</select>
+<select name="district" id="selDistricts" class="select_addr">
+	<option value="-1">{:lang('member_selection_area')}</option>
+</select>
+<div class="required-notice fl">
+	<i class="notice-icon"></i><span class="notice-text address-notice"></span>
+</div>
+<script>
+initProvince("#selProvinces");
+</script>

@@ -1,0 +1,308 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/order.css">
+<style>
+.silider-express{padding-left: 10px;background: #fff;font-size: 12px;}
+.logistics-tracking{padding-left:5px;}
+.popover-content{width:700px;}
+.popover{max-width:900px;}
+</style>
+{/block}
+{block name="main"}
+<div class="mod-table">
+{if condition="$order['order_status'] lt 5 && $order['order_status'] gt 0"}
+<div class="step-region">
+	<ul class="ui-step ui-step-4">
+		<li class="ui-step-done"><div class="ui-step-title">买家下单</div><div class="ui-step-number">1</div><div class="ui-step-meta">{$order['create_time'] | getTimeStampTurnTime}</div></li>
+		<li class="{if condition='$order["order_status"] gt 0'}ui-step-done{/if}"><div class="ui-step-title">买家付款</div><div class="ui-step-number">2</div><div class="ui-step-meta">{if condition='$order["order_status"] gt 0'}{$order['pay_time'] | getTimeStampTurnTime}{/if}</div></li>
+		<li class="{if condition='$order["order_status"] gt 1'}ui-step-done{/if}"><div class="ui-step-title">商家发货</div><div class="ui-step-number">3</div><div class="ui-step-meta">{if condition='$order["order_status"] gt 1'}{$order['consign_time'] | getTimeStampTurnTime}{/if}</div></li>
+		<li class="{if condition='$order["order_status"] eq 4'}ui-step-done{/if}"><div class="ui-step-title">交易完成</div><div class="ui-step-number">4</div><div class="ui-step-meta">{if condition='$order["order_status"] eq 4'}{$order['finish_time'] | getTimeStampTurnTime}{/if}</div></li>
+	</ul>
+</div>
+{/if}
+<div class="step-region clearfix">
+	<div class="info-region">
+		<div class="info-div">订单信息<span class="secured-title">担保交易</span></div>
+		<table class="info-table">
+		<tbody>
+			<tr><th>订单编号：</th><td>{$order['order_no']}</td></tr>
+			<tr style="display: table-row;"><th>订单类型：</th><td>普通订单</td></tr>
+			<tr><th>付款方式：</th><td>{$order['payment_type_name']}</td></tr>
+			<tr><th>买家：</th><td><span>{$order['user_name']}</span></td></tr>
+		</tbody>
+		</table>
+		<div class="dashed-line"></div>
+		<table class="info-table">
+			<tbody>
+					<tr><th>配送方式：</th><td>{$order['shipping_type_name']}&nbsp;&nbsp;{$order['shipping_company_name']}</td></tr>
+				{switch name="$order.shipping_type"}
+					{case value="1"}
+					<!-- 物流 -->
+					<tr>
+						<th>收货信息：</th>
+						<td>
+							<p>{$order['receiver_name']}，{$order['receiver_mobile']}，{$order['address']}&nbsp;{$order['receiver_address']}{if condition="$order['receiver_zip']!=''"}&nbsp;，{$order['receiver_zip']}{/if}</p>
+						</td>
+					</tr>
+					{/case}
+					{case value="2"}
+					<!-- 自提 -->
+					<tr>
+						<th>自提地址：</th>
+						<td>
+							<p>{$order['order_pickup']['province_name']}&nbsp;{$order['order_pickup']['city_name']}&nbsp;{$order['order_pickup']['dictrict_name']}&nbsp;{$order['order_pickup']['address']}</p>
+						</td>
+					</tr>
+					{/case}
+				{/switch}
+				
+				{if condition="!empty($order['buyer_invoice_info'])"}
+				<tr>
+					<th>发票抬头：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][0])"}
+						{$order['buyer_invoice_info'][0]}
+						{/if}
+					</td>
+				</tr>
+				<tr>
+					<th>纳税人识别号：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][2])"}
+						{$order['buyer_invoice_info'][2]}
+						{else/}
+						-
+						{/if}
+					</td>
+				</tr>
+				<tr>
+					<th>发票内容：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][1])"}
+						{$order['buyer_invoice_info'][1]}
+						{/if}
+					</td>
+				</tr>
+				{/if}
+				<tr>
+					<th>买家留言：</th>
+					{if condition="$order['buyer_message'] !=''"}
+					<td>{$order['buyer_message']}</td>
+					{else/}
+					<td>此订单没有留言</td>
+					{/if}
+				</tr>
+				{if condition="$order['seller_memo'] != ''"}
+				<tr>
+					<th>卖家备注：</th>
+					<td>{$order['seller_memo']}</td>
+				</tr>
+				{/if}
+			</tbody>
+		</table>
+	</div>
+	<div class="state-region">
+		<div style="padding: 0px 0px 30px 40px;">
+			<div class="state-title"><span class="icon info">!</span>订单状态：{$order['status_name']}</div>
+			<div class="state-action">
+			{volist name="order['operation']" id="v" empty=""}
+				<button class="zent-btn zent-btn-primary test-send-goods" onclick="operation('{$v['no']}',{$order['order_id']})">{$v['name']}</button>
+			{/volist}
+			</div>
+		</div>
+		<div class="state-remind-region">
+			<div class="dashed-line"></div>
+			<div class="state-remind"><div class="tixing">{$title_name}提醒：</div>
+				<ul><li>如果无法发货，请及时与买家联系并说明情况后进行退款；</li>
+				<li>买家申请退款后，须征得买家同意后再发货，否则买家有权拒收货物；</li>
+				<li>买家付款后超过7天仍未发货，将有权申请客服介入发起退款维权；</li></ul>
+			</div>
+		</div>
+	</div>
+</div>
+<table class="ui-table ui-table-simple goods-table order-detail-goods-table">
+	<thead>
+		<tr>
+			<th style="width:8%;">商品图</th>
+			<th class="cell-10" style="width:40%;">商品</th>
+			<th style="width:10%;">价格(元)</th>
+			<th style="width:10%;">数量</th>
+			<th style="width:10%;">调整金额(元)</th>
+			<th class="cell-13" style="width:10%;">小计(元)</th>
+			<th style="width:15%;">配送状态</th>
+		</tr>
+	</thead>
+	<tbody>
+	<!-- 待发货商品 -->
+	{if $order['order_goods_no_delive']}
+		{volist name="order['order_goods_no_delive']" id="vo"}
+			<tr class="test-item">
+				<td class="td-goods-image" rowspan="1">
+					<div class="ui-centered-image" style="width: 48px; height: 48px;">
+						<img src="{:__IMG($vo['picture_info']['pic_cover_micro'])}" style="max-width: 48px; max-height: 48px;">
+					</div>
+				</td>
+				<td class="cell-10" style="width:200px;">
+					<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$vo['goods_id'])}" target="_blank">{$vo['goods_name']}</a>
+					<p class="c-gray">{$vo['sku_name']}</p>
+				</td>
+				<td>{$vo['price']}</td>
+				<td>{$vo['num']}</td>
+				<td>{$vo['adjust_money']}</td>
+				<td><p>{$vo['goods_money']}</p></td>
+				<td>
+					<p>{$vo['shipping_status_name']}</p>
+					{if condition="$vo['refund_status'] neq 0"}
+						<p><a href="{:__URL('ADMIN_MAIN/order/orderrefunddetail','itemid='.$vo['order_goods_id'])}">{$vo['status_name']}</a></p>
+					{/if}
+				</td>
+			</tr>
+			<tr><td colspan="9"></td></tr>
+		{/volist}
+	{/if}
+	<!-- 已发货 -->
+	{if $order['goods_packet_list']}
+	{volist name="order['goods_packet_list']" id="v" key=key}
+		<tr style="background-color:#f2f2f2;color:#999;font-weight:bold;">
+		<td colspan="7"><a href="javascript:;" style="color:rgba(34, 34, 34, 0.71);font-size:14px;">{$v['packet_name']}</a>&nbsp;&nbsp;&nbsp;&nbsp;
+		{if condition="$v['is_express'] eq 1"}
+			{$v['express_name']}&nbsp;&nbsp;运单号:{$v['express_code']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" data-html="true" class="logistics-tracking" data-container="body" data_express="{$v['express_name']}" data-placement="top" data-trigger="manual" goods_id="{$v['express_id']}" data-show="1">物流跟踪</a>
+		{/if}
+		</td>
+		
+		</tr>
+		{volist name="$v['order_goods_list']" id="vo"}
+		<tr class="test-item">
+			<td class="td-goods-image" rowspan="1">
+				<div class="ui-centered-image" style="width: 48px; height: 48px;">
+					<img src="{:__IMG($vo['picture_info']['pic_cover_micro'])}" style="max-width: 48px; max-height: 48px;">
+				</div>
+			</td>
+			<td class="cell-10" style="width:200px;">
+				<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$vo['goods_id'])}" target="_blank">{$vo['goods_name']}</a>
+				<p class="c-gray">{$vo['sku_name']}</p>
+			</td>
+			<td>{$vo['price']}</td>
+			<td>{$vo['num']}</td>
+			<td>{$vo['adjust_money']}</td>
+			<td><p>{$vo['goods_money']}</p></td>
+			<td>
+				<p>
+					{$vo['shipping_status_name']}
+					{if condition="$vo['refund_status'] neq 0"}
+						<p><a href="{:__URL('ADMIN_MAIN/order/orderrefunddetail','itemid='.$vo['order_goods_id'])}">{$vo['status_name']}</a></p>
+					{/if}
+				</p>
+			</td>
+		</tr>
+		{/volist}
+	{/volist}
+	{/if}
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="9" class="text-right">
+				<span>商品总金额：￥{$order['goods_money']}，</span>
+				
+				{if condition="$order['user_platform_money']>0"}
+				<span>余额支付：￥{$order['user_platform_money']}，</span>
+				{/if}
+				
+				{if condition="$order['coupon_money']>0"}
+				<span>优惠券：￥{$order['coupon_money']}，</span>
+				{/if}
+				
+				{if condition="$order['tax_money']>0"}
+				<span>发票税额：￥{$order['tax_money']}，</span>
+				{/if}
+				
+				{if condition="$order['promotion_money']>0"}
+				<span>满减优惠：￥{$order['promotion_money']}，</span>
+				{/if}
+				
+				{if condition="$order['point']>0"}
+				<span>使用积分：{$order['point']}，</span>
+				{/if}
+				
+				<span> 实际需支付：<b class="real-pay c-red">￥{$order['pay_money']}</b></span>
+				<span>（含运费 ￥{$order['shipping_money']}）</span>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+
+<table class="ui-table ui-table-simple goods-table order-detail-goods-table" style="border-top:none;">
+	<thead>
+		<tr>
+			<th>订单日志</th>
+		</tr>
+	</thead>
+	<tbody>
+	{volist name="order['order_action']" id="v1"}
+		<tr class="test-item">
+			<td class="td-goods-image" colspan="9">
+			 操作备注：&nbsp;&nbsp; {$v1.user_name}&nbsp;&nbsp;&nbsp;于&nbsp;&nbsp;&nbsp;{$v1.action_time | getTimeStampTurnTime}&nbsp;&nbsp;&nbsp;【{$v1.action}】
+			</td>
+		</tr>
+	{/volist}
+	</tbody>
+</table>
+</div>
+<input type="hidden" id="order_id" value="{$order['order_id']}" />
+<script type="text/javascript">
+$(function(){
+	//查询物流
+	$(".logistics-tracking").mouseover(function(){
+		$(".logistics-tracking").removeAttr("data-show");
+		$(this).attr("data-show",1);
+	});
+	var html = '';
+	$(".logistics-tracking").hover(function(){
+		
+		var curr = $(this);
+		var order_goods_id = curr.attr('goods_id');
+		var express_name = curr.attr('data_express');
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/order/getexpressinfo')}",
+			data : {"order_goods_id":order_goods_id},
+			beforeSend : function(){
+				html = '<div class="silider-express">';
+				html += '<div class="mask-layer-loading" style="text-align:center;">';
+				html += '<img src="ADMIN_IMG/mask_load.gif"/>';
+				html += '<div style="text-align:center;margin-top:10px;">努力加载中...</div>';
+				html += '</div>';
+				html += '</div>';
+				$(".logistics-tracking").popover({content : html});
+				curr.popover("show");
+			},
+			success : function(data) {
+				if(data["Success"]){
+					html = '<div class="silider-express">';
+					html += '<div class="express_names">快递公司:'+express_name+'</div>';
+					html += '<div>';
+					html += '<div>物流跟踪：</div>';
+					if (data["Traces"].length > 0) {
+						for (var i = 0; i < data["Traces"].length; i++){
+								html += '<p style="width:76%;float:left;">'+ data["Traces"][i]["AcceptStation"]+'</p>';
+								html += '<p style="width:24%;float:right;">'+ data["Traces"][i]["AcceptTime"]+'</p>';
+						}
+					} 
+					html += '</div>';
+			 		html += '</div>';
+				}else{
+					html = '<div class="silider-express">'+ data["Reason"] +'</div>';
+				}
+		 		curr.popover("destroy");
+				curr.popover({content : html});
+				curr.popover("show");
+			}
+		});
+	},function(){
+		$(this).popover("hide");
+	});
+	
+})
+</script>
+{include file="adminblue/Order/orderAction"/}
+{/block}

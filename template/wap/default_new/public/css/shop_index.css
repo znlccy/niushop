@@ -1,0 +1,76 @@
+@CHARSET "UTF-8";
+.user-head {
+	position: relative;
+	background: #fff;
+}
+.user-head .user-bg {
+	width: 100%;
+	height: 160px;
+}
+.user-info {
+	margin: 0 10px;
+	height: 30px;
+	line-height: 30px;
+}
+.user-info .user-logo {
+	width: 110px;
+	max-width: 100%;
+	display: inline-block;
+	position: absolute;
+	bottom: 80px;
+	box-shadow: 0 0 0 1px rgb(203, 203, 203);
+	vertical-align: middle;
+}
+.user-head h1 {
+	display: inline-block;
+	color: #e0775c;
+	font-weight: normal;
+}
+.user-nav {
+	overflow: hidden;
+	padding: 20px 0 10px 0;
+	border-bottom: 1px solid #e1e1e1;
+}
+.user-nav-fixed {
+	position: fixed;
+	width: 100%;
+	z-index: 999;
+	background: #fff;
+	top: 0;
+}
+.user-nav ul li {
+	float: left;
+	width: 24.7%;
+	text-align: center;
+	color: #5a5a5a;
+	font-size: 12px;
+	border-right: 1px solid #e1e1e1;
+}
+.user-nav ul li:LAST-CHILD {
+	border: 0px;
+}
+.user-nav ul li i {
+	display: block;
+	margin-bottom: 5px;
+	font-size: 20px;
+}
+.control>div.control_l {
+	float: none;
+}
+.control>div.control_l h1 {
+	text-align: center;
+}
+.control>div.control_l h1 i:FIRST-CHILD, .control>div.control_l h1 i:LAST-CHILD
+	{
+	height: 1px;
+	border-top: 1px solid #e1e1e1;
+	width: 40px;
+	display: inline-block;
+	vertical-align: middle;
+}
+.control>div.control_l h1 i:FIRST-CHILD {
+	margin-right: 10px;
+}
+.control>div.control_l h1 i:LAST-CHILD {
+	margin-left: 10px;
+}

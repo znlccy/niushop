@@ -1,0 +1,459 @@
+@charset "utf-8";
+/*for CNRMALL 品牌特卖*/
+.sale-header {
+	width: 100%;
+	height: 163px;
+	/*  background: url(../images/cnr_home_sale_header.jpg) no-repeat 50% 50%; */
+}
+
+.sale-container {
+	width: 100%;
+	/*     background-color: #F2F2F2; */
+	overflow: hidden;
+}
+
+.sale-container .left-content {
+	width: 888px;
+	margin-top: 30px;
+	float: left;
+}
+
+.left-content .left-content-con {
+	padding-top: 10px;
+}
+
+.left-content .content-tit {
+	background: url(../images/cnr_home_sale_new_title.jpg);
+	width: 159px;
+	height: 25px;
+	display: inline-block;
+}
+
+.left-content .content-border {
+	width: 715px;
+	height: 25px;
+	margin-left: 10px;
+	display: inline-block;
+	border-bottom: 1px solid #CDCDCD;
+}
+
+.sale-container .right-content {
+	width: 293px;
+	float: right;
+	margin-top: 30px;
+}
+
+.right-content .right-header {
+	position: relative;
+	height: 42px;
+	line-height: 42px;
+	font-size: 15px;
+	color: white;
+	text-align: center;
+	background-color: #F15C18;
+}
+
+.right-content .right-header i {
+	position: absolute;
+	font-size: 18px;
+	color: #F15C18;
+	top: 36px;
+	left: 142px;
+}
+
+.right-content .right-goods {
+	margin-top: 10px;
+	border: 1px solid #DDDDDD;
+	overflow: hidden;
+	background-color: white;
+	padding: 10px 10px 16px;
+}
+
+.left-content .content-goods {
+	margin-top: 10px;
+}
+
+.left-content .content-goods a {
+	position: relative;
+	display: block;
+	width: 886px;
+	height: 248px;
+	margin-bottom: 20px;
+	border: 1px solid #DDDDDD;
+}
+
+.left-content .content-goods a>span {
+	width: 73px;
+	height: 21px;
+	border: 1px solid #767571;
+	background-color: #767571;
+	border-top-right-radius: 12px;
+	border-bottom-right-radius: 12px;
+	position: absolute;
+	left: 238px;
+	top: 23px;
+	color: white;
+	text-align: center;
+	line-height: 21px;
+}
+
+.left-content .content-goods a>span i.fa-clock-o {
+	color: #C9CACC;
+	margin-right: 8px;
+	font-size: 16px;
+}
+
+.left-content .content-goods a>img {
+	width: 886px;
+	height: 248px;
+}
+
+.left-content .left-content-con>a {
+	width: 887px;
+	height: 61px;
+	display: block;
+	background: url(../images/cnr_home_sale_button.jpg);
+}
+
+.sale-middle .middle-border {
+	width: 100%;
+	display: inline-block;
+	height: 12px;
+	border-top: 2px solid #CDCDCD;
+	margin-top: 60px;
+	position: relative;
+}
+
+.sale-middle .middle-hot {
+	width: 350px;
+	height: 40px;
+	display: inline-block;
+	background: #f2f2f2 url(../images/cnr_home_sale_hot_title.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	position: absolute;
+	top: -22px;
+	left: 50%;
+	margin-left: -148px;
+}
+
+.sale-middle .middle-new {
+	width: 350px;
+	height: 40px;
+	display: inline-block;
+	background: #f2f2f2 url(../images/cnr_home_sale_new_title.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	position: absolute;
+	top: -22px;
+	left: 50%;
+	margin-left: -148px;
+}
+
+.sale-footer {
+	margin-top: 50px;
+	margin-bottom: 20px;
+	overflow: hidden;
+}
+
+.sale-footer ul {
+	margin-left: -40px;
+}
+
+.sale-footer ul li {
+	float: left;
+	margin: 0 0 20px 20px;
+}
+
+.sale-footer ul li a {
+	position: relative;
+	display: block;
+}
+.sale-footer ul li a .brand_gg_img{
+	width: 285px;
+    height: 362px;
+    border: 1px solid #eee; 
+    text-align: center;
+    line-height: 360px;
+}
+.sale-footer ul li a .brand_gg_img img{
+	max-height: 100%;
+	max-width: 100%;
+	height: auto;
+}
+.sale-footer ul li div a>span {
+	position: absolute;
+	left: 20px;
+	bottom: 15px;
+	border: 1px solid #A3A5A2;
+	border-radius: 15px;
+	width: 160px;
+	height: 21px;
+	line-height: 21px;
+	text-align: center;
+	background-color: #A3A5A2;
+	color: white;
+}
+/* .sale-footer ul li a>img{
+    width: 580px;
+    height: 388px;
+} */
+.right-goods li {
+	display: block;
+	border-top: solid 1px #DDDDDD;
+}
+
+.right-goods dl {
+	display: block;
+	position: relative;
+	z-index: 1;
+	height: 68px;
+	padding: 19px 0 15px 135px;
+	overflow: hidden;
+}
+
+.right-goods dd.goods-pic {
+	position: absolute;
+	z-index: 1;
+	top: 15px;
+	left: 43px;
+	display: block;
+}
+
+.right-goods dd.goods-num {
+	position: absolute;
+	width: 35px;
+	height: 23px;
+	z-index: 1;
+	top: 20px;
+	left: 0px;
+	display: block;
+	background-image: url(../images/cnr-num-title.png);
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+}
+
+.num1 {
+	background-position: 0 0;
+}
+
+.num2 {
+	background-position: 0 -30px;
+}
+
+.num3 {
+	background-position: 0 -60px;
+}
+
+.num4 {
+	background-position: 0 -90px;
+}
+
+.num5 {
+	background-position: 0 -120px;
+}
+
+.num6 {
+	background-position: 0 -150px;
+}
+
+.num7 {
+	background-position: 0 -180px;
+}
+
+.num8 {
+	background-position: 0 -210px;
+}
+
+.num9 {
+	background-position: 0 -240px;
+}
+
+.num10 {
+	background-position: 0 -270px;
+}
+
+.right-goods dd.goods-pic img {
+	width: 75px;
+	height: 75px;
+}
+
+.right-goods dt {
+	display: block;
+	width: 100%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.right-goods dt.brand {
+	color: #333;
+	font-weight: bold;
+}
+
+.right-goods dd.price {
+	display: block;
+	height: 18px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	font-family: "微软雅黑", "黑体";
+	line-height: 18px;
+	color: #C81623;
+}
+
+.right-goods dd.selled {
+	display: block;
+	height: 18px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	line-height: 18px;
+	color: #999;
+}
+/*页面整体宽度控制*/
+.wrapper {
+	width: 1210px;
+	margin: auto;
+}
+
+.sale_buy i {
+	background-image: url(../images/cur_right.png);
+	width: 90px;
+	height: 31px;
+	display: inline-block;
+	background-repeat: no-repeat;
+	position: relative;
+	z-index: 1;
+	top: 34px;
+	left: 0px;
+}
+
+.pinpaijngxuan_pro_head .focus-prev {
+	left: 30px;
+	background: url(../images/bander.png) -224px -4px no-repeat;
+}
+
+.pinpaijngxuan_pro_head .focus-next {
+	right: 30px;
+	background: url(../images/bander.png) -250px -4px no-repeat;
+}
+
+.foot_sale {
+	background: #FFF;
+	height: 99px !important; /* width:284px; */
+	border: 1px solid #ECECEC;
+	border-top: none;
+}
+
+.sale-footer ul {
+	margin-left: 0px;
+}
+
+.sale-footer ul li:nth-child(4n+1) {
+	margin-left: 0px;
+}
+
+.foot_sale div{
+	font-size: 14px;
+	text-align: center;
+	line-height: 99px;
+	display: inline-block;
+}
+.foot_sale div.brand_logo_img{
+	width: 170px;
+	height: 59px;
+	line-height: 59px;
+	margin: 20px 0;
+}
+.foot_sale div.brand_logo_img img{
+	max-height: 100%;
+	max-width: 100%;
+	height: auto;
+}
+.foot_sale div.brand_logo_name{
+	width: 110px;
+	text-align: center;
+}
+.brand-floor {
+	overflow: hidden;
+}
+
+.sale-footer {
+	margin-top: 10px;
+}
+
+.pinpaijngxuan_pro_head {
+	padding-top: 10px;
+}
+
+.pinpaijngxuan_pro_title {
+	width: 1210px;
+	height: 47px;
+	background-color: #F6F6F6;
+}
+
+.pinpaijngxuan_pro_head .brand-showcase-list {
+	position: relative;
+	width: 1092px;
+	text-align: left;
+	margin: 0 auto;
+	height: 47px;
+	overflow: hidden;
+}
+
+.pinpaijngxuan_pro_title li {
+	line-height: 47px;
+	font-size: 16px;
+	float: left;
+	width: 218px;
+	height: 47px;
+}
+
+.pinpaijngxuan_pro_head .brand-showcase-page a {
+	width: 11px;
+	height: 53px;
+	top: -50px;
+	position: absolute;
+	cursor: pointer;
+	display: block;
+	color: #ccc;
+	line-height: 53px;
+	font-family: SimSun;
+}
+
+.pinpaijngxuan_pro_title li a {
+	padding: 0 21px;
+	border-left: 1px solid #E5E5E5;
+	margin-left: -1px;
+	margin-left: -1px\9;
+	display: block;
+	height: 21px;
+	margin-top: 12px;
+	line-height: 20px;
+	text-align: center;
+}
+
+.pinpaijngxuan_pro_title a {
+	color: #000;
+	text-decoration: none;
+}
+
+.pinpaijngxuan_pro_title a:hover {
+	color: red;
+}
+
+.pinpaijngxuan_pro_title li a.current {
+	color: red;
+}
+
+.pinpaijngxuan_pro_head .brand-showcase-page {
+	margin: auto;
+	position: relative;
+	font-size: 45px;
+	display: block;
+}
+
+.brand-floor {
+	min-height: 484px;
+}

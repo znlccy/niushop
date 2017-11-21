@@ -1,0 +1,59 @@
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/jquery-ui-private.css">
+<script>
+var platform_shopname= '{$web_popup_title}';
+</script>
+<script type="text/javascript" src="ADMIN_JS/jquery-ui-private.js" charset="utf-8"></script>
+<script type="text/javascript" src="ADMIN_JS/jquery.timers.js"></script>
+<div id="dialog"></div>
+<script type="text/javascript">
+function showMessage(type, message,url,time){
+	if(url == undefined){
+		url = '';
+	}
+	if(time == undefined){
+		time = 2;
+	}
+	//成功之后的跳转
+	if(type == 'success'){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#51A351": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:message,
+			time:time,
+			timeHref: url,
+		});
+	}
+	//失败之后的跳转
+	if(type == 'error'){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			time:time,
+			contentText:message,
+			timeHref: url,
+		});
+	}
+}
+
+function showConfirm(content){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				return 1;
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+				return 0;
+			}
+		},
+		contentText:content,
+	});
+}
+</script>

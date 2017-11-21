@@ -1,0 +1,177 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<style>
+.Switch_FlatCircular {line-height: 30px;}
+.left_main{width: 23%;float: left;border:1px solid #E3E3E3;height: 524px;}
+.left_main ul{margin: 10px;}
+.leftcheckbox{float:right;}
+.left_main li{line-height:30px;padding:2px 6px;border:1px dotted #E3E3E3;margin-bottom: 10px;}
+.left_main ul a{color:#666;}
+.left_main a:hover{color:#11B9ED;}
+.right_main{width:75%;float:right;border:1px solid #E3E3E3;height: 400px;}
+.main-top{height: 30px;line-height: 30px;padding: 0 10px;color: #666;border-bottom: 1px solid #E3E3E3;margin-bottom: 15px;}
+.email_title{width:81px;line-height: 40px;float: left;padding-left: 10px;}
+.edit_bat{width: 250px;float: left;margin-left: 20px;line-height: 40px;}
+.save{clear:both;text-align:center;margin-top:10px;display: inline-block;width:100%;}
+input[type="submit"], input.submit, a.submit {display: inline-block;}
+.back{background: #e5e5e5;border: 0;height: 30px;width: 66px;}
+.rightlist{clear: both;content: '';display: inline-block;}
+.right-item{width: 12%;}
+.itemlist{padding: 0 2px;margin: 5px;float:left;text-align: center;color:#666;}
+.title-item{height: 40px;border-top:1px solid #E3E3E3;color: #666;}
+.template-message{height: 40px;line-height: 40px;border: 1px solid #e5e5e5;border-bottom: none;}
+h1{width: 2px;height: 20px;float: left;background-color: #0072D2;}
+.active{color:#11B9ED !important;}
+.tab-pane{clear: both;content: '';}
+.msg{display: inline-block;width: 100%;color: #FF8400;height: 40px;line-height: 40px;padding-left: 10px;}
+.senditem{border: 1px solid #11B9ED;margin: 9px;border-radius: 3px;width:30%;}
+.qianming{display: inline-block;line-height: 40px;margin-left: 10px;color:#666;width:100%;}
+.bl{color:#666;margin-left:10px;display: inline-block;line-height:35px;width:100%;}
+input[type="text"]{vertical-align: middle;margin-bottom:0;}
+</style>
+{/block}
+{block name="main"}
+<input type="hidden" id="curr_selectid" value="{$template_select.template_code}"/>
+<div class="set-style">
+<div class="template-message"><h1></h1><p style="width:90%;margin-left: 7px;">短信通知模板</p></div>
+	<div class="tab-pane active">
+		<div class="left_main">
+			<ul>
+				{foreach name="template_type_list" item="template_item"}
+					<a href="javascript:void(0);" onclick="template_onclick(this);" id="{$template_item.template_code}">
+						<li>{$template_item.template_name}
+							<span class="leftcheckbox">
+							{if condition="$template_item.is_enable eq 1"}
+								<input id="adminCode" type="checkbox" class="checkbox" checked="checked" name="{$template_item.template_code}" onchange="check_change(this);"/>
+							{else/}
+								<input id="adminCode" type="checkbox" class="checkbox" onchange="check_change(this);" name="{$template_item.template_code}"/>
+							{/if}
+							</span>
+						</li>
+					</a>
+				{/foreach}
+			</ul>
+		</div>
+		<div class="right_main">
+			<div class="main-top">您正在编辑<a href="javascript:;" id="update_nameid"></a>通知模板</div>
+			<div class="qianming"><div style="width:75px;float:left;">模板ID：</div><input type="text" id="template_titleid" value="{$template_select.template_title}" style="margin-right: 15px !important;" class="input-common" /><span style="font-size:13px;">必须与阿里大鱼的模板ID一致，否则无效!</span></div>
+			<div class="qianming"><div style="width:75px;float:left;">短信签名：</div><input type="text" id="signNameid" style="margin-right: 15px !important;" value="{$template_select.sign_name	}" class="input-common" /><span style="font-size:13px;">与阿里大鱼内短信签名保持一致!</span></div>
+			<div class="bl">
+				<div style="width:75px;float:left;">可用变量：</div>
+				<div style="width:88%;float: left;font-size:13px;" id="user_variable">
+					{foreach name="template_item_list" item="item_obj"}
+						{$item_obj.replace_name}({$item_obj.item_name}),
+					{/foreach}
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	<div class="save">
+		<input type="submit" value="保存" class="btn-common" style="margin-right: 20px;" onclick="template_submit();"/>
+		<a href="{:__url('ADMIN_MAIN/config/notifyindex')}">
+			<input type="button" value="返回" class="btn-common-cancle"/>
+		</a>
+	</div>
+</div>
+
+<script type="text/javascript">
+var $template_array={$template_json};
+var $template_send_item={$template_send_item_json};
+var $is_first=1;
+var $curr_select=$("#curr_selectid").val();
+$("#"+$curr_select).click();
+
+//左边模板菜单的点击函数
+function template_onclick(event){
+	$(event).parent('ul').find('a').removeClass('active');
+	$(event).addClass('active');
+	//处理新的以前 将上次改动的保存
+	var $deal_type="";
+	var $deal_title="";
+	var $sign_name="";
+	if($is_first==0){
+		$deal_type=$("#curr_selectid").val();
+		$deal_title=$("#template_titleid").val();
+		$sign_name=$("#signNameid").val();
+	}
+	$template_type=$(event).attr("id");
+	for($i=0; $i<$template_array.length;$i++){
+		$template_obj=$template_array[$i];
+		$template_obj_type=$template_obj.template_code;
+		if($template_obj_type==$deal_type && $is_first==0){
+			$template_array[$i].template_title=$deal_title;
+			$template_array[$i].sign_name=$sign_name;
+		}
+		if($template_obj_type==$template_type){
+			$("#curr_selectid").val($template_type);
+			$("#update_nameid").text($template_obj.template_name);
+			$title=$template_obj.template_title;
+			$("#template_titleid").val($title);
+			$("#signNameid").val($template_obj.sign_name);
+		}
+	}
+	$is_first=0;
+	get_template_item($template_type);
+}
+
+function get_template_item($template_code){
+	$.ajax({
+		type : "post",
+		url: "{:__url('ADMIN_MAIN/Config/getTemplateItem')}",
+		data: {"template_code": $template_code },
+		async : false, // 让它同步执行
+		success: function (data) {
+			var $html="";
+			for($i=0;$i<data.length;$i++){
+				$name=data[$i]["item_name"];
+				$replace=data[$i]["replace_name"];
+				if($html==""){
+					$html=$replace+"("+$name+")";
+				}else{
+					$html=$html+","+$replace+"("+$name+")";
+				}
+			}
+			$("#user_variable").html($html);
+		}
+	});
+}
+
+//开关关闭的点击事件
+function check_change(event){
+	var $type=$(event).attr("name");
+	var $selected=$(event).attr("result");
+	var $is_enable=0;
+	if($selected == 'true'){
+		$is_enable=0;
+	}else if($selected == 'false'){
+		$is_enable=1;
+	}
+	for($i=0; $i<$template_array.length;$i++){
+		$template_obj=$template_array[$i];
+		$template_obj_type=$template_obj.template_code;
+		if($template_obj_type==$type){
+			$template_array[$i].is_enable=$is_enable;
+		}
+	}
+}
+function template_submit(){
+	var $curr_select=$("#curr_selectid").val();
+	$("#"+$curr_select).click();
+	$.ajax({
+		type : "post",
+		url: "{:__url('ADMIN_MAIN/config/updatenotifytemplate')}",
+		data: { "type": "sms", "template_data": JSON.stringify($template_array) },
+		async : false, // 让它同步执行
+		success: function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', '提交成功');
+				window.location.href=__URL("ADMIN_MAIN/config/notifytemplate?type=sms");
+			}else{
+				showMessage('error', '提交失败');
+			}
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta name="renderer" content="webkit" />
+	<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+	{if $frist_menu.module_name=='首页'}
+	<title>{$title_name} - 商家管理</title>
+	{else /}
+		<title>{$title_name} - {$frist_menu.module_name}管理</title>
+	{/if}
+	<link rel="shortcut  icon" type="image/x-icon" href="ADMIN_IMG/admin_icon.ico" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="__STATIC__/blue/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_blue_common.css" />
+	<link rel="stylesheet" type="text/css" href="__STATIC__/font-awesome/css/font-awesome.min.css" />
+	<link rel="stylesheet" type="text/css" href="__STATIC__/simple-switch/css/simple.switch.three.css" />
+	<style>
+	.Switch_FlatRadius.On span.switch-open{background-color: #0072D2;border-color: #0072D2;}
+	#copyright_meta a{color:#333;}
+	</style>
+	<script src="__STATIC__/js/jquery-1.8.1.min.js"></script>
+	<script src="__STATIC__/blue/bootstrap/js/bootstrap.js"></script>
+	<script src="__STATIC__/bootstrap/js/bootstrapSwitch.js"></script>
+	<script src="__STATIC__/simple-switch/js/simple.switch.js"></script>
+	<script src="__STATIC__/js/jquery.unobtrusive-ajax.min.js"></script>
+	<script src="__STATIC__/js/common.js"></script>
+	<script src="__STATIC__/js/seller.js"></script>
+	<script src="__STATIC__/js/load_task.js"></script>
+	<script src="__STATIC__/js/load_bottom.js" type="text/javascript"></script>
+	<script src="ADMIN_JS/jquery-ui.min.js"></script>
+	<script src="ADMIN_JS/ns_tool.js"></script>
+	<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_table_style.css">
+	{include file="adminblue/controlCommonVariable" }
+	{block name="resources"/}{/block}
+	</head>
+<body>
+{include file="adminblue/urlModel"}
+<article class="ns-base-article">
+
+	<aside class="ns-base-aside">
+		<div class="ns-logo" onclick="location.href='{:__URL('ADMIN_MAIN')}';"></div>
+		<div class="ns-main-block">
+			<header>
+				<article class="ns-base-user">
+					<div class="ns-head-portrait">
+						{if condition="$user_headimg neq ''"}
+						<img src="{:__IMG($user_headimg)}"/>
+						{else /}
+						<img src="__STATIC__/blue/img/head_portrait_default.png"/>
+						{/if}
+					</div>
+					<div class="ns-base-info">
+						<span>欢迎您：{$user_name}</span>
+						<span>角色：{$group_name}</span>
+					</div>
+				</article>
+				<a href="#edit-password" data-toggle="modal" title="修改密码">修改密码</a>
+				<a href="{:__URL('ADMIN_MAIN/login/logout')}" title="安全退出">安全退出</a>
+			</header>
+			<nav>
+				<ul>
+					{foreach name="leftlist" item="leftitem"}
+					{if condition="strtoupper($leftitem['module_id']) eq $second_menu_id"}
+					<li class="selected" onclick="location.href='{:__URL('ADMIN_MAIN/'.$leftitem['url'])}';" title="{$leftitem.module_name}">{$leftitem.module_name}</li>
+					{else/}
+					<li onclick="location.href='{:__URL('ADMIN_MAIN/'.$leftitem['url'])}';" title="{$leftitem.module_name}">{$leftitem.module_name}</li>
+					{/if}
+					{/foreach}
+				</ul>
+			</nav>
+			<div style="height:50px;"></div>
+			<div id="bottom_copyright">
+				<footer>
+					<img id="copyright_logo"/>
+					<p>
+						<span id="copyright_desc"></span>
+						<br/>
+						<span id="copyright_companyname"></span>
+						<br/>
+						<span id="copyright_meta"></span>
+					</p>
+				</footer>
+			</div>
+		</div>
+	</aside>
+	
+	<section class="ns-base-section">
+		<header class="ns-base-header">
+			<div class="ns-search">
+				<img src="__STATIC__/blue/img/nav_menu.png" title="导航管理" class="nav-menu js-nav" />
+				<div class="ns-navigation-management">
+					<div class="ns-navigation-title">
+						<h4>导航管理</h4>
+						<span>x</span>
+					</div>
+					<div style="height:40px;"></div>
+					{foreach name="nav_list" item="nav"}
+					<dl>
+						<dt>{$nav.data.module_name}</dt>
+						{foreach name="nav['sub_menu']" item="nav_sub"}
+						<dd onclick="location.href='{:__URL('ADMIN_MAIN/'.$nav_sub['url'])}';">{$nav_sub.module_name}</dd>
+						{/foreach}
+					</dl>
+					{/foreach}
+				</div>
+				<i class="ns-vertical-bar"></i>
+				<div class="ns-search-block">
+					<i class="fa fa-search" title="搜索"></i>
+					<span>搜索</span>
+					<div class="mask-layer-search">
+						<input type="text" id="search_goods" placeholder="搜索" />
+						<a href="javascript:search();"><img src="__STATIC__/blue/img/enter.png"/></a>
+					</div>
+				</div>
+			</div>
+			<nav>
+				<ul>
+					{foreach name="headlist" item="per"}
+					{if condition="strtoupper($per['module_id']) eq $headid"}
+					<li class="selected" onclick="location.href='{:__URL('ADMIN_MAIN/'.$per['url'])}';">
+						<span>{$per.module_name}</span>
+						{if condition="$per['module_id'] eq 10000"}
+							<span class="is-upgrade"></span>
+						{/if}
+					</li>
+					
+					{else/}
+					<li onclick="location.href='{:__URL('ADMIN_MAIN/'.$per['url'])}';">
+						<span>{$per.module_name}</span>
+						{if condition="$per['module_id'] eq 10000"}
+							<span class="is-upgrade"></span>
+						{/if}
+					</li>
+					{/if}
+					{/foreach}
+				</ul>
+			</nav>
+			<div class="ns-base-tool">
+				<div class="ns-help">
+					<img src="__STATIC__/blue/img/user_admin_blue.png" width="30" >
+					<!-- <i class="fa fa-question-circle-o"></i> -->
+					<ul>
+						<li title="前台首页" onclick="window.open('{:__URL('SHOP_MAIN')}')">
+							<img src="__STATIC__/blue/img/home_pc.png"/>
+							<a href="javascript:;">前台首页</a>
+						</li>
+						<li title="加入收藏" onclick="addFavorite()">
+							<img src="__STATIC__/blue/img/add_favorites.png" />
+							<a href="javascript:;">加入收藏</a>
+						</li>
+						<li title="清理缓存" onclick="delcache()">
+							<img src="__STATIC__/blue/img/clear_the_cache.png"/>
+							<a href="javascript:;">清理缓存</a>
+						</li>
+						<li title="退出登录" onclick="window.location.href='{:__URL('ADMIN_MAIN/login/logout')}'">
+							<img src="__STATIC__/blue/img/loout.png"/>
+							<a href="javascript:;">退出登录</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</header>
+		
+		{block name="ns_notice"}{/block}
+		
+		<div style="position:relative;margin:10px 0;">
+			<!-- 三级导航菜单 -->
+			{block name="thirdmenu"}
+			<nav class="ns-third-menu">
+				<ul>
+				{foreach name="child_menu_list" item="child_menu" key="k" }
+				{eq name="child_menu['active']" value="1"}
+					<li class="selected" onclick="location.href='{:__URL('ADMIN_MAIN/'.$child_menu['url'])}';">{$child_menu.menu_name}</li>
+				{else/}
+					<li onclick="location.href='{:__URL('ADMIN_MAIN/'.$child_menu['url'])}';">{$child_menu.menu_name}</li>
+				{/eq}
+				{/foreach}
+				</ul>
+			</nav>
+			{/block}
+			
+			<div class="right-side-operation">
+				<ul>
+					{block name="right_tab"}{/block}
+					{block name="right_tab_tip"}
+					<li {if condition="$warm_prompt_is_show == 'show'"}style="display:none;"{/if}><a class="js-open-warmp-prompt"><i class="fa fa-info-circle"></i>&nbsp;提示</a></li>
+					{/block}
+				</ul>
+			</div>
+		</div>
+		<!-- 操作提示 -->
+		{block name="warm_prompt"}
+		<div class="ns-warm-prompt" {if condition="$warm_prompt_is_show == 'hidden'"}style="display:none;"{/if}>
+			<div class="alert alert-info">
+				<button type="button" class="close">&times;</button>
+				<h4>
+					<i class="fa fa-info-circle"></i>
+					<span>操作提示</span>
+				</h4>
+				<div style="font-size:12px;text-indent:18px;">
+					{block name="alert_info"}
+						{foreach name="leftlist" item="leftitem"}
+						{if condition="strtoupper($leftitem['module_id']) eq $second_menu_id"}
+						{$leftitem.module_name}
+						{/if}
+						{/foreach}
+					{/block}
+				</div>
+			</div>
+		</div>
+		{/block}
+		<div class="ns-main">
+			{block name="main"}{/block}
+			{include file="adminblue/pageCommon"}
+		</div>
+		
+	</section>
+</article>
+	
+<!-- 公共的操作提示弹出框 common-success：成功，common-warning：警告，common-error：错误，-->
+<div class="common-tip-message js-common-tip">
+	<div class="inner"></div>
+</div>
+
+<!--修改密码弹出框 -->
+<div id="edit-password" class="modal hide fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="width:562px;top:50%;margin-top:-180.5px;">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3>修改密码</h3>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="pwd0" style="width: 160px;"><span class="color-red">*</span>原密码</label>
+				<div class="controls" style="margin-left: 180px;">
+					<input type="password" id="pwd0" placeholder="请输入原密码" class="input-common" />
+					<span class="help-block"></span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="pwd1" style="width: 160px;"><span class="color-red">*</span>新密码</label>
+				<div class="controls" style="margin-left: 180px;">
+					<input type="password" id="pwd1" placeholder="请输入新密码" class="input-common" />
+					<span class="help-block"></span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="pwd2" style="width: 160px;"><span class="color-red">*</span>再次输入密码</label>
+				<div class="controls" style="margin-left: 180px;">
+					<input type="password" id="pwd2" placeholder="请输入确认密码" class="input-common" />
+					<span class="help-block"></span>
+				</div>
+			</div>
+			<div style="text-align: center; height: 20px;" id="show"></div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" onclick="submitPassword()" style="display:inline-block;">保存</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+	</div>
+</div>
+{include file="adminblue/openDialog" /}
+<script src="ADMIN_JS/ns_common_base.js"></script>
+<script src="__STATIC__/blue/js/ns_common_blue.js"></script>
+<script>
+$(function(){
+	//顶部导航管理显示隐藏
+	$(".ns-navigation-title>span").click(function(){
+		$(".ns-navigation-management").slideUp(400);
+	});
+	
+	$(".js-nav").toggle(function(){
+		$(".ns-navigation-management").slideDown(400);
+	},function(){
+		$(".ns-navigation-management").slideUp(400);
+	});
+	
+	//搜索展开
+	$(".ns-search-block").hover(function(){
+		if($(this).children(".mask-layer-search").is(":hidden")) $(this).children(".mask-layer-search").fadeIn(300);
+	},function(){
+		if($(this).children(".mask-layer-search").is(":visible")) $(this).children(".mask-layer-search").fadeOut(300);
+	});
+	
+	$(".ns-base-tool .ns-help").hover(function(){
+		if($(this).children("ul").is(":hidden")) $(this).children("ul").fadeIn(250);
+	},function(){
+		if($(this).children("ul").is(":visible")) $(this).children("ul").fadeOut(250);
+	});
+	
+});
+
+function addFavorite() {
+	var url = window.location;
+	var title = document.title;
+	var ua = navigator.userAgent.toLowerCase();
+	if (ua.indexOf("360se") > -1) {
+		alert("由于360浏览器功能限制，请按 Ctrl+D 手动收藏！");
+	}else if (ua.indexOf("msie 8") > -1) {
+		window.external.AddToFavoritesBar(url, title); //IE8
+	}
+	else if (document.all) {
+		try{
+			window.external.addFavorite(url, title);
+		}catch(e){
+			alert('您的浏览器不支持,请按 Ctrl+D 手动收藏!');
+		}
+	}else if (window.sidebar) {
+		window.sidebar.addPanel(title, url, "");
+	}else {
+		alert('您的浏览器不支持,请按 Ctrl+D 手动收藏!');
+	}
+}
+
+</script>
+{block name="script"}{/block}
+</body>
+</html>

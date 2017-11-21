@@ -1,0 +1,35 @@
+<div class="controltype" >
+	<!-- <img src="__TEMP__/{$style}/public/images/brand_top.png"/> -->
+	<!-- <div style="position:relative;margin:50px auto;width:100px;height:100px;box-sizing:border-box;border:1px solid #333;line-height:120px;text-indent:5px;"></div> -->
+	<!-- <span class="control_l_content" style="width:20%;left:40%;">
+	<a href="APP_MAIN/goods/brandlist" style="color:#f79646;">品牌专区</a></span> -->
+	<a href="{:__URL('APP_MAIN/goods/brandlist')}" style="color:#f79646;"><img src="__TEMP__/{$style}/public/images/navimg/brand_zone.png"></a>
+</div>
+<section class="members_goodspic" style="/* margin-bottom: 10px; */">
+	<ul>
+	{foreach name="list" item="category_second" key = "k"}
+		<li class="gooditem" style="margin:0;width:33.3%;">
+			<!-- <div class="img"> --><!-- style="height:inherit;" -->
+				<!-- <a href="APP_MAIN/goods/goodslist?brand_id={$category_second.brand_id}">
+					<img class="lazy" src="__UPLOAD__/{$category_second.brand_ads}" alt="{$category_second.brand_name}">
+				</a>
+			</div> -->
+			<div class="info" style="padding-left:0;text-align: center;">
+				<!-- <p class="goods-title"  style="height:auto;overflow: inherit;padding:5px 0;"> -->
+					<a href="{:__URL('APP_MAIN/goods/goodslist?brand_id='.$category_second['brand_id'])}">
+						<div style="margin:10px 0;">
+						<img src="{:__IMG($category_second.brand_pic)}" alt="{$category_second.brand_name}" style="width: 100%;"onerror="this.src='__TEMP__/{$style}/public/images/default/default_shop_logo.png'">
+						</div>
+					</a>
+				<!-- </p> -->
+				<!-- <p class="goods-price">
+						<em>
+							<a href="APP_MAIN/goods/goodslist?brand_id={$category_second.brand_id}">{$category_second.brand_name}</a>
+						</em>
+					</p>
+				-->
+			</div>
+		</li>
+	{/foreach}
+	</ul>
+</section>

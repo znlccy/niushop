@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+
+.pro-form .help-inline {
+	display: none;
+	color: red;
+}

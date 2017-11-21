@@ -1,0 +1,120 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/highcharts.js"></script>
+<script src="ADMIN_JS/exporting.js"></script>
+<style  type="text/css">
+.alert{
+	color: #C09853;
+	height:auto;
+}
+.alert-info{
+	color: #3A87AD;
+}
+.count-box li{
+	font: 12px/20px 'Hiragino Sans GB','Microsoft Yahei','Helvetica Neue',Helvetica,STHeiTi,sans-serif;
+}
+a{cursor:pointer;}
+</style>
+ {/block}
+{block name="main"}
+<div class="count-box">
+	<div class="main-content" id="mainContent">
+		<div class="alert mt10" style="clear:both;">
+			<ul class="mt5">
+				<li>1、符合以下任何一种条件的订单即为有效订单：a）采用在线支付方式支付并且已付款；b）采用货到付款方式支付并且交易已完成</li>
+				<li>2、以下列表为从昨天开始最近30天有效订单中的所有商品数据</li>
+				<li>3、近30天下单商品数：从昨天开始最近30天有效订单的某商品总销量</li>
+				<li>4、近30天下单金额：从昨天开始最近30天有效订单的某商品总销售额</li>
+<!-- 				<li>5、点击每列旁边的箭头对列表进行排序，默认按照“近30天成交件数”降序排列</li> -->
+<!-- 				<li>6、点击每条记录后的“走势图”，查看最近30天下单金额、下单商品数、下单量走势</li> -->
+			</ul>
+		</div>
+		<div class="mod-table">
+			<div class="mod-table-head">
+				<table class="mytable">
+					<tr>
+						<th width="10%">
+							<div class="fr">&nbsp;&nbsp;商品名称
+								<input type="text" id="goods_name" />
+								<label class="submit-border">
+									<input type="submit" class="submit" value="搜索" onclick="LoadingInfo(1);"/>
+								</label>
+							</div>
+						</th>
+					</tr>
+				</table>
+				<div class="mod-table-head">
+					<div class="style0list">
+						<table>
+							<colgroup>
+						 		<col style="width: 5%;">
+								<col style="width: 30%;">
+								<col style="width: 20%;">
+								<col style="width: 20%;">
+								<col style="width: 20%;">
+								<col style="width: 5%;">
+							</colgroup>
+							<thead>
+								<tr align="center">
+									<th></th>
+									<th class="tal">商品名称</th>
+									<th class="tal">价格</th>
+									<th>近30天下单商品数</th>
+									<th>近30天下单金额</th>
+								</tr>
+							</thead>
+							<colgroup>
+						 		<col style="width: 5%;">
+								<col style="width: 30%;">
+								<col style="width: 20%;">
+								<col style="width: 20%;">
+								<col style="width: 20%;">
+							</colgroup>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var goods_name = $("#goods_name").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/account/shopgoodssaleslist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"goods_name":goods_name
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					var goods_name = "";
+					if(data["data"][i]["goods_name"].length > 23){
+						goods_name = data["data"][i]["goods_name"].substring(0 ,24)+"..." ;
+					}else{
+						goods_name =  data["data"][i]["goods_name"];
+					}
+					html += '<tr align="center">';
+					html += '<td></td>';
+					html += '<td class="tal" title="' + data["data"][i]["goods_name"] + '">' + goods_name + '</td>';
+					html += '<td class="tal">' + data["data"][i]["price"] + '</td>';
+					html += '<td>' + data["data"][i]["sales_info"]["sales_num"] + '</td>';
+					html += '<td>' + data["data"][i]["sales_info"]["sales_money"] + '</td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="5">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

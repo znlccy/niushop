@@ -1,0 +1,177 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.table-class tbody td a{margin-left: 8px;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="2%" style="text-align: left;">
+			<button class="btn-common" onclick="batchDelete()">备份</button>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 1%">
+		<col style="width: 25%;">
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<col style="width: 24%;">
+		<col style="width: 20%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><input id="ckall" type="checkbox" onClick="CheckAll(this)"></th>
+			<th>表名</th>
+			<th>数据量</th>
+			<th>数据大小</th>
+			<th>发布时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//分页数据
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/databaselist')}",
+		success : function(data) {
+			var html = '';
+			if (data.length > 0) {
+				for (var i = 0; i < data.length; i++) {
+					html += '<tr align="center">';
+					html += '<td><div class="cell"><label><input name="sub" type="checkbox" value="'+ data[i]["name"]+'" class="input-common"></label></div></td>';
+					html += '<td>'+ data[i]["name"]+'</td>';
+					html += '<td>'+ data[i]["rows"]+'</td>';
+					html += '<td>'+ data[i]["data_length_info"]+ '</td>';
+					html += '<td>'+ timeStampTurnTime(data[i]["create_time"])+ '</td>';
+					html += '<td><a target="_blank" href="">优化表</a><a href="">修复表</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="9">暂无列表</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			//initPageData(data["page_count"],data['data'].length,data['total_count']);
+			//$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			load();
+		}
+	});
+}	
+
+function batchDelete() {
+	var _tables = new Array();
+	$(".table-class tbody input[type='checkbox']:checked").each(function(i) {
+		_tables[i]=$(this).val();
+	});
+	if(_tables.length ==0){
+		$("#dialog").dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	ajax_ids(_tables);
+}
+
+var flag = false;
+// 备份表
+function ajax_ids(_tables){
+	$("#dialog").dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				if(!flag){
+					flag = true;
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/config/exportdatabase')}",
+						data : { "tables" : _tables },
+						dataType : "json",
+						success : function(data) {
+							if(data.status ==1 && data.message=="初始化成功"){
+								backup(data.tab);
+								return;
+							} 
+							flag = false;
+						}
+					})
+				}
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否备份？",
+	});
+}
+
+//备份数据库
+function backup(tab,status) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/exportdatabase')}",
+		data : { "id" : tab.id, "start" : tab.start },
+		dataType : "json",
+		success : function(data) {
+			if (data.status) {
+				//alert('备分数据库,请不要关闭窗口');
+				if (!$.isPlainObject(data.tab)) {
+					//dialog.get('progress').content(data.info);
+					//alert(JSON.stringify(data.info));
+					return;
+				}else{
+					//alert('正在处理 '+data.tab.table+' ...');
+					//dialog.get('progress').content('正在处理 '+data.tab.table+' ...');
+				}
+				//alert(JSON.stringify(data));
+				//alert(data.tab);
+				//alert(tab.id);
+				backup(data.tab, tab.id != data.tab.id);
+			} else {
+				alert('备份完成');
+			}
+		}
+	});
+}
+
+/*修改排序*/
+function load(){
+	$('.num').change(function(){
+		var fieldid = $(this).attr('fieldid');
+		var sort = $(this).val();
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/cms/modifyarticlefield')}",
+			data:{'fieldid':fieldid,'sort':sort},
+			success: function (data) {
+				if(data['code'] <= 0){
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	});
+}
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

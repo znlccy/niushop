@@ -1,0 +1,317 @@
+{extend name="adminblue/base" /}
+{block name="resources"/} 
+<style>
+.modal-infp-style{width:90%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+.modal{width:614px;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<td>
+			会员账号：<input id="userName" class="input-small input-common" type="text">
+			手机号：<input id="userTel" class="input-small input-common" type="text">
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</td>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 8%;">
+		<col style="width: 8%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 16%;">
+		<col style="width: 9%;">
+		<col style="width: 6%;">
+		<col style="width: 15%;">
+		<col style="width: 8%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th>会员账号</th>
+			<th>手机号</th>
+			<th>提现流水号</th>
+			<th>提现银行</th>
+			<th>提现账户</th>
+			<th>账户姓名</th>
+			<th>提现金额</th>
+			<th>提现日期</th>
+			<th>状态</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<colgroup>
+		<col style="width: 7%;">
+		<col style="width: 8%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 16%;">
+		<col style="width: 9%;">
+		<col style="width: 6%;">
+		<col style="width: 15%;">
+		<col style="width: 8%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<tbody></tbody>
+</table>
+
+<!-- 拒绝提现申请 -->
+<div class="modal fade hide" id="recharge_balance" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<input type="hidden" id="balance_id">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>拒绝提现申请</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td>备注</td>
+							<td colspan='3' id="time"><textarea id="remark" class="input-common"></textarea></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="refusetrue()">确定</button>
+				<button class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 提现详情模态框（Modal） -->
+<div class="modal fade hide" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>提现详情</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td>会员</td>
+							<td colspan='4' id="real_name"></td>
+							<td>手机号</td>
+							<td colspan='4' id="mobile"></td>
+						</tr>
+						<tr>
+							<td>提现流水号</td>
+							<td colspan='4' id="withdraw_no"></td>
+							<td>提现银行</td>
+							<td colspan='4' id="bank_name"></td>
+						</tr>
+						<tr>
+							<td>提现账户</td>
+							<td colspan='4' id="account_number"></td>
+							<td>账户姓名</td>
+							<td colspan='4' id="realname"></td>
+						</tr>
+						<tr>
+							<td>提现金额</td>
+							<td colspan='4' id="cash"></td>
+							<td>提现日期</td>
+							<td colspan='4' id="ask_for_date"></td>
+						</tr>
+						<tr>
+							<td>状态</td>
+							<td colspan='4' id="status"></td>
+							<td>备注</td>
+							<td colspan='4' id="memo"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="uid"/>
+<input type="hidden" id="status"/>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function searchData(){
+	LoadingInfo(1);
+}
+//加载数据
+function LoadingInfo(pageIndex) {
+	var user_name = $("#userName").val();
+	var user_phone = $("#userTel").val();
+		$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/usercommissionwithdrawlist')}",
+		data : {
+			"pageIndex" : pageIndex,
+			"user_name":user_name,
+			"user_phone":user_phone
+		},
+		success : function(data) {
+			$("#page_count").val(data["page_count"]);
+			$("#pageNumber a").remove();
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					var status = "";
+					var lock_operrate = "";
+					var lock_do = 1;
+					if(data["data"][i]["status"] == 0){
+						status = "审核中";
+					}else if(data["data"][i]["status"] == 1){
+						status = "已通过";
+					}else{
+						status = "已拒绝";
+					}
+					html += '<tr align="center">';
+					html += '<td>'+data["data"][i]["real_name"]+'</td>';
+					html += '<td>' + data["data"][i]["mobile"] + '</td>';
+					html += '<td>' + data["data"][i]["withdraw_no"] + '</td>';
+					html += '<td>' + data["data"][i]["bank_name"] + '</td>';
+					html += '<td>' + data["data"][i]["account_number"] + '</td>';
+					html += '<td>' + data["data"][i]["realname"] + '</td>';
+					html += '<td>' + data["data"][i]["cash"] + '</td>';
+					html += '<td>' + timeStampTurnTime(data["data"][i]["ask_for_date"]) + '</td>';
+					html += '<td>' + status + '</td>';
+					html += '<td>';
+					if(data["data"][i]["status"] == 0){
+						html += '<a  href="javascript:void(0);" onclick="audit('+ data["data"][i]["id"] +', 1);">通过</a>';
+						html += '&nbsp;&nbsp;<a  href="javascript:void(0);" onclick="refuse('+ data["data"][i]["id"] +', -1);">拒绝</a>';
+					}else{
+						html += '&nbsp;&nbsp;<a  href="javascript:void(0);" onclick="details('+ data["data"][i]["id"] +');">详情</a>';
+					}
+					html += '</td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="10">暂无符合条件的数据记录</td></tr>';
+			}
+			
+			$(".table-class tbody").html(html);
+			var totalpage = $("#page_count").val();
+			if (totalpage == 1) {
+				changeClass("all");
+			}
+			var $html = pagenumShow(jumpNumber,totalpage,{$pageshow})
+			$("#pageNumber").append($html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}	
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+//推广员审核通过提现申请
+function partnerAudit(id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定,#e57373": function() {
+				audit(id,1);
+				$(this).dialog('close');
+			},
+			"拒绝": function() {
+				audit(id,-1);
+				$(this).dialog('close');
+			}
+		},
+		contentText:"确定要通过此用户的提现申请吗？",
+	});
+}
+
+function audit(id,status){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/usercommissionwithdrawaudit')}",
+		data : {
+			"id" : id,
+			"status":status
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/member/usercommissionwithdrawlist')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	})
+}
+
+//拒绝提现申请
+function refuse(id,status){
+	$("#recharge_balance").modal("show");
+	$('#uid').val(id);
+	$('#status').val(status);
+}
+
+function refusetrue(){
+	var uid = $('#uid').val();
+	var status = $('#status').val();
+	var remark = $('#remark').val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/usercommissionwithdrawrefuse')}",
+		data : {
+			"id" : uid,
+			"status":status,
+			'remark':remark
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/member/usercommissionwithdrawlist')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+			$("#recharge_balance").modal("hide");
+		}
+	})
+}
+
+//提现详情
+function details(id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/getwithdrawalsinfo')}",
+		data : { "id" :id },
+		success : function(data) {
+			if (data) {
+				$("#real_name").html(data["real_name"]);
+				$("#mobile").html(data["mobile"]);
+				$("#withdraw_no").html(data["withdraw_no"]);
+				$("#bank_name").html(data["bank_name"]);
+				$("#account_number").html(data["account_number"]);
+				$("#realname").html(data["realname"]);
+				$("#cash").html(data["cash"]);
+				$("#ask_for_date").html(data["ask_for_date"]);
+				if(data["status"] == 0){
+					status = "审核中";
+				}else if(data["status"] == 1){
+					status = "已通过";
+				}else{
+					status = "已拒绝";
+				}
+				$("#status").html(status);
+				$("#memo").html(data["memo"]);
+				if(data['status'] )
+					$("#details").modal("show");
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+	})
+}
+</script>
+{/block}

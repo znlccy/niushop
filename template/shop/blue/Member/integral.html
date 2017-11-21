@@ -1,0 +1,193 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<style type="text/css">
+td{padding:10px;border: 1px Black; width:46px;}
+table{background-color:#eeeeee;border:0;width:100%;}
+.integral_title{display:block;font-size:18px;text-align:center;padding:20px;}
+.member-main .tabmenu .tab li {border-bottom: 2px #ff6600 solid;}
+.right-function{float:right;margin: 0 10px;line-height: 30px;font-size:14px;}
+</style>
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<input type="hidden" value="{$account}" id="subscription"/>
+	<div class="member-main">
+		<div class="box" id="firstpage">
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('member_my_points')}</li>
+				</ul>
+			</div>
+			<div class="member-data-header">
+				<span class="member-data-title">
+					{if condition="!isset($shopname)"}
+					{$platform_shopname}
+					{else /}
+					{$shopname}
+					{/if}
+					<span>({:lang('goods_integral')}:<span class="sum">{$sum}</span>)</span>
+				</span>
+				
+				<div class="right-function">
+					{if condition="$account !=null && $account>0"}
+					<a href="javascript:;" id="extract">{:lang('member_exchange_balance')}</a>&nbsp;|
+					{/if}
+					<a href="{:__URL('SHOP_MAIN/member/integrallist')}">{:lang('member_my_points')}</a>
+				</div>
+			</div>
+			{if condition="$total_count neq ''"}
+			<table>
+				<tr align="center">
+					<td>{:lang('member_category')}</td>
+					<td>{:lang('goods_number')}</td>
+					<td>{:lang('member_describe')}</td>
+					<td>{:lang('member_time')}</td>
+				</tr>
+				<tbody id="list_content" class="close-order">
+					{foreach $balances.data as $balance}
+					<tr align="center">
+						<td>{$balance.type_name}</td>
+						<td>{$balance.number}</td>
+						<td>{$balance.text}</td>
+						<td>{$balance.create_time | getTimeStampTurnTime}</td>
+					</tr>
+					{/foreach}
+				</tbody>
+			</table>
+			{include file='shop/blue/controlCommonPage'/}
+			{else/}
+			<div>
+				<div class="emptyFrame"> <i class="user_point"></i><span>{:lang('member_no_scored_yet')}</span> </div>
+			</div>
+			{/if}
+		</div>
+		<div class="box" id="secondpage" style="display:none;">
+			
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('member_exchange_balance')}</li>
+				</ul>
+			</div>
+			
+			
+			<div class="member-data-header">
+				<span class="member-data-title">
+					{if condition="!isset($shopname)"}
+					{$platform_shopname}
+					{else /}
+					{$shopname}
+					{/if}
+					<span>({:lang('goods_integral')}:<span class="sum">{$sum}</span>)</span>
+				</span>
+				
+				<div class="right-function">
+					<a href="javascript:;" id="extract2">{:lang('member_integration_details')}</a>&nbsp;|
+					<a href="{:__URL('SHOP_MAIN/member/integrallist')}">{:lang('member_my_points')}</a>
+				</div>
+			</div>
+			<form name="formSurplus" method="post" action="{:__URL('SHOP_MAIN/member/exchange')}" id="formsubmit">
+				<input type="hidden" name="shopid" value="{$shop_id}" /> 
+				<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee">
+					<tr>
+						<td width="10%" align="right">{:lang('member_exchange_product_score')}:</td>
+						<td align="left">
+							<input type="text" name="amount" class="inputBg" size="30" min="0" max="{$sum}" style="width:86px;border:1px solid #ccc;"/>
+							<span style="display:inline-block;" id="proving"></span>
+						</td>
+					</tr>
+					<tr>
+						<td width="10%" align="right"><span style="display:inline-block;">{:lang('member_integral_available')}<span id="number">{$sum}</span></span></td>
+						{if condition="$account !=null && $account>0"}
+						<td align="left">{:lang('member_exchange_rate')}{$account}{:lang('element')}</td>
+						{else/}
+						<td align="left">{:lang('member_no_integral_change')}</td>
+						{/if}
+					</tr>
+					<tr>
+						<td colspan="2" align="center">
+							<input type="hidden" name="surplus_type" value="1" />
+							<input type="hidden" name="act" value="act_account" />
+							{if condition="$account!=null && $account>0"}
+							<input type="submit" name="submit" class="common-btn" value="{:lang('member_exchange')}" />
+							<input type="hidden" id="hidden_account" value="{$account}" />
+							{else/}
+							<input type="submit" name="submit" class="common-btn-disabled" value="{:lang('member_exchange')}" disabled="disabled" />
+							{/if}
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+<input type="hidden" value="{$sum}" id="hidden_sum_integral" />
+{/block}
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script>
+$(document).ready(function(){
+	var max = parseInt($("input[name='amount']").attr("max"));		//最大余额
+	var number = $("#number").text();								//可用积分
+	var yz = false;													//验证条件
+	var subscription = $("#subscription").val();					//兑换比例
+	//点击进入积分兑换
+	$("#extract").on("click",function(){
+		number = $("#hidden_sum_integral").val();
+		$("#firstpage").hide();
+		$("#secondpage").show();
+	});
+	//点击返回余额明细界面
+	$("#extract2").on("click",function(){
+		$("#firstpage").show();
+		$("#secondpage").hide();
+		$("input[name='amount']").val("");
+	});
+	//左侧菜单栏选中效果
+	$("#qiye_point").addClass('curs');
+	//选中积分提示效果
+	$("input[name='amount']").on("keyup",function(){
+		var getnumber = $("input[name='amount']").val();//输入框中输入的积分
+		var re = /^[0-9]*[1-9][0-9]*$/ ;
+		if(subscription == 0){
+			$(this).css("border","1px solid red");
+			$("#proving").text("{:lang('member_amend_exchange')}").css("color","red");
+			yz = false;
+			is_ok
+		}else if(!re.test(getnumber)){
+			$(this).css("border","1px solid red");
+			$("#proving").text("{:lang('member_integral_must_integer')}").css("color","red");
+			yz = false;
+		}else if(getnumber.search(/[^\-?\d.]/g) == -1){
+			var stringToNumber = parseFloat(getnumber);
+			if(stringToNumber>0 && stringToNumber<=max){
+				var result = subscription*stringToNumber;
+				$(this).css("border","1px solid #ccc");
+				$("#proving").text("{:lang('member_amount_exchange')}¥"+result.toFixed(2)).css("color","red");
+				yz = true;
+			}else{
+				$(this).css("border","1px solid red");
+				$("#proving").text("{:lang('member_maximum_convertibility')}"+number+"{:lang('goods_integral')}").css("color","red");
+				yz = false;
+			}
+		}else{
+			$(this).css("border","1px solid red");
+			$("#proving").text("{:lang('member_correct_integral_format')}").css("color","red");
+			yz = false;
+		}
+	});
+	$("input[name='submit']").on("click",function(){
+		if($("#hidden_account").val() == undefined || $("#hidden_account").val() == "" || parseFloat($("#hidden_account").val()) == 0){
+			$.msg("{:lang('member_no_balance_installed')}");
+			return false;
+		}
+		if(yz){
+			$("#formsubmit").submit();
+		}else{
+			$("input[name='amount']").trigger("focus");
+			return false;
+		}
+	});
+});
+</script>
+{/block}

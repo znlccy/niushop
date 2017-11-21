@@ -1,0 +1,11 @@
+{extend name="wap/default_new/base" /}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang("shop_help_center")}</div>
+</section>
+{/block}
+{block name="main"}
+	{include file='wap/default_new/Helpcenter/controlleft'/}
+{/block}
+{block name="bottom"} {/block}

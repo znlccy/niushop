@@ -1,0 +1,146 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>广告名称:</dt>
+		<dd>
+			<p><input id="adv_title" type="text" value="{$adv_info['adv_title']}" class="input-common"></p>
+			<p class="error">请输入广告名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>广告图片:</dt>
+		<dd>
+			<div class="class-logo"><p><img id="imgLogo" {if condition="$adv_info['adv_image'] != ''"} src="{:__IMG($adv_info['adv_image'])}" {/if} ></p></div>
+			<div class="upload-btn"> 
+				<span>
+					<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
+				</span>
+				<p><i class="fa fa-cloud-upload"></i>上传图片</p>
+			</div>
+			<input type="hidden"id="Logo" />
+			<p class="error">请输入设置广告图片</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>背景色:</dt>
+		<dd>
+			<input id="background" type="color" style="width:60px;height:25px;" value="{$adv_info['background']}" class="input-common"/>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>链接地址:</dt>
+		<dd>
+			<p><input id="adv_url" type="text" value="{$adv_info['adv_url']}" class="input-common"></p>
+			<p class="error">请输入链接地址</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>排序:</dt>
+		<dd>
+			<p><input id="slide_sort" type="number" value="{$adv_info['slide_sort']}" class="input-common"></p>
+			<p class="error">请输入序号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="updateShopAdvAjax();">保存</button></dd>
+	</dl>
+</div>	
+<input type="hidden" id="adv_id" value="{$adv_info['adv_id']}">
+<input type="hidden" id="ap_id" value="{$adv_info['ap_id']}">
+
+{/block}
+{block name="script"}
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var data = { 'file_path' : UPLOADADV };
+	uploadFile(fileid,data,function(res){
+		if(res.code){
+			$("#imgLogo").attr("src",__IMG(res.data));
+			$("#Logo").val(res.data);
+			showTip(res.message,"success");
+		}else{
+			showTip(res.message,"error");
+		}
+	});
+}
+/**
+*添加广告位
+*/
+function updateShopAdvAjax() {
+	var adv_id = $("#adv_id").val();
+	var adv_title = $("#adv_title").val();
+	var ap_id = $("#ap_id").val();
+	if($("#Logo").val().length > 0){
+		var adv_image = $("#Logo").val();
+	}else{
+		var adv_image = "{$adv_info['adv_image']}"; 
+	}
+	var adv_url = $("#adv_url").val();
+	var slide_sort = $("#slide_sort").val();
+	var background = $("#background").val();
+	if(verify(adv_title,adv_image,adv_url,slide_sort)){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/system/updateshopadv')}",
+			data : {
+				'adv_id' : adv_id,
+				'adv_title' : adv_title,
+				'ap_id' : ap_id,
+				'adv_image' : adv_image,
+				'adv_url' : adv_url,
+				'slide_sort' : slide_sort,
+				'background' : background
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', "修改成功",__URL('ADMIN_MAIN/system/shopadvlist?ap_id='+ap_id));
+				}else{
+					showMessage('error', "修改失败");
+				}
+			}
+		});
+	}
+}
+function verify(adv_title,adv_image,adv_url,slide_sort){
+	if(adv_title == ''){
+		$("#adv_title").parent().next(".error").show();
+		$('#adv_title').focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(adv_image == ''){
+		$("#Logo").parent().find(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	if(adv_url == ''){
+		$("#adv_url").parent().next(".error").show();
+		$("#adv_url").focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	if(slide_sort == ''){
+		$("#slide_sort").parent().next(".error").show();
+		$("#slide_sort").focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	return true;
+}
+</script>
+{/block}

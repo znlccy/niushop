@@ -1,0 +1,222 @@
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/shopping_cart.js"></script>
+<script src="__TEMP__/{$style}/public/js/ns_collections.js" type="text/javascript"></script>
+<!-- common.js 刷新了购物车数据 -->
+<script>
+//当浏览器窗口大小改变时，设置显示内容的高度  
+window.onresize = function(){
+	$(".sidebar-cartbox").find('.cart-panel-content').height($(window).height());
+	$(".sidebar-cartbox").find('.bonus-panel-content').height($(window).height());
+}
+$(function() {
+	$(".sidebar-cartbox").find('.cart-panel-content').height($(window).height());
+	$(".sidebar-cartbox").find('.bonus-panel-content').height($(window).height());
+	$.ajax({
+		type:"post",
+		url:"{:__URL('SHOP_MAIN/components/getlogininfo')}",
+		async:true,
+		success:function(data){
+			if(data != null && data != ""){
+				var img = data["user_info"]["user_headimg"];
+				var name = data["user_info"]["nick_name"];
+				$("#not_logged").css("display","none");
+				$("#right_login_info").css("display","block");
+				$("#right_login_info_name").text(name);
+				if(img == '' ||img == null){
+					$("#login_member_logo").attr('src',"__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png"); 
+				}else{
+					img = __IMG(img);
+					$("#login_member_logo").attr('src',img);
+				}
+			}else{
+				$("#not_logged").css("display","block");
+				$("#right_login_info").css("display","none");
+			}
+		}
+	})
+	$('.ajax-login').click(function(){
+		$('#mask-layer-login').show();
+		$('#layui-layer').show();
+	})
+	$('.layui-layer-close.layui-layer-close1').click(function(){
+		$('#mask-layer-login').hide();
+		$('#layui-layer').hide();
+	})
+	refreshShopCart();
+});
+</script>
+<div class="right-sidebar-con">
+	<div class="right-sidebar-main">
+		<div class="right-sidebar-panel">
+			<div id="quick-links" class="quick-links">
+				<ul>
+					<li class="quick-area quick-login sidebar-user-trigger">
+						<!-- 用户 --> <a href="javascript:void(0);" class="quick-links-a"><i class="setting"></i></a>
+						<div class="sidebar-user quick-sidebar">
+							<i class="arrow-right"></i>
+							<div class="sidebar-user-info">
+								<!-- 没有登录的情况 _start -->
+								<div class="NS-USER-NOT-LOGIN">
+										<a href="{:__URL('SHOP_MAIN/member/index')}">
+									<div class="user-pic">
+										<div class="user-pic-mask"></div>
+										<img id="login_member_logo" src="__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png">
+									</div>
+									</a>
+									<br>
+									<p id="not_logged">
+										你好！请<a href="javascript:void(0);"
+											class="quick-login-a color ajax-login">登录</a> | <a
+											href="{:__URL('SHOP_MAIN/login/registerbox')}"
+											class="color">注册</a>
+									</p>
+									<p id="right_login_info">
+										你好！<span id="right_login_info_name"></span>
+									</p>
+								</div>
+								<!-- 没有登录的情况 _end -->
+								<!-- 有登录的情况 _start -->
+								<div class="js-user-already-login" style="display: none;">
+									<div class="user-have-login">
+										<div class="user-pic">
+											<div class="user-pic-mask"></div>
+											<img src="" class="NS-USER-PIC">
+										</div>
+										<div class="user-info">
+											<p>
+												用&nbsp;&nbsp;&nbsp;户： <span class="NS-USER-NAME"></span>
+											</p>
+										</div>
+									</div>
+									<p class="m-t-10">
+										<span class="prev-login"> 上次登录时间： 
+											<span class="NS-USER-LAST-LOGIN"></span>
+										</span>
+										<a href="{:__URL('SHOP_MAIN/member/index')}" class="btn account-btn" target="_blank">个人中心</a>
+										<a href="{:__URL('SHOP_MAIN/member/orderlist')}" class="btn order-btn" target="_blank">订单中心</a>
+									</p>
+								</div>
+								<!-- 有登录的情况 _end -->
+							</div>
+						</div>
+					</li>
+					<li class="sidebar-tabs" data-ns-flag="shopping_cart">
+						<!-- 购物车 -->
+						<div class="cart-list quick-links-a sidebar-cartbox-trigger">
+							<i class="cart"></i>
+							<div class="span">购物车</div>
+							<span class="ECS_CARTINFO"> <span
+								class="cart_num js-cart-count">0</span>
+								<div class="sidebar-cart-box">
+									<h3 class="sidebar-panel-header">
+										<a href="javascript:void(0);" class="title">
+											<i class="cart-icon"></i> <em class="title">购物车</em>
+										</a>
+										<span class="close-panel"></span>
+									</h3>
+								</div>
+							</span>
+						</div>
+					</li>
+					<li class="sidebar-tabs" data-ns-flag="love_history">
+						<a href="javascript:void(0);" class="mpbtn_history quick-links-a sidebar-historybox-trigger">
+							<i class="history"></i>
+						</a>
+						<div class="popup" style="left: -121px; visibility: hidden;">
+							<font id="mpbtn_histroy">我看过的</font> <i class="arrow-right"></i>
+						</div>
+					</li>
+					<li id="collectGoods" class="sidebar-tabs" data-ns-flag="collections_goods">
+						<a href="javascript:;" class="mpbtn_collect quick-links-a">
+							<i class="collect"></i>
+						</a>
+						<div class="popup" style="left: -121px; visibility: hidden;">
+							我收藏的商品 <i class="arrow-right"></i>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="quick-toggle">
+				<ul>
+					<li class="quick-area">
+						<a class="quick-links-a" href="{$custom_service['value']['service_addr']}" target="_blank">
+							<i class="customer-service"></i>
+						</a>
+<!-- 						<div class="sidebar-service quick-sidebar"> -->
+<!-- 							<i class="arrow-right"></i> -->
+<!-- 							<div class="customer-service"> -->
+<!-- 								<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={$web_info['web_qq']}&site=qq&menu=yes"> -->
+<!-- 									<span class="icon-qq"></span> QQ -->
+<!-- 								</a> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+					</li>
+					<li class="quick-area">
+						<a class="quick-links-a" href="javascript:void(0);"> <i class="qr-code"></i></a>
+						<div class="sidebar-code quick-sidebar" style="display: none;">
+							<i class="arrow-right"></i> 
+							<img src="{:__IMG($web_info['web_qrcode'])}">
+						</div>
+					</li>
+					<li class="returnTop" style="display: none;">
+						<a href="javascript:void(0);" class="return_top quick-links-a"> 
+							<i class="top"></i>
+						</a>
+						<div class="popup" style="left: -121px; visibility: hidden;">
+							返回顶部 <i class="arrow-right"></i>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!--购物车 start-->
+		<div class="right-sidebar-panels sidebar-cartbox animate-out" style="z-index: 1;">
+			<div class="sidebar-cart-box">
+				<h3 class="sidebar-panel-header">
+					<a href="javascript:void(0);" class="title" target="_blank">
+						<i class="cart-icon"></i>
+						<em class="title js-sidebar-title">购物车</em>
+					</a>
+					<span class="close-panel"></span>
+				</h3>
+				<div class="sidebar-cartbox-goods-list">
+					<div class="cart-panel-main">
+						<div class="cart-panel-content" >
+							<!-- 点击了购物车 -->
+							<div class="cart-list js-cart-list"></div>
+							
+							<!-- 点击了我收藏的店铺 -->
+							<div class="cart-list js-collections-shops"></div>
+							
+							<!-- 点击了我收藏的商品 -->
+							<div class="cart-list js-collections-goods"></div>
+							
+							<!-- 点击了我看过的，浏览历史 -->
+							<div class="cart-list js-love-history"></div>
+							
+							<div class="tip-box js-tip-box" style="display:none;">
+								<i class="tip-icon"></i>
+								<div class="tip-text js-tip-text">
+									您的购物车里什么都没有哦<br>
+									<a class="color" href="{:__URL('SHOP_MAIN')}" title="再去看看吧" target="_blank">再去看看吧</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="cart-panel-footer" style="position: absolute;bottom: 0;width: 100%;">
+					<div class="cart-footer-checkout">
+						<div class="js-footer-cart" >
+							<div class="number">共<strong class="count second-color js-count">0</strong>种商品</div>
+							<div class="sum">
+								共计：<strong class="total second-color js-total">￥0</strong>
+							</div>
+							<a class="btn bg-color" href="{:__URL('SHOP_MAIN/goods/cart')}" target="_blank">去购物车结算</a>
+						</div>
+						<a class="btn bg-color" style="width:100%;display:none;" id="refreshMore" href="" target="_blank">查看更多</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--购物车 end-->
+	</div>
+</div>

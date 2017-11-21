@@ -1,0 +1,199 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.all.common.js"></script>
+<!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+<!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/zh-cn.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/message_template.js"></script>
+<style>
+.Switch_FlatCircular {line-height: 30px;}
+.left_main{width: 23%;float: left;border:1px solid #E3E3E3;height: 524px;}
+.left_main ul{margin: 10px;}
+.leftcheckbox{float:right;}
+.left_main li{line-height:30px;padding:2px 6px;border:1px dotted #E3E3E3;margin-bottom: 10px;}
+.left_main ul a{color:#666;}
+.left_main a:hover{color:#11B9ED;}
+.right_main{width:75%;float:right;border:1px solid #E3E3E3;}
+.main-top{height: 30px;line-height: 30px;padding: 0 10px;color: #666;}
+.email_title{width:81px;line-height: 40px;float: left;padding-left: 10px;}
+.edit_bat{width: 250px;float: left;margin-left: 20px;line-height: 40px;}
+.save{clear:both;text-align:center;margin-top:10px;display: inline-block;width:100%;}
+input[type="submit"], input.submit, a.submit {display: inline-block;}
+.back{background: #e5e5e5;border: 0;height: 30px;width: 66px;}
+.rightlist{clear: both;content: '';display: inline-block;color:#fff;}
+.right-item{width: 12%;}
+.itemlist{padding: 2px 5px;margin: 5px;background: rgb(0, 192, 255);border-radius: 8px;float:left;text-align: center;}
+.title-item{height: 40px;border-top:1px solid #E3E3E3;border-bottom:1px solid #E3E3E3;color: #666;}
+.tab-pane{clear: both;content: '';}
+.template-message{height: 40px;line-height: 40px;border: 1px solid #e5e5e5;border-bottom: none;}
+h1{width: 2px;height: 20px;float: left;background-color: #0072D2;}
+.active{color:#11B9ED !important;}
+</style>
+{/block}
+{block name="main"}
+<!-- 邮箱设置 -->
+<input type="hidden" id="curr_selectid" value="{$template_select.template_code}"/>
+<div class="set-style">
+	<div class="template-message"><h1></h1><p style="width:90%;margin-left: 7px;">邮件通知模板</p></div>
+	<div class="tab-pane active">
+		<div class="left_main">
+			<ul>
+				{foreach name="template_type_list" item="template_item"}
+					<a href="javascript:void(0);" onclick="template_onclick(this);" id="{$template_item.template_code}">
+						<li>{$template_item.template_name}
+							<span class="leftcheckbox">
+							{if condition="$template_item.is_enable eq 1"}
+								<input id="adminCode" type="checkbox" class="checkbox" checked="checked" name="{$template_item.template_code}" onchange="check_change(this);"/>
+							{else/}
+								<input id="adminCode" type="checkbox" class="checkbox" onchange="check_change(this);" name="{$template_item.template_code}"/>
+							{/if}
+							</span>
+						</li>
+					</a>
+				{/foreach}
+			</ul>
+		</div>
+		
+		<div class="right_main">
+			<div class="main-top">您正在编辑<a href="javascript:;" id="update_nameid">{$template_select.template_name}</a>通知模板</div>
+			<div class="title-item">
+				<div class="email_title">邮件标题：</div>
+				<input type="text" style="float:left;margin:5px !important;" id="template_titleid" value="{$template_select.template_title}" class="input-common" />
+				<a href="javascript:;"><div class="edit_bat">标题支持标签请从编辑器中复制</div></a>
+			</div>
+			<div class="rightlist" id="user_variable" style="float: left;">
+				{foreach name="template_item_list" item="item_obj"}
+					<a onclick='item_onclick({$item_obj.id})' style="color: white;"><p class="itemlist">{$item_obj.item_name}</p></a>
+				{/foreach}
+			</div>
+			<script id="editor" type="text/plain" style="clear: both;">{$template_select.template_content}</script>
+		</div>
+	</div>
+	<div class="save">
+		<input type="submit" value="保存" style="margin-right: 20px;" onclick="template_submit();" class="btn-common"/>
+		<a href="{:__URL('ADMIN_MAIN/config/notifyindex')}">
+			<input type="button" value="返回" class="btn-common-cancle"/>
+		</a>
+	</div>
+</div>
+<script type="text/javascript">
+var $template_array={$template_json};
+var $template_send_item={$template_send_item_json};
+var ue = UE.getEditor('editor',{
+	initialFrameHeight : 320,
+	initialFrameWidth : 730
+});
+var $is_first=0;
+var $curr_select=$("#curr_selectid").val();
+
+//左边模板菜单的点击函数
+function template_onclick(event){
+	$(event).parent('ul').find('a').removeClass('active');
+	$(event).addClass('active');
+	//处理新的以前 将上次改动的保存
+	var $deal_type="";
+	var $deal_title="";
+	var $deal_content="";
+	var ue = UE.getEditor('editor');
+	if($is_first==0){
+		$deal_type=$("#curr_selectid").val();
+		$deal_title=$("#template_titleid").val();
+		$deal_content=ue.getContent();
+	}
+	$template_type=$(event).attr("id");
+	for($i=0; $i<$template_array.length;$i++){
+		$template_obj=$template_array[$i];
+		$template_obj_type=$template_obj.template_code;
+		if($template_obj_type==$deal_type && $is_first==0){
+			$template_array[$i].template_title=$deal_title;
+			$template_array[$i].template_content=$deal_content;
+		}
+		if($template_obj_type==$template_type){
+			$("#curr_selectid").val($template_type);
+			$("#update_nameid").text($template_obj.template_name);
+			$title=$template_obj.template_title;
+			$("#template_titleid").val($title);
+			$content=$template_obj.template_content;
+			ue.setContent($content, false);
+		}
+	}
+	$is_first=0;
+	get_template_item($template_type);
+}
+
+function get_template_item($template_code){
+	$.ajax({
+		type : "post",
+		url: "{:__URL('ADMIN_MAIN/config/gettemplateitem')}",
+		data: {"template_code": $template_code },
+		async : false, // 让它同步执行
+		success: function (data) {
+			$template_send_item=data;
+			var $html="";
+			for($i=0;$i<data.length;$i++){
+				$id=data[$i]["id"];
+				$name=data[$i]["item_name"];
+				$replace=data[$i]["replace_name"];
+				$item_html="<a onclick='item_onclick("+$id+");' style='color: white; cursor:pointer;'>";
+				$item_html=$item_html+"<p class='itemlist'>";
+				$item_html=$item_html+$name;
+				$item_html=$item_html+"</p></a>";
+				$html=$html+$item_html;
+			}
+			$("#user_variable").html($html);
+		}
+	});
+}
+
+//选择项的点击事件
+function item_onclick($item_id){
+	for($i=0;$i<$template_send_item.length;$i++){
+		$id=$template_send_item[$i].id;
+		if($id==$item_id){
+			var ue = UE.getEditor('editor');
+			var $content=ue.getContent();
+			$content=$content+$template_send_item[$i].show_name;
+			ue.setContent($content, false);  //赋值给UEditor  
+			return false;
+		}
+	}
+}
+
+function check_change(event){
+	var $type=$(event).attr("name");
+	var $selected=$(event).attr("result");
+	var $is_enable=0;
+	if($selected == 'true'){
+		$is_enable=0;
+	}else if($selected == 'false'){
+		$is_enable=1;
+	}
+	for($i=0; $i<$template_array.length;$i++){
+		$template_obj=$template_array[$i];
+		$template_obj_type=$template_obj.template_code;
+		if($template_obj_type==$type){
+			$template_array[$i].is_enable=$is_enable;
+		}
+	}
+}
+function template_submit(){
+	var $curr_select=$("#curr_selectid").val();
+	$("#"+$curr_select).click();
+	$.ajax({
+		type : "post",
+		url: "{:__URL('ADMIN_MAIN/config/updatenotifytemplate')}",
+		data: { "type": "email", "template_data": JSON.stringify($template_array) },
+		async : false, // 让它同步执行
+		success: function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', '提交成功');
+				window.location.href=__URL("ADMIN_MAIN/config/notifytemplate?type=email");
+			}else{
+				showMessage('error', '提交失败');
+			}
+		}
+	});
+}
+</script>
+{/block}

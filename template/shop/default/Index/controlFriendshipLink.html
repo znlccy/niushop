@@ -1,0 +1,21 @@
+<!--
+	创建时间：2017年2月7日 12:24:13
+	功能描述：友情链接
+-->
+<!--友情链接-->
+{notempty name="link_list"}
+<div class="links-box w1210">
+	<div class="links-title">
+		<span>{:lang('friendship_link')}</span>
+	</div>
+	<div class="links-content">
+		{foreach name="link_list" item="vo"}
+			{if condition="$vo['is_blank'] eq 1"}
+				<a href="{$vo.link_url}" title="{$vo.link_title}" target="_blank_">{$vo.link_title}</a>
+			{else/}
+				<a href="{$vo.link_url}" title="{$vo.link_title}">{$vo.link_title}</a>
+			{/if}
+		{/foreach}
+	</div>
+</div>
+{/notempty}

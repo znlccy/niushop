@@ -1,0 +1,371 @@
+<!--功能：商品列表可块级显示也可条状显示-->
+<!--创建人：李志伟-->
+<!--时间：2017年2月7日11:57:58-->
+<script src="__TEMP__/{$style}/public/js/goods/controlGoods.js"></script>
+<script src="__TEMP__/{$style}/public/js/ns_collections.js" type="text/javascript"></script>
+<!-- 地址选择 _start -->
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_select_region.js"></script>
+<input type="hidden" id="hidden_province" value="{$user_location.province}" />
+<input type="hidden" id="hidden_city" value="{$user_location.city}" />
+<div class="main">
+	<div id="filter">
+		<!--排序-->
+		<form method="get" name="listform" action="" style="position: relative;">
+			<div class="fore1">
+				<dl class="order">
+				<!-- 默认 -->
+				{if condition=" $order=='' "}<dd class="first curr">{else/}<dd>{/if}
+					<a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_order)}">{:lang('goods_comprehensive')}</a>
+					</dd>
+				<!--销量-->
+				{if condition=" $order=='ng.sales' "}
+					<dd class="curr">
+					{if condition = " $sort=='asc' "}
+						<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.sales&sort=desc'.$attr_url)}">{:lang('goods_sales_volume')}
+						<b style="background-position:-23px -169px"></b>
+					{else/}
+						<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.sales&sort=asc'.$attr_url)}">{:lang('goods_sales_volume')}
+						<b class="icon-order-DESCending"></b>
+					{/if}
+				{else/}
+					<dd>
+						<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.sales&sort=desc'.$attr_url)}">{:lang('goods_sales_volume')}
+						<b class="icon-order-DESCending"></b>
+				{/if}
+						</a>
+					</dd>
+					
+				<!-- 新品 -->
+				{if condition = " $order=='ng.is_new' "}
+					<dd class="curr">
+						{if condition = " $sort=='asc' "}
+							<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.is_new&sort=desc'.$attr_url)}">{:lang('goods_new')}
+							<b style="background-position:-23px -169px"></b>
+						{else/}
+							<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.is_new&sort=asc'.$attr_url)}">{:lang('goods_new')}
+							<b class="icon-order-DESCending"></b>
+						{/if}
+				{else/}
+						<dd>
+							<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.is_new&sort=desc'.$attr_url)}">{:lang('goods_new')}
+							<b class="icon-order-DESCending"></b>
+				{/if}
+						</a>
+					</dd>
+				
+				<!-- 价格 -->
+				
+				{if condition = " $order=='ng.price' "}
+					<dd class="curr">
+						{if condition = " $sort=='asc' && $order=='ng.price' "}
+							<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.price&sort=desc'.$attr_url)}">{:lang('goods_price')}
+							<b style="background-position:-23px -169px"></b>
+							
+						{else/}
+							<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.price&sort=asc'.$attr_url)}">{:lang('goods_price')}
+							<b class="icon-order-DESCending"></b>
+						{/if}
+					{else/}
+					<dd>
+							<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_order.'&order=ng.price&sort=desc'.$attr_url)}">{:lang('goods_price')}
+							<b class="icon-order-DESCending"></b>
+					{/if}
+						</a>
+					</dd>
+				</dl>
+				<div class="total">共 <span class="color" id="shops_count">{$total_count}</span>{:lang('goods_goods')}&nbsp;</div>
+				<dl class="order f-right">
+					<!-- <dd class="first">
+						<a href="javascript:;" style="position: relative;" onmouseout="hideAddress(this)" onmousemove="showAddress(this)">所在地<i class="address_home_down"></i> </a>
+					</dd> -->
+				</dl> 
+			</div>
+			 <div class="fore2">
+				<div class="filter-btn">
+					<span class="distribution">{:lang('goods_delivery_to')}</span>
+					<div class="region-chooser-container region-chooser" style="z-index: 3">
+						<div class="region-chooser-selected">
+							<div class="region js-region">
+								<font>{$user_location.province}{$user_location.city}<i></i></font>
+							</div>
+						</div>
+						<div class="region-chooser-box" id="region-chooser-box" style="display: none;">
+							<div class="region-chooser-close"></div>
+							<div class="region-tabs">
+								<div class="region-tab selected" data-region-level="1" style="display: block">
+									{$user_location.province}<i></i>
+								</div>
+								<div class="region-tab" data-region-level="2" style="display: block">
+									{$user_location.city}<i></i>
+								</div>
+								<div class="region-tab " data-region-level="3" style="display: block">
+									{:lang('goods_select_district_or_county')}<i></i>
+								</div>
+							</div>
+							<div class="region-items" data-region-level="1"  style="display: block;"></div>
+							<div class="region-items" data-region-level="2" style="display: none;"></div>
+							<div class="region-items" data-region-level="3" style="display: none;"></div>
+						</div>
+						<div style="clear: both;"></div>
+					</div>
+					
+					{if condition = "$shipping_fee !='' && $shipping_fee ==0"} 
+					<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_shipping.$attr_url)}" class="filter-tag curr">
+					{else/}
+					<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter.'&shipping_fee=0'.$attr_url)}" class="filter-tag ">
+					{/if}
+						<i class="icon" ></i><span class="text">{:lang('goods_free_shipping')}</span>
+					</a>
+					
+					{if condition = "$stock !='' && $stock>=0"}
+					<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter_not_stock.$attr_url)}" class="filter-tag curr">
+					{else/}
+					<a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter.'&stock=0'.$attr_url)}" class="filter-tag ">
+					{/if}
+						<i class="icon"></i><span class="text">{:lang('goods_show_only_goods')}</span>
+					</a>
+				</div>
+				<div class="filter-mod">
+					<!-- 选中样式为a标签添加curr样式 -->
+					<div class="nch-sortbar-location">{:lang('goods_location')}：
+						<div class="select-layer">
+							<div class="holder">
+								<em nc_type="area_name">
+								{if condition="$province_name == ''"}
+								{:lang('goods_unlimited_area')}
+								{else/}
+								{$province_name}
+								{/if}
+								</em>
+							</div>
+							<div class="selected">
+								<a nc_type="area_name">
+								{if condition="$province_name == ''"}
+								{:lang('goods_unlimited_area')}
+								{else/}
+								{$province_name}
+								{/if}
+								</a>
+							</div>
+							<i class="direction"></i>
+						</div>
+					</div>
+					<a href="javascript:;"  data-type="1" title="{:lang('list_model')}" class="filter-type filter-type-list js-filter-type">
+						<span class="filter-type-icon"></span>
+					</a>
+					<a href="javascript:;" data-type="0" title="{:lang('big_picture_mode')}" class="filter-type filter-type-grid curr js-filter-type">
+						<span class="filter-type-icon"></span>
+					</a>
+				</div>
+			</div>
+			<ul class="options">
+				<div class="filter-detailc" id="addressDraw">
+					<dl class="location-hots">
+						<dt>{:lang('goods_common_area')}</dt>
+						<dd><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=1&province_name=北京'.$attr_url)}">北京</a></dd>
+						<dd><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=2&province_name=天津'.$attr_url)}">天津</a></dd>
+						<dd><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=9&province_name=上海'.$attr_url)}">上海</a></dd>
+					</dl>
+					<dl class="location-all">
+						<dt>{:lang('goods_province')}</dt>
+						<dd>
+							<ul>
+								<li>
+									<p class="lt">A</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=12&province_name=安徽'.$attr_url)}">安徽</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=33&province_name=澳门'.$attr_url)}">澳门</a></span> 
+									</p>
+								</li>
+								<li>
+									<p class="lt">C</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=22&province_name=重庆'.$attr_url)}">重庆</a></span> 
+									</p>
+								</li>
+								<li>
+									<p class="lt">F</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=13&province_name=福建'.$attr_url)}">福建</a></span> 
+									</p>
+								</li>
+								<li>
+									<p class="lt">G</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=19&province_name=广东'.$attr_url)}">广东</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=28&province_name=甘肃'.$attr_url)}">甘肃</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=20&province_name=广西'.$attr_url)}">广西</a></span> 
+										<span><a href="">贵州</a></span> 
+									</p>
+								</li>
+							</ul>
+							<ul>
+								<li>
+									<p class="lt">H</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=21&province_name=海南'.$attr_url)}">海南</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=3&province_name=河北'.$attr_url)}">河北</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=16&province_name=河南'.$attr_url)}">河南</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=8&province_name=黑龙江'.$attr_url)}">黑龙江</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=17&province_name=湖北'.$attr_url)}">湖北</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=18&province_name=湖南'.$attr_url)}">湖南</a></span> 
+									</p>
+								</li>
+								<li>
+									<p class="lt">J</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=10&province_name=江苏'.$attr_url)}">江苏</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=14&province_name=江西'.$attr_url)}">江西</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=7&province_name=吉林'.$attr_url)}">吉林</a></span> 
+									</p>
+								</li>
+							</ul>
+							<ul>
+								<li>
+									<p class="lt">N</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=6&province_name=辽宁'.$attr_url)}">辽宁</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=5&province_name=内蒙古'.$attr_url)}">内蒙古</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=30&province_name=宁夏'.$attr_url)}">宁夏</a></span> 
+									</p>
+								</li>
+								<li>
+									<p class="lt">Q</p>
+									<p class="lc"> <span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=29&province_name=青海'.$attr_url)}">青海</a></span> </p>
+								</li>
+								<li>
+									<p class="lt">S</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=15&province_name=山东'.$attr_url)}">山东</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=4&province_name=山西'.$attr_url)}">山西</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=27&province_name=陕西'.$attr_url)}">陕西</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=23&province_name=四川'.$attr_url)}">四川</a></span> 
+									</p>
+								</li>
+							</ul>
+							<ul>
+								<li>
+									<p class="lt">T</p>
+									<p class="lc"> <span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=34&province_name=台湾'.$attr_url)}">台湾</a></span> </p>
+								</li>
+								<li>
+									<p class="lt">X</p>
+									<p class="lc"> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=26&province_name=西藏'.$attr_url)}">西藏</a></span> 
+										<span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=31&province_name=新疆'.$attr_url)}">新疆</a></span> <span><a href="">香港</a></span> 
+									</p>
+								</li>
+								<li>
+									<p class="lt">Y</p>
+									<p class="lc"> <span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=25&province_name=云南'.$attr_url)}">云南</a></span> </p>
+								</li>
+								<li>
+									<p class="lt">Z</p>
+									<p class="lc"> <span><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.'&province_id=11&province_name=浙江'.$attr_url)}">浙江</a></span> </p>
+								</li>
+							</ul>
+						</dd>
+					</dl>
+					<p class="oreder-default"><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_province_id.$attr_url)}">{:lang('goods_unlimited_area')}</a></p>
+				</div>
+			</ul>
+		</form>
+	</div>
+	<!--主体商品内容展示-->
+	<form name="compareForm" action="" method="post" onsubmit="" id="table_list">
+		<div class="goodsList js-list-type" style="display: none;">
+		<!-- JS加载商品列表数据列表模式 -->
+		{foreach name="goods_list['data']" item="goods"} 
+			<ul class="clearfix">
+				<li class="thumb">
+					<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank" title="{$goods.goods_name}">
+						<img src="{:__IMG($goods['pic_cover_mid'])}" class="pic_img_206" style="display: inline;">
+					</a>
+				</li>
+				<li class="goodsName">
+					<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank" title="{$goods.goods_name}">{$goods.goods_name}</a>
+				</li>
+				<li class="list_price">{:lang('goods_market_value')}： <font class="market">￥{$goods.market_price}</font><br> {:lang('goods_shop_price')}： <font class="shop">￥{$goods.promotion_price}</font> <br></li>
+				<li class="action">
+					<a href="javascript:;" class="action-btn collet-btn  curr" onclick="collectionGoods({$goods.goods_id},'goods','{$goods.goods_name}',this,true)"> 
+					 {if condition="$goods.is_favorite>0"}{:lang('goods_collected')}
+					 {else/}
+					 {:lang('goods_collection')}
+					 {/if}
+					</a>
+					<a href="javascript:ShowGoodsAttribute({$goods.goods_id},'{$goods.goods_name}',{$goods.pic_id},this,{if condition='$goods.max_buy==0' }{$goods.stock}{else/}{$goods.max_buy}{/if},{$goods.state});" class="action-btn addcart-btn add-cart">{:lang('goods_add_cart')}</a>
+				</li>
+			</ul>
+		{/foreach}
+		</div>
+		<ul class="list-grid clearfix js-list-grid">
+			{foreach name="goods_list['data']" item="goods" key="k"}
+			<li class="item {if condition='$k neq 0 && ($k+1)%4==0'}last{/if}">
+				<div class="item-con">
+					{if condition="$goods['is_hot'] eq 1"}
+						<img src="__TEMP__/{$style}/public/images/hot.png" alt="" class="recommend">
+					{/if}
+					{if condition="$goods['is_recommend'] eq 1"}
+						<img src="__TEMP__/{$style}/public/images/recommend.png" alt="" class="recommend">
+					{/if}
+					{if condition="$goods['is_new'] eq 1"}
+						<img src="__TEMP__/{$style}/public/images/new.png" alt="" class="recommend">
+					{/if}
+					<div class="item-pic">
+						<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" title="{$goods.goods_name}" target="_blank">
+							<img src="{:__IMG($goods['pic_cover_mid'])}">
+						</a>
+					</div>
+					<div class="item-info">
+						<div class="item-price"><em class="sale-price color">￥{$goods.promotion_price}</em></div>
+						<div class="item-name"><a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank" title="{$goods.goods_name}">{$goods.goods_name}</a></div>
+						<div class="item-con-info">
+							<div class="fr" style="float: left;margin-right: 5px;">
+								<div class="item-add-cart">
+									{if condition="$goods['stock'] neq '0'"}
+										<a href="javascript:ShowGoodsAttribute({$goods.goods_id},'{$goods.goods_name}',{$goods.pic_id},this,{if condition='$goods.max_buy==0' }{$goods.stock}{else/}{$goods.max_buy}{/if},{$goods.state});" class="add-cart" title="{:lang('goods_add_cart')}"><i class="icon-cart"></i>{:lang('goods_add_cart')}</a>
+									{else /}
+										<a href="javascript:;" class="add-cart" title="{:lang('goods_add_cart')}"  style="background: #bbb;"><i class="icon-cart"></i>{:lang('goods_add_cart')}</a>	
+									{/if}
+									{foreach name="goods['sku_list']" item="pro_skus" key="k"}
+									<input type="hidden" name="goods_sku{$goods.goods_id}" value="{$pro_skus.attr_value_items};" stock="{$pro_skus.stock}" {if condition = "$goods.promotion_info neq ''"} price="{$pro_skus.promote_price}" {else/} price="{$pro_skus.price}"{/if} skuid="{$pro_skus.sku_id}" skuname="{$pro_skus.sku_name}">
+									{/foreach}
+								</div>
+							</div>
+							<div class="fl">
+								<div class="item-operate {if condition="$goods.is_favorite>0"}is_favorite{/if}">
+										<a href="javascript:;" class="operate-btn collet-btn  goods-collect" onclick="collectionGoods({$goods.goods_id},'goods','{$goods.goods_name}',this,false)">
+										<i data-log-id="{$goods.is_favorite}"></i>
+										<span> {if condition="$goods.is_favorite>0"}{:lang('goods_collected')}
+					 							{else/}{:lang('goods_collection')}{/if}
+					 					</span>
+									</a>
+									<!-- <a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'].'#goods_evaluate')}" target="_blank" class="operate-btn comment-btn"><i></i> {$goods.evaluates}</a> -->
+								</div>
+							</div>
+							{if condition="$custom_service['value']['service_addr'] != '' "}
+							<a href="{$custom_service['value']['service_addr']}" title="{:lang('contact_customer_service')}" target="_blank" class="customerService">
+								<i class="kefu"></i>
+							</a>
+							{/if}
+						</div>
+					</div>
+				</div>
+			</li>
+			{/foreach}
+		<!-- JS加载商品列表数据大图模式 -->
+		</ul>
+		{if condition="$total_count==0"}
+		<div class="tip-box">
+			<i class="tip-icon"></i>
+			<div class="tip-text">Sorry！{:lang('goods_no_goods_you_want')}……</div>
+		</div>
+		{/if}
+		
+		{include file='shop/default/Goods/controlPopUpGoodsSkuAttribute'/}
+		<!--分页-->
+		<div class="js-show-page">
+		{include file='shop/default/controlCommonPage'/}
+		</div>
+	</form>
+</div>

@@ -1,0 +1,112 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/order/ns_order_refund_detail.css">
+{/block}
+{block name="main"}
+<div class="mod-table">
+<div class="step-region">
+	<ul class="ui-step ui-step-4">
+		<li class="ui-step-done">
+			<div class="ui-step-title">买家申请退款</div>
+			<div class="ui-step-number">1</div>
+			<div class="ui-step-meta">{$order_goods['refund_time'] | getTimeStampTurnTime}</div>
+		</li>
+		<li class="{if condition='$order_goods["refund_status"] egt 2 || $order_goods["refund_status"] lt 0'}ui-step-done{/if}">
+			<div class="ui-step-title">商家退款处理</div>
+			<div class="ui-step-number">2</div>
+			<div class="ui-step-meta"></div>
+		</li>
+		<li class="{if condition='$order_goods["refund_status"] egt 5 || $order_goods["refund_status"] lt 0'}ui-step-done{/if}">
+			<div class="ui-step-title">退款完成</div>
+			<div class="ui-step-number">3</div>
+			<div class="ui-step-meta"></div>
+		</li>
+	</ul>
+</div>
+<div class="step-region clearfix">
+	<div class="info-region">
+		<div class="info-div">退款信息</div>
+		<div>
+			<div class="info-goods">
+				<div class="ui-centered-image">
+					<img src="{:__IMG($order_goods['picture_info']['pic_cover_micro'])}">
+				</div>
+				<div class="info-goods-content">
+					<div>{$order_goods['goods_name']} - {$order_goods['sku_name']}</div>
+				</div>
+			</div>
+			<div class="dashed-line"></div>
+		</div>
+		<table class="info-table">
+			<tbody>
+				<tr>
+					<th>退款方式：</th>
+					<td>
+						<span class="color-orange">{$order_goods['refund_type'] == 1 ? '仅退款' : '退款，退货'}</span>
+					</td>
+				</tr>
+				<tr>
+					<th>申请退款：</th>
+					<td><span class="color-orange">{$order_goods['refund_require_money']}</span>元</td>
+				</tr>
+				<tr>
+					<th>实际退款：</th>
+					<td><span class="color-orange">{$order_goods['refund_real_money']}</span>元</td>
+				</tr>
+				{if condition="$refund_balance>0"}
+				<tr>
+					<th>退还余额：</th>
+					<td><span class="color-orange">{$refund_balance}</span>元</td>
+				</tr>
+				{/if}
+				<tr>
+					<th>退款原因：</th>
+					<td>{$order_goods['refund_reason']}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="state-region">
+		<div style="padding: 0px 0px 30px 40px;">
+			<div class="state-title"><span class="icon info">!</span>订单状态：{$order_goods['status_name']}</div>
+			<div class="state-action">
+			{volist name="order_goods['refund_operation']" id="v" empty=""}
+				<button class="zent-btn zent-btn-primary test-send-goods" onclick="refundOperation('{$v['no']}',{$order_goods['order_id']},{$order_goods['order_goods_id']},{$order_goods['refund_require_money']})">{$v['name']}</button>
+			{/volist}
+			</div>
+		</div>
+		<div class="state-remind-region">
+			<div class="dashed-line"></div>
+			<div class="state-remind"><div class="tixing">{$title_name}提醒：</div>
+				<ul><li>如果无法发货，请及时与买家联系并说明情况后进行退款；</li>
+				<li>买家申请退款后，须征得买家同意后再发货，否则买家有权拒收货物；</li>
+				<li>买家付款后超过7天仍未发货，将有权申请客服介入发起退款维权；</li></ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="safeguard-log">
+	<div class="info-div">协商记录</div>
+	<table>
+	{volist name='order_goods["refund_info"]' id="vo" empty=''}
+		<tbody>
+			<tr class="tr-title">
+				<td>{$vo['action_way'] == 1 ? '买家' : '卖家'}</td>
+				<td class="td-time">{$vo['action_time'] | getTimeStampTurnTime}</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<span>【{$vo['action']}】</span>
+					{if $vo['refund_status'] == 5 && $remark != ""}
+					<span>{$remark}</span>
+					{/if}
+					{if $vo['refund_status'] == 3}<span>&nbsp;&nbsp;快递单号&nbsp;:&nbsp;{$order_goods['refund_shipping_code']}&nbsp;&nbsp;快递公司&nbsp;:&nbsp;{$order_goods['refund_shipping_company']}{/if}</span>
+				</td>
+			</tr>
+		</tbody>
+	{/volist}
+	</table>
+</div>
+</div>
+{include file="adminblue/Order/orderRefundAction"/}
+{/block}

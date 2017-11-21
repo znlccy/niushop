@@ -1,0 +1,101 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>标识名:</dt>
+		<dd>
+			<p><input id="" type="text" class="input-common"></p>
+			<p class="error">请输入标识名</p>
+			<p class="hint">请输入插件标识</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>插件名:</dt>
+		<dd>
+			<p><input id="" type="text" class="input-common"></p>
+			<p class="hint">请输入插件名</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>版本:</dt>
+		<dd>
+			<p>
+				<input id="" type="text" class="input-common">
+			</p>
+			<p class="hint">请输入插件版本</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>作者:</dt>
+		<dd>
+			<p>
+				<input id="" type="text" class="input-common">
+			</p>
+			<p class="hint">请输入插件作者</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述:</dt>
+		<dd>
+			<p><textarea id="desc" class="input-common"></textarea></p>
+			<p class="hint">请输入描述信息</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>安装后是否启用:</dt>
+		<dd>
+			<p>
+				<input id="" type="checkbox">
+			</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>是否需要配置:</dt>
+		<dd>
+			<p>
+				<input id="" type="checkbox">
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否需要外部访问:</dt>
+		<dd>
+			<p>
+				<input id="" type="checkbox">
+			</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>实现的钩子方法:</dt>
+		<dd>
+			<p>
+				<select class="select-common">
+					<option>1</option>
+					<option>3</option>
+				</select>
+			</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>是否需要后台列表:</dt>
+		<dd>
+			<p>
+				<input id="" type="checkbox">勾选，扩展里已装插件后台列表会出现插件名的列表菜单，如系统的附件
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common" style="margin-left: 200px;">预览</button>
+			<button class="btn-common" onclick="addUserAjax()" style="background-color:red;">确定</button>
+			<button class="btn-common-cancle" >返回</button>
+		</dd>
+	</dl>
+</div>
+{/block}

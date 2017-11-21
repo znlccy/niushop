@@ -1,0 +1,345 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/highcharts.js"></script>
+<script src="ADMIN_JS/exporting.js"></script>
+<style  type="text/css">
+body{
+	font: 12px/20px "Hiragino Sans GB","Microsoft Yahei",arial,ç€¹å¬©ç¶‹,"Helvetica Neue",Helvetica,STHeiTi,sans-serif !important;
+}
+.alert{
+	color: #C09853;
+	height:auto;
+}
+.alert-info{
+	color: #3A87AD;
+}
+.w210{
+	width:210px;
+}
+.h30 {
+	height: 30px !important;
+}
+.top-alert{
+	border: 1px solid #FBEED5;
+}
+.w450 {
+	width: 450px!important;
+}
+.mr50 {
+	margin-right: 50px !important;
+}
+.count-box li{
+	font: 12px/20px 'Hiragino Sans GB','Microsoft Yahei',arial,ç€¹å¬©ç¶‹,'Helvetica Neue',Helvetica,STHeiTi,sans-serif;
+}
+.mytable {border: 0;}
+.style0list tbody td {vertical-align: middle;}
+.style0list  tbody tr {border-bottom: 1px dashed  #E3E3E3;}
+a{
+	cursor:pointer;
+}
+
+.charts-nav ul li{
+	float:left;
+	margin-left:20px;
+}
+
+.mt5 li{
+	font: 12px/20px 'Hiragino Sans GB','Microsoft Yahei',arial,ç€¹å¬©ç¶‹,'Helvetica Neue',Helvetica,STHeiTi,sans-serif;
+}
+.text{
+	height:18px;
+}
+.tabmenu{
+	border-bottom: none;
+	
+}
+</style>
+{/block}
+{block name="main"}
+<div class="alert mt10">
+	<ul class="mt5">
+		<li>1、符合以下任何一种条件的订单即为有效订单：1）采用在线支付方式支付并且已付款；2）采用货到付款方式支付并且交易已完成</li>
+		<li>2、统计图展示了符合搜索条件的有效订单中的下单总金额和下单数量在时间段内的走势情况及与前一个时间段的趋势对比</li>
+	</ul>
+</div>
+<table class="search-form">
+	<input type="hidden" name="act" value="statistics_sale" />
+	<input type="hidden" name="op" value="sale" />
+	<tbody>
+		<tr>
+			<td class="tr">
+				<div class="fr">
+					<label class="submit-border"><input type="submit" class="submit" value="搜索" onclick="search();"></label>
+				</div>
+				<div class="fr">
+					<div class="fl" style="margin-right:3px;">
+						<select name="search_type" id="search_type" class="querySelect" >
+							<option value="1">按照天统计</option>
+							<option value="3">按照周统计</option>
+							<option value="4">按照月统计</option>
+						</select>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<div class="alert alert-info mt10" style="clear:both;">
+	<ul class="mt5">
+		<li>
+			<span class="w210 fl h30" style="display:block;">
+				<i title="店铺符合搜索条件的订单总金额" class="tip icon-question-sign"></i>
+				总下单金额：<strong id="money">0元</strong>
+			</span>
+			<span class="w210 fl h30" style="display:block;">
+				<i title="店铺符合搜索条件的订单数量" class="tip icon-question-sign"></i>
+				总下单量：<strong id="num">0</strong>
+			</span>
+		</li>
+	</ul>
+	<div style="clear:both;"></div>
+</div>
+
+<div id="stat_tabs" class="ui-tabs ui-tabs-nav" style="min-height:500px;padding-top:10px;">
+	<div class="tabmenu">
+	<ul class="tab pngFix">
+		<li class="ui-tabs-selected">
+			<a class="a-nav"onclick="getGoodsSalesCharts(1)">下单金额</a>
+		</li>
+		<li>
+			<a class="a-nav" onclick="getGoodsSalesCharts(2)">下单量</a>
+		</li>
+	</ul>
+</div>
+<!-- 下单金额 -->
+	<div id="money_div" style="width: 930px; display: block;" class="ui-tabs-panel" data-highcharts-chart="1">
+		<div class="highcharts-container" id="highcharts-2" style="position: relative; overflow: hidden; width: 930px; height: 400px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); font-family: &amp; quot; Lucida Grande&amp;quot; , &amp; quot; Lucida Sans Unicode&amp;quot; , Verdana , Arial, Helvetica, sans-serif; font-size: 12px;"></div>
+	</div>
+	<!-- 下单量 -->
+	<div id="num_div" style="width: 930px; "class="ui-tabs-panel ui-tabs-hide hide" >
+		<div class="highcharts-container" id="highcharts-3" style="position: relative; overflow: hidden; width: 930px; height: 400px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); font-family: &amp; quot; Lucida Grande&amp;quot; , &amp; quot; Lucida Sans Unicode&amp;quot; , Verdana , Arial, Helvetica, sans-serif; font-size: 12px;"></div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+var saleNumChart,saleNumStatistical,saleNumStatistical, saleUnit,saleTitle,saleMoneyChart,saleMoneyStatistical,saleTimeStatistical,saleMoneyTimeStatistical;
+var saleTimeStatistical = [ '00:00', '01:00', '02:00', '03:00', '04:00',
+							'05:00', '06:00', '07:00', '08:00', '09:00',
+							'10:00', '11:00', '12:00', '13:00', '14:00',
+							'15:00', '16:00', '17:00', '18:00', '19:00',
+							'20:00', '21:00', '22:00', '23:00' ];
+var saleMoneyTimeStatistical = [ '00:00', '01:00', '02:00', '03:00', '04:00',
+ 							'05:00', '06:00', '07:00', '08:00', '09:00',
+							'10:00', '11:00', '12:00', '13:00', '14:00',
+							'15:00', '16:00', '17:00', '18:00', '19:00',
+							'20:00', '21:00', '22:00', '23:00' ];
+var  saleNumStatistical = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var  saleMoneyStatistical = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+$(function() {
+
+	saleNumChart = new Highcharts.Chart("highcharts-2",{
+		title : {
+			text : "下单金额统计",
+			align : "center",
+			useHTML : true
+		},
+		xAxis : {
+			categories : saleTimeStatistical
+		},
+		lang : {
+			printChart : "打印",
+			downloadPNG : "导出PNG格式图片",
+			downloadJPEG : "导出JPEG格式图片",
+			downloadPDF : "导出PDF格式图片",
+			downloadSVG : "导出SVG格式图片"
+		},
+		yAxis : {
+			title : {
+				text :saleUnit
+			},
+			plotLines : [ {
+				value : 0,
+				width : 1,
+				color : '#808080'
+			} ]
+		},
+		tooltip : {
+			valueSuffix : saleUnit
+		},
+		legend : {
+			enabled : false
+		},
+		credits : {
+			enabled : false,// 默认值，如果想去掉版权信息，设置为false即可
+			text : 'Niushop商城', // 显示的文字
+			href : '#', // 链接地址
+		},
+		exporting : {
+			allowHTML : true,
+			buttons : {
+				contextButton : {
+				// text : '导出'
+				}
+			}
+		},
+		series : [ {
+			name : '今日',
+			data : saleNumStatistical
+		}]
+	});
+	
+	saleMoneyChart = new Highcharts.Chart("highcharts-3",{
+		title : {
+			text : "订单量统计",
+			align : "center",
+			useHTML : true
+		},
+		xAxis : {
+			categories : saleMoneyTimeStatistical
+		},
+		lang : {
+			printChart : "打印",
+			downloadPNG : "导出PNG格式图片",
+			downloadJPEG : "导出JPEG格式图片",
+			downloadPDF : "导出PDF格式图片",
+			downloadSVG : "导出SVG格式图片"
+		},
+		yAxis : {
+			title : {
+				text :saleUnit
+			},
+			plotLines : [ {
+				value : 0,
+				width : 1,
+				color : '#808080'
+			} ]
+		},
+		tooltip : {
+			 valueSuffix : saleUnit
+		},
+		legend : {
+			enabled : false
+		},
+		credits : {
+			enabled : false,// 默认值，如果想去掉版权信息，设置为false即可
+			text : 'Niushop商城', // 显示的文字
+			href : '#', // 链接地址
+		},
+		exporting : {
+			allowHTML : true,
+			buttons : {
+				contextButton : {
+				// text : '导出'
+				}
+			}
+		},
+		series : [ {
+			name : '今日',
+			data : saleMoneyStatistical
+		}]
+	});
+	search(1);
+});
+var var_type = 1 ;
+//走势图数据
+function getGoodsSalesCharts(type){
+	$(".a-nav").css("background-color","#FFF");
+	$(".a-nav").css("color","#27A9E3");
+
+	var num = type-1;
+	$(".a-nav:eq("+num+")").css("background-color","#27A9E3");
+	$(".a-nav:eq("+num+")").css("color","#FFF");
+	var date = $("#search_type").val();
+	var_type = type;
+	//type 走势图类型 1 金额 2 数量
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/account/getshoporderchartcount')}",
+		data:{ "type":type, "date":date},
+		success : function(data) {	
+			if(type == 1){
+				saleUnit = "元";
+				saleNumStatistical = data[0];
+				saleNumChart.update({
+					xAxis : {
+						categories : saleNumStatistical
+					},
+					tooltip : {
+						 valueSuffix : saleUnit
+					},
+					series : [ {
+						name : "订单金额",
+						data : data[1]
+					}],
+					yAxis : {
+						title : {
+							text :saleUnit
+						},
+						plotLines : [ {
+							value : 0,
+							width : 1,
+							color : '#808080'
+						} ]
+					},
+				})
+				
+				$("#num_div").hide();
+				$("#money_div").show();
+			}else{
+				saleUnit = "笔";
+				saleTimeStatistical = data[0];
+				saleMoneyChart.update({
+					xAxis : {
+						categories : saleTimeStatistical
+					},
+					tooltip : {
+						 valueSuffix : saleUnit
+					},
+					series : [ {
+						name : "订单量",
+						data : data[1]
+					}],
+					yAxis : {
+						title : {
+							text :saleUnit
+						},
+						plotLines : [ {
+							value : 0,
+							width : 1,
+							color : '#808080'
+						} ]
+					},
+				})
+				$("#num_div").show();
+				$("#money_div").hide();
+			}
+		
+		}
+	});
+}
+/**
+ * 下单量级下单金额统计
+ */
+function getShopSaleInfo(){
+	var date = $("#search_type").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/account/getordershopsalecount')}",
+		data:{"date":date},
+		success : function(data) {
+			$("#money").text(data["count_money"]);
+			$("#num").text(data["count_num"]);
+		}
+	})
+}
+/**
+ *时间筛选
+ */
+ function search(){
+	 getGoodsSalesCharts(var_type);
+	 getShopSaleInfo();
+}
+</script>
+{/block}

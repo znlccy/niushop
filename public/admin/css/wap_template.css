@@ -1,0 +1,56 @@
+@CHARSET "UTF-8";
+
+.app-template {
+	padding: 20px 20px;
+	overflow: hidden;
+}
+
+.app-template li {
+	margin: 0 10px 20px 0;
+	padding-top: 30px;
+	width: 307px;
+	background: #fafafa;
+	float: left;
+}
+
+/*临时用，到时候删除*/
+.app-template li:NTH-CHILD(5) {
+	/* 	margin-right: 0; */
+	
+}
+
+.app-template li:hover .img, .app-template .selected .img {
+	background: url("../images/radio_iphone_select.png") no-repeat center;
+	cursor: pointer;
+}
+
+.app-template li .img {
+	margin: 0 auto;
+	padding: 0;
+	height: 353px;
+	background: url("../images/radio_iphone.png") no-repeat center;
+	text-align: center;
+}
+
+.app-template li .introduce {
+	margin-top: 20px;
+	padding: 20px 10px 10px;
+	border-top: 1px dashed rgba(0, 0, 0, .2);
+	font-size: 12px;
+	color: #999;
+	text-align: center;
+}
+
+.app-template li .theme {
+	width: 145px;
+	height: 30px;
+	line-height: 30px;
+	margin: 10px auto 20px;
+	background: #A0A0A0;
+	color: #ffffff;
+	text-align: center;
+}
+
+.app-template li:hover .theme, .app-template .selected .theme {
+	background: #0072D2;
+}

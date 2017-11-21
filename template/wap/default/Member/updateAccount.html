@@ -1,0 +1,94 @@
+{extend name="wap/default/base" /} {block name="resources"}
+<link rel="stylesheet" type="text/css"
+	href="__TEMP__/{$style}/public/css/member_address.css">
+{/block} {block name="goodsHead"}
+<section class="head">
+	<a class="head_back" onclick="window.history.go(-1)"
+		href="javascript:void(0)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('modify_account_information')}</div>
+</section>
+{/block} {block name="main"}
+
+<form class="form-info">
+    <input type="hidden" value="{$result.id}" id="account_id"/>
+	<div class="div-item">
+		<span>{:lang('member_full_name')}</span> <input type="text" placeholder="{:lang('member_enter_your_real_name')}" id="realname" value="{$result.realname}"/>
+	</div>
+	<div class="div-item">
+		<span>{:lang('cell_phone_number')}</span> <input type="text" placeholder="{:lang('member_enter_your_phone_number')}" id="mobile" value="{$result.mobile}"/>
+	</div>
+	<div class="div-item">
+		<span>{:lang('member_account_type')}</span> 
+		<select id="bank_type">
+		   <option  value="{:lang('member_bank_card')}" >{:lang('member_bank_card')} </option>
+		   <option value="{:lang('member_alipay')}" style="display:none;">{:lang('member_alipay')}</option>
+		</select>
+	</div>
+	<div class="div-item">
+		<span>{:lang('member_sub_branch_information')}</span> <input type="text" placeholder="{:lang('member_input_sub_branch_information')}" id="branch_bank_name" value="{$result.branch_bank_name}"/>
+	</div>
+	<div class="div-item">
+		<span>{:lang('member_bank_account')}</span> <input type="text" placeholder="{:lang('member_input_bank_account')}" id="account_number" value="{$result.account_number}"/>
+	</div>
+	<input type="hidden" value="{$shop_id}" id="shop_id"/>
+</form>
+<button onclick="update()" class="btn-save">{:lang('member_modify')}</button>
+{/block}
+{block name="bottom"}{/block} 
+ {block name="javascript"}
+<script type="text/javascript">
+	
+	function update(){
+		var shop_id = $("#shop_id").val();
+		var id = $("#account_id").val();
+		var realname = $("#realname").val();
+		var mobile = $("#mobile").val();
+		var bank_type = $("#bank_type").val();
+		var account_number = $("#account_number").val();
+		var branch_bank_name = $("#branch_bank_name").val();
+        if(realname==''){
+        	showBox("{:lang('member_name_cannot_empty')}");
+    		$("#realname").focus();
+        	return false;
+        }
+        if(!(/^1[3|4|5|7|8][0-9]{9}$/.test(mobile))){
+			showBox("{:lang('member_phone_not_correct')}");
+    		$("#mobile").focus();
+        	return false;
+        }
+        if(account_number==''){
+        	showBox("{:lang('member_bank_cannot_empty')}");
+    		$("#account_number").focus();
+        	return false;
+        }
+        if(branch_bank_name==''){
+        	showBox("{:lang('member_branch_cannot_empty')}");
+    		$("#branch_bank_name").focus();
+        	return false;
+        }
+		$.ajax({
+			type : "post",
+			url : "{:__URL('APP_MAIN/member/updateaccount')}",
+			dataType : "json",
+			data : {
+				"id":id,
+				"realname":realname,
+				"mobile":mobile,
+				"bank_type":bank_type,
+				"account_number":account_number,
+				"branch_bank_name":branch_bank_name
+			},
+			success : function(data) {
+			//	alert(JSON.stringify(data));
+				if(data['code']>0){
+					showBox(data['message']);
+					window.location.href = __URL("APP_MAIN/member/accountlist?shop_id="+shop_id);
+				}else{
+					showBox("{:lang('unable_to_change')}");
+				}
+			    
+			}
+		})
+	}
+</script>
+{/block}

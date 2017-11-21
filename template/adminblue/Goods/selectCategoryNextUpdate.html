@@ -1,0 +1,572 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<!-- 编辑商品时，用到的JS、CSS资源 -->
+{include file="adminblue/Goods/controlEditGoodsCommonResources"}
+{/block}
+{block name="main"}
+<div class="ncsc-form-goods">
+	<h3 class="js-goods-info">商品信息</h3>
+	<dl>
+		<dt><i class="required">*</i>商品分类：</dt>
+		<dd id="tbcNameCategory" data-flag="category" cid="{$goods_info.category_id}" data-attr-id="{$goods_info.goods_attribute_id}" cname="{$goods_info.category_name}" data-goods-id="{$goodsid}">
+			<div class="controls">
+				<span class="category-text">{$goods_info.category_name}</span>
+				<button class="category-button">选择</button>
+				<span class="help-inline">请选择商品类目</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>扩展分类：</dt>
+		<dd id = "extend_name_category_box">
+			<div class="extend-name-category-box">
+			{if condition ="!empty($goods_info['extend_category'])"}
+			{foreach $goods_info["extend_category"] as $k=>$vo}
+				<div class="extend-name-category" id="extend_name_category{$k}" data-flag="extend_category" data-goods-id="{$goodsid}" cid="{$vo.extend_category_id}" data-attr-id="{$goods_info.goods_attribute_id}" cname="{$vo.extend_category_name}">
+					<span class="category-text" onclick="editCategory(this);">{$vo.extend_category_name}</span>
+					&nbsp;&nbsp;<span class="do-style" onclick="editCategory(this);"><i class="fa fa-edit"></i>&nbsp;编辑</span>&nbsp;&nbsp;
+					<span class="do-style" onclick="removeParentBox(this);"><i class="fa fa-trash-o"></i>&nbsp;删除</span>
+					<span class="help-inline" style="vertical-align: top;">已添加的商品扩展分类不能为空</span>
+				</div>
+			{/foreach}
+			{/if}
+			</div>
+			<div class="clear">
+				<button  class="select-button"onclick="addExtentCategoryBox();"><i class="fa fa-plus-square"></i>&nbsp;添加</button>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt><i class="required">*</i>商品名称：</dt>
+		<dd>
+			<div class="controls">
+				<input class="productname" type="text" id="txtProductTitle" placeholder="请输入商品名称，不能超过60个字符" value="{$goods_info.goods_name}" oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("商品名称不能超过60个字符").show();}'/>
+				<span class="help-inline">请输入商品名称，不能超过60个字符</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商品促销语：</dt>
+		<dd>
+			<div class="controls">
+				<input class="productname" type="text" id="txtIntroduction" placeholder="请输入商品名称，不能超过60个字符" value="{$goods_info.introduction}" oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("促销语不能超过60个字符").show();}'/>
+				<span class="help-inline">请输入商品促销语，不能超过60个字符</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>关键词：</dt>
+		<dd>
+			<div class="controls">
+				<input class="productname" type="text" id="txtKeyWords" placeholder="商品关键词用于SEO搜索" value="{$goods_info.keywords}" oninput='if(value.length>40){value=value.slice(0,40);$(this).next().text("商品关键词不能超过40个字符").show();}'/>
+				<span class="help-inline">请输入商品促销语，不能超过40个字符</span>
+			</div>
+		</dd>
+	</dl>
+	<dl style="overflow: inherit;">
+		<dt>商品品牌：</dt>
+		<dd>
+			<div class="controls brand-controls">
+				<select id="brand_id" style="display: none;">
+				{if condition="$goods_info['brand_info']"}
+				<option value="{$goods_info['brand_info']['brand_id']}">{$goods_info['brand_info']['brand_name']}</option>
+				{else/}
+				<option value="0">请选择商品品牌</option>
+				{/if}
+				</select>
+				<input type="text" id="selected_brand_name" style="padding:0;margin:0;opacity: 0;position: absolute;"/>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>供货商：</dt>
+		<dd>
+			<div class="controls">
+				<select id="supplierSelect">
+					<option value="0">请选择供货商</option>
+					{foreach name="supplier_list" item="sup"}
+						{if condition = "$sup.supplier_id eq $goods_info.supplier_id"}
+							<option value="{$sup.supplier_id}" selected="selected">{$sup.supplier_name}</option>
+						{else /}
+							<option value="{$sup.supplier_id}">{$sup.supplier_name}</option>
+						{/if}
+					{/foreach}
+				</select>
+				<span class="help-inline">请选择商品类型</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>市场价：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" id="txtProductMarketPrice" min="0" placeholder="0" value="{$goods_info.market_price}" style="width:114px;" /><em class="add-on">元</em>
+				<span class="help-inline">商品市场不能为空且需是数字</span> 
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt><i class="required">*</i>销售价：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" id="txtProductSalePrice" min="0" value="{$goods_info.price}" style="width:114px;"/><em class="add-on">元</em>
+				<span class="help-inline">商品现价不能为空且需是数字</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>成本价：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" id="txtProductCostPrice" min="0" placeholder="0" value="{$goods_info.cost_price}" style="width:114px;"/><em class="add-on">元</em>
+				<span class="help-inline">商品成本不能为空且需是数字</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>基础销量：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" class="span1" id="BasicSales" placeholder="0" value="{$goods_info.sales}" />
+				<span class="help-inline">基础销量需是数字</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>基础点击数：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" class="span1" id="BasicPraise" placeholder="0" value="{$goods_info.clicks}" />
+				<span class="help-inline">基础点击数需是数字</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>基础分享数：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" class="span1" id="BasicShare" placeholder="0" value="{$goods_info.shares}" />
+				<span class="help-inline">基础分享数需是数字</span> 
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商家编码：</dt>
+		<dd>
+			<div class="controls">
+				<input type="text" id="txtProductCodeA" placeholder="请输入商家编码" value="{$goods_info.code}" />
+				<span class="help-inline">请输入商家编码，不能超过40个字符</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt><i class="required">*</i>总库存：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" class="goods-stock"  id="txtProductCount" min="0" value="{$goods_info.stock}" />
+				<span class="help-inline">请输入总库存数量，必须是大于0的整数</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt><i class="required">*</i>库存预警：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" class="goods-stock" class="span1" id="txtMinStockLaram" min="0" value="{$goods_info.min_stock_alarm}" />
+				<span class="help-inline">请输入库存预警数，必须是大于0的整数</span>
+				<p class="hint">设置最低库存预警值。当库存低于预警值时商家中心商品列表页库存列红字提醒。<br>0为不预警。</p>
+			</div>
+		</dd>
+	</dl>
+	
+	<h3 class="js-goods-type">商品类型</h3>
+	<dl>
+		<dt>商品类型：</dt>
+		<dd>
+			<div class="controls">
+				<select id="goodsType">
+					<option value="0">请选择商品类型</option>
+					{foreach name="goods_attribute_list" item="attribute"}
+					{if condition="$goods_info.goods_attribute_id == $attribute.attr_id"}
+					<option value="{$attribute.attr_id}" selected="selected">{$attribute.attr_name}</option>
+					{else/}
+					<option value="{$attribute.attr_id}">{$attribute.attr_name}</option>
+					{/if}
+					{/foreach}
+				</select>
+				<span class="help-inline">请选择商品类型</span>
+			</div>
+		</dd>
+	</dl>
+	<dl class="control-group js-goods-spec-block" style="display:none;">
+		<dt><span class="color-red"></span></dt>
+		<dd><table class="goods-sku js-goods-sku"></table></dd>
+	</dl>
+	<dl class="control-group js-spec-table" name="skuTable" style="display: none;">
+		<dt><span class="color-red"></span>商品库存：</dt>
+		<dd>
+			<div class="controls"> 
+				<div class="js-goods-stock control-group" style="font-size: 14px; margin-top: 10px;">
+					<div id="stock-region" class="sku-group"> 
+						<table class="table-sku-stock">
+							<thead></thead>
+							<tbody></tbody>
+							<tfoot></tfoot>
+						</table> 
+					</div> 
+				</div> 
+			</div> 
+		</dd>
+	</dl>
+	<dl class="control-group js-goods-attribute-block" style="display:none;">
+		<dt><span class="color-red"></span>商品属性：</dt>
+		<dd>
+			<div class="controls">
+				<table class="goods-sku-attribute js-goods-sku-attribute" style="margin:0;"></table>
+			</div>
+		</dd>
+	</dl>
+	
+	<h3 class="js-goods-img">商品图片</h3>
+	<dl>
+		<dt><i class="required">*</i>商品图片：</dt>
+		<dd>
+			<div id="goods_picture_box" class="controls" style="background-color:#FFF;border: 1px solid #E9E9E9;">
+				<div class="ncsc-goods-default-pic" >
+					<div class="goodspic-uplaod" style="padding: 15px;">
+						<div class='img-box' style="min-height:160px;">
+						{if condition="count($goods_info['img_temp_array']) gt 0" }
+							{foreach $goods_info["img_temp_array"]  as $vo}
+								<div class="upload-thumb draggable-element">
+									<img src="{:__IMG($vo['pic_cover'])}" />
+									<input type="hidden" class="upload_img_id" value="{$vo['pic_id']}" />
+									<div class="black-bg hide">
+										<div class="off-box">&times;</div>
+									</div>
+								</div>
+							{/foreach}
+						{else /}
+							<div class="upload-thumb" id="default_uploadimg">
+								<img src="ADMIN_IMG/album/default_goods_image_240.gif" />
+							</div>
+						{/if}
+						</div>
+						<div class="clear"></div>
+						<span class="img-error">最少需要一张图片作为商品主图</span>
+						<p class="hint">上传商品图片，<font color="red">第一张图片将作为商品主图</font>,支持同时上传多张图片,多张图片之间可随意调整位置；支持jpg、gif、png格式上传或从图片空间中选择，建议使用尺寸800x800像素以上、大小不超过1M的正方形图片，上传后的图片将会自动保存在图片空间的默认分类中。</p>
+						<div class="handle">
+							<div class="ncsc-upload-btn">
+								<a href="javascript:void(0);">
+									<span>
+										<input style="cursor:pointer;font-size:0;" type="file" id="fileupload" hidefocus="true" size="1" class="input-file" name="file_upload"multiple="multiple" />	
+									</span>
+									<p>图片上传</p>
+								</a>
+							</div>
+							<a class="ncsc-btn mt5" id="img_box"nctype="show_image" href="javascript:void(0);">从图片空间选择</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt><i class="required"></i>规格图片：</dt>
+		<dd>
+			<div class="sku-picture-div"></div>
+			<div class="clear"></div>
+			<div class="sku-picture-box"></div>
+		</dd>
+	</dl>
+	{include file="adminblue/Goods/fileAlbumImg"/}
+
+	<h3 class="js-goods_detail">商品详情</h3>
+	<dl>
+		<dt><i class="required">*</i>商品描述：</dt>
+		<dd>
+			<div class="controls" id="discripContainer">
+				<textarea id="tareaProductDiscrip" name="discripArea" style="height: 500px; width: 800px; display: none;"></textarea>
+				<script id="editor" type="text/plain" style="width: 100%; height: 500px;"></script>
+				<span class="help-inline">请输入商品描述</span>
+			</div>
+		</dd>
+	</dl>
+
+	<h3 class="js-goods-express-info">商品物流信息</h3>
+	<dl>
+		<dt>所在地：</dt>
+		<dd>
+			<div class="controls">
+				<select id="provinceSelect" onchange="getProvince(this,'#citySelect',-1)">
+					<option value="0">请选择省</option>
+				</select>
+				<select id="citySelect">
+					<option value="0">请选择市</option>
+				</select>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt><i class="required">*</i>运费：</dt>
+		<dd>
+			<div class="controls">
+				{if condition = "$goods_info.shipping_fee  eq 0"}
+					<label class="radio inline normal"><input type="radio" name="fare" value="0" checked="checked" />免邮</label>
+					<label class="radio inline normal"><input type="radio" name="fare" value="1">买家承担运费</label>
+				{else /}
+					<label class="radio inline normal"><input type="radio" name="fare" value="0" >免邮</label>
+					<label class="radio inline normal"><input type="radio" name="fare" value="1" checked="checked" />买家承担运费</label>
+				{/if}
+				<span class="help-inline">请选择运费类型</span>
+			</div>
+		</dd>
+	</dl>
+
+	{if condition = "$goods_info.shipping_fee  eq 0"}
+	<dl id="valuation-method" style=" display:none;">
+		<dt><i class="required">*</i>计价方式：</dt>
+		<dd>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="3" checked="checked" />计件</label>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="2" />体积</label>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="1" />重量</label>
+		</dd>
+	</dl>
+	<dl id="commodity-weight" style=" display:none;">
+		<dt><i class="required">*</i>商品重量：</dt>
+		<dd>
+			<input type="number" class="goods-stock" id="goods_weight" min="0" value="0" />公斤
+			<span class="help-inline">商品重量不能为空</span>
+		</dd>
+	</dl>
+	<dl id="commodity-volume" style=" display:none;">
+		<dt><i class="required">*</i>商品体积：</dt>
+		<dd>
+			<input type="number" class="goods-stock" id="goods_volume" min="0" value="0" />立方米
+			<span class="help-inline">商品体积不能为空</span>
+		</dd>
+	</dl>
+	<dl id="express_Company" style="display: none;">
+		<dt>物流公司：</dt>
+		<dd>
+			<select id="expressCompany">
+				<option value="0">请选择物流公司</option>
+				{foreach name="expressCompanyList" item="vo"}
+				<option value="{$vo.co_id}">{$vo.company_name}</option>
+				{/foreach}
+			</select>
+		</dd>
+	</dl>
+	{else /}
+	
+	<dl id="valuation-method">
+		<dt><i class="required">*</i>计价方式：</dt>
+		<dd>
+			{if condition = "$goods_info.shipping_fee_type eq 3"}
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="3" checked="checked" />计件</label>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="2" />体积</label>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="1" />重量</label>
+			{elseif condition = "$goods_info.shipping_fee_type eq 2"/}
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="3" />计件</label>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="2" checked="checked" />体积</label>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="1" />重量</label>
+			{else/}
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="3" />计件</label>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="2" />体积</label>
+			<label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="1" checked="checked" />重量</label>
+			{/if}
+		</dd>
+	</dl>
+	
+	<dl id="commodity-weight">
+		<dt><i class="required">*</i>商品重量：</dt>
+		<dd>
+			<input type="number" class="goods-stock" id="goods_weight" min="0" value="{$goods_info.goods_weight}" />公斤
+			<span class="help-inline">商品重量必须大于0</span>
+		</dd>
+	</dl>
+	
+	<dl id="commodity-volume">
+		<dt><i class="required">*</i>商品体积：</dt>
+		<dd>
+			<input type="number" class="goods-stock" id="goods_volume" min="0" value="{$goods_info.goods_volume}" />立方米
+			<span class="help-inline">商品体积必须大于0</span>
+		</dd>
+	</dl>
+	<dl id="express_Company">
+		<dt>物流公司：</dt>
+		<dd>
+			<select id="expressCompany">
+				<option value="0">请选择物流公司</option>
+				{foreach name="expressCompanyList" item="vo"}
+				<option value="{$vo.co_id}" {if condition="$goods_info['shipping_fee_id'] eq $vo['co_id']"}selected{/if}>{$vo.company_name}</option>
+				{/foreach}
+			</select>
+		</dd>
+	</dl>
+	{/if}
+	<dl>
+		<dt><i class="required">*</i>库存显示：</dt>
+		<dd>
+			<div class="controls">
+				{if condition = "$goods_info.is_stock_visible  eq 1"}
+				<label class="radio inline normal"><input type="radio" name="stock" checked="checked" value="1" />是</label>
+				<label class="radio inline normal"><input type="radio" name="stock" value="0" />否</label>
+				{else /}
+				<label class="radio inline normal"><input type="radio" name="stock"  value="1" />是</label>
+				<label class="radio inline normal"><input type="radio" name="stock" value="0" checked="checked" />否</label>
+				{/if}
+				<span class="help-inline">请选择库存是否显示</span>
+			</div>
+		</dd>
+	</dl>
+
+	<h3 class="js-goods-point">积分购买设置</h3>
+	<dl>
+		<dt><i class="required">*</i>积分设置：</dt>
+		<dd>
+			<div class="controls">
+			{if condition = "$goods_info.point_exchange_type  eq 0"}
+				<label class="radio inline normal"><input type="radio" name="integralSelect" value="0" checked="checked" />非积分兑换</label>
+				<label class="radio inline normal"><input type="radio" name="integralSelect" value="1" />积分兑换</label>
+			{else /}
+				<label class="radio inline normal"><input type="radio" name="integralSelect" value="0"/>非积分兑换</label>
+				<label class="radio inline normal"><input type="radio" name="integralSelect" value="1" checked="checked" />积分兑换</label>
+			{/if}
+			</div>
+		</dd>
+	</dl>
+	{if condition = "$goods_info.point_exchange_type  eq 0"}
+	<dl id="integral-exchange" style="display: none">
+		<dt>积分兑换：</dt>
+		<dd>
+			<div class="controls">
+				<input id="integration_available_use" class="input-mini" placeholder="0" min="0" type="number" onchange="integrationChange(this);" value="{$goods_info.point_exchange}" />&nbsp;积分
+				<span class="help-inline">请设置积分</span>
+			</div>
+		</dd>
+	</dl>
+	{else /}
+	<dl id="integral-exchange">
+		<dt>积分兑换：</dt>
+		<dd>
+			<div class="controls">
+				<input id="integration_available_use" class="input-mini" placeholder="0" min="0" type="number" onchange="integrationChange(this);" value="{$goods_info.point_exchange}" />&nbsp;积分
+				<span class="help-inline">请设置积分</span>
+			</div>
+		</dd>
+	</dl>
+	{/if}
+	<dl>
+		<dt>购买可赠送：</dt>
+		<dd>
+			<div class="controls">
+				<input id="integration_available_give" class="input-mini" placeholder="0" min="0" type="number" onchange="integrationChange(this);" value="{$goods_info.give_point}" />&nbsp;积分
+			</div>
+		</dd>
+	</dl>
+	
+	<h3 class="js-goods-other">其他信息</h3>
+	<dl>
+		<dt>商品标签：</dt>
+		<dd>
+			<div class="group-text-check-box">
+				<div class="controls product-category-position">
+					{if condition = "!empty($group_list)"}
+						<div class="goods-group-div">
+						{if condition="$goods_info['group_id_array'] neq ''"}
+							{foreach $edit_group_array as $m=>$t}
+								<div class="goods-group-line">
+									<select class="goods-gruop-select" onchange="changeGoodsGroup(this);">
+										<option value="0"></option>
+										{foreach $group_list as $k=>$v}
+											{if condition="$v['group_id'] eq $t"}
+												<option value="{$v.group_id}" selected>{$v.group_name}</option>
+											{else /}
+												<option value="{$v.group_id}">{$v.group_name}</option>
+											{/if}
+										{/foreach}
+									</select>
+								</div>
+							{/foreach}
+						{/if}
+							<div class="goods-group-line">
+								<select class="goods-gruop-select" onchange="changeGoodsGroup(this);">
+									<option value="0"></option>	
+									{foreach $group_list as $k=>$v}
+										<option value="{$v.group_id}">{$v.group_name}</option>
+									{/foreach}
+								</select>
+							</div>
+						</div>
+					{else /}
+						<span class="span-error" style="display:block;">暂无可选的商品标签</span>
+					{/if}
+				</div>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>每人限购：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" class="input-mini" min="0" placeholder="0" id="PurchaseSum" value="{$goods_info.max_buy}" />
+				<span style="vertical-align: middle;">件<i style="font-style: normal;color: #FF8400;">（0表示不限购）</i></span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>最少购买数：</dt>
+		<dd>
+			<div class="controls">
+				<input type="number" class="input-mini" min="1" placeholder="0" id="minBuy" value="{$goods_info.min_buy}" />
+				<span style="vertical-align: middle;">件</span>
+				<span class="help-inline">最少购买数必须是大于0的整数</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt><i class="required">*</i>是否上架：</dt>
+		<dd>
+			<div class="controls">
+				{if condition = "$goods_info.state eq 1"}
+				<label class="radio inline normal"><input type="radio" name="shelves" value="1" checked="checked" />立刻上架</label>
+				<label class="radio inline normal"><input type="radio" name="shelves" value="0" />放入仓库</label>
+				{else /}
+				<label class="radio inline normal"><input type="radio" name="shelves" value="1" />立刻上架</label>
+				<label class="radio inline normal"><input type="radio" name="shelves" value="0" checked="checked" />放入仓库</label>
+				{/if}
+			</div>
+		</dd>
+	</dl>
+</div>
+<div class="btn-submit" >
+	<button class="btn-common" id="btnSave" type="button" onClick="SubmitProductInfo(0,'ADMIN_MAIN','SHOP_MAIN')">保存</button>
+	<button class="btn-common" id="btnSavePreview" type="button" onClick="SubmitProductInfo(1,'ADMIN_MAIN','SHOP_MAIN')">保存并预览</button>
+</div>
+{include file="adminblue/Goods/controlEditGoodsCommonHTML"}
+<script>
+var goods_spec_format = '{$goods_info.goods_spec_format}';//SKU数据
+var sku_list = eval('{$goods_info.sku_list}');//SKU数据
+var goods_attribute_list = eval('{$goods_info.goods_attribute_list}');
+var province_id = '{$goods_info.province_id}';
+var city_id = '{$goods_info.city_id}';
+var sku_picture_array_str = '{$sku_picture_array_str}';
+$(function(){
+	//初始化规格图片记录数组
+	var groupIdArray = eval('{$goods_info.goods_group_list}');
+	var $selDiv = $("#productcategory-selected");
+	var $lis = $("#procategory li");
+	var html = "";
+	for (var $i = 0; $i < groupIdArray.length; $i++) {
+		var groupId = groupIdArray[$i]["group_id"];
+		var name = groupIdArray[$i]["group_name"];
+		html += "<span class='label' id='" + groupId + "' group_name='"+ name +"'>" + name + "<i class='categoryclose'></i></span>";
+	}
+	$selDiv.append(html);
+	ue.ready(function() {
+		ue.setContent('{$goods_info.description}', false);
+	});
+})
+</script>
+{include file="adminblue/Goods/controlEditGoodsCommonScript"}
+{/block}

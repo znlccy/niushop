@@ -1,0 +1,106 @@
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/purchase_consulting.css">
+<div class="ncs-goods_main goods-detail-con">
+<div class="ncs-goods-info-content bd" id="ncGoodsConsult">
+	<h3 class="color">{:lang('goods_purchase_consultation')}</h3>
+	<div id="consulting_demo" class="ncs-loading">
+		<div class="top" style="overflow: hidden;">
+			<div class="ncs-cosult-tips">
+				<i></i>
+				<p></p>
+				<p>{:lang('goods_text')}！</p>
+				<p></p>
+			</div>
+			<div class="ncs-cosult-askbtn">
+				<a href="{:__URL('SHOP_MAIN/goods/goodsconsult','goodsid='.$goods_id.'#askQuestion')}"
+					target="_blank" class="btn btn-white"> {:lang('goods_need_consult')}</a>
+			</div>
+		</div>
+		<div class="ncs-goods-title-nav">
+			<ul id="consulting_tab">
+				<input type="hidden" id="currClassId" value="0">
+				<li id="classTab0" class="current"><a
+					href="javascript:;" onclick="consultType(0,this)">{:lang('whole')}</a></li>
+				<li id="classTab1"><a
+					href="javascript:;" onclick="consultType(1,this)">{:lang('goods_commodity_consultation')}</a></li>
+				<li id="classTab2"><a
+					href="javascript:;" onclick="consultType(2,this)">{:lang('goods_payment_problem')}</a></li>
+				<li id="classTab3"><a
+					href="javascript:;" onclick="consultType(3,this)">{:lang('goods_invoice_and_warranty')}</a></li>
+			</ul>
+		</div>
+			{volist name="consult_list" id="item"}
+			
+			{if condition="$key eq 0"}
+				<div id="ncs_main_{$key}" name="nsc_main">
+			{else /}
+				<div style="display: none;" id="ncs_main_{$key}" name="nsc_main">
+			{/if}
+			
+			{if condition="$item['total_count'] eq 0"}
+				<div class="ncs-cosult-main" >
+					<div class="ncs-norecord">{:lang('goods_no_consultation_yet')}</div>
+				</div>
+			{else /}
+				<div class="ncs-commend-main" >
+					<!-- 咨询列表s -->
+					{volist name="item['data']" id="vo"}
+							<div class="ncs-cosult-list" >
+								<dl class="asker">
+									<dt>{:lang('goods_consulting_user')}：</dt>
+									<dd>
+										{if condition="$vo.member_name eq ''"}
+										{:lang('goods_tourist')}
+										{else /}
+										{$vo.member_name|cover_up_username}
+										{/if}
+										<span>{:lang('goods_consulting_type')}：
+										{if condition="$vo.ct_id eq 1"}
+											{:lang('goods_commodity_consultation')}
+										{elseif condition="$vo.ct_id eq 2"/}
+											{:lang('goods_payment_problem')}
+										{else/}
+											{:lang('goods_invoice_and_warranty')}
+										{/if}
+										</span>
+										<time datetime="" pubdate="pubdate" class="m-l-20">[{$vo.consult_addtime | getTimeStampTurnTime}]</time>
+									</dd>
+								</dl>
+								<dl class="ask-con">
+									<dt>{:lang('goods_consultation_content')}：</dt>
+									<dd>
+										<p>{$vo.consult_content}</p>
+									</dd>
+								</dl>
+								{if condition="$vo.consult_reply neq ''"}
+									<!-- 回复内容s -->
+								<dl class="reply">
+									<dt>{:lang('goods_merchant_reply')}：</dt>
+									<dd>
+										<p>{$vo.consult_reply}</p>
+										<time  pubdate="pubdate">[{$vo.consult_reply_time | getTimeStampTurnTime}]</time>
+									</dd>
+								</dl>
+								<!-- 回复内容e -->
+								{/if}
+							</div>
+							
+						{/volist}
+				<div class="more_Consultation">
+					<a href="{:__URL('SHOP_MAIN/goods/goodsconsult','goodsid='.$goods_id)}" target="_blank">{:lang('goods_view_all_consultation')}&gt;&gt;</a>
+				</div>
+			</div>
+		{/if}
+		</div>
+		{/volist}
+	</div>
+	</div>
+	<script type="text/javascript">
+		function consultType(type,eve){
+			$('.current').removeClass('current');
+			$(eve).parent().addClass('current');
+			$('[name="nsc_main"]').hide();
+			$('#ncs_main_'+Number(type)).show();
+		}
+	</script>
+</div>
+</div>

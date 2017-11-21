@@ -1,0 +1,142 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="20%" style="text-align: left;">
+			<button style="margin:0 5px 0 0 !important;" class="btn-common-delete btn-small" onclick="batchDelete()">批量删除</button>
+			<button style="margin:0 5px 0 0 !important;" class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/shop/addpickuppoint')}';">添加自提点</button>
+		</th>
+		<th width="20%">
+			<input type="text" id = 'search_text' placeholder="请输入自提名称" class="input-common"/>
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 1%">
+		<col style="width: 10%;">
+		<col style="width: 20%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 14%;">
+		<col style="width: 15%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><input id="ckall" type="checkbox" onClick="CheckAll(this)"></th>
+			<th>自提名称</th>
+			<th>地址</th>
+			<th>联系人</th>
+			<th>联系电话</th>
+			<th>发布时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/shop/pickuppointlist')}",
+		data : {
+			"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><input name="sub" type="checkbox" value="'+ data['data'][i]['id']+'"></td>';
+					html += '<td>' + data["data"][i]["name"]+ '</td>';
+					html += '<td>'+ data["data"][i]["province_name"]+ '/'+ data["data"][i]["city_name"]+ '/' + data["data"][i]["dictrict_name"]+ '/'+ data["data"][i]["address"]+'</td>';
+					
+					html += '<td>' + data["data"][i]["contact"]+ '</td>';
+					html += '<td>'+data["data"][i]["phone"]+'</td>'
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"])+ '</td>';
+					html += '<td><a href="'+__URL('ADMIN_MAIN/shop/updatepickuppoint?id='+ data['data'][i]['id'])+'">修改</a><a onclick="deletepickupPoint('+data['data'][i]['id']+')">删除</a></td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="9">暂无自提点</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}	
+
+function batchDelete() {
+	var pickupPoint_id= new Array();
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			pickupPoint_id.push($(this).val());
+		}
+	});
+	if(pickupPoint_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deletepickupPoint(pickupPoint_id);
+}
+var flag = false;
+//删除
+function deletepickupPoint(pickupPoint_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				if(!flag){
+					flag = true;
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/shop/deletepickuppoint')}",
+						data : {
+							"pickupPoint_id" : pickupPoint_id.toString()
+						},
+						dataType : "json",
+						success : function(data) {
+							if (data["code"] > 0) {
+								showMessage('success', data["message"]);
+								window.location.href=__URL("ADMIN_MAIN/shop/pickuppointlist");
+							}else{
+								showMessage('error', data["message"]);
+								flag = false;
+							}
+						}
+					})
+				}
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否删除该自提点？",
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

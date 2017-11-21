@@ -1,0 +1,127 @@
+{extend name="adminblue/base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>会员注册送积分:</dt>
+		<dd>
+			<p><input id="reg_member_self_point" type="number" min="0" value="{$res.reg_member_self_point}"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common"></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+	<dt></dt>
+		<dd>
+			<p>
+				<input id="register_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['register_integral'] eq 1"}checked="checked"{/if} class="input-common" >
+			</p>
+			<p class="hint">是否启用会员注册送积分</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>签到送积分:</dt>
+		<dd>
+			<p><input id="sign_point" type="number" value="{$res.sign_point}"  min="0" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common" ></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+		<dl>
+		<dt></dt>
+		<dd>
+			<p>
+				<input id="sign_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['sign_integral'] eq 1"}checked="checked"{/if} class="input-common" >
+			</p>
+			<p class="hint">是否启用签到送积分</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>分享送积分:</dt>
+		<dd>
+			<p><input id="share_point" type="number" value="{$res.share_point}" min="0"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common" ></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<p>
+				<input id="share_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['share_integral'] eq 1"}checked="checked"{/if} class="input-common" >
+			</p>
+			<p class="hint">是否启用分享送积分</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>点赞送积分:</dt>
+		<dd>
+			<p><input id="click_point" type="number" value="{$res.click_point}" min="0"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common" ></p>
+		</dd>
+	</dl>
+
+	<dl>
+		<dt>评论送积分:</dt>
+		<dd>
+			<p><input id="comment_point" type="number" value="{$res.comment_point}" min="0"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common" ></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setRewardRuleAjax();" style="margin:20px 0 20px 205px;">提交</button></dd>
+	</dl>
+</div>
+
+<script>
+function setIntegralAjax(){
+	if($("#register_open").prop("checked")){
+		var register = 1;
+	}else{
+		var register = 0;
+	}
+	if($("#sign_open").prop("checked")){
+		var sign = 1;
+	}else{
+		var sign = 0;
+	}
+	if($("#share_open").prop("checked")){
+		var share = 1;
+	}else{
+		var share = 0;
+	}
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/promotion/setintegralajax')}",
+		data : {
+			'register':register,
+			'sign':sign,
+			'share':share
+		},
+		success : function(data){
+		
+		}
+	})
+}
+function setRewardRuleAjax(){
+	var sign_point = $("#sign_point").val();
+	var share_point = $("#share_point").val();
+	var reg_member_self_point = $("#reg_member_self_point").val();
+	var click_point = $("#click_point").val();
+	var comment_point = $("#comment_point").val();
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/promotion/integral')}",
+		data : {
+			"sign_point" : sign_point,
+			"share_point" : share_point,
+			"reg_member_self_point" : reg_member_self_point,
+			"click_point" : click_point,
+			"comment_point" : comment_point
+		},
+		success : function(data){
+			if(data['code'] >=0){
+				showMessage("success", "设置成功！", "{:__URL('ADMIN_MAIN/promotion/integral')}");
+			}else{
+				showMessage("error", "设置失败");
+			}
+		}
+	})
+}
+</script>
+{/block}

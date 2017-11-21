@@ -1,0 +1,115 @@
+{extend name="wap/default_new/base" /} {block name="goodsHead"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/goods_list.css">
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1);"><i
+		class="icon-back"></i></a>
+	<div class="head-title">{:lang('integral_commodity')}</div>
+</section>
+<style>
+.head-title {
+	margin: 0 80px;
+	height: 44px;
+	line-height: 44px;
+	color: #333;
+	font-size: 16px;
+	text-align: center;
+	width: 75%;
+	margin: auto;
+	margin-left: 15%;
+}
+
+.custom-search {
+	padding: 0px;
+	background-color: #f7f7f7;
+}
+
+.custom-search form {
+	margin: 0;
+	position: relative;
+	background: none;
+	border-radius: 4px;
+	border: 0 none;
+	overflow: hidden;
+}
+
+.custom-search-button {
+	top: 6px;
+}
+
+.members_goodspic {
+	margin-top: 85px;
+}
+.members_goodspic>ul>li.gooditem>div.img img{
+    max-width: 100%;
+    display: inline;
+}
+.order_div{
+	height:35px;
+}
+</style>
+<script type="text/javascript">
+	
+</script>
+{/block} {block name="main"}
+<div class="order_div">
+	<span class="select" value='1'>{:lang("goods_sales_volume")}</span> <span value='2'>{:lang("collect_quantity")}</span> <span
+		value='3'>{:lang("rating_scale")}<i class='ico_order_state'></i></span> <span value='4'>{:lang("share_number")}</span>
+</div>
+<section class="members_goodspic" id="main_list">
+</section>
+<script>
+	$(function() {
+		 	GetgoodsList(1,0);
+		$('.order_div span').click(function() {
+			$('.order_div span').removeClass('select');
+			$(this).addClass('select');
+			GetgoodsList($(this).attr('value'));
+		})
+		$('.order_div span:nth-child(3)').click(function() {
+			if (!$(this).children().is('.statu_two')) {
+				$(this).children().addClass('statu_two');
+			} else {
+				$(this).children().removeClass('statu_two');
+			}
+		})
+		
+	})
+	function GetgoodsList(sear_type) {
+		var orderState = 'asc';
+		if ($('.order_div span:nth-child(3)').children().is('.statu_two')) {
+			orderState = 'desc';
+		}
+		
+		$.ajax({
+			type : "post",
+			url : "{:__URL('APP_MAIN/Goods/integralCenterListAjax')}",
+			async : true,
+			data : {"id":sear_type},
+			beforeSend : function() {
+				showLoadMaskLayer();
+			},
+			success : function(data) {
+				if (data != null) {
+					 					var html = '';
+					 					 html +='<ul>';
+					 					 	for(i=0; i<data.length;i++)
+					 					 		{
+					 					 			html+='<li class="gooditem"><div class="img"> <a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data[i]['goods_id'])+'">';
+					 					 			html+='<img class="lazy" src="'+__IMG(data[i]['pic_cover_small'])+'" >';
+					 					 			html+='</a></div><div class="info">';
+					 					 			html+='<p class="goods-title"><a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data[i]['goods_id'])+'" >'+data[i]['goods_name']+'</a></p>';
+					 					 			html+='<p class="goods-price"><em>￥'+data[i]['promotion_price']+'</em></p>';
+					 					 			html+=' <a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data[i]['goods_id'])+'"><div class="goods-buy"></div></a> </div></li>';	 			
+					 					 		}
+
+					 		      		html +='</ul>';
+					 		      		html += '<div class="h50"></div>';
+					 		      		$("#main_list").html(html);
+
+					hiddenLoadMaskLayer();
+				}
+			}
+		})
+	}
+</script>
+{/block} {block name="bottom"} {/block}

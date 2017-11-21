@@ -1,0 +1,561 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<style type="text/css">
+.error {
+	padding-left: 5px !important;
+}
+.table{
+	width:98%;
+	display:table;
+	border-left: 1px dotted #e5e5e5;
+	border-right: 1px dotted #e5e5e5;
+	border-bottom: 1px dotted #e5e5e5;
+	background: rgba(204, 204, 204, 0.09);
+	padding: 0px 10px 10px 10px;
+}
+.table-body{
+	min-height:50px;
+	max-height:410px;
+	overflow-y:auto;
+	overflow-x:hidden;
+}
+.inline-block{display:inline-block;}
+.w5{width:5%;}
+.w75{width:15%;}
+.w19{width:10%;text-align:center;}
+.w100{width:100%;height: 40px;line-height: 40px;border-bottom: 1px dotted #e5e5e5;}
+.add-spec{height: 40px;line-height: 40px;border-bottom:1px dotted #E6E6E6;}
+input{
+	vertical-align: initial;
+}
+.table input[type="text"], input[type="password"], input.text, input.password {
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: baseline;
+	margin-bottom:0px;
+}
+.set-style dl dt {
+	text-align:left;
+	width: 7%;
+}
+.attr-choose-wrap label, .relate-norm label {
+	cursor: pointer;
+	float: left;
+	margin: 0 15px 10px 0;
+	padding: 0 10px;
+	color: #636363;
+	line-height: 28px;
+}
+.attr-choose-wrap label.current, .relate-norm label.current {
+	color: #636363;
+	background: url(../images/icon_choose.gif) no-repeat right bottom;
+}
+a:hover{
+	text-decoration: none;
+}
+input{
+	width:100px;
+}
+.selectbox{
+	width:110px;
+}
+label{
+	font-weight: normal;
+}
+.text {
+color: #fb6b5b;
+}
+.attr_table{
+	position: fixed;
+	top: 10%;
+	left: 50%;
+	z-index: 1050;
+	width: 560px;
+	margin-left: -280px;
+	background-color: #ffffff;
+	border: 1px solid #999;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	outline: none;	
+	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	background-clip: padding-box;
+}
+.edit_top{
+	padding: 0px 20px;
+	line-height: 40px;
+	background: #e5e5e5;
+}
+.addSpec{
+	height: 40px;
+	line-height: 40px;
+	padding: 0px 10px;
+}
+.modal-header {
+	padding: 9px 15px;
+	border-bottom: 1px solid #eee;
+}
+.modal-footer {
+	padding: 14px 15px 15px;
+	margin-bottom: 0;
+	text-align: right;
+	background-color: #f5f5f5;
+	border-top: 1px solid #ddd;
+	border-radius: 0 0 6px 6px;
+	box-shadow: inset 0 1px 0 #ffffff;
+
+}
+.w140{width:140px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;padding:0;height:23px;line-height:26px;}
+</style>
+{/block} {block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>类型名称:</dt>
+		<dd>
+			<input id="attr_name" type="text" placeholder="请输入类型名称" value="{$info.attr_name}"/>
+			<span class="error">请输入类型名称</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">&nbsp;</span>属性排序:</dt>
+		<dd>
+			<input id="sort" type="text" value="{$info.sort}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">&nbsp;</span>是否启用</dt>
+		<dd>
+			<input id="is_visible" type="checkbox" class="checkbox" {if condition="$info.is_use eq 1"}checked="checked"{/if} />
+		</dd>
+	</dl>
+	<div class="table">
+		<div class="add-spec">关联规格</div>
+		{if condition="$goodsguige neq ''"}
+		<div class="padding-top padding-left padding-right attr-choose-wrap clearfix">
+			{foreach name="goodsguige['data']" item="v"}
+			<label class="ralationguige" style="margin-top: 8px;"><input type="checkbox" value="{$v.spec_id}" {in name="v.spec_id" value="$info.spec_id_array"}checked{/in} name="spec"/>{$v.spec_name}</label>
+			{/foreach}
+		</div>
+		{/if}
+			
+	</div>
+	
+	<div class="table">
+		<div class="w100">
+			<div class="inline-block w5"></div>
+			<div class="inline-block w75">排序</div>
+			<div class="inline-block w75" style="width:23%;">属性名称</div>
+			<div class="inline-block w75">所属类型</div>
+			<div class="inline-block w75">属性值</div>
+			<div class="inline-block w75" style="width:10%;">是否筛选</div>
+			<div class="inline-block w19">操作</div>
+		</div>
+		<div class="table-body">
+		{foreach name="info['value_list']['data']" item="v" key=key}
+		<div class="w100 value_data old_data">
+			<div class="inline-block w5"><label style="margin-left: 5px;"> <input type="checkbox" /></label></div>
+			<div class="inline-block w75">
+				<input type="text" name="value_sort" value="{$v.sort}" onchange="updateAttrvalue('value_sort',{$v.attr_value_id},this);" />
+			</div>
+			<div class="inline-block w75"  style="width:23%;">
+				<input type="text" name="value_name" value="{$v.attr_value_name}" onchange="updateAttrvalue('value_name',{$v.attr_value_id},this);" />
+				<span class="spec_box_{$v.attr_value_id}">
+				{if condition="$v['type'] eq 1"}{else /}<a href="javascript:;" id="showAttrbox_{$v.attr_value_id}" onclick="showAttrbox({$v.attr_value_id},{$v.attr_id},this);">编辑属性值</a>{/if}
+				</span>
+				<input type="hidden" name="attr_value_id" value="{$v.attr_value_id}" />
+			</div>
+			<div class="inline-block w75">
+				<select class="selectbox" id="type_box_{$v.attr_value_id}" value="{$v.type}" onchange="updateAttrvalue('type_box',{$v.attr_value_id},this);">
+					<option value="1" {if condition="$v.type eq 1"}selected="selected"{/if}>输入框</option>
+					<option value="2" {if condition="$v.type eq 2"}selected="selected"{/if}>单选框</option>
+					<option value="3" {if condition="$v.type eq 3"}selected="selected"{/if}>复选框</option>
+				</select>
+			</div>
+			<div class="inline-block w75 w140" id="value_{$v.attr_value_id}" title="{$v.value}" />
+			{$v.value}
+			<input type="hidden" class="value_{$v.attr_value_id}" value="{$v.value}" />
+			</div>
+			<div class="inline-block w75" style="width:10%;">
+			{if condition="$v.is_search eq 0"}
+				<a href="javascript:;" class="is_search" is_search="0" onclick="updateAttrvalue('is_search',{$v.attr_value_id},this);"><i class="fa fa-times text-danger text"></i></a>
+			{else /}
+				<a href="javascript:;" class="is_search" is_search="1" onclick="updateAttrvalue('is_search',{$v.attr_value_id},this);"><i class="fa fa-check text-success text-active"></i></a>
+			{/if}
+			</div>
+			<div class="inline-block w19"><a href="javascript:;" onclick="delOldAttributeValue(this, {$v.attr_id}, {$v.attr_value_id})">删除</a></div>
+		</div>
+		{/foreach}
+		</div>
+		<div><a href="javascript:;" onclick="addSpecValue(this)"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加一个属性</a></div>
+</div>
+<input type="hidden" id="attr_id" value="{$attr_id}" />
+<button class="edit_button" onclick="updateAttributeService();">提交</button>
+<!-- 点击编辑弹出框开始 -->
+<div class="attr_table" id="Attrbox" style="display:none;">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">编辑属性值</h3>
+	</div>
+	<div class="w100">
+		<div class="inline-block w5"></div>
+		<div class="inline-block w75" style="width:80%;">属性名称</div>
+		<div class="inline-block w19">操作</div>
+	</div>
+	<div class="table-body">
+		<div class="w100 Spec_data">
+			<div class="inline-block w5"><label style="margin-left: 15px;"> <input type="checkbox" /></label></div>
+			<div class="inline-block w75" style="width:80%">
+				<input type="text" name="attr_value" style="width:200px;margin-left:4px;" />
+			</div>
+			<div class="inline-block w19"><a href="javascript:;" onclick="delSpecValue(this)">删除</a></div>
+		</div>
+	</div>
+	<div class="addSpec"><a href="javascript:;" onclick="addAttrSmallValue(this)"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加一个属性</a></div>
+	<div class="modal-footer">
+		<input type="hidden" id="click_order" />
+		<button class="btn btn-info" onclick="submitAttrValue()" style="display:inline-block;">保存</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+	</div>
+</div>
+<!-- 点击编辑弹出框结束 -->
+<script src="ADMIN_JS/plugin/drag-arrange.js"></script>
+<script>
+//点击编辑属性值弹出框事件
+function showAttrbox(attr_value_id,attr_id,e){
+	$("#Attrbox").show();
+	var click_order = $("#click_order").attr('click_order',attr_value_id);
+	var value_str = $(e).parents(".value_data").find(".value_"+attr_value_id).val();
+	if(value_str != undefined){
+		var value_arr = value_str.split(',');
+		var html = '';
+		for(var i=0; i<value_arr.length; i++){
+			html += '<div class="w100 Spec_data">';
+			html += '<div class="inline-block w5"><label style="margin-left: 15px;"> <input type="checkbox" style=""></label></div>';
+			html += '<div class="inline-block w75" style="width:80%">';
+			html += '<input type="text" name="attr_value" style="width:200px;margin-left:4px;" value="'+value_arr[i]+'">';
+			html += '</div>';
+			html += '<div class="inline-block w19"><a href="javascript:;" onclick="delSpecValue(this)">删除</a></div>';
+			html += '</div>';
+		}
+	}else{
+		var html = '';
+		html += '<div class="w100 Spec_data">';
+		html += '<div class="inline-block w5"><label style="margin-left: 15px;"> <input type="checkbox" style=""></label></div>';
+		html += '<div class="inline-block w75" style="width:80%">';
+		html += '<input type="text" name="attr_value" style="width:200px;margin-left:4px;" value="">';
+		html += '</div>';
+		html += '<div class="inline-block w19"><a href="javascript:;" onclick="delSpecValue(this)">删除</a></div>';
+		html += '</div>';
+	}
+	$(".Spec_data").remove();
+	$(".attr_table .table-body").append(html);
+	$('.Spec_data').arrangeable();
+}
+$(".close").click(function(){
+	
+	$("#Attrbox").hide();
+})
+$(".btn").click(function(){
+	
+	$("#Attrbox").hide();
+})
+
+function addAttrSmallValue(e){
+	var spec_data_num = $(".Spec_data").length;
+	var html = '<div class="w100 Spec_data">';
+	html += '<div class="inline-block w5"><label style="margin-left: 15px;"> <input type="checkbox" /></label></div>';
+	html += '<div class="inline-block w75" style="width:80%">';
+	html += '<input type="text" name="attr_value" style="width:200px;margin-left: 4px;">';
+	html += '</div>';
+	html += '<div class="inline-block w19"><a href="javascript:;" onclick="delSpecValue(this)">删除</a></div>';
+	html += '</div>';
+	$(e).parents(".attr_table").find(".table-body").append(html);
+	$('.Spec_data').arrangeable();
+}
+function delSpecValue(e){
+	$(e).parents(".Spec_data").remove();
+}
+
+function submitAttrValue(){
+	var click_order = $("#click_order").attr('click_order');
+	var attr_value_obj = $("input[name='attr_value']");
+	var attr_value_str = '';
+	attr_value_obj.each(function(i){
+		if(attr_value_obj.eq(i).val() != ''){
+			attr_value_str += ',' + trim(attr_value_obj.eq(i).val());
+		}
+	});
+	attr_value_str = attr_value_str.substr(1);
+	$("#value_"+click_order).text(attr_value_str);
+	$("#value_"+click_order).append('<input type="hidden" class="value_'+click_order+'" value="'+ attr_value_str +'">');
+	updateAttrvalue('value', click_order, attr_value_str);
+	
+}
+
+function updateAttrvalue(type,attr_value_id,e){
+	$("#Attrbox").hide();
+	var field_name = '';
+	var field_value = '';
+	if(type == 'value_sort'){
+		field_name = 'sort';
+		field_value = $(e).val();
+	}else if(type == 'value_name'){
+		field_name = 'attr_value_name';
+		field_value = $(e).val();
+		if(field_value == ''){
+			$(e).focus();
+			showMessage('error', '属性名称不能为空');
+			return false;
+		}
+	}else if(type == 'type_box'){
+		var attr_id = $("#attr_id").val();
+		if($(e).val()==1){
+			$(e).parents(".value_data").find(".spec_box_"+attr_value_id).html('<a href="javascript:;" style="color: #777;"></a>');
+			updateAttrvalue('value',attr_value_id,'');
+			field_name = 'type';
+			field_value = $(e).val();
+			$(e).parents(".value_data").find("#value_"+attr_value_id).html('<input type="hidden" class="value_'+attr_value_id+'" value="">');
+			$("#Attrbox .Spec_data:gt(0)").remove();
+			$("#Attrbox .Spec_data").eq(0).find("input[name='attr_value']").val('');
+		}else{
+			$(e).parents(".value_data").find(".spec_box_"+attr_value_id).html('<a href="javascript:;" id="showAttrbox_'+attr_value_id+'" onclick="showAttrbox('+attr_value_id+','+attr_id+',this);">编辑属性值</a>');
+			$(e).parents(".value_data").find("#value_"+attr_value_id).html('<input type="hidden" class="value_'+attr_value_id+'" value="">');
+			$("#Attrbox .Spec_data:gt(0)").remove();
+			$("#Attrbox .Spec_data").eq(0).find("input[name='attr_value']").val('');
+			return false;
+		}
+	}else if(type == 'value'){
+		var type = $('#type_box_'+attr_value_id).val();
+		field_name = 'value';
+		field_value = e;
+		if(type > 1){
+			if(field_value == ''){
+				$('#type_box_'+attr_value_id).focus();
+				showMessage('error', '类型为单选框或复选框时，属性值不能为空');
+				return false;
+			}else{
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/modifyattributevalueservice')}",
+					data : {
+						'attr_value_id' : attr_value_id,
+						'field_name' : 'type',
+						'field_value' : type
+					},
+					dataType : "json",
+					success : function(data) {
+					}
+				});
+			}
+		}
+	}else if(type == 'is_search'){
+		field_name = 'is_search';
+		field_value = $(e).attr('is_search');
+		if(field_value==1){
+			field_value = 0;
+		}else if(field_value == 0){
+			field_value = 1;
+		}
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/modifyattributevalueservice')}",
+		data : {
+			'attr_value_id' : attr_value_id,
+			'field_name' : field_name,
+			'field_value' : field_value
+		},
+		dataType : "json",
+		success : function(data) {
+			if(type=='is_search'){
+				if(field_value==1){
+					$(e).attr('is_search',1);
+					$(e).parent().find(".is_search").html('<i class="fa fa-check text-success text-active"></i>');
+				}else if(field_value==0){
+					$(e).attr('is_search',0);
+					$(e).parent().find(".is_search").html('<i class="fa fa-times text-danger text"></i>');
+				}
+			}
+		}
+	});
+	
+	
+}
+//点击改变是否可以编辑属性值
+function updateAttrselectvalue(order,e){
+	if($(e).val()==1){
+		$(e).parents(".value_data").find(".spec_box_"+order).html('<a href="javascript:;"></a>');
+	}else{
+		$(e).parents(".value_data").find(".spec_box_"+order).html('<a href="javascript:;" id="showAttrbox_'+order+'" onclick="showAttrbox('+order+',this);">编辑属性值</a>');
+	}
+	$(e).parents(".value_data").find("#value_"+order).html('');
+	$("#Attrbox .Spec_data:gt(0)").remove();
+	$("#Attrbox .Spec_data").eq(0).find("input[name='attr_value']").val('');
+}
+function addSpecValue(e){
+	var data_obj_num = $(".new_data").length;
+	var html = '<div class="w100 value_data new_data">';
+	html += '<div class="inline-block w5" style="padding-right:3px;"><label style="margin-left: 5px;"> <input type="checkbox" style=""></label></div>';
+	html += '<div class="inline-block w75" style="padding-right: 4px;">';
+	html += '<input type="text" name="value_sort_'+data_obj_num+'" value="'+data_obj_num+'">';
+	html += '</div>';
+	html += '<div class="inline-block w75" style="margin-right: 5px;width:23%;">';
+	html += '<input type="text" name="value_name_'+data_obj_num+'" style="margin-right:5px;"><span class="spec_box_'+data_obj_num+'"></span>';
+	html += '</div>';
+	html += '<div class="inline-block w75" style="margin-right: 5px;">';
+	html += '<select class="selectbox_'+data_obj_num+'" id="type_'+data_obj_num+'" style="width:110px;" onchange="updateAttrselectvalue('+data_obj_num+',this);">';
+	html += '<option value="1">输入框</option>';
+	html += '<option value="2">单选框</option>';
+	html += '<option value="3">复选框</option>';
+	html += '</select>';
+	html += '</div>';
+	html += '<div class="inline-block w75 w140" style="margin-right: 4px;" id="value_'+data_obj_num+'">';
+	html += '</div>';
+	html += '<div class="inline-block w75" style="width:10%;">';
+	html += '<a href="javascript:;" class="is_search is_search_'+data_obj_num+'" is_search="1" onclick="tab_is_search(this)"><i class="fa fa-check text-success text-active"></i></a>';
+	html +='</div>';
+	html += '<div class="inline-block w19"><a href="javascript:;" onclick="delNewAttributeValue(this)">删除</a></div>';
+	html += '</div>';
+	$(e).parents(".table").find(".table-body").append(html);
+}
+function delOldAttributeValue(e, attr_id, attr_value_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/deleteattributevalue')}",
+					data : {
+						'attr_id' : attr_id,
+						'attr_value_id' : attr_value_id
+					},
+					dataType : "json",
+					success : function(data) {
+						if (data['code'] > 0) {
+							$(e).parents('.w100').remove();
+						}else if(data['code'] == 0){
+						}else if(data['code'] == -1){
+							showMessage('error', '当前属性已经使用过，不能删除！');
+						}else if(data['code'] == -2){
+							showMessage('error', '当前属性已经是最后一个，不能删除！');
+						}
+					}
+				});
+			},"取消,#e57373" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+function delNewAttributeValue(e){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$(e).parents('.w100').remove();
+			},"取消,#e57373" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+function validation() {
+	var attr_name = $("#attr_name");
+	if (attr_name.val() == "") {
+		attr_name.focus().next("span").show();
+		return false;
+	} else {
+		attr_name.next("span").hide();
+	}	
+	return true;
+}
+
+var flag = false;//防止重复提交
+function updateAttributeService() {
+	if (!validation()) {
+		return;
+	}
+	var attr_name = $("#attr_name").val();
+	var sort = $("#sort").val();
+	if ($("#is_visible").prop("checked")) {
+		var is_visible = 1;
+	} else {
+		var is_visible = 0;
+	}
+	
+	var select_box = '';
+	$("input[name='spec']:checked").each(function(){
+		select_box = select_box+','+$(this).val();
+	});
+	select_box = select_box.substring(1);
+	var attr_id = $("#attr_id").val();
+	
+	var data_obj = $(".new_data");
+	var data_obj_str = '';
+	data_obj.each(function(i){
+		if(data_obj.eq(i) != ''){
+			var value_sort = $("input[name='value_sort_"+i+"']").val();
+			var value_name = trim($("input[name='value_name_"+i+"']").val());
+			if(value_name == ''){
+				$("input[name='value_name_"+i+"']").focus();
+				showTip("属性名称不能为空",'warning');
+				flag = true;
+				return false;
+			}else{
+				flag = false;
+			}
+			var type = $("#type_"+i).val();
+			var value = $("#value_"+i).text();
+			if(type > 1){
+				if(value == ''){
+					$("#type_"+i).focus();
+					showTip("类型为单选框或复选框时，属性值不能为空",'warning');
+					flag = true;
+					return false;
+				}else{
+					flag = false;
+				}
+			}
+			var is_search = $(".is_search_"+i).attr("is_search");
+			var new_str = '';
+			new_str = value_name+ '|' +type+ '|' +value_sort+ '|' +is_search+ '|' +value;
+			
+			data_obj_str = data_obj_str + ';' + new_str;
+		}
+	});
+	data_obj_str = data_obj_str.substr(1);
+	if(flag){
+		return;
+	}
+	flag = true;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/updategoodsattribute')}",
+		data : {
+			'attr_id' : attr_id,
+			'attr_name' : attr_name,
+			'sort' : sort,
+			'is_visible' : is_visible,
+			'select_box' :select_box,
+			'data_obj_str' :data_obj_str,
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', "修改成功","{:__URL('ADMIN_MAIN/goods/attributelist')}");
+			} else {
+				showMessage('error', "修改失败");
+				flag = false;
+			}
+		}
+	});
+}
+</script>
+{/block}

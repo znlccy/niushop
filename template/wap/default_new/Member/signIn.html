@@ -1,0 +1,138 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/group_goods_list.css">
+<style>
+.head-box{
+	width: 100%;
+	height: 230px;
+	background-image: url("__TEMP__/{$style}/public/images/member_top_bg.png");
+	background-color: #ED5564;
+	animation: changeBg 20s infinite;
+}
+.head-box .my_jifen{
+	width: 150px;
+	height: 30px;
+	padding: 15px 0;
+	color: #fff;
+	margin-top: 44px;
+	text-align: center;
+}
+.head-box .signIn{
+	width: 120px;
+	height: 120px;
+	background: url("__TEMP__/{$style}/public/images/signin.png") no-repeat;
+	margin: 0 auto;
+	background-size:120px 120px;
+	border-radius: 50%;
+}
+.head-box .signIn .box{
+	width: 90px;
+	height: 60px;
+	text-align: center;
+	margin: 0 auto;
+	color: #F33B43;
+}
+@keyframes changeBg{
+	0%{background-color:#ED5564;}
+	10%{background-color:#FB6E52;}
+	20%{background-color:#FFCE55;}
+	30%{background-color:#A0D468;}
+	40%{background-color:#48CFAE;}
+	50%{background-color:#4FC0E8;}
+	60%{background-color:#5D9CEC;}
+	70%{background-color:#AC92ED;}
+	80%{background-color:#EC87BF;}
+	90%{background-color:#ED5564;}
+}
+.box-title{
+	height: 45px;
+	line-height: 45px;
+	border-bottom: 1px solid #ddd;
+	background-color:#eee;
+}
+.box-title h3{
+	margin-left: 15px;
+}
+.signLog{
+	height: 45px;
+	width: 100%;
+	line-height: 45px;
+	border-bottom: 1px solid #ddd;
+}
+.signLog span{
+	margin-left: 15px;
+	font-size: 16px;
+}
+.signLog span b{
+	color: #F33B43;
+}
+</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('sign_in_and_receive_points')}</div>
+</section>
+<div class="head-box">
+	<div class="my_jifen">
+		<p>{:lang('member_my_points')}</p>
+		{foreach $point as $vo}
+          	{if condition="$vo.shop_id eq $shop_id"}
+			<p style="font-size: 16px;font-weight: bolder;">{$vo.point}</p>
+			{/if}
+		{/foreach}
+	</div>
+	{if condition="$isSign eq 0"}
+	<div class="signIn" id="click">
+		<div class="box" style="border-bottom: 1px solid #eee;">
+			<p style="padding-top: 30px;font-size: 20px;">{:lang('sign_in')}</p>
+		</div>
+		<div class="box">
+			<p style="margin-top: 5px;">{:lang('goods_gift_points')}</p>
+		</div>
+	</div>
+	{else /}
+	<div class="signIn">
+		<div class="box" style="border-bottom: 1px solid #eee;">
+			<p style="padding-top: 30px;font-size: 20px;">{:lang('signed_in')}</p>
+		</div>
+		<div class="box">
+			<p style="margin-top: 5px;margin-left: 5px;">{:lang('stick_to_it')}！</p>
+		</div>
+	</div>
+	{/if}
+</div>
+<div class="box-title">
+	<h3>{:lang('sign_in_log')}</h3>
+	
+</div>
+{volist name="pointList" id="vo"} 
+<div class="signLog">
+	<span class="event">{:lang('member_integral')}<b>+{$vo.number|ceil}</b></span>
+	<span class="time" style="color: #777;font-size: 14px;">{$vo.create_time | getTimeStampTurnTime} {$vo.text}{:lang('obtain')}</span>
+</div>
+{/volist}
+<input type="hidden" id="shop_id" value="{$shop_id}">
+<script src="__TEMP__/{$style}/public/js/jquery.js"></script>
+<script type="text/javascript">
+$("#click").click(function(){
+	var shop_id = $("#shop_id").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('APP_MAIN/member/signin')}",
+		data : {
+			"shop_id" : shop_id,
+			"sign" : true
+		},
+		success : function(data){
+			if(data['code']>0){
+				location.reload();
+			}
+		}
+	})
+})
+</script>
+{/block}
+{block name="bottom"}
+{/block}

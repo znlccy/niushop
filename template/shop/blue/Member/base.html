@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="renderer" content="webkit" />
+<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+<meta charset="UTF-8">
+<title>{$title}{if condition="$seoconfig.seo_title neq ''"}-{$seoconfig.seo_title}{/if}</title>
+<meta name="keywords" content="{$seoconfig.seo_meta}" />
+<meta name="description" content="{$seoconfig.seo_desc}"/>
+<link rel="shortcut  icon" type="image/x-icon" href="__TEMP__/{$style}/public/images/favicon.ico" media="screen"/>
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_common.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_color_style.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/iconfont.css">
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/layer.css" id="layuicss-skinlayercss">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_bottom.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/user.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_shop_common.css">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_components.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/nav.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/layer.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.method.js"></script>
+<script type="text/javascript">
+	var shop_main='SHOP_MAIN';//外置JS调用
+	var upload = "__UPLOAD__";//外置JS调用
+	var temp = "__TEMP__/";//外置JS调用
+</script>
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+{/block}
+</head>
+<body>
+<!-- 公共的顶部（部分界面不用，） -->
+{block name="commonTop"}
+	{include file='shop/blue/controlTop'/}
+{/block}
+
+<!-- 头部，菜单栏、搜索、导航栏 -->
+{block name="head"}
+	{include file='shop/blue/controlHeadSerach'/}
+{/block}
+
+<!--头部商品分类 start-->
+{block name="headGoodType"}
+	{include file='shop/blue/controlHeadGoodType'/}
+{/block}
+<!--头部商品分类 end-->
+
+
+<div class="margin-w1210 clearfix">
+	<div class="w">
+		<div class="breadcrumb clearfix">
+			<a href="SHOP_MAIN" class="index">首页</a>
+			<span class="crumbs-arrow">&gt;</span>
+			<span class="last">用户中心</span>
+		</div>
+		{include file='shop/blue/Member/controlLeftMenu'/}
+		{block name="main"}
+		<!-- 内容 -->
+		{/block}
+	</div>
+</div>
+{block name="bottom"}
+{include file='shop/blue/controlBottomLinkHelp'/}
+{include file='shop/blue/controlBottom'/}
+{/block}
+
+<script type="text/javascript"src="__TEMP__/{$style}/public/js/common.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/shopping_cart.js"></script>
+{block name="javascript"}
+<!-- 添加js文件 -->
+{/block}
+</body>
+</html>

@@ -1,0 +1,64 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_category_all.css">
+{/block}
+{block name="main"}
+<div class="w1210">
+	<div class="breadcrumb clearfix">
+		<a href="{:__URL('SHOP_MAIN')}" class="index">{:lang('home_page')}</a>
+		<span class="crumbs-arrow">&gt;</span>
+		<span class="last">{:lang('all_goods_classification')}</span>
+	</div>
+	{notempty name="$goods_category_one"}
+	<div class="w1210 all-category-list" style="height: 90px;">
+		<div class="all-category-items">
+			<ul>
+			{foreach $goods_category_one as $vo}
+				<li class="category-list">
+					<a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo['category_id'])}">{$vo.category_name}</a>
+				</li>
+			{/foreach}
+			</ul>
+		</div>
+	</div>
+	<div class="all-warpper w1210"> 
+	{foreach $goods_category_one as $vo}
+		<div class="all-category-floor">
+			<div class="floor-top">
+				<div class="title"><a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo['category_id'])}">{$vo.category_name}</a></div>
+			</div>
+			<div class="floor-bot">
+				<div class="floor-category-list">
+					{if condition="$vo['child_list'] neq null "}
+					{foreach $vo['child_list'] as $vo2}
+						{if condition="$vo2.pid eq $vo.category_id"}
+						<dl>
+							<dt><a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo2['category_id'])}" target="_blank">{$vo2.category_name}</a></dt>
+							<dd>
+							{if condition="$vo2['child_list'] neq null "}
+								{foreach $vo2['child_list'] as $vo3}
+								{if condition="$vo3.pid eq $vo2.category_id"}
+								<a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo3['category_id'])}" target="_blank">{$vo3.category_name}</a>
+								{/if}
+							{/foreach}
+							{/if}
+							</dd>
+						</dl>
+						{/if}
+					{/foreach}
+					{/if}
+				</div>
+			</div>
+		</div>
+	{/foreach}
+	</div>
+	{else /}
+	<div class="notGoodsCategory">
+		<img src="__TEMP__/{$style}/public/images/notCateGory.png" alt="">
+		<p>{:lang('no_goods_classification')}</p>
+	</div>
+	{/notempty}
+</div>
+{/block}
+{block name="javascript"}{/block}

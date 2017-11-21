@@ -1,0 +1,125 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="20%" style="text-align: left;">
+			<button class="btn-common-delete btn-small" onclick="batchDelete()" style="margin:0 5px 0 0 !important;">批量删除</button>
+			<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/Member/addsupplier')}';" style="margin:0 5px 0 0 !important;">添加供货商</button>
+		</th>
+		<th width="20%">
+			<input type="text" id = 'search_text' placeholder="输入代理商名称" class="input-common"/>
+			<input type="button" onclick="LoadingInfo(1)" value="搜索" class="btn-common"/>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<thead>
+		<tr align="center">
+			<th><input type="checkbox" onclick="CheckAll(this)"></th>
+			<th>供货商名称</th>
+			<th>联系人</th>
+			<th>联系电话</th>
+			<th>联系地址</th>
+			<th>供货商描述</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/Member/supplierList')}",
+		data : {
+			"page_index" : page_index, "page_size" :  $("#showNumber").val(), 'search_text' : search_text
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><input name="sub" type="checkbox" value="'+ data["data"][i]["supplier_id"]+'" ></td>';
+					html += '<td>'+ data["data"][i]["supplier_name"]+'</td>';
+					html += '<td>'+ data["data"][i]["linkman_name"]+'</td>';
+					html += '<td>'+ data["data"][i]["linkman_tel"]+'</td>';
+					html += '<td>'+ data["data"][i]["linkman_address"]+'</td>';
+					html += '<td>' + data['data'][i]['desc'] + '</td>';
+					html += '<td> <a href="'+__URL('ADMIN_MAIN/Member/updatesupplier?supplier_id='+ data['data'][i]['supplier_id'])+'">修改</a>';
+					html += '&nbsp;&nbsp;&nbsp;<a href="javascript:deleteSupplier('+data['data'][i]['supplier_id']+');">删除</a></td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="7">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+function deleteSupplier(supplier_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/member/deleteSupplier')}",
+					data : {
+						'supplier_id' : supplier_id.toString()
+					},
+					success : function(data) {
+						if (data['code'] > 0) {
+							showMessage('success', data["message"], "{:__URL('ADMIN_MAIN/member/supplierlist')}");
+						} else if(data['code'] == -1){
+							showMessage('error', '当前供货商存在供货商品，不能被删除！');
+						}else{
+							showMessage('error', data['message']);
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要删除该供货商吗？",
+	});
+}
+
+//批量删除
+function batchDelete() {
+	var uid= new Array();
+	$(".table-class input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			uid.push($(this).val());
+		}
+	});
+	if(uid.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteSupplier(uid);
+}
+</script>
+{/block}

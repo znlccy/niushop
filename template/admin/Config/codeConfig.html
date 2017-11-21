@@ -1,0 +1,46 @@
+{extend name="admin/base" /}
+{block name="main"}
+<!-- 热门搜索 -->
+<div class="set-style">
+	<dl>
+		<dt>后台验证码是否开启:</dt>
+		<dd>
+				<input id="adminCode" type="checkbox" class="checkbox" {if condition="$code_config.admin=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商城验证码是否开启:</dt>
+		<dd>
+				<input id="pcCode" type="checkbox" class="checkbox" {if condition="$code_config.pc=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setConfigAjax();">提交</button>
+</div>
+<script>
+function setConfigAjax(){
+	var adminCode = 0;
+	var pcCode = 0;
+	if($("#adminCode").is(":checked")){
+		adminCode = 1;
+	}
+	if($("#pcCode").is(":checked")){
+		pcCode = 1;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/codeconfig')}",
+		data:{
+			'adminCode':adminCode,
+			'pcCode' : pcCode
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],'');
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

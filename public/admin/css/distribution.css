@@ -1,0 +1,9 @@
+﻿@charset "utf-8";
+/* CSS Document */
+/*monger list*/
+.mongerinfo .commision-count{margin:10px 0;background:#f7f7f7;}
+.mongerinfo .commision-count .commision-count-p{margin:10px 0 10px 10px;line-height:30px;}
+.mongerinfo .commision-count small{color:#888;}
+.mongerinfo .commision-count big{font-size:24px;color:#;}
+/*distribution grade*/
+.distribution-grade-tip{ position:static;text-align:left;}

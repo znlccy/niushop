@@ -1,0 +1,261 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/integralcenter/exchange.css">
+<style type="text/css">
+.act-list ul li.first{
+	margin-left:15px;
+	height:300px;
+	width:228px;
+}
+.act-list ul li.first:nth-child(5n+1){
+	margin-left:0;
+}
+.recommend{
+	position: absolute;
+	z-index: 10;
+	width: 40px;
+	margin-left: 8px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="margin-w1210 clearfix">
+	<div class="w">
+		<div class="breadcrumb clearfix">
+			<a href="{:__URL('SHOP_MAIN')}" class="index">{:lang('home_page')}</a>
+			<span class="crumbs-arrow">&gt;</span>
+			<a href="{:__URL('SHOP_MAIN/goods/integralcenter')}" class="last">{:lang('goods_integral_mall')}</a>
+		</div>
+	</div>
+	<div class="blank"></div>
+	<div id="JS_slider" class="act-slider fl">
+		<div class="stage">
+			<table id="JS_slide_stage" cellpadding="0" spellcheck="0" border="0" style="margin-left: 0px;">
+				<tbody id="googleaaa"></tbody>
+			</table>
+		</div>
+		<div id="JS_slide_nav" class="nav"> 
+			<a href="javascript:;" class="current"></a>
+			<a href="javascript:;" class=""></a>
+			<a href="javascript:;" class=""></a>
+			<a href="javascript:;" class=""></a>
+		</div>
+	</div>
+	<!-- 火爆兑换start -->
+	<div class="spot-goods fr">
+		<h4>{:lang('goods_hot_exchange')}</h4>
+		<ul id="JS_spot_goods">
+			{foreach name="hotGoods.data"  item="good" key="k"}
+			<li {if condition="$k eq 0"}class="open"{/if}>
+				<div class="show">
+					<span class="index">{$k+1}</span>
+					<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$good['goods_id'])}" target="_blank" title="{$good.goods_name}">{$good.goods_name}</a>
+					<span class="price red">{:lang('goods_integral')}：{$good.point_exchange}</span>
+				</div>
+				<div class="hide">
+					<div class="title">
+						<span class="index">{$k+1}</span>
+						<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$good['goods_id'])}" target="_blank" title="{$good.goods_name}">{$good.goods_name}</a>
+					</div>
+					<div class="detail">
+						<a href="" target="_blank" title="{$good.goods_name}" class="img">
+							<img src="{:__IMG($good['pic_cover_mid'])}" width="122" height="122">
+						</a>
+						<div class="number">
+							<p class="p1"><strong>{:lang('goods_integral')}：{$good.point_exchange}</strong></p>
+							<p class="p2"><a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$good['goods_id'])}" target="_blank">{:lang('goods_redeem_now')}</a></p>
+						</div>
+					</div>
+				</div>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<!-- 火爆兑换end -->
+	<div class="blank"></div>
+	<div class="act-banner"> 
+		<table cellpadding="0" cellspacing="0">
+			<tbody id="googlebbb"></tbody>
+		</table>
+	</div>
+	<div class="blank"></div>
+	<div class="w mt15">
+		<form method="GET" class="sort" name="listform">
+			<div id="filter">
+				<div class="fore1" style="border:none;">
+					<dl class="order">
+						<dt>{:lang('goods_commodity_sorting')}：</dt>
+						<dd><a {if condition="$id eq 1"}style="color:#0D84D4;"{/if}href="{:__URL('SHOP_MAIN/goods/integralcenter','id=1&nav_id=20')}">{:lang('goods_by_volume')}</a><b></b></dd>
+						<dd><a {if condition="$id eq 2"}style="color:#0D84D4;"{/if}href="{:__URL('SHOP_MAIN/goods/integralcenter','id=2&nav_id=20')}">{:lang('goods_by_collection')}</a><b></b></dd>
+						<dd><a {if condition="$id eq 3"}style="color:#0D84D4;"{/if}href="{:__URL('SHOP_MAIN/goods/integralcenter','id=3&nav_id=20')}">{:lang('goods_evaluation_quantity')}</a><b></b></dd>
+						<dd><a {if condition="$id eq 4"}style="color:#0D84D4;"{/if}href="{:__URL('SHOP_MAIN/goods/integralcenter','id=4&nav_id=20')}">{:lang('goods_by_sharing')}</a><b></b></dd>
+					</dl>
+					<div class='pagin pagin-m'><span class='text'>{if condition="$page egt 1 && $page elt $page_count"}{$page}{else/}1{/if}/{$page_count}</span>
+						{if condition="$page elt 1"}
+						<span class="prev-disabled">{:lang('goods_previous_page')}<b></b></span>
+						{else/}
+						<a href="{:__URL('SHOP_MAIN/goods/integralcenter','page='.($page-1).'&id='.$id)}" class="prev" style="border:1px solid #CCC">{:lang('goods_previous_page')}<b></b></a>
+						{/if}
+						{if condition="$page lt $page_count && $page egt 1"}
+						<a href="{:__URL('SHOP_MAIN/goods/integralcenter','page='.($page+1).'&id='.$id)}" class="prev" style="border:1px solid #CCC">{:lang('goods_next_page')}<b></b></a> 
+						{else/}
+						<span class="prev-disabled">{:lang('goods_next_page')}<b></b></span>
+						{/if}
+					</div>
+					<div class="total">
+						<span>{:lang('goods_total')}<strong>{$hotGoods.total_count}</strong>{:lang('goods_goods')}</span>
+					</div>
+					<span class="clr"></span>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<!-- 商品详情开始 -->
+	<div class="w mt15">
+		<div class="act-list">
+			<form name="compareForm" method="post">
+				<ul class="clearfix" id="allgoods">
+					{foreach $allGoods.data as $goods}
+					<li class="first">
+						{if condition="$goods['is_hot'] eq 1"}
+							<img src="__TEMP__/{$style}/public/images/hot.png" class="recommend">
+						{/if}
+						{if condition="$goods['is_recommend'] eq 1"}
+							<img src="__TEMP__/{$style}/public/images/recommend.png" class="recommend">
+						{/if}
+						{if condition="$goods['is_new'] eq 1"}
+							<img src="__TEMP__/{$style}/public/images/new.png" class="recommend">
+						{/if}
+						<div class="img">
+							<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank" title="{$goods.goods_name}">
+								<img src="{:__IMG($goods['pic_cover_mid'])}" />
+							</a>
+							<p class="absBg"></p>
+							<p class="absFg">
+								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo',$goods['goods_name'])}" target="_blank" title="{$goods.goods_name}">{$goods.goods_name}</a>
+							</p>
+						</div>
+						<div class="info">
+						{if condition="$goods.promotion_price neq 0 AND $goods.point_exchange neq 0"}
+							<div class="price" style="width:143px;color:red;">
+								<strong class="main-color arial">¥{$goods.promotion_price}+</strong>
+								<strong class="main-color arial">{$goods.point_exchange}</strong>
+								<span class="main-color jifen">{:lang('goods_integral')}</span>
+							</div>
+							{else/}
+							
+							{if condition="$goods.promotion_price eq 0"}
+							<div class="price" style="width:143px;color:red;">
+								<strong class="main-color arial">{$goods.point_exchange}</strong>
+								<span class="main-color jifen">{:lang('goods_integral')}</span>
+							</div>
+							{else/}
+							<div class="price" style="width:143px;color:red;">
+								<strong class="main-color arial">¥{$goods.promotion_price}</strong>
+							</div>
+							{/if}
+						{/if}
+							<div class="discount">
+								<span class="f16 yahei"><a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank">{:lang('goods_redeem_now')}</a></span>
+							</div>
+						</div>
+					</li>
+					{/foreach}
+				</ul>
+			</form>
+			{include file='shop/blue/controlCommonPage' /}
+		</div>
+	</div>
+	<div class="blank5"></div>
+<script type="text/javascript">
+
+$(document).ready(function(){
+	//广告图
+	var ap_id=1076;
+	var data=platformAdvLoad(ap_id);
+	var str = "";
+	if(data != ''){
+	  	str+="<tr>";
+		for(i=0;i<data.length;i++){
+			str += '<td> <table cellpadding="0" cellspacing="0"><tbody><tr><td><a href="'+data[i]['adv_url']+'" target="_blank"><img src="'+__IMG(data[i]['adv_image'])+'" width="910" height="320" border="0"></a></td></tr></tbody></table> </td>';
+		}
+		str+="</tr>"
+	}
+	
+	$("#googleaaa").html(str); 
+	//2号广告图
+	var ap_id2 = 1102;
+	var data2 = platformAdvLoad(ap_id2);
+	var str2 = "";
+	if(data2 != ''){
+		str2 += '<tr><td><a href="'+data2[0]['adv_url']+'" target="_blank"><img src="'+__IMG(data2[0]['adv_image'])+'" width="1210" height="60" border="0"></a></td></tr>"';
+		$("#googlebbb").html(str2);
+	}
+	
+});
+// 焦点图
+$(function(){
+	var slider = $('#JS_slider'),
+	sliderWidth = 910,
+	stage = $('#JS_slide_stage'),
+	list = stage.find('img'),
+	len = list.length,
+	nav = $('#JS_slide_nav a'),
+	pTimer,
+	index = 0;
+	function move(index) {
+		var distance = 0 - index * sliderWidth;
+		stage.stop(true, false).animate({'margin-left':distance+'px'}, 300);
+		nav.removeClass('current').eq(index).addClass('current');
+	
+	}
+	function auto() {
+		move(index);
+		index++;
+		if (index == len) {
+			index = 0;
+		}
+	}
+	
+	pTimer = setInterval(function(){
+		auto();
+	}, 3000);
+	
+	slider.hover(function(){
+		clearInterval(pTimer);
+	}, function(){
+		pTimer = setInterval(function(){
+			auto();
+		}, 5000);
+	});
+	
+	nav.mouseenter(function(){
+		index = nav.index(this);
+		move(index);
+	});
+});
+// 现货特价
+$(function(){
+	var item = $('#JS_spot_goods li');
+	item.hover(function(){
+		item.removeClass('open')
+		$(this).addClass('open');
+		var img = $(this).find('img'),
+		src = img.attr('data-lazy');
+		img.attr('src', src);
+	});
+});
+
+//请求数据
+</script>
+	<div class="blank"></div>
+</div>
+
+{/block}
+{block name="javascript"}
+<script src="__TEMP__/{$style}/public/js/integralcenter/integralcenter.js"></script>
+<script>
+getMemberInfo();
+</script>
+{/block}

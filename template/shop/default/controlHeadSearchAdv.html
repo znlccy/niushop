@@ -1,0 +1,14 @@
+<!-- logo栏小广告 
+	李志伟
+	2017年2月10日10:28:30
+ -->
+<script type="text/javascript">
+	//logo右侧小广告 
+	var ap_id=[ap_id];
+	var data=platformAdvLoad(ap_id);
+	if(data !=''){
+		$('.logo-info').append('<a href="'+data[0]['adv_url']+'" class="logo-right"> <img src="'+__IMG(data[0]['adv_image'])+'" style="max-width:'+data[0]['adv_width']+'px;max-height:'+data[0]['adv_height']+'px;"> </a>');	
+	}
+	//搜索框右侧小广告
+	//$('.header-right').html('<a href="'+data[1]['adv_url']+'" target="_blank" title="">  <img src="'+__IMG(data[1]['adv_image'])+'"></a>');
+</script>

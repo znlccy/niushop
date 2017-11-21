@@ -1,0 +1,81 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<td width="10%">
+			<input type="text" id='startDate' placeholder="请选择开始日期" class="input-medium input-common" onclick="WdatePicker()"/>
+			&nbsp;-&nbsp;
+			<input type="text" id='endDate' placeholder="请选择结束日期" class="input-medium input-common" onclick="WdatePicker()" />
+			
+			<input type="text" id='search_text' placeholder="请输入会员昵称" class="input-common" />
+			
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</td>
+	</tr>
+</table>
+<table class="table-class">
+	<thead>
+		<tr align="center">
+			<th><input type="checkbox" onclick="CheckAll(this)"></th>
+			<th>会员昵称</th>
+			<th>类别</th>
+			<th>数量</th>
+			<th>描述</th>
+			<th>时间</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+<input type="hidden" id="member_id" value="{$member_id}"/>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var member_id = $("#member_id").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/accountdetail')}",
+		data : {
+			"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text":search_text, "member_id":member_id, "start_date":start_date, "end_date":end_date
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><input name="sub" type="checkbox" value="'+ data["data"][i]["id"] +'" ></td>';
+					html += '<td>'+data["data"][i]["nick_name"]+'</td>';
+					html += '<td align="center">'+data["data"][i]["type_name"]+'</td>';
+					html += '<td align="center">'+ data["data"][i]["number"] +'</td>';	
+					html += '<td align="center">'+ data["data"][i]["text"] +'</td>';
+					html += '<td align="center">'+ timeStampTurnTime(data["data"][i]["create_time"]) +'</td>';
+					html += '</tr>';
+					html += '<input type="hidden" id="member_id" value="{$member_id}"/>'
+				}
+			} else {
+				html += '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

@@ -1,0 +1,51 @@
+<!--
+	创建人：王永杰
+	创建时间：2017年2月7日 12:17:11
+	功能描述： 店内商品排行榜
+-->
+<!-- 排行榜 提出来的 【排行榜】-->
+<div class="store-rank-list">
+	<h3 class="left-title">{:lang('goods_store_rankings')}</h3>
+	<div class="left-content rank-list">
+		<ul class="tab-nav j-tab-nav">
+			<li class="current">{:lang('goods_sales_volume')}</li>
+			<li>{:lang('goods_collection_number')}</li>
+		</ul>
+		<div class="tab-con">
+			<div class="j-tab-con">
+				<ul class="goods-list" style="display: block">
+				{foreach name="goods_rank" item="goods" key="k" }
+					{if condition = "($k+1) <= 5" }
+					<li class="goods-item first">
+						<div class="picture">
+							<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" title="{$goods.goods_name}">
+								<img src="{:__IMG($goods['pic_cover_mid'])}" />
+							</a>
+						</div>
+						<div class="price">
+							<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" title="{$goods.goods_name}">{$goods.goods_name}</a>
+							<span class="color">￥{$goods.promotion_price}</span>
+						</div>
+					</li>
+					{/if}
+				{/foreach}
+				</ul>
+				<ul class="goods-list">
+				{foreach name="goods_collection" item="goods" key="k"}
+					<li class="goods-item first">
+						<div class="picture">
+							<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" title="{$goods.goods_name}">
+								<img src="{:__IMG($goods['pic_cover_mid'])}" />
+							</a>
+						</div>
+						<div class="price">
+							<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" title="{$goods.goods_name}">{$goods.goods_name}</a>
+							<span class="color">￥{$goods.promotion_price}</span>
+						</div>
+					</li>
+				{/foreach}
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

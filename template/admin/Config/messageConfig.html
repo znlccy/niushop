@@ -1,0 +1,232 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<style>
+.btn-test{
+	font-family: "microsoft yahei";
+	border-radius: 4px;
+	padding: 5px 20px;
+	background-color: #51A351;
+	color: #FFF;
+	margin: 0 10px;
+	border: none;
+}
+</style>
+{/block}
+{block name="main"}
+{if condition="$type == 'email'"}
+<!-- 邮箱设置 -->
+<div class="set-style">
+	<dl>
+		<dt>是否开启：</dt>
+		<dd>
+				<input id="email_is_use" type="checkbox" class="checkbox" {if condition="$email_message.is_use=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>SMTP服务器：</dt>
+		<dd>
+			<input id="email_host" type="text" value="{$email_message['value']['email_host']}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>SMTP端口：</dt>
+		<dd>
+			<input id="email_port" type="text" value="{$email_message['value']['email_port']}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>发信人邮件地址：</dt>
+		<dd>
+			<input id="email_addr" type="text" value="{$email_message['value']['email_addr']}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>SMTP身份验证用户名：</dt>
+		<dd>
+			<input id="email_id" type="text" value="{$email_message['value']['email_id']}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>SMTP身份验证码：</dt>
+		<dd>
+			<input id="email_pass" type="text" value="{$email_message['value']['email_pass']}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否使用安全链接：</dt>
+		<dd>
+			<input id="email_is_security" type="checkbox" class="checkbox" {if condition="$email_message['value']['email_is_security'] eq 'true'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>测试接收邮件地址：</dt>
+		<dd>
+			<input id="email_test" type="text" />
+			<button class="btn-test" onclick="testSend()">测试发送</button>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setConfigAjax();">提交</button>
+</div>
+<script>
+function setConfigAjax(){
+	var is_use = 0;
+	if($("#email_is_use").is(':checked')){
+		var is_use = 1;
+	}
+	var email_is_security = false;
+	if($("#email_is_security").is(':checked')){
+		var email_is_security = true;
+	}
+	var email_host = $("#email_host").val();
+	var email_port = $("#email_port").val();
+	var email_addr = $("#email_addr").val();
+	var email_id = $("#email_id").val();
+	var email_pass = $("#email_pass").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/setemailmessage')}",
+		data:{
+			'is_use':is_use,
+			'email_host':email_host,
+			'email_port':email_port,
+			'email_addr':email_addr,
+			'email_id':email_id,
+			'email_pass':email_pass,
+			'email_is_security':email_is_security
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],'');
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+function testSend(){
+	var email_host = $("#email_host").val();
+	var email_port = $("#email_port").val();
+	var email_addr = $("#email_addr").val();
+	var email_id = $("#email_id").val();
+	var email_pass = $("#email_pass").val();
+	var email_is_security = false;
+	if($("#email_is_security").is(':checked')){
+		var email_is_security = true;
+	}
+	var email_test = $("#email_test").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/testsend')}",
+		data:{
+			'email_host':email_host,
+			'email_port':email_port,
+			'email_addr':email_addr,
+			'email_id':email_id,
+			'email_pass':email_pass,
+			'email_is_security':email_is_security,
+			'email_test':email_test
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"]);
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{else/}
+<style>
+.user_type label{
+	vertical-align: middle;
+	margin: 0 5px 0 0;
+	display: inline-block;
+	font-weight: normal
+}
+.user_type input{
+	margin:0;
+}
+</style>
+<div class="set-style">
+	<dl>
+		<dt>是否开启：</dt>
+		<dd style="width:5%;">
+			<input id="sms_is_use" type="checkbox" class="checkbox" {if condition="$mobile_message.is_use=='1'"}checked="checked"{/if}/>
+		</dd>
+		<dd style="width:20%;color:#666;margin-left: 60px;" class="showmessage">当前使用阿里大于短信配置</dd>
+	</dl>
+	<dl>
+		<dt>APP_KEY：</dt>
+		<dd>
+			<input id="app_key" type="text" value="{$mobile_message['value']['appKey']}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>SECRET_KEY：</dt>
+		<dd>
+			<input id="secret_key" type="text" value="{$mobile_message['value']['secretKey']}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>短信内容签名：</dt>
+		<dd>
+			<input id="free_sign_name" type="text" value="{$mobile_message['value']['freeSignName']}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>阿里大于用户：</dt>
+		<dd class="user_type">
+		
+			<input type="radio" value="0" name="user_type" id="user_type_old" {if condition="$mobile_message['value']['user_type'] == 0"}checked="checked"{/if} />
+			<label for="user_type_old">旧用户</label>
+			
+			<input type="radio" value="1" name="user_type" id="user_type_new" {if condition="$mobile_message['value']['user_type'] == 1"}checked="checked"{/if} />
+			<label for="user_type_new">新用户</label>
+			
+			<p style="color:#FF8400;font-weight:bold">注:新用户为已入驻阿里云短信</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setConfigAjax();">提交</button>
+</div>
+<script>
+$("#sms_is_use").click(function(){
+	if($("#sms_is_use").prop("checked")){
+		$(".showmessage").toggle();
+	}else{
+		$(".showmessage").toggle();
+	}
+})
+
+function setConfigAjax(){
+	var is_use = 0;
+	if($("#sms_is_use").is(':checked')){
+		var is_use = 1;
+	}
+	var app_key = $("#app_key").val();
+	var secret_key = $("#secret_key").val();
+	var free_sign_name = $("#free_sign_name").val();
+	var user_type = $("input[name='user_type']:checked").val();//用户类型
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/setmobilemessage')}",
+		data:{
+			'is_use':is_use,
+			'app_key':app_key,
+			'secret_key':secret_key,
+			'free_sign_name':free_sign_name,
+			'user_type' : user_type
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"]);
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/if}
+{/block}

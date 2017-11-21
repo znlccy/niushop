@@ -1,0 +1,110 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<style>
+.modal-tab tr:first-child{border-bottom:1px solid #ccc;}
+.modal-tab td:first-child{line-height: 50px;text-align:right;width: 25%;}
+input[type="text"], input[type="password"], input.text, input.password{margin-top:18px;}
+</style>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="table-div">
+		<table>
+			<tbody>
+				<tr><td class="back-f5f5f5">授权信息</td></tr>
+				<tr>
+					<td>授权账号：
+					{if condition="$result neq ''"}
+						{$devolution_user_name} &nbsp;&nbsp;<a href="javascript:;" target="_blank" style="color:#666;" onclick="bind()">重新绑定</a>
+					{else/}
+					&nbsp;&nbsp;<a href="javascript:;" target="_blank" style="color:#666;" onclick="bind()">立即绑定</a>
+					{/if}
+					</td>
+				</tr>
+				<tr><td>站点URL：{$result['data']['devolution_url']}</td></tr>
+				<tr><td>授权时间：
+				{notempty name="$result['data']['devolution_obj']['devolution_date']"}
+		        	{$result.data.devolution_obj.devolution_date|strtotime|date="Y-m-d",###}
+		        {/notempty}</td></tr>
+				<tr><td >当前版本：{$niu_version}</td></tr>
+				<tr><td >服务器版本：{$latestVersion.data.latest_version}</td></tr>
+				<tr><td >授权版本：{$result.data.devolution_version_name}</td></tr>
+				{if condition="$result['code'] eq 0"}
+					<tr><td >授权状态：<span style="color:red">已授权</span>&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+				{else/}
+					<tr><td >授权状态：<span style="color:red">未授权</span>&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.niushop.com.cn/authorization.html" target="_blank" style="color:#666;text-decoration: underline;">去授权</a></td></tr>
+				{/if}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="modal fade hide" id="bind_user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:400px;left:56%">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>云平台绑定</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style" style="height:165px;width:320px;margin:auto;">
+					<table class="modal-tab" style="width: 100%;">
+						<tr>
+							<td colspan="2" style="text-align:left">输入Niushop官方授权账号完成绑定
+							<a style="float:right;color:#00C0FF;" href="http://www.niushop.com.cn/authorization.html" target="_blank" >授权</a>
+							</td>
+						</tr>
+						<tr>
+							<td>用户名：</td>
+							<td>
+								<input id="user_name" type="text" class="input-common"/>
+							</td>
+						</tr>
+						<tr>
+							<td>密码：</td>
+							<td>
+								<input id="user_pass" type="text" class="input-common"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+			<div class="modal-footer">
+				<input type="hidden" id="modify_username_hidden" />
+				<button class="btn btn-primary" onclick="bind_mess()" id="butSubmit">绑定</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function bind(){
+	$("#bind_user").modal("show");
+}
+
+function bind_mess(){
+	var user_name = $("#user_name").val();
+	var user_pass = $("#user_pass").val();
+	$.ajax({
+		type:'post',
+		url : "{:__URL('ADMIN_MAIN/Upgrade/onlineUpdate')}",
+		data:{
+			'user_name':user_name,
+			'password':user_pass
+		},
+		success:function(data){
+			if(data['code']==0){
+				showMessage('success',data['message']);
+				$("#bind_user").modal("hide");
+				window.location.reload();
+			}else{
+				showMessage('error',data['message']);
+			}
+		}
+	})
+}
+</script>
+{/block}

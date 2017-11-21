@@ -1,0 +1,78 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+    <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_balance.css">
+	<script type="text/javascript">window.onerror=function(){return true;}</script>
+<style type="text/css">
+.ns-table td{
+	width:100%;
+}
+.ns-lf{
+	float:left;
+}
+.ns-rg{
+	color:red;font-size:14px;float:right
+}
+.ns-rg-time{
+	font-size:14px;float:right
+}
+</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+		<a class="head_back" id="backoutapp" href="{:__URL('APP_MAIN/member/index?shop_id='.$shop_id)}"><i class="icon-back"></i></a>
+		<div class="head-title">{:lang('member_my_points')}</div>
+	</section>
+{/block}
+
+{block name="main"}
+    
+    <div id="main" class="detail-main">
+		<div class="my-account">
+			<div class="account-box">
+				<p class="balace">{$sum}</p>
+				<p style="font-size: 15px;color: #fff;">{:lang('goods_integral')}</p>
+				{if condition="$pointconfiginfo['is_open'] == 1"}
+				<a href="{:__URL('APP_MAIN/member/integralexchangebalance?shop_id='.$shop_id)}"  class="account-title bottom">{:lang('member_exchange_balance')}</a>
+				{/if}  
+			</div>
+		</div>
+		<div class="integral-declaration">
+			<div class="declaration-title">
+				{:lang('integral_declaration')}
+			</div>
+			<div class="declaration-content">
+				{$pointconfiginfo.desc}
+			</div>
+		</div>
+{if condition="$member_point_list['total_count'] gt 0"}		
+	    <table class="ns-table">
+	  			{volist name="member_point_list['data']" id="vo"}
+	  			<tr align="center">
+	  				<td style="padding-bottom: 0.2rem;font-size: 16px;">
+					    <span class="ns-lf" style="color: #444">{$vo.type_name}</span>
+					    <span class="ns-rg">{$vo.number|ceil}</span>
+					</td>	
+					<td style="padding-top: 0.2rem;font-size: 14px;color: #888;">
+						<span class="ns-lf">{$vo.text}</span>
+						<span class="ns-rg-time">{$vo.create_time | getTimeStampTurnTime}</span>
+					</td> 
+				</tr>
+	  			{/volist}
+	  	</table>
+{else/}
+        <div>
+            <div class="emptyFrame"> <i class="user_balance"></i><span>{:lang('you_have_not_got_any_minutes_yet')}！</span></div>
+        </div>
+{/if} 	  	
+   </div>
+ <script>
+ $("#backoutapp").click(function (){
+     var json ={
+     		"center" : "1",
+         }
+     window.webkit.messageHandlers.center.postMessage(json);
+ })
+ </script>
+{/block}
+{block name="bottom"}
+{/block}

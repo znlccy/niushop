@@ -1,0 +1,248 @@
+{extend name="wap/default/Shop/shopBase" /}
+
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/control_type.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/goods_list.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/shop_index.css">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/collection_goods_or_shop.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/shop_index.js"></script>
+{/block}
+
+{block name="goodsHead"}
+{if condition="$onekey_subscribe.url != ''AND $is_subscribe eq 0"}
+<div class="fixed-focus-on">
+	<i class="close" onclick="$('.fixed-focus-on').hide();">x</i>
+	<div class="foucs-on-block">
+	{if condition="$shop_info['shop_logo'] !=''"}
+	<img class="user-bg" src="{$shop_info['shop_logo']}">
+	{else/}
+	<img class="user-bg" src="__TEMP__/{$style}/public/images/default/default_shop_avatar.png">
+	{/if}
+	{if condition="$source_user_name !=''"}
+	<p>{:lang('i_am_your_best_friend')}<span>{$source_user_name}</span>,{:lang('recommended_to_you_business_from_now')}</p>
+	<button onclick="location.href='{$onekey_subscribe.url}'">{:lang('click_on_the_attention')}</button>
+	{else/}
+	<p>{:lang('you_are_not_currently_concerned_about_the_WeChat_public_account')}，{:lang('click_on_the_attention')}</p>
+	<button onclick="location.href='{$onekey_subscribe.url}'">{:lang('click_on_the_attention')}</button>
+	{/if}
+	</div>
+</div>
+{/if}
+<article class="user-head">
+
+	{if condition="$shop_info['shop_avatar'] !=''"}
+	<img class="user-bg" src="{:__IMG($shop_info['shop_avatar'])}">
+	{else/}
+	<img class="user-bg" src="__TEMP__/{$style}/public/images/default/default_shop_avatar.png">
+	{/if}
+	
+	<div class="user-info">
+		{if condition="$shop_info['shop_logo'] !=''"}
+		<img class="user-logo" src="{$shop_info['shop_logo']}">
+		{else/}
+		<img class="user-logo" src="__TEMP__/{$style}/public/images/default/default_shop_logo.png">
+		{/if}
+		<h1>{$shop_info['shop_name']}</h1>
+	</div>
+	
+	<div class="user-nav js-user-nav">
+		<ul>
+			<li><a href="{:__URL('APP_MAIN/shop/goodslist?shop_id='.$shop_id)}"><i class="fa fa-align-justify"></i>{:lang('all_goods')}</a></li>
+			<li><a href="{:__URL('APP_MAIN/shop/goodslist?shop_id='.$shop_id)}"><i class="fa fa-list-ul"></i>{:lang('goods_group')}</a></li>
+			<li onclick="collectionGoodsOrShop('.js-collection',{$shop_id},'shop','')">
+				<a href="javascript:;">
+					<i class="fa fa-book"></i>
+					<span class="js-collection">
+						{if condition="$is_member_fav_shop ==0"}
+						{:lang('mark_shop')}
+						{else/}
+						{:lang('goods_collected')}
+						{/if}
+					</span>
+				</a>
+			</li>
+			{if condition="$is_shop_member eq 1"}
+				<li><a href="{:__URL('APP_MAIN/member/index?shop_id='.$shop_id)}" style="color:red;"><i class="fa fa-heart"></i>{:lang('member_member_center')}</a></li>
+			{else /}
+				<li><a href="javascript:;" onclick="userAssociateShop({$shop_id},this)"><i class="fa fa-heart"></i>{:lang('membership_form')}</a></li>
+			{/if}
+		</ul>
+	</div>
+</article>
+{/block}
+
+{block name="main" }
+<div style="display:none;position: fixed;left: 10px;z-index: 999999;top:25%;border-radius: 100%;height:30px;width:30px;line-height: 30px;text-align: center;">
+	<a href="{:__URL('APP_MAIN')}" style="color: #ffffff;">
+		<img src="__TEMP__/{$style}/public/images/shop_goback.png"/>
+	</a>
+</div>
+<input type="hidden" id="shop_id" value="{$shop_info['shop_id']}">
+{include file='wap/default/share'/}
+<script>
+$(function(){
+$.ajax({
+	type:"post",
+	url : "{:__URL('APP_MAIN/shop/getsharecontents')}",
+	data : {
+		'shop_id':$("#shop_id").val()
+	},
+	success : function(data){
+		//alert(JSON.stringify(data));
+			/* $("#share_title").val(data['share_title']);
+			$("#share_desc").val(data['share_contents']);
+			$("#share_url").val(data['share_url']);
+			$("#share_img_url").val(data['share_img']);\ */
+			wx.config({
+			    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+			    appId: $("#appId").val(), // 必填，公众号的唯一标识
+			    timestamp: $("#jsTimesTamp").val(), // 必填，生成签名的时间戳
+			    nonceStr:  $("#jsNonceStr").val(), // 必填，生成签名的随机串
+			    signature: $("#jsSignature").val(),// 必填，签名，见附录1
+			    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+			});
+			wx.ready(function () {
+			    var title = data['share_title'];
+			    var share_contents = data['share_contents']+'\r\n';
+			    var share_nick_name = data['share_nick_name']+'\r\n';
+			    var desc2 = share_contents+ share_nick_name + "{:lang('heat_collection')}：★★★★★";
+			    var url = data['share_url'];
+			    var img_url = data['share_img'];
+			        wx.onMenuShareAppMessage({
+			            title: title,
+			            desc: desc2,
+			            link: url,
+			            imgUrl: img_url,
+			            trigger: function (res) {
+//			                alert('用户点击发送给朋友');
+			            },
+			            success: function (res) {
+//			                alert('已分享');
+			           
+			            },
+			            cancel: function (res) {
+			                //alert('已取消');
+			            },
+			            fail: function (res) {
+			                //alert(JSON.stringify(res));
+			            }
+			        });
+
+			    // 2.2 监听“分享到朋友圈”按钮点击、自定义分享内容及分享结果接口
+			        wx.onMenuShareTimeline({
+			            title: title,
+			            link: url,
+			            imgUrl: img_url,
+			            trigger: function (res) {
+			              // alert('用户点击分享到朋友圈');
+			            },
+			            success: function (res) {
+			                //alert('已分享');
+			            
+			            },
+			            cancel: function (res) {
+			                //alert('已取消');
+			            },
+			            fail: function (res) {
+			           //     alert(JSON.stringify(res));
+			            }
+			        });
+
+			    // 2.3 监听“分享到QQ”按钮点击、自定义分享内容及分享结果接口
+			        wx.onMenuShareQQ({
+			            title: title,
+			            desc: desc2,
+			            link: url,
+			            imgUrl: img_url,
+			            trigger: function (res) {
+			                //alert('用户点击分享到QQ');
+			            },
+			            complete: function (res) {
+			                //alert(JSON.stringify(res));
+			            },
+			            success: function (res) {
+			                //alert('已分享');
+			            	
+			            },
+			            cancel: function (res) {
+			                //alert('已取消');
+			            },
+			            fail: function (res) {
+			                //alert(JSON.stringify(res));
+			            }
+			        });
+
+			    // 2.4 监听“分享到微博”按钮点击、自定义分享内容及分享结果接口
+			        wx.onMenuShareWeibo({
+			            title: title,
+			            desc: desc2,
+			            link: url,
+			            imgUrl: img_url,
+			            trigger: function (res) {
+			                //alert('用户点击分享到微博');
+			            },
+			            complete: function (res) {
+			                //alert(JSON.stringify(res));
+			            },
+			            success: function (res) {
+			                //alert('已分享');
+			            
+			            },
+			            cancel: function (res) {
+			                //alert('已取消');
+			            },
+			            fail: function (res) {
+			                //alert(JSON.stringify(res));
+			            }
+			        });
+
+
+			})
+	
+			}
+		})
+		
+	$(".user-logo").next().css("padding-left",(parseInt($(".user-logo").width())+10)+"px");
+})
+</script>
+
+
+<script>var is_member_fav_shop = "{$is_member_fav_shop}";</script>
+<div class="com-content">
+
+<!-- {1include file='wap/default/Shop/navi'/} -->
+<style type="text/css">.custom-search-button{top: 1px!important;}</style>
+<div style="width: 100%;background-color: #fff;padding: 10px 0px;">
+{include file='wap/default/Shop/search'/}
+</div>
+{include file='wap/default/Shop/notice' text="{:lang('welcome_open')}"/}
+
+	{foreach name = "goods_list.nav" item="nav" key = "k"}
+	{if condition="$nav.count>0"}
+	<div class="control">
+		<div class="control_l">
+			<!-- <span class="control_l_img"><img src="__TEMP__/{$style}[images]" alt="" /></span> -->
+			<h1><i></i>{$nav.title}<i></i></h1>
+		</div>
+	</div>
+	<section class="members_goodspic">
+		<ul>
+			{foreach name = "goods_list.list[$k]" item="goods"}
+			<li class="gooditem">
+				<div class="img">
+					<a href="{:__URL('APP_MAIN/Goods/goodsDetail?id='.$goods['goods_id'].'&shop_id='.$goods['shop_id'])}"><img class="lazy" src="{:__IMG($goods['pic_cover_micro'])}"></a>
+				</div>
+				<div class="info">
+					<p class="goods-title"><a href="{:__URL('APP_MAIN/Goods/goodsDetail?id='.$goods['goods_id'].'&shop_id='.$goods['shop_id'])}">{$goods.goods_name}</a></p>
+					<p class="goods-price"><em>￥{$goods.promotion_price}</em></p>
+					<a href="javascript:CartGoodsInfo({$goods.goods_id},{$goods.state})"><div class="goods-buy"></div></a>
+				</div>
+			</li>
+			{/foreach}
+		</ul>
+	</section>
+	{/if}
+	{/foreach}
+	<div class="h60"></div>
+</div>
+{/block}

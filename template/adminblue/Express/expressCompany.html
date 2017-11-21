@@ -1,0 +1,43 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<table class="mytable">
+			<tr>
+				<th width="50%" style="text-align: left;">
+					<button class="btn-common-delete btn-small" onclick="batchDelete()">批量删除</button>
+					<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/express/addexpresscompany')}';">添加物流公司</button>
+				</th>
+				<th width="20%">
+					<input type="text" id = 'search_text' placeholder="请输入物流公司名称或编号" class="input-common"/>
+					<input type="button" onclick="searchData()" value="搜索" class="btn-common"/>
+				</th>
+			</tr>
+		</table>
+		<div class="con style0list">
+			<table class="table-class">
+				<thead>
+					<tr align="center">
+						<th><input type="checkbox" onclick="CheckAll(this)"></th>
+						<th>物流公司</th>
+						<th>物流编号</th>
+						<th>联系电话</th>
+						<th>是否默认</th>
+						<th>排序</th>
+						<th>是否启用</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="productTbody"></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script src="ADMIN_JS/express/express_company.js"></script>
+<script>
+var pageshow = "{$pageshow}";
+</script>
+{/block}

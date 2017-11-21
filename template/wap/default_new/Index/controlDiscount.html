@@ -1,0 +1,157 @@
+<style type="text/css">
+.group-list-box{
+	width:100%;
+	margin:0 auto 10px auto;
+	float: none;
+	padding: 10px 0;
+	background:#fff;
+}
+.group-list-box .controltype{
+	width: 90%;
+	padding: 0 5%;
+	vertical-align: bottom;
+}
+.group-list-box .controltype span{
+	color: #FF4E00;
+	font-weight: normal;
+}
+.group-list-box .controltype span.title{
+	font-size: 17px;
+
+}
+.group-list-box .controltype span.more{
+	color: #FF4E00;
+	float: right;
+	font-size: 12px;
+}
+.group-list-box .controltype span.more a{
+	color: #FF4E00;
+	font-size: 12px;
+}
+.group-list-box .discount-list{
+	overflow-y: auto;
+	width: 100%;
+}
+.group-list-box .discount-list::-webkit-scrollbar,.group-list-box .discount-list ul::-webkit-scrollbar{
+	display: none;
+}
+.group-list-box .discount-list ul{
+	white-space: nowrap;
+	overflow-y: hidden;
+}
+.group-list-box .discount-list ul li{
+	width: 35%;
+	margin-left: 3%;
+	display: inline-block;
+}
+.group-list-box .discount-list ul li .goods_img{
+	width: 100%;
+	/*height: 120px;*/
+	overflow: hidden;
+	position: relative;
+}
+.group-list-box .discount-list ul li .goods_img a{
+	display: block;
+	text-align: center;
+	line-height: 120px;
+	padding: 50% 0;
+} 
+.group-list-box .discount-list ul li .goods_img a img{
+	width: 100%;
+	max-height: 100%;
+	vertical-align: middle;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.group-list-box .discount-list ul li .goods_img a .brand-time{
+	position: absolute;
+	z-index: 10;
+	bottom: 0;
+	background:rgba(0,0,0,0.4);
+	color: #fff;
+	width: 100%;
+	line-height: 25px;
+	height: 25px;
+	text-align: center;
+	font-size: 12px;
+}
+.group-list-box .discount-list ul li a .goods-name{
+	font-size: 13px;
+	color: #333;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-top: 5px;
+}
+</style>
+<div class="group-list-box">
+	<div class="controltype" >
+		<span class="title">限时折扣</span>
+		<span class="more"><a href="{:__URL('APP_MAIN/index/discount')}">更多秒杀</a></span>
+	</div>
+	<div class="discount-list">
+		<ul>
+			{volist name="discount_list" id="vo"}
+			<li>
+				<div class="goods_img">
+					<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$vo['goods_id'])}" title="{$vo.goods_name}">
+					    <img src="{:__IMG($vo['picture']['pic_cover_small'])}">
+						<div class="brand-time" >
+							<i></i>
+							<span class="settime" starttime="{$vo.start_time | getTimeStampTurnTime}" endtime="{$vo.end_time | getTimeStampTurnTime}" ></span>
+						</div>
+					</a>
+				</div>
+				<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$vo['goods_id'])}" title="{$vo.goods_name}"><div class="goods-name">{$vo.goods_name}</div></a>
+				<div class="brand-info" style="height:initial;">
+					<div class="brand-info-left" style="float:none;">
+						<span class="b-price" style="float:left;margin:5px 0">
+						<p>￥{$vo.promotion_price}</p>
+						</span>
+						<em></em>
+						<span class="buyer" style="float:left;line-height:31px;"><s style="margin-left: 10px;">
+						{if condition ="$vo['market_price'] > 0"}
+							￥{$vo.market_price}
+						{/if}
+						</s></span>
+					</div>
+				</div>
+			</li>
+			{/volist}
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+$().ready(function() {
+	updateEndTime();
+});
+//倒计时函数
+function updateEndTime() {
+	var date = new Date();
+	var time = date.getTime(); //当前时间距1970年1月1日之间的毫秒数
+
+	$(".settime").each(function(i) {
+		var endDate = this.getAttribute("endTime"); //结束时间字符串
+		
+		//转换为时间日期类型
+		var endDate1 = eval('new Date(' + endDate.replace(/\d+(?=-[^-]+$)/, function(a) {
+			return parseInt(a, 10) - 1;
+		}).match(/\d+/g) + ')');
+		
+		var endTime = endDate1.getTime(); //结束时间毫秒数
+
+		var lag = (endTime - time) / 1000; //当前时间和结束时间之间的秒数
+		if (lag > 0) {
+			var second = Math.floor(lag % 60);
+			var minite = Math.floor((lag / 60) % 60);
+			var hour = Math.floor((lag / 3600) % 24);
+			var day = Math.floor((lag / 3600) / 24);
+			$(this).html(day + "{:lang('days')}" + hour + "{:lang('hours')}" + minite + "{:lang('minutes')}" + second + "{:lang('second')}");
+		} else{
+			$(this).html("{:lang('activity_over')}！");
+		}
+	});
+	setTimeout("updateEndTime()", 1000);
+}
+</script>

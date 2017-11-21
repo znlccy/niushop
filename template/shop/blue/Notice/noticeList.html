@@ -1,0 +1,38 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<style>
+.fr{ width:1200px; background-color: #fff; }
+</style>
+{/block}
+{block name="main"}
+<div class="content w990 clearfix">
+	<div class="breadcrumb clearfix" style="margin: 10px 10px 5px auto;">
+		<a href="{:__URL('SHOP_MAIN/index')}" class="index">{:lang('home_page')}</a>
+		<span class="crumbs-arrow">&gt;</span>
+		<a href="{:__URL('SHOP_MAIN/notice/noticeList')}"><span class="last">{:lang('notice')}</span></a>
+	</div>
+	<div class="fr">
+		<div class="right-inner">
+			{if condition="count($list) neq 0"}
+			{volist name="$list" id="vo"}
+			<div style="margin-top: 15px;">
+				<div style="margin-top: 15px; overflow: hidden;">
+					<a href="{:__URL('SHOP_MAIN/notice/detail', 'id='.$vo.id)}" style="float: left;">{$vo.notice_title}</a>
+					<span style="float: right;">{$vo.create_time | getTimeStampTurnTime}</span>
+				</div>
+			</div>
+			{/volist}
+			{else/}
+			<div style="margin-top: 15px;">
+				<div style="margin-top: 15px; overflow: hidden;text-align: center;">
+					<span>{:lang('no_notice')}</span>
+				</div>
+			</div>
+			{/if}
+		</div>
+	</div>
+	<!-- 右半部分内容 -->
+</div>
+{/block}
+{block name="javascript"}{/block}
+

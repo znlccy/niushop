@@ -1,0 +1,87 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<style>
+.table-class tbody td{border:0;vertical-align: middle;}
+.statistics{border:1px solid #F5F6F5;width:25%;height:70px;float:left;}
+.statistics img{padding:10px 0 0 15px;float:left;}
+.statistics  ul{float:left;font-size:12px;margin: 0 0 10px 25px;}
+.goods-name{max-width:30px;white-space: nowrap;overflow:hidden;text-overflow:ellipsis;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<td style="padding:10px;">
+			<input type="text" id="startDate" class="input-common w200" placeholder="请选择开始日期" onclick="WdatePicker()" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common w200" onclick="WdatePicker()" />
+			<input type="button" class="btn-common" onclick="LoadingInfo(1)" value="搜索" />
+		</td>
+	</tr>
+</table>
+<div class="total">
+	<div class="statistics">
+		<img src="__STATIC__/images/balance.png" />
+		<ul>
+			<li style="line-height: 40px;"><span>商品销售量</span></li>
+			<li><span style="font-size: 15px; font-weight: bold;" id="goods_sale_num">0</span></li>
+		</ul>
+	</div>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 40%;">
+		<col style="width: 20%;">
+		<col style="width: 10%;">
+		<col style="width: 30%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th>商品名称 </th>
+			<th>SKU名称</th>
+			<th style="text-align:center;">购买数量</th>
+			<th style="text-align:center;">购买时间</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/account/shopgoodsaccountList')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"goods_id":"{$goods_id}",
+			"start_date":start_date,
+			"end_date":end_date
+		},
+		success : function(data) {
+			var html = '';
+			if (data['data'].length > 0) {
+				for (var i = 0; i < data['data'].length; i++) {
+					html += '<tr align="center">';
+					html += '<td class="goods-name" title="' + data['data'][i]["goods_name"] + '">' + data['data'][i]["goods_name"] + '</td>';
+					html += '<td>' + data['data'][i]["sku_name"] + '</td>';
+					html += '<td>' + data['data'][i]["num"] + '</td>';
+					html += '<td>' + timeStampTurnTime(data['data'][i]["create_time"]) + '</td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="4">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			$("#goods_sale_num").html(data['total_count']);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

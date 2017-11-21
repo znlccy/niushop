@@ -1,0 +1,244 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.table{
+	width: 975px;
+}
+.table label{
+	display: inline-block;
+	vertical-align: middle;
+	height: 20px;
+	width: 140px;
+	line-height: 20px;
+	font-weight: normal;
+}
+.table label input{
+	margin-top: -3px;
+}
+.table label span{
+	margin-left: 3px;
+}
+.num{
+	font-weight: normal;
+}
+.modal-infp-style label input{
+	margin-top: -3px;
+}
+.modal-infp-style label span{
+	margin-left: 3px;
+}
+.modal-infp-style label{
+	width: 150px;
+	margin-left: 10px;
+	display: inline-block;
+	font-weight: normal;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="style0list">
+			<table class="table table-striped table-main">
+				<colgroup>
+					<col style="width: 20%">
+					<col style="width: 80%;">
+				</colgroup>
+				<thead>
+					<tr align="left" style="border-bottom: 1px solid #E3E3E3;">
+						<th>省</th>
+						<th>市</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="vo"}
+					<tr align="left">
+						<th class="province">			
+							<label for="province_{$vo.province_id}"><input type="checkbox" id="province_{$vo.province_id}" value="{$vo.province_id}" name="province_id_{$vo.province_id}" onclick="provinceClick({$vo.province_id},this);" 
+							{notempty name="$provinces"}{foreach name="provinces" item="po"}{if condition="$vo['province_id'] eq $po"}checked{/if}{/foreach}{/notempty}><span>{$vo.province_name}</span></label>	
+						</th>
+						<td class="city">
+						{volist name="$vo['city_list']" id="co"}
+							<label for="" style="width: 230px;">
+								<input type="checkbox" value="{$co.city_id}" name="city_pid_{$co.province_id}" class="city_{$co.city_id}" pid="{$co.province_id}" onclick="cityClick({$co.city_id},{$co.province_id},this)" {notempty name="citys"}{foreach name="$citys" item="to"}{if condition="$co['city_id'] eq $to"}checked{/if}{/foreach}{/notempty}>
+								<span>{$co.city_name}</span>
+								<span class="num">(0)</span>
+								<a href="javascript:;" onclick="selectDistrictAjax({$co.city_id},this);"  style="color: #999;">&nbsp;<i class="fa fa-pencil" aria-hidden="true"></i></a>
+							</label>
+						{/volist}
+						</td>	
+					</tr>
+					{/volist}
+					<tr>
+						<td colspan="2" style="text-align:center"><button type="button" class="btn btn-success" data-dismiss="modal"
+					onclick="save();">保存</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="districts" value="{notempty name='$districts'}{$districts}{/notempty}">
+<!-- 模态框 -->
+<div class="modal fade hide" id="evaluate" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">选择子地区</h4>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					{volist name="districtList" id="do"}
+					<label for="" style="display: none;">
+						<input type="checkbox" value="{$do.district_id}" name="district_pid_{$do.city_id}" class="district_{$do.district_id}">
+						<span>{$do.district_name}</span>
+					</label>
+					{/volist}
+				</div>
+			</div>
+			<input type="hidden" id="nowSelectCityId" value="">
+			<input type="hidden" id="lowerLevelNumVal" value=""> 
+			<div class="modal-footer">
+			    <span style="font-size: 12px;color: red;float: left;">选择完成后点击页面最下方的保存后方可生效</span>
+				<input type="hidden" id="evaluate_id" value="">
+				<button type="button" class="btn btn-success" data-dismiss="modal"
+					onclick="selectDistrict();">确认</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	//初始化
+	$(function(){  
+		var arr = $("#districts").val().split(',');
+		$("input[name^=district_pid_]").each(function(i,d){
+			var d_id = $(d).val();
+			for (var a = 0; a <arr.length; a++) {
+				if(d_id == arr[a]){
+					$(".district_"+d_id).attr("checked",true);
+					arr.splice(a,1);
+				}
+			}
+		})
+		$("input[name^=city_pid_]").each(function(i,d){
+			var city_id = $(d).val();
+			var selectNums = $("input[name=district_pid_"+city_id+"]:checked").length;
+			$(this).next().next().text('('+selectNums+')');
+		});
+	});  
+	//点击弹出模态框显示县级地区
+	function selectDistrictAjax(city_id,event){
+		var city_name = $(event).prev().prev("span").text();
+		$("#nowSelectCityId").val(city_id);
+		$("#myModalLabel").text("选择 "+city_name+" 子地区");
+		$("input[name=district_pid_"+city_id+"]").parent('label').show();
+		$("#evaluate").modal('show');
+	}
+	//点击模态框确认按钮时执行事件
+	$(".btn-success").click(function(){
+		var city_id = $("#nowSelectCityId").val();
+		if(city_id.length>0){
+			$("input[name=district_pid_"+city_id+"]").parent('label').hide();
+		}
+		//将选中的县的值存入数组
+		var selectNum =  $("input[name=district_pid_"+city_id+"]:checked").length;
+		if(selectNum >0){
+			$(".city_"+city_id).attr("checked",true);
+		}else{
+			$(".city_"+city_id).attr("checked",false);
+		}
+		var province_id = $(".city_"+city_id).attr("pid");
+		if($("input[name=city_pid_"+province_id+"]:checked").length>0){
+			$("#province_"+province_id).attr("checked",true);
+		}else{
+			$("#province_"+province_id).attr("checked",false);
+		}
+		$(".city_"+city_id).next().next(".num").text('('+selectNum+')');
+	})
+	//点击省时执行时间
+	function provinceClick(province_id,event){
+		if($(event).is(":checked")){
+			$("input[name=city_pid_"+province_id+"]:checkbox").attr("checked",true);
+			$("input[name=city_pid_"+province_id+"]:checkbox").each(function (i,d){
+				var city_id = $(d).val();
+				$("input[name=district_pid_"+city_id+"]:checkbox").attr("checked",true);
+				var selectNums = $("input[name=district_pid_"+city_id+"]:checkbox").length;
+				$(this).next().next().text('('+selectNums+')');
+			});
+		}else{
+			$("input[name=city_pid_"+province_id+"]:checkbox").attr("checked",false);
+			$("input[name=city_pid_"+province_id+"]:checkbox").each(function (i,d){
+				var city_id = $(d).val();
+				$("input[name=district_pid_"+city_id+"]:checkbox").attr("checked",false);
+				$(this).next().next().text('(0)');
+			});
+		}
+	}
+	//点击市时执行事件
+	function cityClick(city_id,province_id,event){
+		if($(event).is(":checked")){
+			$("input[name=district_pid_"+city_id+"]:checkbox").attr("checked",true);
+			var selectNums = $("input[name=district_pid_"+city_id+"]:checkbox").length;
+			$(event).next().next().text('('+selectNums+')');
+		}else{
+			$("input[name=district_pid_"+city_id+"]:checkbox").attr("checked",false);
+			$(event).next().next().text('(0)');	
+		}
+		if($("input[name=city_pid_"+province_id+"]:checked").length>0){
+			$("input[name=province_id_"+province_id+"]:checkbox").attr("checked",true);
+		}else{
+			$("input[name=province_id_"+province_id+"]:checkbox").attr("checked",false);
+		}
+	}
+	$(function(){ 
+		$('#evaluate').on('hide.bs.modal', function () {
+      		var city_id = $("#nowSelectCityId").val();
+			if(city_id.length>0){
+				$("input[name=district_pid_"+city_id+"]").parent('label').hide();
+			}
+  		})
+   	});
+	//保存所选地区
+	function save(){
+		var districtArray = new Array();
+		$("input[name^=district_pid_]").each(function (i,d){ 
+		    if(d.checked) { 
+		      	districtArray.push(d.value); 
+		    } 
+		})
+		var cityArray = new Array();
+		$("input[name^=city_pid_]").each(function (i,d){ 
+		    if(d.checked) { 
+		      	cityArray.push(d.value); 
+		    } 
+		})
+		var provinceArray = new Array();
+		$("input[name^=province_id_]").each(function (i,d){ 
+		    if(d.checked) { 
+		      	provinceArray.push(d.value); 
+		    } 
+		})
+		var province_id = provinceArray.join(',');
+		var city_id = cityArray.join(',');
+		var district_id =districtArray.join(',');
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/config/addorupdatedistributionareaajax')}",
+			data : {
+				"province_id" : province_id,
+				"city_id" : city_id,
+				"district_id" : district_id
+			},
+			success : function(data){
+				if(data['code']>0){
+					showMessage("success",data['message'],"{:__URL('ADMIN_MAIN/config/distributionareamanagement')}");
+				}
+			} 
+		})	
+	}
+</script>
+{/block}

@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+.refunds-block{margin-bottom:10px;}
+.refunds-block label{display: inline-block;margin: 0;vertical-align: middle;font-weight: normal;}
+.refunds-block input{margin:0;vertical-align: middle;}
+#refund_way_select{margin:0;}
+.refunds-block .tip{font-size:12px;color: red;font-weight: bold;margin:0;}
+#countdown_refund_confirm.disabled,.js-confirm-refund-ok.disabled{cursor:not-allowed;}
+.w130{width:130px;text-align: right;}
+.operating-hint{display: none;margin-left: 5px;color: red;vertical-align: middle;}
+.js-not-configured-prompt,.js-confirmation-prompt{float:left;margin: 0;height: 30px;line-height: 30px;display: none;}
+.js-confirmation-prompt{font-size:12px;}
+.js-not-configured-prompt p,.js-confirmation-prompt p{margin:0;}
+.js-confirmation-prompt p{font-weight: bold;color:#F44336;}
+.js-not-configured-prompt a{color:red;text-decoration:underline;}
+#refund-remark{width:95%;resize: none;border-radius: 0;font-size:12px;padding:10px;padding: 5px;margin: 0;}
+#pay_money,#apply_money,#balance_refund{font-weight: bold;color:#FF5722;}
+.js-confirmation + label{font-weight: normal;}

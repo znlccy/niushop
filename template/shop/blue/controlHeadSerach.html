@@ -1,0 +1,302 @@
+<!--
+	创建人：王永杰
+	创建时间：2017年2月7日 12:09:42
+	功能描述：顶部logo、搜索 
+-->
+<script type="text/javascript">
+	//显示搜索历史
+	function SearRecord(){
+		var arrSear=new Array();
+		var strSear = $.cookie("searchRecord");
+		var sear_html="<span>{:lang('recent_search')}</span>";
+		if(typeof(strSear)!='undefined' && strSear!='null'){
+			var arrSear=JSON.parse(strSear);
+			sear_html+='<a href="javascript:clearSearRecord();" class="clear-history"> <i></i>{:lang("empty")}</a><br/>';
+			for(var i=0;i<arrSear.length;i++){
+				sear_html+='<a href="'+__URL('SHOP_MAIN/goods/goodslist?keyword='+arrSear[i])+'" style="display:inline-block;">'+arrSear[i]+'</a>';
+			}
+		}
+		$('#search_titles').html(sear_html);
+	}
+	//清除搜索历史
+	function clearSearRecord(){
+		clear = JSON.stringify(new Array());
+		$.cookie("searchRecord", clear);
+		SearRecord();
+	}
+	
+	$(function(){
+		SearRecord();
+	});
+</script>
+<div class="as-shelter"></div>
+<div class="follow-box">
+	<div class="follow-box-con">
+		<a href="{:__URL('SHOP_MAIN')}" class="logo"><img src="{:__IMG($web_info['logo'])}"/></a>
+		<div class="search NS-SEARCH-BOX-TOP">
+			<form class="search-form NS-SEARCH-BOX-FORM" method="get"  onsubmit="return false">
+				<div class="search-info">
+					<div class="search-type-box">
+						<ul class="search-type" style="height: 36px; overflow: hidden;">
+							<li class="search-li-top curr" num="0">{:lang('baby')}</li>
+<!-- 							<li class="search-li-top" num="1" >店铺</li> -->
+						</ul>
+<!-- 						<i></i> -->
+					</div>
+					<div class="search-box">
+						<div class="search-box-con">
+							<input type="text" class="search-box-input NS-SEARCH-BOX-KEYWORD" name="keyword" tabindex="9" autocomplete="off" data-searchwords="{$default_keywords}" placeholder="{$default_keywords}"  value="{if condition="$keyword !=''"}{$keyword}{/if}">
+						</div>
+					</div>
+					<input type="hidden" id="searchtypeTop" name="type" value="0" class="searchtype">
+					<input type="button" id="btn_search_box_submit_top" value="{:lang('search')}" class="button NS-SEARCH-BOX-SUBMIT-TOP">
+				</div>
+			</form>
+		</div>
+		<div class="login-info"></div>
+	</div>
+</div>
+<div class="header">
+	<div class="w1210">
+		<div class="logo-info">
+			<a href="{:__URL('SHOP_MAIN')}" class="logo"> <img src="{:__IMG($web_info['logo'])}"/></a>
+		</div>
+		<div class="search NS-SEARCH-BOX">
+			<form class="search-form NS-SEARCH-BOX-FORM" method="get"  onsubmit="return false">
+				<div class="search-info">
+					<div class="search-type-box">
+						<ul class="search-type">
+							<li class="search-li curr" num="0">{:lang('baby')}</li>
+<!-- 							<li class="search-li" num="1">店铺</li> -->
+						</ul>
+<!-- 						<i></i> -->
+					</div>
+					<div class="search-box">
+						<div class="search-box-con">
+							<input type="text" class="keyword search-box-input NS-SEARCH-BOX-KEYWORD" name="keyword" tabindex="9" autocomplete="off" data-searchwords="{$default_keywords}" placeholder="{$default_keywords}" value="{if condition="$keyword !=''"}{$keyword}{/if}" />
+						</div>
+					</div>
+					<!-- <input type="hidden" id="searchtype" name="type" value="0" class="searchtype"> --> 
+					<input type="button" id="btn_search_box_submit" value="{:lang('search')}" class="button btn_search_box_submit NS-SEARCH-BOX-SUBMIT">
+				</div>
+				<!-- -热门搜索热搜词显示 -->
+				<div class="search-results hide NS-SEARCH-BOX-HELPER" style="display: none;">
+					<ul class="history-results">
+						<li class="title" id="search_titles" style="word-wrap:break-word "></li>
+						
+					</ul>
+					<ul class="rec-results">
+						<li class="title"><span>{:lang('hot_search')}</span> <i class="close"></i></li>
+						{volist name="hot_keys" id="hot_key" empty=""}
+						<li><a  href="{:__URL('SHOP_MAIN/goods/goodslist','keyword='.$hot_key)}" title="{$hot_key}">{$hot_key}</a></li>
+						{/volist}
+					</ul>
+				</div>
+			</form>
+			<ul class="hot-query">
+				<!-- 默认搜索词 -->
+				<li class="first"><a href="javascript:void(0);"></a></li>
+			</ul>
+		</div>
+		<!-- 搜索框右侧小广告 _start -->
+		<div class="header-right">
+			<a href="javascript:void(0);" class="my-cart"><span class="ico"></span>{:lang('shopping_cart_settlement')}<span class="right_border"></span></a>
+<!-- 			<a href="{:__URL('SHOP_MAIN/member')}" class="my-mall"><span class="ico"></span>{:lang('my_mall')}<span class="right_border"></span></a> -->
+			<div class="cart-box-mask-layer">
+				<i class="line"></i>
+				<div class="cart_title">最新加入的商品</div>
+				<div class="cart_goods_info">
+					<ul id="js_cart">
+						<p class="cart_empty">您的购物车中暂无商品</p>
+					</ul>
+					<!-- <p class="cart_empty">您的购物车中暂无商品</p> -->
+				</div>
+				<div class="cart-box-bottom">
+					<span class="total"></span><a href="{:__URL('SHOP_MAIN/goods/cart')}" class="cart_btn">去购物车结算</a>
+				</div>
+			</div>
+		</div>
+		<!-- 搜索框右侧小广告 _end -->
+	</div>
+</div>
+<!-- logo栏小广告  -->
+{include file='shop/blue/controlHeadSearchAdv' ap_id='1052'/}
+<script type="text/javascript">
+	$(document).ready(function() {
+		// 搜索框提示显示
+		$('.NS-SEARCH-BOX .NS-SEARCH-BOX-KEYWORD').focus(function() {
+			$(".NS-SEARCH-BOX .NS-SEARCH-BOX-HELPER").show();
+		});
+		// 搜索框提示隐藏
+		$(".NS-SEARCH-BOX-HELPER .close").on('click',function() {
+			$(".NS-SEARCH-BOX .NS-SEARCH-BOX-HELPER").hide();
+		});
+		// 清除记录
+		$(".NS-SEARCH-BOX-HELPER .clear").click(function() {
+			var url = '/search/clear-record.html';
+			$.post(
+				url,
+				{},
+				function(result) {
+					if (result.code == 0) {
+						$(".history-results .active").empty();
+					} else {
+					}
+				},
+				'json');
+		});
+	});
+	function search_box_remove(key) {
+		var url = '/search/delete-record.html';
+		$.post(url, {
+			data : key
+		}, function(result) {
+			if (result.code == 0) {
+				$("#" + key).css("display", "none");
+			} else {
+
+			}
+		}, 'json');
+	}
+	$(document).on("click", function(e) {
+		var target = $(e.target);
+		if (target.closest(".NS-SEARCH-BOX").length == 0) {
+			$('.NS-SEARCH-BOX-HELPER').hide();
+		}
+	})
+	// 鼠标移上时显示
+	$(".header-right").hover(
+		function(){
+			refreshShopCartBlue();
+			$(".cart-box-mask-layer").show();
+			$(".header .header-right a.my-cart span.right_border").css({
+				"transform" :"rotate(225deg)",
+				"marginTop" : "1px"
+			})
+		},
+		function(){
+			refreshShopCartBlue();
+			$(".cart-box-mask-layer").hide();
+			$(".header .header-right a.my-cart span.right_border").css({
+				"transform" : "rotate(45deg)",
+				"marginTop" : "-8px"
+			});
+		}
+	)
+</script>
+<script type="text/javascript">
+	//固定搜索
+	$(document).ready(function() {
+		$(".NS-SEARCH-BOX .NS-SEARCH-BOX-SUBMIT").click(function() {
+			var keyword_obj = $(this).parents(".NS-SEARCH-BOX").find(".NS-SEARCH-BOX-KEYWORD");
+			var keywords = keyword_obj.val();
+			if ($.trim(keywords).length == 0 || $.trim(keywords) == "{:lang('please_input_keywords')}") {
+				keywords = keyword_obj.attr("data-searchwords");
+			}
+			
+			$(keyword_obj).val(keywords);
+			if(keywords==null)
+			{
+				keywords = "";
+			}
+
+			if($.cookie("searchRecord") != undefined){
+				var arr = eval($.cookie("searchRecord"));				
+			}else{
+				var arr = new Array();
+			}
+			if(arr.length >0 ){
+				if($.inArray(keywords,arr)< 0){
+					arr.push(keywords);
+				}
+			}else{
+				arr.push(keywords);
+			}
+			$.cookie("searchRecord",JSON.stringify(arr));
+
+			if ($(".search-li.curr").attr('num') == 0) {
+				window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
+			}else{
+				window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
+			}
+		});
+	});
+	//浮动搜索
+	$(document).ready(function() {
+		$(".NS-SEARCH-BOX-TOP .NS-SEARCH-BOX-SUBMIT-TOP").click(function() {
+			var keyword_obj = $(this).parents(".NS-SEARCH-BOX-TOP").find(".NS-SEARCH-BOX-KEYWORD");
+			var keywords = $(keyword_obj).val();
+			if ($.trim(keywords).length == 0
+					|| $.trim(keywords) == "{:lang('please_input_keywords')}") {
+				keywords = $(keyword_obj).attr("data-searchwords");
+			}
+
+			if($.cookie("searchRecord") != undefined){
+				var arr = eval($.cookie("searchRecord"));				
+			}else{
+				var arr = new Array();
+			}
+			if(arr.length >0 ){
+				if($.inArray(keywords,arr)< 0){
+					arr.push(keywords);
+				}
+			}else{
+				arr.push(keywords);
+			}
+			$.cookie("searchRecord",JSON.stringify(arr));
+
+			$(keyword_obj).val(keywords);
+			if ($(".search-li-top.curr").attr('num') == 0) {
+				window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
+			}else{
+				window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
+			}
+		});
+	});
+	
+	
+	
+	  
+	
+	
+	
+	//回车键搜索
+	$('.NS-SEARCH-BOX-KEYWORD').bind('keypress', function (event) {
+		if (event.keyCode == 13) { 
+			var keyword_obj = $(this).parents(".NS-SEARCH-BOX").find(".NS-SEARCH-BOX-KEYWORD");
+			var keywords = keyword_obj.val();
+			if ($.trim(keywords).length == 0 || $.trim(keywords) == "{:lang('please_input_keywords')}") {
+				keywords = keyword_obj.attr("data-searchwords");
+			}
+			
+			$(keyword_obj).val(keywords);
+			if(keywords==null)
+			{
+				keywords = "";
+			}
+	
+			if($.cookie("searchRecord") != undefined){
+				var arr = eval($.cookie("searchRecord"));				
+			}else{
+				var arr = new Array();
+			}
+			if(arr.length >0 ){
+				if($.inArray(keywords,arr)< 0){
+					arr.push(keywords);
+				}
+			}else{
+				arr.push(keywords);
+			}
+			$.cookie("searchRecord",JSON.stringify(arr));
+	
+			if ($(".search-li.curr").attr('num') == 0) {
+				window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
+			}else{
+				window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
+			}
+		}
+	})
+	
+	
+	
+</script>

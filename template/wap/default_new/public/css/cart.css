@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+
+.checkbox {
+	background: url('../images/cartp2.png') 100% no-repeat;
+	margin-top: 40px;
+	cursor: pointer;
+	width: 20px;
+	height: 20px;
+	background-size: 100% 100%;
+}
+
+.custom-store-img {
+	display: inline-block;
+	vertical-align: middle;
+	height: 18px;
+	width: 18px;
+	background: url(../images/shop-img.png) no-repeat;
+	background-size: 18px 18px;
+	margin-right: 5px;
+}
+
+.cart_ed {
+	float: right;
+}
+
+.cart_ed a {
+	cursor: pointer;
+}

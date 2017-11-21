@@ -1,0 +1,53 @@
+{extend name="admin/base" /}
+{block name="right_tab"}
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>会员注册送积分:</dt>
+		<dd>
+			<p><input name="UserCode" id="reg_member_self_point" type="number" min="0"  value="{$res.reg_member_self_point}"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" ></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>签到送积分:</dt>
+		<dd>
+			<p><input name="UserCode" id="sign_point" type="number" value="{$res.sign_point}"  min="0" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  ></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>分享送积分:</dt>
+		<dd>
+			<p><input name="UserCode" id="share_point" type="number" value="{$res.share_point}" min="0"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" ></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setRewardRuleAjax();" style="margin:20px 0 20px 205px;">提交</button>
+</div>
+
+<script>
+	function setRewardRuleAjax(){
+		var sign_point = $("#sign_point").val();
+		var share_point = $("#share_point").val();
+		var reg_member_self_point = $("#reg_member_self_point").val();
+		$.ajax({
+			type : 'post',
+			url : "{:__URL('ADMIN_MAIN/reward/indexfx1')}",
+			data : {
+				"sign_point" : sign_point,
+				"share_point" : share_point,
+				"reg_member_self_point" : reg_member_self_point
+			},
+			success : function(data){
+				if(data['code'] >0){
+					showMessage("success", "设置成功！", "{:__URL('ADMIN_MAIN/reward/index')}");
+				}else{
+					showMessage("error", "设置失败");
+				}
+			}
+		})
+	}
+</script>
+{/block}

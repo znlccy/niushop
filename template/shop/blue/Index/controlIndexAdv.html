@@ -1,0 +1,24 @@
+<div class="w1210 ad-groups ad-groups5">
+	<div class="ad-groups5-layout">
+		<div class="ad-groups5-list">
+		</div>
+		<script type="text/javascript">
+			var ap_id = [ap_id];
+			var data = platformAdvLoadNew(ap_id);
+			var html = '';
+			if(data !=null && data != ''){
+				for (var i = 0; i < data["adv_list"].length; i++) {	
+					if(i==4) break;
+					if(data["adv_list"][i]['adv_image'] != undefined && data["adv_list"][i]['adv_image'] != ""){
+						html += '<div class="item" style="width:'+data["ap_width"]+'px;height:'+data["ap_height"]+'px;line-height:'+data["ap_height"]+'px;">';
+						html += '<a href="'+data["adv_list"][i]['adv_url']+'" target="_blank">';
+						html += '<img src="'+__IMG(data["adv_list"][i]['adv_image'])+'"></a></div>';
+					}
+				}
+				$('.ad-groups5-list').html(html);
+			}else{
+				$(".ad-groups5").hide();
+			}
+		</script>
+	</div>
+</div>

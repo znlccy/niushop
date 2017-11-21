@@ -1,0 +1,60 @@
+<div class="user-left"> <div class="sideNav">
+  <h1><a href="{:__URL('SHOP_MAIN/member/index')}"><span>{:lang('my_mall')}</span></a></h1>
+  <div class="userInfo">
+    <div class="myInfo clearfix"> 
+      <div class="photo">
+        <div class="mask">
+        {if condition="$member_img neq '' and $member_img neq '0'"}
+        	<img id="headImagePath" src="{:__IMG($member_img)}" style="border-radius: 0;display: block;">
+        {else/}
+        	<img id="headImagePath" src="__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png" style="border-radius: 0;display: block;">
+        {/if}
+      </div> 
+      </div>
+      <div class="info-op">
+      	<ul>
+      		<li class="info-op1"><span style="color: #fff;padding-left: 20px;">{$member_detail.level_name}</span></li> 
+        	<li class="info-op1"><i></i><a href="{:__URL('SHOP_MAIN/member/person')}">{:lang('modifying_data')}</a></li>
+        	<li class="info-op2"><i></i><a href="javascript:logout();" target="_top">{:lang('safe_exit')}</a></li>
+        </ul>
+      </div>
+    </div>
+    <a class="name" href="{:__URL('SHOP_MAIN/member/person')}">{$member_info['user_info']['nick_name']}</a>
+  </div>
+</div>
+ <div class="navList">
+      <div class="func func1 clearfix">
+        <p class="title"><i></i><span>{:lang('member_member_center')}</span></p>
+        <a href="{:__URL('SHOP_MAIN/member/index')}"  class="item"><span>{:lang('member_welcome_page')}</span><i></i></a> 
+        <a href="{:__URL('SHOP_MAIN/member/person')}"  class="item "><span>{:lang('member_personal_data')}</span><i></i></a>
+        <a href="{:__URL('SHOP_MAIN/member/usersecurity')}"  class="item "><span>{:lang('member_account_security')}</span><i></i></a>
+        <a href="{:__URL('SHOP_MAIN/member/addresslist')}" class="item "><span>{:lang('member_delivery_address')}</span><i></i></a>
+        <!-- 目前只有平台余额，直接进入详情 -->
+        <a href="{:__URL('SHOP_MAIN/member/balancelist')}" class="item " id="qiye_balance"><span>{:lang('member_account_balance')}</span><i></i></a>
+        <a href="{:__URL('SHOP_MAIN/member/balancewithdrawlist')}" class="item " id="qiye_balance_Withdrawals"><span>{:lang('member_cash_register')}</span><i></i></a>
+        <!-- <a href="SHOP_MAIN/member/balanceWithdrawals" class="item " id="qiye_balance_Withdrawals"><span>余额提现</span><i></i></a> -->
+        <a href="{:__URL('SHOP_MAIN/member/vouchers')}"  class="item "><span>{:lang('member_my_coupon')}</span><i></i></a>
+        <a href="{:__URL('SHOP_MAIN/member/integrallist')}"  class="item " id="qiye_point"><span>{:lang('member_my_points')}</span><i></i></a>
+      </div>
+      <div class="func func2 clearfix">
+        <p class="title"><i></i><span>{:lang('member_trading_center')}</span></p>
+        <a href="{:__URL('SHOP_MAIN/member/orderlist')}"  class="item "><span>{:lang('member_my_order')}</span><i></i></a> 
+        <a href="{:__URL('SHOP_MAIN/member/backlist')}"   class="item "><span>{:lang('refund_return_maintenance')}</span><i></i></a> 
+        <a href="{:__URL('SHOP_MAIN/member/goodsevaluationlist')}"   class="item "><span>{:lang('commodity_evaluation_drying_list')}</span><i></i></a> 
+        <a href="{:__URL('SHOP_MAIN/member/goodscollectionlist')}" class="item "><span>{:lang('member_merchandise_collection')}</span><i></i></a> 
+      </div>
+</div> </div>
+<script type="text/javascript">
+	$(function(){
+		//选中
+		$('.navList>a').removeClass('curs');
+		var path_info='{$path_info}';
+// 		alert(path_info);
+// 		alert();
+		if(path_info==''||path_info=="member"){
+			$("[href^='{:__URL('SHOP_MAIN/member/index')}']").addClass('curs');
+		}else{
+			$("[href^='{:__URL('SHOP_MAIN/'.$path_info)}']").addClass('curs');
+		}
+	})
+</script>

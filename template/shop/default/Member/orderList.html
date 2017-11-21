@@ -1,0 +1,220 @@
+{extend name="shop/default/Member/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+<script type="text/javascript">
+var shopmain = '{:__URL('SHOP_MAIN')}';
+</script>
+<script src="__TEMP__/{$style}/public/js/order.js"></script>
+<style type="text/css">
+.nav_active{background:#E6E6E6; color:#FFF;}
+.tip-box{position: static;  margin-top: 100px;}
+</style>
+{/block}
+{block name="main"}
+<div class="user-right">
+    	<div class="box">
+          <div class="tabmenu">
+            <ul class="tab">
+              <li class="active"> <a href="javascript:void(0);" >{:lang('member_my_order')}</a> </li>
+            </ul>
+          </div>
+          <div id="J_Remide" class="remide-box">
+            <h3>{:lang('my_trading_reminder')}：</h3>
+            <ul>
+              <li {if condition="$status eq 'all'"} class="nav_active" {/if} va="all"><a href="{:__URL('SHOP_MAIN/member/orderlist','status=all')}" >{:lang('whole')}(<span class="num" id="all">{$statusNum['all']}</span>)</a></li>
+              <li {if condition="$status eq '0'"} class="nav_active" {/if} va="0"><a href="{:__URL('SHOP_MAIN/member/orderlist','status=0')}">{:lang('member_pending_payment')}(<span class="num" id="wait_pay">{$statusNum['wait_pay']}</span>)</a></li>
+              <li {if condition="$status eq '1'"} class="nav_active" {/if} va="1"><a href="{:__URL('SHOP_MAIN/member/orderlist','status=1')}">{:lang('member_shipment_pending')}(<span class="num" id="wait_delivery">{$statusNum['wait_delivery']}</span>)</a></li>
+              <li {if condition="$status eq '2'"} class="nav_active" {/if} va="2"><a href="{:__URL('SHOP_MAIN/member/orderlist','status=2')}">{:lang('member_goods_received')}(<span class="num" id="wait_recieved">{$statusNum['wait_recieved']}</span>)</a></li>
+              <li {if condition="$status eq '3'"} class="nav_active" {/if} va="3"><a href="{:__URL('SHOP_MAIN/member/orderlist','status=3')}">{:lang('member_received_goods')}(<span class="num" id="recieved">{$statusNum['recieved']}</span>)</a></li>
+              <li {if condition="$status eq '4'"} class="nav_active" {/if} va="4"><a href="{:__URL('SHOP_MAIN/member/orderlist','status=4')}">{:lang('refund_after_sale')}(<span class="num" id="refunding">{$statusNum['refunding']}</span>)</a></li>
+              <li {if condition="$status eq '5'"} class="nav_active" {/if} va="5"><a href="{:__URL('SHOP_MAIN/member/orderlist','status=5')}">{:lang('member_pending_evaluation')}(<span class="num" id="wait_evaluate">{$statusNum['wait_evaluate']}</span>)</a></li>
+            </ul>
+          </div>
+          <div class="extra-r" style="display:none">
+            <div class="search-01">
+              <input id="ip_keyword" name="" class="s-itxt" value="{:lang('name_of_commodity_commodity_number_order_no')}" onfocus="if (this.value==this.defaultValue) this.value=&#39;&#39;" onblur="if (this.value==&#39;&#39;) this.value=this.defaultValue" onkeydown="javascript:if(event.keyCode==13) OrderSearch(&#39;ip_keyword&#39;);" type="text">
+              <!--input name="" type="button" value="查 询" class="btn-13" onclick="OrderSearch('ip_keyword')" clstag="click|keycount|orderinfo|search"/--> 
+              <a href="javascript:;" class="btn-13" onclick="OrderSearch(&#39;ip_keyword&#39;)" clstag="click|keycount|orderinfo|search">{:lang('member_query')}</a> </div>
+            <div class="blank"></div>
+          </div>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="bought-table">
+            <thead>
+              <tr class="col-name">
+                <th width="25%" style="border-left: 1px solid #E6E6E6;">{:lang('baby')}</th>
+                <th width="18%">{:lang('member_attribute')}</th>
+                <th width="9%">{:lang('member_unit_price')}</th>
+                <th width="5%">{:lang('goods_number')}</th>
+                <th width="13%">{:lang('member_customer_service')}</th>
+                <th width="8%">{:lang('member_total_order_amount')}</th>
+                <th width="10%">{:lang('status')}</th>
+                <th width="13%" style="border-right: 1px solid #E6E6E6;">{:lang('goods_operation')}</th>
+              </tr>
+            </thead>
+            <tbody id="list_content" class="close-order">
+			{if condition="count($orderList) neq 0"}
+			{volist name="orderList" id="order"}
+			<tr class="order-hd">
+			<td colspan="8">
+			<span class="no"><label> {:lang('member_order_number')}：<span class="order-num"><a href="javascript:void(0);" class="main-color">{$order.order_no}</a></span> </label></span>
+			<span class="deal-time">&nbsp;&nbsp;{:lang('member_closing_time')}：<span>{$order.create_time | getTimeStampTurnTime}</span></span>
+			<!-- <span class="deal-time">&nbsp;&nbsp;{$order.shop_name}</span> -->
+			</td>
+			</tr>
+			{volist name="order['order_item_list']" id="order_item" key="k"}
+			<tr class="order-bd">
+			<td align="center" class="baobei no-border-right order_goods_info">
+			<div class="goods_desc last">
+			<a class="pic" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$order_item['goods_id'])}" title="{:lang('member_view_baby_details')}" target="_blank">
+				<img src="{:__IMG($order_item['picture']['pic_cover_micro'])}" alt="" width="50" height="50">
+			</a>
+			<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$order_item['goods_id'])}" title="{:lang('member_view_baby_details')}" target="_blank">
+				<div class="goods_name">{$order_item.goods_name}</div>
+			</a>
+			</div> 
+			</td>
+			<td align="center" class="baobei no-border-right order_goods_attr"><div class="goods_desc goods_desc_t last" style="line-height:50px;">{$order_item.sku_name} </div></td>
+			<td align="center" class="baobei no-border-right order_goods_info" style="padding:0px;"><div class="goods_desc price  last" style="padding-left:0px; line-height:50px;"> ￥{$order_item.price} </div></td>
+			<td align="center" class="baobei no-border-right order_goods_info" style="padding:0px;"><div class="goods_desc  last" style="padding-left:0px;line-height:50px;"> {$order_item.num} </div> </td>
+			<td align="center" class="after-service baobei no-border-right order_goods_info" valign="middle">
+			<div class="goods_desc last"> 
+		<!-- 	<a href="javascript:;" style="line-height:50px;">留言/投诉</a> -->
+			{if condition="$order.payment_type eq 4"}
+				{if condition="$order.is_refund eq 1 AND $order_item.refund_status eq 0 AND $order.order_status eq 2"}
+					<div><a href="{:__URL('SHOP_MAIN/member/refunddetail','order_goods_id='.$order_item['order_goods_id'])}" style="border: 1px solid #E31939;padding: 3px 8px;color: #E31939;line-height: 45px;">{:lang('list_of_refund_return')}</a></div>
+				{elseif condition="$order_item.refund_status neq 0"}
+					<div><a href="{:__URL('SHOP_MAIN/member/refunddetail','order_goods_id='.$order_item['order_goods_id'])}" style="border: 1px solid #03A9F4;padding: 3px 8px;color: #03A9F4;line-height: 35px;">{:lang('member_view_refund')}</a></div>
+					{if condition="$order_item.refund_status neq 5 and $order_item.refund_status neq -2"}
+					<div><a href="javascript:;" class="cancle" style="border: 1px solid #E31939;padding: 3px 8px;color: #E31939;line-height: 45px;" onclick="if(confirm('{:lang("member_sure_cancel")}'))cancleDetail({$order.order_id},{$order_item.order_goods_id})">{:lang('member_cancellation_refund')}</a></div>
+					{/if}
+				{/if}
+			{else /}
+				{if condition="$order.is_refund eq 1 AND $order_item.refund_status eq 0"}
+					<div><a href="{:__URL('SHOP_MAIN/member/refunddetail','order_goods_id='.$order_item['order_goods_id'])}" style="border: 1px solid #E31939;padding: 3px 8px;color: #E31939;line-height: 45px;">{:lang('list_of_refund_return')}</a></div>
+				{elseif condition="$order_item.refund_status neq 0"}
+					<div><a href="{:__URL('SHOP_MAIN/member/refunddetail','order_goods_id='.$order_item['order_goods_id'])}" style="border: 1px solid #03A9F4;padding: 3px 8px;color: #03A9F4;line-height: 35px;">{:lang('member_view_refund')}</a></div>
+					{if condition="$order_item.refund_status neq 5 and $order_item.refund_status neq -2"}
+					<div><a href="javascript:;" class="cancle" style="border: 1px solid #E31939;padding: 3px 8px;color: #E31939;line-height: 45px;" onclick="if(confirm('{:lang("member_sure_cancel")}'))cancleDetail({$order.order_id},{$order_item.order_goods_id})">{:lang('member_cancellation_refund')}</a></div>
+					{/if}
+				{/if}
+			{/if}
+			</div>
+			</td>
+			{if condition="$k eq 1"}
+			<td rowspan="{$order.order_item_list|count}" align="center" class="amount no-border-right"><p class="post-type"><strong>￥{$order.order_money}</strong></p></td>
+			 
+			<td rowspan="{$order.order_item_list|count}" align="center" class="trade-status no-border-right">
+			<div>{$order.status_name}</div>
+			<a href="{:__URL('SHOP_MAIN/member/orderdetail','orderid='.$order['order_id'])}" class="main-color">{:lang('member_order_details')}</a><br/>
+			
+			{if condition="$order.order_status == 2"}
+			<a href="{:__URL('SHOP_MAIN/member/orderdetail','orderid='.$order['order_id'])}" class="main-color">{:lang('member_view_logistics')}</a>
+			{/if}
+			</td>
+			<td rowspan="{$order.order_item_list|count}" align="center" class="other">
+			{if condition="$order.member_operation neq ''"}
+				{volist name="order['member_operation']" id="operation"}
+					<a href="javascript:void(0)" class="on_money" style="background-color:#FF9149;border: 1px solid  #FF9149;" onclick="operation('{$operation.no}',{$order.order_id})">{$operation.name}</a>
+				{/volist}
+			{/if}
+			{if condition="$order.order_status eq 3 OR $order.order_status eq 4"}
+       		  	{if condition="$order.is_evaluate eq 0"}
+        		  	<a href="{:__URL('SHOP_MAIN/member/reviewcommodity','orderid='.$order_item['order_id'])}" class="on_money" style="background-color:#FF9149;border: 1px solid  #FF9149;">{:lang('member_i_want_evaluate')}</a>
+       		  	{elseif condition="$order.is_evaluate eq 1"}
+       		  		<a href="{:__URL('SHOP_MAIN/member/reviewagain','orderid='.$order_item['order_id'])}" class="on_money" style="background-color:#FF9149;border: 1px solid  #FF9149;">{:lang('goods_additional_evaluation')}</a>
+       		  	{/if}
+      		 {/if}
+
+			</td> 
+			{/if}
+			</tr>
+			{/volist}
+			{/volist}
+			{else/}
+			<tr>
+			<td colspan="8" align="center">
+			<div class="tip-box">
+			<i class="tip-icon"></i>
+			<div class="tip-text">Sorry！{:lang('member_no_order_want')}……</div>
+			</div>
+			</td>
+			</tr>
+			{/if}
+            </tbody>
+            </table>
+{include file='shop/default/controlCommonPage'/}
+        </div>
+    </div>
+
+{/block}
+
+{block name="javascript"}
+{include file='shop/default/openDialog'/}
+<script type="text/javascript">
+$(function(){
+	var html = '';
+	$(".logistics-tracking").hover(function(){
+		var curr = $(this);
+		var order_goods_id = curr.attr('goods_id');
+		var express_name = curr.parent().siblings('.express_name').attr('express_name');
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/order/getexpressinfo')}",
+			data : {"order_goods_id":order_goods_id},
+			beforeSend : function(){
+				html = '<div class="silider-express">';
+				html += '<div class="mask-layer-loading" style="text-align:center;">';
+				html += '<img src="ADMIN_IMG/mask_load.gif"/>';
+				html += '<div style="text-align:center;margin-top:10px;">{:lang('member_effort_loading')}...</div>';
+				html += '</div>';
+				html += '</div>';
+				$(".logistics-tracking").popover({content : html});
+				curr.popover("show");
+			},
+			success : function(data) {
+				html = '<div class="silider-express">';
+				html += '<div class="express_names">{:lang('member_courier_services_company')}:'+express_name+'</div>';
+				html += '<div>';
+				html += '<div>{:lang('member_logistics_tracking')}：</div>';
+				if (data['Success'] == true) {
+					for (var i = 0; i < data["Traces"].length; i++){
+							html += '<p style="width:76%;float:left;">'+ data["Traces"][i]["AcceptStation"]+'</p>';
+							html += '<p style="width:24%;float:right;">'+ timeStampTurnTime(data["Traces"][i]["AcceptTime"])+'</p>';
+					}
+				} else {
+					html += '<p style="width:76%;float:left;">'+ data["Reason"]+'</p>';
+				}
+				html += '</div>';
+		 		html += '</div>';
+		 		curr.popover("destroy");
+				curr.popover({content : html});
+				curr.popover("show");
+			}
+		});
+	},function(){
+		$(this).popover("hide");
+	});
+	
+})
+ function cancleDetail(order_id ,order_goods_id){
+	
+	 $.ajax({
+		 url: "{:__URL('SHOP_MAIN/member/cancleorder')}",
+		 type: "post",
+		 data:{
+			 "order_id":order_id,
+		     "order_goods_id":order_goods_id
+		 },
+		 dataType:"json",
+		 success: function(res){
+			 if(res['code']>0){
+				// alert(JSON.stringify(res));
+				 $.msg("{:lang('member_cancellation_refund_successful')}");
+				 location.href=__URL("SHOP_MAIN/member/orderlist");
+			 }
+			
+		 }
+	 })
+	
+ }
+</script>
+{/block}

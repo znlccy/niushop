@@ -1,0 +1,129 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.fun-a {
+	margin-top: 0px;
+	padding: 6px 15px 0 15px;
+}
+.style0list tbody td a{
+	    margin-left: 8px;
+	}
+.num{width:40px;text-align:center;}
+.cell_total{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:250px;display: block;}
+.style0list table input {
+	margin-bottom: 0px;
+}
+
+.style0list table input.sort {
+	width: auto;
+	text-align: center;
+}
+
+.style0list tbody td {
+	line-height: 28px;
+}
+.cell_total{
+	width:120px;
+}
+</style>
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/extend/addhooks')}" ><i class="fa fa-plus-circle"></i>&nbsp;添加钩子</a></li>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="con style0list">
+			<table>
+				 <colgroup>
+                    <col style="width: 8%;">
+                    <col style="width: 60%;">
+                    <col style="width: 15%;">
+                    <col style="width: 15%">
+                    </colgroup>
+				<thead>
+					<tr align="center">
+                          <th class="x-tab tal"><div class="iconbg-arrow up">名称</div></th>
+                          <th class="x-tab tal"><div class="iconbg-arrow up">描述</div></th>
+                          <th class="x-tab"><div class="iconbg-arrow up">类型</div></th>
+					      <th class="x-tab">操作</th>
+					</tr>
+				</thead>
+				<colgroup>
+                    <col style="width: 8%;">
+                    <col style="width: 60%;">
+                    <col style="width: 15%;">
+                    <col style="width: 15%">
+                    </colgroup>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+</div>
+{/block} {block name="script"}
+
+<script type="text/javascript">
+//查询用户列表
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/extend/hookslist')}",
+		data : {
+			 "page_index" : page_index, "page_size" : $("#showNumber").val()
+		},
+		success : function(data) {
+			var html = '';
+			if (data['data'].length > 0) {
+				for (var i = 0; i < data['data'].length; i++) {
+					var type = '';
+					if(data['data'][i]['type'] == 1){
+						type = '视图';
+					}else{
+						type = '控制器';
+					}
+					html += '<tr align="center">';
+					html += '<td class="tal">'+ data['data'][i]['name'] +'</td>';
+					html += '<td class="tal">'+ data['data'][i]['description'] +'</td>';
+					html += '<td>'+ type +'</td>';
+					html += '<td><a href="'+__URL('ADMIN_MAIN/extend/updatehooks?id='+data['data'][i]['id'])+'">修改</a>&nbsp;<a href="javascript:;" onclick="deleteHooks('+ data['data'][i]['id'] +')">删除</a></td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="4">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+function deleteHooks(id){
+	$( "#dialog" ).dialog({
+        buttons: {
+            "确定": function() {
+                $(this).dialog('close');
+                $.ajax({
+            		type : "post",
+            		url : "{:__URL('ADMIN_MAIN/extend/deleteHooks')}",
+            		data : {
+            			 "id" : id
+            		},
+            		success : function(data) {
+            			if (data["code"] > 0) {
+            				showMessage('success', "删除成功","{:__URL('ADMIN_MAIN/extend/hookslist')}");
+            			}else{
+            				showMessage('error', "删除失败");
+            			}
+            		}
+            	});
+            },
+            "取消,#e57373": function() {
+                $(this).dialog('close');
+            }
+        },
+        contentText:"你确定删除吗？",
+        title:"消息提醒"
+    });
+}
+</script>
+{/block}

@@ -1,0 +1,152 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+.goods-group-line{
+	display:inline-block;
+	width:150px;
+}
+.goods-gruop-select{
+	width:100px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>商品标签：</dt>
+		<dd>
+			<div class="group-text-check-box">
+				<div class="controls product-category-position">
+					{if condition = "!empty($group_list)"}
+						<div class="goods-group-div">
+						{if condition="$goods_group_recommend['group_id_array'] neq ''"}
+							{foreach $group_id_array as $m=>$t}
+								<div class="goods-group-line">
+									<select class="goods-gruop-select" onchange="changeGoodsGroup(this);">
+										<option value="0"></option>	
+										{foreach $group_list as $k=>$v}
+											{if condition="$v['group_id'] eq $t"}
+												<option value="{$v.group_id}" selected>{$v.group_name}</option>
+											{else /}
+												<option value="{$v.group_id}">{$v.group_name}</option>
+											{/if}
+										{/foreach}
+									</select>
+								</div>
+							{/foreach}
+						{/if}
+							<div class="goods-group-line">
+								<select class="goods-gruop-select" onchange="changeGoodsGroup(this);">
+									<option value="0"></option>	
+									{foreach $group_list as $k=>$v}
+										<option value="{$v.group_id}">{$v.group_name}</option>
+									{/foreach}
+								</select>
+							</div>
+						</div>
+					{else /}
+						<span class="span-error" style="display:block;">暂无可选的商品标签</span> 
+					{/if}
+				</div>									
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否显示:</dt>
+		<dd>
+			<p>
+					<input id="is_show" type="checkbox" class="checkbox" {if condition="$goods_group_recommend.is_show eq 1"}checked="checked"{/if} /> 
+			</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setGoodsGroup();">提交</button>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+//导航分组
+var group_str = '{$group_str}';//标签列表
+function changeGoodsGroup(obj){
+	if($(obj).val() > 0){
+		var exist_num = 0;
+		$(".goods-group-div .goods-group-line .goods-gruop-select").each(function() {					
+			if($(this).val() == 0){
+				exist_num++;
+			}			
+		})
+		if(exist_num < 1){
+			if($.trim(group_str) != "" && $.trim(group_str) != undefined){
+				var html = "<div class='goods-group-line'><select class='goods-gruop-select' onchange='changeGoodsGroup(this);'>";
+				html +="<option value='0'></option>"
+				var group_array = eval(group_str);
+				
+				for(var i = 0; i < group_array.length ; i++ ){
+					html +="<option value='"+ group_array[i]["group_id"] +"'>"+ group_array[i]["group_name"] +"</option>"
+				}
+				html +="</select></div>";
+				$(".goods-group-div").append(html);	
+			}else{
+				$(".span-error").show();
+			}									
+		}
+	}else{
+		if($(".goods-group-div .goods-group-line .goods-gruop-select").length > 1){
+			$(obj).parent().remove();
+		}
+	}
+}
+
+function setGoodsGroup(){
+	var is_show = 0
+	if($("#is_show").is(":checked")){
+		is_show = 1;
+	}
+	var group_id_array = "";
+	$(".goods-group-line .goods-gruop-select").each(function() {
+		if($(this).val() > 0){
+			group_id_array += $(this).val() + ",";
+		}			
+	})
+	if (group_id_array != "") {
+		group_id_array = group_id_array.substring(0,group_id_array.length - 1);
+		 var goodsgroup_array = group_id_array.split(",");
+		 var goodsgroup_array = undulpicate(goodsgroup_array);
+		 group_id_array = goodsgroup_array.join(",");
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/system/setgoodsgrouprecommend')}",
+		data:{
+			'group_id_array':group_id_array,
+			'is_show':is_show
+			},
+		async:true,
+		success: function (data) {
+			if(data.code > 0){
+				showTip("编辑成功","success");
+				location.reload();
+			}else{
+				showTip("编辑失败","error");
+			}
+		}
+	 });
+}
+//数组去重
+function undulpicate(array){
+	for(var i=0;i<array.length;i++) {
+		for(var j=i+1;j<array.length;j++) {
+		//注意 ===
+			if(array[i]===array[j]) {
+				array.splice(j,1);
+				j--;
+			}
+		}
+	}
+	return array;
+	}
+</script>
+{/block}

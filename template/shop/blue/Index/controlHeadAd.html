@@ -1,0 +1,27 @@
+<!--
+	创建人：王永杰
+	创建时间：2017年2月7日 12:02:25
+	功能描述： 首页顶部广告图，可以关闭。此广告只在网站首页展示 
+-->
+<div class="top-active">
+	<div class="top-active-wrap"></div>
+</div>
+<script type="text/javascript">
+var ap_id=[ap_id];
+var data=platformAdvLoadNew(ap_id);
+if($.cookie("1051_close")!=null){
+	$(".top-active").hide();
+}else{
+	if(data !=null && data != ''){
+		var width = data['ap_width'];
+		var height = data['ap_height'];
+		if(data['adv_list'][0]['adv_image'] != ''){
+			$(".top-active").css("background-color",data['adv_list'][0]["background"]);
+			$('.top-active-wrap').html('<a href="'+data['adv_list'][0]['adv_url']+'" target="_blank"><img src="'+__IMG(data['adv_list'][0]['adv_image'])+'"></a><a href="javascript:void(0);" title="{:lang('goods_close')}" class="top-active-close"></a>');
+		}else{
+			$(".top-active").css("background-color","#0287E1");
+			$('.top-active-wrap').html('<a href="javascript:;" target="_blank"><img src="__TEMP__/{$style}/public/images/style_blue_head_adv.png"></a><a href="javascript:void(0);" title="{:lang('goods_close')}" class="top-active-close"></a>');
+		}
+	}
+}
+</script>

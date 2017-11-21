@@ -1,0 +1,279 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/group_goods_list.css">
+<style>
+.custom-search-button{top:6px;}
+.category{width:95%;margin:10px auto;display: none;}
+.category img{display: inline-block;width: 100%;}
+.nothing-data{margin-top:50%;}
+.custom-tag-list-goods dl{width:100%;}
+.custom-tag-list-goods dt a {padding:0 10px;}
+.custom-tag-list{height:92%;}
+/* .category img{
+	display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    height: auto;
+} */
+/* .custom-tag-list,.custom-tag-list .custom-tag-list-menu-block,.custom-tag-list .custom-tag-list-goods{height:initial;}
+ body{ 
+	height:initial;
+} */ 
+.controlSearch {
+    width: 85%;
+    padding: 0; 
+    background: none; 
+    margin: 8px 0 5px 9%;
+}
+.controlSearch .control-search-input{
+	height: 30px;
+	border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
+    overflow: hidden;
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
+}
+.controlSearch .control-search-input .search-input {
+    width: 75%;
+    height: 20px;
+    line-height: 20px;
+    margin: 4px 0;
+    padding: 0 15px;
+    border: none;
+    color: #999;
+    float: left;
+    font-size: 13px;
+    background:#EFEFEF;
+}
+.controlSearch .control-search-input .search-button{
+	margin: 4px 0;
+}
+.more{
+	height: 4rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #333;
+}
+.pull_icon{
+	width: 25px;
+	height: 25px;
+	background-image: url('__TEMP__/{$style}/public/images/pull.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 25px;
+	transition: all .5s;
+}
+.more span{
+	padding-left: .5rem;
+}
+
+.scroller{
+	background-color: #fff;
+}
+
+
+.more .flip{
+	transform: rotate(180deg);
+}
+.loading{
+	background-image: url('__TEMP__/{$style}/public/images/loading.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 25px;
+	width: 25px;
+	height: 25px;
+	position: relative;
+	display: inherit;
+}
+.more i.loading{
+    transform: rotate(0deg) translateZ(0);
+    transition-duration: 0;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes loading {
+  from {
+    -webkit-transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    -webkit-transform: rotate(360deg) translateZ(0);
+  }
+}
+.custom-tag-list .custom-tag-list-goods .custom-tag-list-goods-detail .custom-tag-list-goods-buy img {
+    max-width: 120%;
+    max-height: 120%;
+}
+/*#goods_list{
+	margin-bottom: 40px;
+}*/
+</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="head_back" href="{:__URL('APP_MAIN')}"><i class="icon-back"></i></a>
+	<div class="head-title"><span>{include file='wap/default_new/Index/controlSearch'/}</span></div>
+</section>
+{/block}
+
+{block name="main"}
+	<!-- 平台商品分类 -->
+	<!-- 搜索框样式 -->
+<div class="custom-tag-list clearfix">
+<!-- 	<div class="mask" id="grouGoodsListmask"></div> -->
+	{if condition="count($goods_category_list_1)"}
+	<div class="custom-tag-list-menu-block">
+		<ul class="custom-tag-list-side-menu" style="position: relative;width:100%;background:#fff;" id='goods_group'>
+			<li val="{$category.category_id}">
+				<a class="selected" onclick="showChildGoods(this,0)" data-category-id="0"><span>全部</span></a>
+			</li>
+			{foreach name="goods_category_list_1" item = "category" key = "k"}
+			<li val="{$category.category_id}">
+				<a onclick="showChildGoods(this,{$category.category_id})" data-category-id="{$category.category_id}"><span>{$category.short_name}</span></a>
+			</li>
+			{/foreach}
+			<li class="sc"></li>
+		</ul>
+	</div>
+	{/if}
+	<div class="custom-tag-list-goods">	
+		<div id="showContent">
+			<ul id="goods_list">
+				
+			</ul>
+			<div id="empty_info" style="display: none;text-align: center;margin-bottom: 55px;margin-top: 10px;font-size: 10px;">
+				没有更多数据了</div>
+			<!-- <div id="wrapper">
+				<div class="more"><i class="pull_icon"></i><span>上拉加载...</span></div>
+			</div> -->
+		</div>	
+	</div>
+</div>
+<input type="hidden" id="pageNum" value="1">
+<input type="hidden" id="category_id" value="1">
+<input type="hidden" id="page_count">
+<script src="__TEMP__/{$style}/public/js/public_assembly.js"></script>
+<script src="__TEMP__/{$style}/public/js/iscroll.js"></script>
+<script>
+$(function(){
+	bottomActive('#bottom_classify');
+	//默认显示选择的第一个商品分类数据
+	if($("#goods_group li .selected").attr("data-category-id") != undefined){
+		showCategorySecond($("#goods_group li .selected"),$("#goods_group li .selected").attr("data-category-id"));
+	}
+	
+	//将没有第三级的商品分类过滤
+	$("[class*='js-category']").each(function(){
+		if($(this).find(".catalog-info").length == 0){
+			$(this).find("dd").remove();
+		}
+	});
+
+	showChildGoods($("[data-category-id='0']"),0);
+});
+
+//显示二级分类
+function showCategorySecond(obj,category_id){
+	//设置选中效果
+	$(".custom-tag-list-side-menu li a").removeClass("selected");
+	$(obj).addClass("selected");
+	$("[class*='js-category']").hide();
+	$("[class$='js-category-"+category_id+"']").show();
+	if($("dl[class='js-category-"+category_id+"']").length == 0){
+		$(".js-children").show();
+	}else{
+		$(".js-children").hide();
+	}
+}
+function showChildGoods(obj,category_id){
+	//设置选中效果
+	$(".custom-tag-list-side-menu li a").removeClass("selected");
+	$("#empty_info").hide();
+	$(obj).addClass("selected");
+	$("#pageNum").val(1);
+	$("#category_id").val(category_id);
+	$("#page_count").val('');
+	is_repeat = false;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('APP_MAIN/Goods/getCategoryChildGoods')}",
+		data : { "category_id" : category_id },
+		success : function(data){
+			// alert(JSON.stringify(data));
+			$("#page_count").val(data['page_count']);
+			var html = '';
+			if(data['data'].length > 0){
+				for (var i = 0; i < data['data'].length; i++) {
+					html += '<li class="custom-tag-list-single-goods clearfix">';
+
+					html +=	'<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data["data"][i]["goods_id"])+'" class="custom-tag-list-goods-img">';
+					html +=	'<img class="js-lazy" src="__UPLOAD__/'+data['data'][i]['pic_cover_small']+'" style="display: block;"></a>';
+					html += '<div class="custom-tag-list-goods-detail">';
+					html += '<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data["data"][i]["goods_id"])+'" class="custom-tag-list-goods-title">'+data['data'][i]['goods_name']+'</a>';
+					html += '<span class="custom-tag-list-goods-price">￥'+data['data'][i]['promotion_price']+'</span>';
+					html += '<a class="custom-tag-list-goods-buy js-custom-tag-list-goods-buy" href="javascript:CartGoodsInfo('+data['data'][i]['goods_id']+','+data['data'][i]['state']+')" data-buyway="1" data-alias="m2nx2p6x" data-postage="0" data-id="22569525" data-isvirtual="0">';
+					html += '<img src="__TEMP__/{$style}/public/images/add-cart.png"></a></div></li>';
+				}
+			}else{
+				html += '<div class="nothing-data js-children" align="center" >';
+				html += '<img src="__TEMP__/{$style}/public/images/wap_nodata.png"/>';
+				html += '<div>{:lang("no_goods_under_current_merchandise_classification")}...</div></div>';
+			}
+			$("#goods_list").html(html);
+		}
+	})
+}
+
+$(".custom-tag-list-goods").scroll(function(){
+	 var $this =$(this),
+	 viewH =$(this).height(),//可见高度
+	 contentH =$("#goods_list").height(),//内容高度
+	 scrollTop =$(this).scrollTop();//滚动高度
+	if(contentH - viewH - scrollTop <= 10) { //到达底部100px时,加载新内容
+		pullUpAction();
+	}
+});
+var is_repeat = false;
+function pullUpAction(){
+	if(is_repeat){
+		return false;
+	}
+	is_repeat = true;
+	var category_id = $("#category_id").val();
+	var page = parseInt($("#pageNum").val())+1;
+	var page_count = $("#page_count").val();
+	if(page > page_count){
+		$("#empty_info").show();
+		return false;
+	}else{
+		$.ajax({
+			type : "post",
+			url : "{:__URL('APP_MAIN/Goods/getCategoryChildGoods')}",
+			data : { "category_id" : category_id, "page" :page },
+			success : function(data){
+				var html = $("#goods_list").html();
+				if(data['data'].length > 0){
+					for (var i = 0; i < data['data'].length; i++) {
+						html += '<li class="custom-tag-list-single-goods clearfix">';
+						html +=	'<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data["data"][i]["goods_id"])+'" class="custom-tag-list-goods-img">';
+						html +=	'<img class="js-lazy" src="__UPLOAD__/'+data['data'][i]['pic_cover_small']+'" style="display: block;"></a>';
+						html += '<div class="custom-tag-list-goods-detail">';
+						html += '<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data["data"][i]["goods_id"])+'" class="custom-tag-list-goods-title">'+data['data'][i]['goods_name']+'</a>';
+						html += '<span class="custom-tag-list-goods-price">￥'+data['data'][i]['promotion_price']+'</span>';
+						html += '<a class="custom-tag-list-goods-buy js-custom-tag-list-goods-buy" href="javascript:CartGoodsInfo('+data['data'][i]['goods_id']+','+data['data'][i]['state']+')" data-buyway="1" data-alias="m2nx2p6x" data-postage="0" data-id="22569525" data-isvirtual="0">';
+						html += '<img src="__TEMP__/{$style}/public/images/add-cart.png"></a></div></li>';
+					}
+				}
+				$("#pageNum").val(page+1);
+				$("#goods_list").html(html);
+				is_repeat = false;
+			}
+		});
+	}
+}
+</script>
+{/block}

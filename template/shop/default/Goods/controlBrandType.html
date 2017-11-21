@@ -1,0 +1,37 @@
+<style>
+	.pinpaijngxuan_pro_title li a{
+	font-size:12px;
+	}
+	.pinpaijngxuan_pro_title a{
+	color:#666;
+	}
+	
+.pinpaijngxuan_pro_title li a:hover{
+	background-color:red;
+	color:#fff;
+}
+	
+</style>
+<div class="pinpaijngxuan_pro_head">
+	<div class="pinpaijngxuan_pro_title  edit-mode" modelType="" modelId="1000043983">
+		<div class="brand-showcase-list " id="brand-list">
+			<ul style="width: 1092px; position: relative; height: 100%;">
+				{volist name="type_list" id="type"}
+				<li>
+				{if condition="$type.category_id eq $category_id"}
+					<a href="javascript:categoryHref({$type.category_id});" title="" alt="" id="{$type.category_id}" style="background-color: red;color:#fff;">
+				{else/}
+					<a href="javascript:categoryHref({$type.category_id});" title="" alt="" id="{$type.category_id}">
+				{/if}
+					{$type.category_name}
+					</a>
+				</li>
+				{/volist}
+			</ul>
+		</div>
+		<div class="brand-showcase-page" id="showcase-page" style="display: block">
+			<a href="javascript:;" class="focus-btn focus-prev font-song" id="j-focus-prev" data-btn="tlRight"></a>
+			<a href="javascript:;" class="focus-btn focus-next font-song" id="j-focus-next" data-btn="tlLeft"></a>
+		</div>
+	</div>
+</div>

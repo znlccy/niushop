@@ -1,0 +1,80 @@
+@charset "utf-8";
+
+.areaTable {
+	width: 975px;
+	margin: 0 auto;
+	border-top: 1px solid #E3E3E3;
+}
+
+.areaTable a {
+	text-decoration: none;
+}
+
+.areaTable .areaTr {
+	display: table-row;
+	vertical-align: inherit;
+	border-color: inherit;
+	width: 970px;
+}
+
+.areaTable .areaTr .areaTh {
+	background: #fff; /* #353535*/
+	color: #999;
+	padding: 11px;
+	height: 19px;
+	line-height: 19px;
+	font-weight: 400;
+	border-bottom: 1px solid #E3E3E3;
+	/* text-align: left; */
+	font-size: 12px;
+	display: inline-block;
+	text-align: center;
+	float: left;
+}
+
+.areaTable .areaTr .areaTd {
+	background: #fff; /* #353535*/
+	color: #999;
+	padding: 11px;
+	height: 28px;
+	line-height: 28px;
+	font-weight: 400;
+	border-bottom: 1px solid #E3E3E3;
+	/* text-align: left; */
+	font-size: 12px;
+	display: inline-block;
+	text-align: center;
+	float: left;
+}
+
+.areaTable .areaTr .areaTd .sort {
+	color: #666;
+	width: 206px;
+	margin-bottom: 0px;
+	border: 1px solid #ccc
+}
+
+.style0list table input {
+	color: #666;
+	width: 206px;
+	margin-bottom: 0px;
+	border: 1px solid #ccc;
+}
+
+.style0list table input.sort {
+	width: auto;
+	text-align: center;
+}
+
+.style0list tbody td {
+	line-height: 28px;
+}
+
+.modal {
+	width: 360px;
+	margin-left: -100px;
+}
+
+.right {
+	text-align: right;
+}

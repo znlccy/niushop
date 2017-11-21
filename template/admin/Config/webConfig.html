@@ -1,0 +1,328 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+.total{width: 100%;overflow: hidden;}
+.total label {float:left;text-align: left;font-size: 12px; width:16%;overflow:hidden;color:#666;font-weight: normal;line-height: 32px;margin-bottom:0px}
+.total label input {margin: 0 5px 0 0;} 
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>网站名称:</dt>
+		<dd>
+			<input id="title" type="text" value="{$website.title}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>官方网址:</dt>
+		<dd>
+			<input id="web_url" type="text" value="{$website.web_url}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>联系地址:</dt>
+		<dd>
+			<input id="web_address" type="text" value="{$website.web_address}" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站二维码:</dt>
+		<dd>
+			<p>
+				<img src="{:__IMG($qrcode_path)}" onerror="this.src=''">
+			</p>
+			<!-- <p><img src="{$website.web_qrcode}"></p> -->
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站描述:</dt>
+		<dd>
+			<textarea name="store_zy" rows="2" id="web_desc" class="textarea w400" >{$website.web_desc}</textarea>
+			<p class="hint">关键字最多可输入50字，请用","进行分隔，例如”男装,女装,童装”</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站logo:</dt>
+		<dd>
+			<div class="class-logo">
+				<p>
+					<img id="imglogo" src="{:__IMG($website.logo)}" onerror="this.src=''">
+				</p>
+			</div>
+			<div class="ncsc-upload-btn">
+				<a href="javascript:void(0);">
+					<span>
+						<input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
+						<input type="hidden" id="logo" value="{$website.logo}" />
+					</span>
+					<p><i class="fa fa-cloud-upload text"></i>上传图片</p>
+				</a>
+			</div>
+			<p class="hint">
+				<br><span style="color: orange;">建议使用宽280像素-高50像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站公众号二维码:</dt>
+		<dd>
+			<div class="class-logo">
+				<p>
+					<img id="imgweb_qrcode" src="{:__IMG($website.web_qrcode)}" onerror="this.src=''">
+				</p>
+			</div>
+			<div class="ncsc-upload-btn">
+				<a href="javascript:void(0);">
+					<span>
+						<input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImgweb_qrcode" type="file" onchange="imgUpload(this,'web_qrcode');">
+						<input type="hidden" id="web_qrcode" value="{$website.web_qrcode}" />
+					</span>
+					<p><i class="fa fa-cloud-upload text"></i>上传图片</p>
+				</a>
+			</div>
+			<p class="hint">
+				<br><span style="color: orange;">建议使用宽100像素-高100像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站微信分享logo:</dt>
+		<dd>
+			<div class="class-logo">
+				<p>
+					<img id="imgwechat_share_logo" src="{:__IMG($website.web_wechat_share_logo)}" onerror="this.src=''">
+				</p>
+			</div>
+			<div class="ncsc-upload-btn">
+				<a href="javascript:void(0);">
+					<span>
+						<input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadimgwechat_share_logo" type="file" onchange="imgUpload(this,'wechat_share_logo');">
+						<input type="hidden" id="wechat_share_logo" value="{$website.web_wechat_share_logo}" />
+					</span>
+					<p><i class="fa fa-cloud-upload text"></i>上传图片</p>
+				</a>
+			</div>
+			<p class="hint">
+				<br><span style="color: orange;">建议使用宽100像素-高100像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站关键字:</dt>
+		<dd>
+			<p>
+				<input id="key_words" type="text" value="{$website.key_words}" />
+			</p>
+			<p class="hint">用于网站搜索引擎的优化，关键字之间请用英文逗号分隔</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站联系方式:</dt>
+		<dd>
+			<p>
+				<input id="web_phone" type="text" value="{$website.web_phone}" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站邮箱:</dt>
+		<dd>
+			<p>
+				<input id="web_email" type="text" value="{$website.web_email}" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站QQ号:</dt>
+		<dd>
+			<p>
+				<input id="web_qq" type="text" value="{$website.web_qq}" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站微信号:</dt>
+		<dd>
+			<p>
+				<input id="web_weixin" type="text" value="{$website.web_weixin}" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站备案号:</dt>
+		<dd>
+			<p>
+				<input id="web_icp" type="text" value="{$website.web_icp}" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+<!-- 		<dt>前台网站风格:</dt> -->
+<!-- 		<dd> -->
+<!-- 			<p> -->
+<!-- 				<select id="style_id_pc"> -->
+<!-- 					{volist name="style_list_pc" id="v"} -->
+<!-- 					<option value="{$v['style_id']}" {if condition="$website['style_id_pc'] eq $v['style_id']"} selected="selected"{/if}>{$v['style_name']}</option> -->
+<!-- 					{/volist} -->
+<!-- 				</select> -->
+<!-- 			</p> -->
+<!-- 		</dd> -->
+<!-- 	</dl> -->
+	<dl>
+		<dt>网站弹出框标题:</dt>
+		<dd>
+			<p>
+				<input id="web_popup_title" type="text" value="{$website.web_popup_title}" maxlength="15">
+			</p>
+			<p class="hint">网站弹出框标题，最大不超过15个字符</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>后台网站风格:</dt>
+		<dd>
+			<p>
+				<select id="style_id_admin">
+					{volist name="style_list_admin" id="v"}
+					<option value="{$v['style_id']}" {if condition="$website['style_id_admin'] eq $v['style_id']"} selected="selected"{/if}>{$v['style_name']}</option>
+					{/volist}
+				</select>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站访问模式:</dt>
+		<dd>
+			<p>
+				<select id="visit_pattern" name="visit_pattern">
+					<option value="0" {if condition="$website['url_type'] eq 0"} selected="selected"{/if}>兼容模式</option>
+					<option value="1" {if condition="$website['url_type'] eq 1"} selected="selected"{/if}>pathinfo模式</option>
+				</select>
+			</p>
+			<p class="hint" style="color: orange;">伪静态只支持pathinfo模式，如果开启伪静态，请选择pathinfo模式
+</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>PC端商城运营状态:</dt>
+		<dd>
+		<div class="total">
+			<label for="navigationtype1" class="in"><input type="radio" value="1" name="navigationtype" id="navigationtype1" {if condition="$website.web_status eq 1"}checked{/if}/>开启</label>
+			<label for="navigationtype2" class="out"><input type="radio" value="2" name="navigationtype" id="navigationtype2" {if condition="$website.web_status eq 2"}checked{/if}/>关闭</label>
+			<label for="navigationtype3"><input type="radio" value="3" name="navigationtype" id="navigationtype3" {if condition="$website.web_status eq 3"}checked{/if}/>关闭后访问WAP端</label>
+		</div>
+		<p class="hint">暂时将站点关闭，其他人无法访问，但不影响管理员访问</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>WAP端商城运营状态:</dt>
+		<dd>
+		<div class="total">
+			<label for="waptype1" class="go"><input type="radio" value="1" name="waptype" id="waptype1" {if condition="$website.wap_status eq 1"}checked{/if}/>开启</label>
+			<label for="waptype2" class="come"><input type="radio" value="2" name="waptype" id="waptype2" {if condition="$website.wap_status eq 2"}checked{/if}/>关闭</label>
+			<label for="waptype3"><input type="radio" value="3" name="waptype" id="waptype3" {if condition="$website.wap_status eq 3"}checked{/if}/>关闭后访问PC端</label>
+		</div>
+		<p class="hint">暂时将站点关闭，其他人无法访问，但不影响管理员访问</p>
+		</dd>
+	</dl>
+	
+	<dl class="reason">
+		<dt>网站关闭原因:</dt>
+		<dd>
+			<textarea name="store_zy" rows="2" id="close_reason" class="textarea w400" >{$website.close_reason}</textarea>
+			<p class="hint">请填写站点关闭原因，将在前台显示</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商城第三方统计代码:</dt>
+		<dd>
+			<textarea name="store_zy" rows="2" id="third_count" class="textarea w400" >{$website.third_count}</textarea>
+			<p class="hint">页面底部可以显示第三方统计</p>
+		</dd>
+	</dl>
+	
+	<button class="edit_button" onclick="setConfigAjax();">提交</button>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var data = { 'file_path' : UPLOADCOMMON };
+	var id = $(event).next().attr("id");
+	uploadFile(fileid,data,function(res){
+		if(res.code){
+			$("#img"+id).attr("src",__IMG(res.data));
+			$("#"+id).val(res.data);
+			showTip(res.message,"success");
+		}else{
+			showTip(res.message,"error");
+		}
+	});
+}
+
+function setConfigAjax() {
+	var title = $("#title").val();
+	var web_url = $("#web_url").val();
+	var web_address = $("#web_address").val();
+	var web_desc = $("#web_desc").val();
+	var Logo = $("#logo").val();
+	var web_qrcode = $("#web_qrcode").val();
+	var key_words = $("#key_words").val();
+	var web_phone = $("#web_phone").val();
+	var web_email = $("#web_email").val();
+	var web_qq = $("#web_qq").val();
+	var web_weixin = $("#web_weixin").val();
+	var web_icp = $("#web_icp").val();
+// 	var web_style_pc = $("#style_id_pc").val();//前台网站风格格 已废弃，改为读取配置
+	var web_style_admin = $("#style_id_admin").val();//后台网站风格
+	var visit_pattern = $("#visit_pattern").val();
+	var web_status = $("input[name='navigationtype']:checked").val();
+	var wap_status = $("input[name='waptype']:checked").val();
+	var third_count = $("#third_count").val();
+	var close_reason = $("#close_reason").val();
+	var web_popup_title = $("#web_popup_title").val();
+	var web_wechat_share_logo = $("#wechat_share_logo").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/webconfig')}",
+		data : {
+			'title' : title,
+			'web_url' : web_url,
+			'web_address' : web_address,
+			'web_desc' : web_desc,
+			'logo' : Logo,
+			'web_qrcode' : web_qrcode,
+			'key_words' : key_words,
+			'web_phone' : web_phone,
+			'web_email' : web_email,
+			'web_qq' : web_qq,
+			'web_weixin' : web_weixin,
+			'web_icp' : web_icp,
+// 			'web_style_pc' : web_style_pc,
+			'web_style_admin' : web_style_admin,
+			'visit_pattern' : visit_pattern,
+			'web_status' : web_status,
+			'wap_status' : wap_status,
+			'third_count' : third_count,
+			'close_reason' : close_reason,
+			'web_popup_title' : web_popup_title,
+			'web_wechat_share_logo' : web_wechat_share_logo
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"] , "{:__URL('ADMIN_MAIN/config/webconfig')}");
+			} else {
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

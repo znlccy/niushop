@@ -1,0 +1,217 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/purchase_consulting.css">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.charcount.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.validation.min.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/consult.js"></script>
+<style>
+.btn:hover{color:#ffffff;}
+</style>
+{/block}
+{block name="main"}
+<div class="w1210">
+	<div class="breadcrumb clearfix">
+		<a href="{:__URL('SHOP_MAIN')}" class="index">{:lang('home_page')}&nbsp;&gt;&nbsp;</a>
+		<span class="last">{$goods_info.category_name}{$goods_info.goods_name}</span>
+	</div>
+	<div class="wrapper">
+		<div class="ncs-goods-layout expanded">
+			<div class="ncs-goods-main">
+				<div class="ncs-goods-title-bar">
+					<h4>{:lang('goods_purchase_consultation')}</h4>
+				</div>
+				<div class="ncs-goods-info-content bd" id="ncGoodsRate">
+					<div class="top" style="overflow: hidden;">
+						<div class="ncs-cosult-tips">
+							<i></i>
+							<p></p>
+							<p>{:lang('goods_text')}！</p>
+							<p></p>
+						</div>
+						<div class="ncs-cosult-askbtn">
+							<a href="#askQuestion" class="btn btn-white"><i
+								class="fa fa-comments-o"></i>{:lang('goods_need_consult')}</a>
+						</div>
+					</div>
+					<div class="ncs-goods-title-nav">
+						<ul id="consult_tab">
+							<input type="hidden" id="currClassId" value="0">
+							{if condition="$ct_id eq ''"}
+								<li id="classTab0" class="current">
+							{else /}
+								<li id="classTab0">
+							{/if}
+							<a href="{:__URL('SHOP_MAIN/goods/goodsconsult','goodsid='.$goods_info['goods_id'].'&ct_id=')}">{:lang('whole')}</a></li>
+							
+							{if condition="$ct_id eq 1"}
+								<li id="classTab1" class="current">
+							{else /}
+								<li id="classTab1">
+							{/if}
+							<a href="{:__URL('SHOP_MAIN/goods/goodsconsult','goodsid='.$goods_info['goods_id'].'&ct_id=1')}">{:lang('goods_commodity_consultation')}</a></li>
+							
+							{if condition="$ct_id eq 2"}
+								<li id="classTab2" class="current">
+							{else /}
+								<li id="classTab2">
+							{/if}
+							<a href="{:__URL('SHOP_MAIN/goods/goodsconsult','goodsid='.$goods_info['goods_id'].'&ct_id=2')}">{:lang('goods_payment_problem')}</a></li>
+							
+							{if condition="$ct_id eq 3"}
+								<li id="classTab3" class="current">
+							{else /}
+								<li id="classTab3">
+							{/if}
+							<a href="{:__URL('SHOP_MAIN/goods/goodsconsult','goodsid='.$goods_info['goods_id'].'&ct_id=3')}">{:lang('goods_invoice_and_warranty')}</a></li>
+						</ul>
+					</div>
+					{if condition="$total_count eq 0"}
+					<div class="ncs-cosult-main" >
+						<div class="ncs-norecord">{:lang('goods_no_consultation_yet')}</div>
+					</div>
+					{else /}
+					<div class="ncs-commend-main">
+						<!-- 咨询列表s -->
+						{volist name="consult_list" id="vo"}
+							<div class="ncs-cosult-list">
+								<dl class="asker">
+									<dt>{:lang('goods_consulting_user')}：</dt>
+									<dd>
+										{if condition="$vo.member_name eq ''"}
+										{:lang('goods_tourist')}
+										{else /}
+										{$vo.member_name}
+										{/if}
+										<span>{:lang('goods_consulting_type')}：
+										{if condition="$vo.ct_id eq 1"}
+											{:lang('goods_commodity_consultation')}
+										{elseif condition="$vo.ct_id eq 2"/}
+											{:lang('goods_payment_problem')}
+										{else/}
+										    {:lang('goods_invoice_and_warranty')}
+										{/if}
+										</span>
+										<time datetime="" pubdate="pubdate" class="m-l-20">[{$vo.consult_addtime | getTimeStampTurnTime}]</time>
+									</dd>
+								</dl>
+								<dl class="ask-con">
+									<dt>{:lang('goods_consultation_content')}：</dt>
+									<dd>
+										<p>{$vo.consult_content}</p>
+									</dd>
+								</dl>
+								{if condition="$vo.consult_reply neq ''"}
+									<!-- 回复内容s -->
+								<dl class="reply">
+									<dt>{:lang('goods_merchant_reply')}：</dt>
+									<dd>
+										<p>{$vo.consult_reply}</p>
+										<time pubdate="pubdate">[{$vo.consult_reply_time | getTimeStampTurnTime}]</time>
+									</dd>
+								</dl>
+								<!-- 回复内容e -->
+								{/if}
+							</div>
+						{/volist}
+						<!-- 咨询列表e -->
+						<!-- 咨询分页s -->
+					
+					</div>
+					{include file='shop/blue/controlCommonPage' /}
+					{/if}
+					
+				</div>
+				
+				<!-- S 咨询表单部分 -->
+				<div class="ncs-goods-title-bar" id="askQuestion">
+					<h4>{:lang('goods_publish_consultation')}</h4>
+				</div>
+
+					<input type="hidden" id="goods_id" name="goods_id" value="{$goods_info.goods_id}"/>
+					<input type="hidden" id="goods_name" name="goods_name" value="{$goods_info.goods_name}"/>
+					<input type="hidden" id="shop_id" name="shop_id" value="{$goods_info.shop_id}"/>
+					
+					<div class="ncs-consult-form">
+						<dl>
+							<dt>{:lang('goods_consulting_type')}：</dt>
+							<dd>
+								<label> <input type="radio" checked="checked"
+									nc_type="consultClassRadio" name="classId" class="radio"
+									value="1"> {:lang('goods_commodity_consultation')}
+								</label> <label> <input type="radio" 
+									nc_type="consultClassRadio" name="classId" class="radio"
+									value="2"> {:lang('goods_payment_problem')}
+								</label> <label> <input type="radio" 
+									nc_type="consultClassRadio" name="classId" class="radio"
+									value="3"> {:lang('goods_invoice_and_warranty')}
+								</label>
+							</dd>
+						</dl>
+						<div class="ncs-consult-type-intro" id="consultClassIntroduce1"
+							nc_type="consultClassIntroduce" style="display: block;"></div>
+						<div class="ncs-consult-type-intro" id="consultClassIntroduce2"
+							nc_type="consultClassIntroduce" style="display: none;"></div>
+						<div class="ncs-consult-type-intro" id="consultClassIntroduce3"
+							nc_type="consultClassIntroduce" style="display: none;"></div>
+
+						<dl class="ncs-consult">
+							<dt>{:lang('goods_consultation_content')}：</dt>
+							<dd>
+								<textarea name="consultContent" id="consultContent" class="textarea w700 h60"></textarea>
+								<span id="consultCharCount"></span>
+								<div nc_type="error_msg"></div>
+							</dd>
+						</dl>
+						<dl>
+							<dt>&nbsp;</dt>
+							<dd>
+								<input id="consultCaptcha" name="consultCaptcha"
+									class="text w60" placeholder="{:lang('please_enter_verification_code')}" type="text" size="4"
+									autocomplete="off" maxlength="4">
+								<div class="code">
+									<div class="arrow"></div>
+									<div class="code-img">
+										<a nc_type="consultCaptchaChange" href="javascript:void(0)">
+											<img id="verify_img" src="{:__URL('SHOP_MAIN/captcha')}" alt="captcha" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" />
+										</a>
+									</div>
+									<a href="JavaScript:void(0);" id="consultCaptchaHide" class="close" title="{:lang('goods_close')}"><i></i></a>
+									<!-- <a href="JavaScript:void(0);" nc_type="consultCaptchaChange" class="change" title="{:lang('click_for_another_one')}"><i></i></a> -->
+								</div>
+								<a href="JavaScript:void(0);" id="consultSubmit" title="{:lang('goods_publish_consultation')}"
+									class="btn btn-sm btn-warning m-l-10">{:lang('goods_publish_consultation')}</a>
+								<div nc_type="error_msg"></div>
+								<input type="hidden" id="isSub" value="true"> 
+							</dd>
+							<!--<dd nctype="error_msg"></dd>-->
+						</dl>
+					</div>
+
+				<!-- E 咨询表单部分 -->
+			</div>
+			<div class="ncs-sidebar">
+				<div class="ncs-sidebar-container">
+					<div class="title">
+						<h4>{:lang('goods_commodity_information')}</h4>
+					</div>
+					<div class="content">
+						<dl class="ncs-comment-goods">
+							<dt class="goods-name">
+								<a href="SHOP_MAIN/goods/goodsinfo?goodsid={$goods_info.goods_id}">{$goods_info.goods_name}</a>
+							</dt>
+							<dd class="goods-pic">
+								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods_info['goods_id'])}">
+									<img src='{:__IMG($goods_info["img_list"][0]["pic_cover_big"])}' alt="{$goods_info.goods_name}" />
+								</a>
+							</dd>
+							<dd class="goods-price">
+								{:lang('goods_sale_price')}：<em class="saleP">￥{$goods_info.promotion_price}</em>
+							</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}

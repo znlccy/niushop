@@ -1,0 +1,696 @@
+{extend name="shop/default/Member/base" /}
+{block name="resources"}
+<style>
+#find-box .item {
+    width: 650px;
+    }
+
+</style>
+
+{/block}
+
+{block name="main"}
+
+{if condition="$atc eq ''"}
+	<!-- 账户安全主页 -->
+  <div class="user-right" id="user_security">
+    <div class="box"> 
+      <h5 class="user-title user-title-t"> <span> {:lang('member_account_security')}</span></h5>
+      <div class="blank"></div>
+      <div id="safe05">
+      
+      	<!-- 密码修改 -->
+        <div class="mc">
+          <div class="fore1"> <s class="fore1_3"></s><strong>{:lang('member_login_password')}</strong> </div>
+          <div class="fore2"> <span class="ftx-03">{:lang('member_change_passwords_regularly')}。</span> <span style="color: #E31939;"></span> </div>
+          <div class="fore3">
+            <input type="button" value="{:lang('member_modify')}" onclick="window.location.href='{:__URL('SHOP_MAIN/member/usersecurity','atc=user_pwd')}'" class="main-btn main-btn-large" />
+          </div>
+        </div>
+         
+         <!-- 邮箱 -->
+        <div class="mc">
+       	 {if condition="$member_info['user_info']['user_email'] neq ''"}
+          <div class="fore1"> <s class="fore1_3"></s> <strong>{:lang('member_mailbox_binding')}</strong> </div>
+          <div class="fore2"> <span class="ftx-03">{:lang('member_verified_mailbox')}：{$member_info['user_info']['user_email']}</span> </div>
+          <div class="fore3"> 
+               <input type="button" value="{:lang('member_modify')}" onclick="window.location.href='{:__URL('SHOP_MAIN/member/usersecurity','atc=user_email')}'" class="main-btn main-btn-large" />
+          </div>
+         {else/}
+          <div class="fore1"> <s class="fore1_1"></s> <strong>{:lang('member_mailbox_binding')}</strong> </div>
+          <div class="fore2"> <span tyle="color: #ED5854;">{:lang('member_retrieve_password')}</span> </div>
+          <div class="fore3"> 
+               <a href="{:__URL('SHOP_MAIN/member/usersecurity','atc=user_email')}" class="btn btn-7">{:lang('member_mailbox_binding')}</a> 
+          </div>
+          {/if}
+        </div>
+        
+        <!-- 手机 -->
+        <div class="mc">
+          {if condition="$member_info['user_info']['user_tel'] neq ''"}
+          <div class="fore1"> <s class="fore1_3"></s> <strong>{:lang('member_bind_mobile')}</strong> </div>
+          <div class="fore2"> <span class="ftx-03">{:lang('member_phone_bound')}：{$member_info['user_info']['user_tel']}</span> </div>
+          <div class="fore3">
+          	 <input type="button" value="{:lang('member_modify')}" onclick="window.location.href='{:__URL('SHOP_MAIN/member/usersecurity','atc=user_mobile')}'" class="main-btn main-btn-large" /> 
+          </div>
+          {else/}
+          <div class="fore1"> <s class="fore1_1"></s> <strong>{:lang('mobile_verification')}</strong> </div>
+          <div class="fore2"> <span style="color: #ED5854;">{:lang('member_receive_changes_account')}</span> </div>
+          <div class="fore3"> <a href="{:__URL('SHOP_MAIN/member/usersecurity','atc=user_mobile')}" class="btn btn-7">{:lang('member_bind_mobile')}</a> </div>
+          {/if}
+        </div>
+		
+      </div>   
+    </div>
+  </div>
+{elseif condition="$atc eq 'user_pwd'" /}
+<style>
+  #find-box .item .old-pwd-error {
+    background: #FFFDEE;
+    border: 1px #EDD28B solid;
+    color: #666;
+    width: auto;
+    max-width: 260px;
+    padding: 5px 10px;
+    margin-left: 10px;
+    display: inline-block;
+    font-size: 12px;
+    color: #999;
+    display: none;
+}
+</style>
+ <div class="user-right" id='user_pwd'>
+    <div class="box"> 
+            <h5 title="{:lang('member_modify_login_password')}" class="user-title user-title-t"> <span>{:lang('member_modify_login_password')}</span> </h5>
+            <div class="blank"></div>
+      <div id="find_pw3">
+        <div class="find_con">
+         <div id="sflex04" class="stepflex stepflex_te">
+	            <dl class="normal doing">
+	              <dt class="s-num">1</dt>
+	              <dd class="s-text"> {:lang('member_password_modification')} <s></s> <b></b> </dd>
+	            </dl>
+	            <dl class="last">
+	              <dt class="s-num">&nbsp;</dt>
+	              <dd class="s-text"> {:lang('member_complete')} <s></s> <b></b> </dd>
+	            </dl>
+          </div>
+          <div id="find-box" class="uc_box">
+              <div id="error_container"></div>
+              <div class="item">
+                <label class="con_un">{:lang('member_origina_password')}:</label>
+                <input name="old_password" id="old_password" type="password" tabindex="1" placeholder="{:lang('member_enter_original_password')}" class="text" />
+                <span class="error">{:lang('member_enter_original_password')}!</span>
+                <span class="error">{:lang('member_password_error')}!</span>
+              </div>
+              <div class="item">
+                <label class="con_un">{:lang('member_new_password')}:</label>
+                <input name="newpassword" id="newpassword" type="password" tabindex="1" placeholder="{:lang('please_input_password')}" class="text" />
+                <span class="error">{:lang('member_enter_new_password')}!</span>
+              </div>
+              <div class="item">
+                <label class="con_un">{:lang('member_confirm_password')}:</label>
+                <input name="newpassword1" id="newpassword1" type="password" tabindex="2" placeholder="{:lang('member_enter_password_again')}" class="text" />
+                <span class="error">{:lang('member_enter_password_again')}!</span>
+                <span class="error">{:lang('member_password_inconsistent')}!</span>
+              </div>
+              
+              <div class="item">
+                <label class="con_un">&nbsp;</label>
+                <input type="hidden" name="act" value="password_reset_success" />
+                <input type="button" id="btn_submit" name="btn_submit" class="main-btn main-btn-large" value="{:lang('member_submit')}" onclick="modifyPwd()"/>
+              </div>
+          </div>
+        </div>
+       </div>
+     </div> 
+     <script type="text/javascript">
+		function modifyPwd(){
+			var old_password=$('#old_password').val();
+			var new_password=$('#newpassword').val();
+			var new_password1=$('#newpassword1').val();
+		  if(old_password.length==0){
+        $("#old_password").next(".error").show();
+        return false;
+      }else{
+         $("#old_password").next(".error").hide();
+      }
+      if(new_password.length==0){
+        $("#newpassword").next(".error").show();
+        return false;
+      }else{
+         $("#newpassword").next(".error").hide();
+      }
+       if(new_password1.length==0){
+        $("#newpassword1").next(".error").show();
+        return false;
+      }else{
+         $("#newpassword1").next(".error").hide();
+      }
+      if(new_password1!=new_password){
+        $("#newpassword1").next().next(".error").show();
+        return false;
+      }else{
+         $("#newpassword1").next(".error").hide();
+      }
+			$.ajax({
+                 url: "{:__URL('SHOP_MAIN/member/modifypassword')}",
+                 data: { "new_password":new_password,"old_password":old_password },
+                 type: "post",
+                 success: function (res) {
+                  // alert(JSON.stringify(res));
+                     if (res['code']> 0) {
+                    	 $('#user_pwd #find-box').html('<div class="find_box_end"><p> <i></i>{:lang('member_password_changes_succeeded')}！ </p><p class="on_go"> <a href="{:__URL('SHOP_MAIN/member/usersecurity')}" title="{:lang('member_instant_shopping')}" class="back">{:lang('member_return_account_security_center')}&gt;&gt;</a> </p></div>'); 
+                         $('#user_pwd #sflex04 .normal').removeClass('doing');
+                         $('#user_pwd #sflex04 .normal').removeClass('done');
+                         $('#user_pwd #sflex04 .last').addClass('doing');
+                     } else if(res['code'] == -2005){
+                        $("#old_password").next().next(".error").show();
+                     }else{
+                        $("#old_password").next().next(".error").hide();
+                     }
+                 }
+             })
+		}
+	 </script>  
+</div>
+{elseif condition="$atc eq 'user_mobile'"/}
+	<!-- 手机号绑定 -->
+  <div class="user-right" id="user_mobile" >
+    <div class="box"> 
+      <h5 title="{:lang('member_bind_mobile')}" class="user-title user-title-t"> <span>{:lang('member_bind_mobile')}</span> </h5>
+       
+      <div class="blank"></div>
+      <div id="find_pw3">
+        <div class="find_con"> 
+           <div id="sflex04" class="stepflex stepflex_te">
+	            <dl class="normal doing">
+	              <dt class="s-num">1</dt>
+	              <dd class="s-text"> {:lang('member_bind_mobile')} <s></s> <b></b> </dd>
+	            </dl>
+	            <dl class="last">
+	              <dt class="s-num">&nbsp;</dt>
+	              <dd class="s-text">{:lang('member_complete')} <s></s> <b></b> </dd>
+	            </dl>
+          </div>
+            <div id="find-box" class="uc_box" >
+              <div id="error_container"></div>
+              <div class="item">
+                <label class="con_un">{:lang('member_phone_number')}：</label>
+                <input name="mobile" id="mobile" type="text" tabindex="1" placeholder="{:lang('member_enter_your_phone_number')}" class="text">
+                <span class="error">{:lang('member_must_not_be_empty')}!</span>
+              </div>
+              {if condition = "$login_verify_code['pc'] == 1"}
+              <div class="item">
+	              <label  class="con_un">{:lang('member_verification_code')}：</label>
+	              <input type="text" id="captcha" name="captcha" tabindex="2" placeholder="{:lang('please_enter_verification_code')}" autocomplete="off" class="text text-te" />
+	              <label class="img" style="margin-left: 5px"> <img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}"  onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()"  alt="captcha" style="vertical-align: middle; cursor: pointer; height: 35px;" /> </label>
+	          	  <span id="vertify"></span>
+              </div>
+              {/if}
+              {if condition="$notice['noticeMobile'] eq 1"}
+              <div class="item">
+                <label class="con_un">{:lang('member_mobile_verification_code')}：</label>
+                <input name="mobile_code" id="mobile_code" type="text" tabindex="2" placeholder="{:lang('member_enter_mobile_verification_code')}" class="text text_te">
+                <input id="sendOutCode" name="code_mobile" type="button" value="{:lang('member_get_mobile_verification_code')}" bvalue="{:lang('member_get_mobile_verification_code')}" class="code" >
+                <span class="error">{:lang('member_must_not_be_empty')}!</span>
+              </div> 
+              {/if}
+              <div class="item">
+                <label class="con_un">&nbsp;</label>
+                <input type="hidden" name="act" value="mobile_binding_success">
+                <input type="button" id="btn_submit" name="btn_submit" class="main-btn main-btn-large" value="{:lang('member_submit')}" onclick="bindingMobile()">
+              </div>
+              
+          </div>
+        </div>
+ <script type="text/javascript">
+ 	//手机绑定
+    function bindingMobile(){
+    	var mobile=$('#mobile').val();
+    	var mobile_code=$('#mobile_code').val();
+    	var vertification = $("#captcha").val();
+    	
+    	if(mobile==''){
+    		$('#mobile').parent().children('.error').show();
+    		return false;
+    	}
+    	$('#mobile').parent().children('.error').hide();
+    	{if condition = "$login_verify_code['pc'] == 1"}
+      	if(vertification == ''){
+      			$("#captcha").trigger("focus");
+      			$("#vertify").addClass("error").text("{:lang('please_enter_verification_code')}").show();
+      			return false;
+        } 
+        {if condition="$notice['noticeMobile'] neq 1"}
+        var result = '';
+        $.ajax({
+          type : "post",
+          url : "{:__URL('SHOP_MAIN/member/vertify')}",
+          data : {"vertification" : vertification},
+          async : false,
+          dataType:'json',
+          success : function(res){
+            if(res['code']== 1){
+              result = true;
+            }else{
+              $("#vertify").addClass("error").text("{:lang('member_verify_code_error')}").show();
+              result = false;
+            }
+            return result;
+          }
+        })
+        if(!result){
+          return false;
+        }
+        {/if}
+      {/if}
+		 
+    	$("#vertify").hide();
+    	
+    	if(mobile_code==''){
+    		$('#mobile_code').parent().children('.error').show();
+    		return false;
+    	}
+    	$('#mobile_code').parent().children('.error').hide();
+    	
+    
+    	 $.ajax({
+             url: "{:__URL('SHOP_MAIN/member/modifymobile')}",
+             data: {"mobile": mobile,"mobile_code":mobile_code,"vertification":vertification},
+             type: "post",
+             success: function (res) {
+              //alert(JSON.stringify(res));
+                 if (res["code"] > 0) {
+                	$('#user_mobile #find-box').html('<div class="find_box_end"><p> <i></i> {:lang('member_mobile_bind_success')}！ </p><p class="on_go"> <a href="{:__URL('SHOP_MAIN/member/usersecurity')}" title="{:lang('member_instant_shopping')}" class="back">{:lang('member_return_account_security_center')}&gt;&gt;</a> </p></div>'); 
+                    $('#user_mobile #sflex04 .normal').removeClass('doing');
+                    $('#user_mobile #sflex04 .normal').removeClass('done');
+                    $('#user_mobile #sflex04 .last').addClass('doing');
+                 } else {
+                     $.msg(res["message"]);
+                 }
+             }
+         })
+    }
+ 
+
+ </script> 
+</div>
+
+    </div>
+  </div>
+{elseif condition="$atc eq 'user_email'"/}  
+  <!-- 邮箱绑定 -->
+  <div class="user-right" id="user_email" >
+    <div class="box"> 
+            <h5 title="{:lang('member_mailbox_binding')}" class="user-title user-title-t"> <span>{:lang('member_mailbox_binding')}</span> </h5>
+       
+       
+            <div class="blank"></div>
+      <div id="find_pw3">
+        <div class="find_con"> 
+                    <div id="sflex04" class="stepflex stepflex_te">
+            <dl class="normal doing">
+              <dt class="s-num">1</dt>
+              <dd class="s-text"> {:lang('member_mailbox_binding')} <s></s> <b></b> </dd>
+            </dl>
+            <dl class="last">
+              <dt class="s-num">&nbsp;</dt>
+              <dd class="s-text"> {:lang('member_complete')} <s></s> <b></b> </dd>
+            </dl>
+          </div>
+          <div id="find-box" class="uc_box">
+              <div id="error_container"></div>
+              <div class="item">
+                <label class="con_un">{:lang('member_your_email_address')}：</label>
+                <input name="email" id="email" type="text" tabindex="1" placeholder="{:lang('member_enter_email_address')}" class="text">
+                 <span class="error">{:lang('member_must_not_be_empty')}!</span>
+              </div>
+              {if condition = "$login_verify_code['pc'] == 1"}
+              <div class="item">
+	              <label  class="con_un">{:lang('member_verification_code')}：</label>
+	              <input type="text" id="captcha" name="captcha" tabindex="2" placeholder="{:lang('please_enter_verification_code')}" autocomplete="off" class="text text-te" />
+	              <label class="img" style="margin-left: 5px"> <img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}"  onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()"  alt="captcha" style="vertical-align: middle; cursor: pointer; height: 35px;" /> </label>
+	          	  <span id="vertify"></span>
+              </div>
+              {/if}
+              {if condition="$notice['noticeEmail'] eq 1"}
+              <div class="item">
+                <label class="con_un">{:lang('member_mailbox_authentication_code')}：</label>
+                <input name="email_code" id="email_code" type="text" tabindex="2" placeholder="{:lang('member_enter_mailbox_verification_code')}" class="text text_te">
+                <input id="sendOutCode" name="code_email" type="button" value="{:lang('member_gets_mailbox_validation_codet')}" bvalue="{:lang('member_gets_mailbox_validation_codet')}"  class="code"  >
+                <span class="error">{:lang('member_must_not_be_empty')}!</span>
+              </div> 
+              {/if}
+              <div class="item">
+                <label class="con_un">&nbsp;</label>
+                <input type="hidden" name="act" value="email_binding_success">
+                <input type="button" id="btn_submit" name="btn_submit" class="main-btn main-btn-large" value="{:lang('member_submit')}" onclick="bindingEmail()">
+              </div>
+          </div>
+        </div>
+        <script type="text/javascript">
+    	//邮箱绑定
+        function bindingEmail(){
+        	var email=$('#email').val();
+        	var email_code=$('#email_code').val();
+        	var vertification = $("#captcha").val();
+        	if(email==''){
+        		$('#email').parent().children('.error').show();
+        		return false;
+        	}
+        	$('#email').parent().children('.error').hide();
+        	{if condition = "$login_verify_code['pc'] == 1"}
+          	if(vertification == ''){
+        			$("#captcha").trigger("focus");
+        			$("#vertify").addClass("error").text("{:lang('please_enter_verification_code')}").show();
+        			return false;
+        		} 
+          	$("#vertify").hide();
+            {if condition="$notice['noticeEmail'] neq 1"}
+              var result = '';
+              $.ajax({
+                type : "post",
+                url : "{:__URL('SHOP_MAIN/member/vertify')}",
+                data : {"vertification" : vertification},
+                async : false,
+                dataType:'json',
+                success : function(res){
+                  if(res['code']== 1){
+                    result = true;
+                  }else{
+                    $("#vertify").addClass("error").text("{:lang('member_verification_code_incorrect')}").show();
+                    result = false;
+                  }
+                  return result;
+                }
+              })
+              if(!result){
+                return false;
+              }
+              {/if}
+        	{/if}
+        	if(email_code==''){
+        		$('#email_code').parent().children('.error').show();
+        		return false;
+        	}
+        	$('#email_code').parent().children('.error').hide()
+        	
+        	$.ajax({
+                url: "{:__URL('SHOP_MAIN/member/modifyemail')}",
+                data: { "email": email,'email_code':email_code },
+                type: "post",
+                success: function (res) {
+                    if (res["code"]== 1) {
+                    	$('#user_email #find-box').html('<div class="find_box_end"><p> <i></i> {:lang('member_mailbox_binding_successful')}！ </p><p class="on_go"> <a href="{:__URL('SHOP_MAIN/member/usersecurity')}" title="{:lang('member_instant_shopping')}" class="back">{:lang('member_return_account_security_center')}&gt;&gt;</a> </p></div>'); 
+                        $('#user_email #sflex04 .normal').removeClass('doing');
+                        $('#user_email #sflex04 .normal').removeClass('done');
+                        $('#user_email #sflex04 .last').addClass('doing');
+                    } else {
+                    	 $.msg(res["message"]);
+                    }
+                }
+            })
+        }
+     
+        </script> 
+      </div>
+
+    </div>
+  </div>
+ {elseif condition="$atc eq 'user_pay_pwd'"/} 
+  <div class="user-right" id='user_pay_pwd'>
+    <div class="box"> 
+          <h5 title="{:lang('member_set_payment_password')}" class="user-title user-title-t"> <span>{:lang('member_set_payment_password')}</span> </h5>
+          <div class="blank"></div>
+    <div id="find_pw3">
+      <div class="find_con">
+       <div id="sflex04" class="stepflex stepflex_te">
+            <dl class="normal doing">
+              <dt class="s-num">1</dt>
+              <dd class="s-text"> {:lang('member_payment_password_settings')} <s></s> <b></b> </dd>
+            </dl>
+            <dl class="last">
+              <dt class="s-num">&nbsp;</dt>
+              <dd class="s-text">{:lang('member_complete')} <s></s> <b></b> </dd>
+            </dl>
+        </div>
+        <div id="find-box" class="uc_box">
+            <div id="error_container"></div>
+            <div class="item">
+              <label class="con_un">{:lang('member_payment_password')}:</label>
+              <input name="paymentPassword" id="paymentPassword" type="password" tabindex="1" placeholder="{:lang('please_input_password')}" class="text" />
+              <span class="error">{:lang('member_must_not_be_empty')}!</span>
+            </div>
+            <div class="item">
+              <label class="con_un">{:lang('member_confirm_payment_password')}:</label>
+              <input name="againPaymentPassword" id="againPaymentPassword" type="password" tabindex="2" placeholder="{:lang('member_confirm_password_again')}" class="text" />
+              <span class="error">{:lang('member_must_not_be_empty')}!</span>
+              <span class="error">{:lang('member_password_inconsistent')}!</span>
+            </div>
+            
+            <div class="item">
+              <label class="con_un">&nbsp;</label>
+              <input type="button" id="btn_submit" name="btn_submit" class="main-btn main-btn-large" value="{:lang('member_submit')}" onclick="setPayPwd()"/>
+            </div>
+        </div>
+      </div>
+     </div>
+   </div> 
+   </div>
+   <script>
+     function setPayPwd(){
+      var paymentPassword = $("#paymentPassword").val();
+      var againPaymentPassword = $("#againPaymentPassword").val();
+      if(paymentPassword.length == 0){
+        $("#paymentPassword").next(".error").show();
+        return false;
+      }else{
+        $("#paymentPassword").next(".error").hide();
+      }
+      if(againPaymentPassword.length == 0){
+        $("#againPaymentPassword").next(".error").show();
+        return false;
+      }else{
+        $("#againPaymentPassword").next(".error").hide();
+      }
+      if(againPaymentPassword != paymentPassword){
+        $("#againPaymentPassword").next().next(".error").show();
+        return false;
+      }else{
+        $("#againPaymentPassword").next().next(".error").hide();
+      }
+      $.ajax({
+        type :"post",
+        url : "{:__URL('SHOP_MAIN/member/setuserpaymentpassword')}",
+        data : {"payment_password" : paymentPassword},
+        success : function(res){
+         if (res['code']> 0) {
+             $('#user_pay_pwd #find-box').html('<div class="find_box_end"><p> <i></i> {:lang('member_password_settings_successful')}！ </p><p class="on_go"> <a href="{:__URL('SHOP_MAIN/member/usersecurity')}" title="{:lang('member_instant_shopping')}" class="back">{:lang('member_return_account_security_center')}&gt;&gt;</a> </p></div>'); 
+               $('#user_pay_pwd #sflex04 .normal').removeClass('doing');
+               $('#user_pay_pwd #sflex04 .normal').removeClass('done');
+               $('#user_pay_pwd #sflex04 .last').addClass('doing');
+           } else {
+               alert(res["message"]);
+           }
+        }
+      })
+     }
+   </script>
+  {elseif condition="$atc eq 'up_user_pay_pwd'" /}
+ <div class="user-right" id='up_user_pay_pwd'>
+    <div class="box"> 
+            <h5 title="{:lang('member_change_payment_password')}" class="user-title user-title-t"> <span>{:lang('member_change_payment_password')}</span> </h5>
+            <div class="blank"></div>
+      <div id="find_pw3">
+        <div class="find_con">
+         <div id="sflex04" class="stepflex stepflex_te">
+              <dl class="normal doing">
+                <dt class="s-num">1</dt>
+                <dd class="s-text"> {:lang('member_payment_password_modification')} <s></s> <b></b> </dd>
+              </dl>
+              <dl class="last">
+                <dt class="s-num">&nbsp;</dt>
+                <dd class="s-text"> {:lang('member_complete')} <s></s> <b></b> </dd>
+              </dl>
+          </div>
+          <div id="find-box" class="uc_box">
+              <div id="error_container"></div>
+              <div class="item">
+                <label class="con_un">{:lang('member_origina_password')}:</label>
+                <input name="old_paymentPassword" id="old_paymentPassword" type="password" tabindex="1" placeholder="{:lang('member_enter_original_password')}" class="text" />
+                <span class="error">{:lang('member_must_not_be_empty')}!</span>
+                <span class="error">{:lang('member_original_password_incorrect')}!</span>
+              </div>
+
+              <div class="item">
+                <label class="con_un">{:lang('member_new_password')}:</label>
+                <input name="new_paymentPassword" id="new_paymentPassword" type="password" tabindex="1" placeholder="{:lang('please_input_password')}" class="text" />
+                <span class="error">{:lang('member_must_not_be_empty')}!</span>
+              </div>
+              <div class="item">
+                <label class="con_un">{:lang('member_confirm_password')}:</label>
+                <input name="new_again_paymentPassword" id="new_again_paymentPassword" type="password" tabindex="2" placeholder="{:lang('member_confirm_password_again')}" class="text" />
+                <span class="error">{:lang('member_must_not_be_empty')}!</span>
+                <span class="error">{:lang('member_password_inconsistent')}!</span>
+              </div>
+              
+              <div class="item">
+                <label class="con_un">&nbsp;</label>
+                <input type="button" id="btn_submit" name="btn_submit" class="main-btn main-btn-large" value="{:lang('member_submit')}" onclick="modifyPayPwd()"/>
+              </div>
+          </div>
+        </div>
+       </div>
+     </div> 
+     <script type="text/javascript">
+      function modifyPayPwd(){
+        var old_paymentPassword = $("#old_paymentPassword").val();;
+        var new_paymentPassword = $("#new_paymentPassword").val();
+        var new_again_paymentPassword = $("#new_again_paymentPassword").val();
+        $('#up_user_pay_pwd input[type="password"]').each(function(){
+          if($(this).val()==''){
+            $(this).next('.error').show();
+            return false;
+          }else{
+            $(this).next('.error').hide();
+          }
+          if(new_again_paymentPassword != new_paymentPassword){
+            $("#new_again_paymentPassword").next().next(".error").show();
+            return false;
+          }else{
+            $("#new_again_paymentPassword").next().next(".error").hide();
+          }       
+        });
+        $.ajax({
+          type :"post",
+          url : "{:__URL('SHOP_MAIN/member/updateuserpaymentpassword')}",
+          data : {
+            "old_payment_password" : old_paymentPassword,
+            "new_payment_password" : new_paymentPassword
+          },
+          success : function(res){
+            if(res['code'] == -1){
+              $("#old_paymentPassword").next().next(".error").show();
+            }
+            if(res['code']>0){
+              $("#old_paymentPassword").next().next(".error").hide();
+              $('#up_user_pay_pwd #find-box').html('<div class="find_box_end"><p> <i></i> {:lang('member_modified_successfully')}！ </p><p class="on_go"> <a href="{:__URL('SHOP_MAIN/member/usersecurity')}" title="{:lang('member_instant_shopping')}" class="back">{:lang('member_return_account_security_center')}&gt;&gt;</a> </p></div>'); 
+               $('#up_user_pay_pwd #sflex04 .normal').removeClass('doing');
+               $('#up_user_pay_pwd #sflex04 .normal').removeClass('done');
+               $('#up_user_pay_pwd #sflex04 .last').addClass('doing');
+            }
+          }
+        })
+      }
+     </script>  
+  </div>
+ {/if}
+ <script>
+ /**
+  * 验证码发送
+  */
+
+ //倒计时函数
+ function updateEndTime() {
+ 	var sendOutCode=$('#sendOutCode').val();
+	if(sendOutCode!=undefined){
+		sendOutCode=sendOutCode.replace('{:lang('second')}','');
+		if(Number(sendOutCode)==0){
+			$('#sendOutCode').val($('#sendOutCode').attr('bvalue'));
+			$('#sendOutCode').removeAttr('disabled',true);
+			return false;
+		}else{
+			$('#sendOutCode').val((Number(sendOutCode)-1)+"{:lang('second')}");	
+		}
+		setTimeout("updateEndTime()", 1000);
+	}
+ }
+ //发送手机验证码
+ $(function(){
+ 	$('#sendOutCode').click(function(){
+    {if condition = "$login_verify_code['pc'] == 1"}
+ 		    var vertification = $("#captcha").val();
+    {else /}
+        var vertification = '';
+    {/if}
+ 		if($(this).attr('name')=='code_mobile'){
+ 			var mobile=$('#mobile').val();
+ 			if(mobile==''){
+ 				$('#mobile').parent().children('.error').text("{:lang('member_phone_must_not_empty')}").show();
+ 				return false;
+ 			}else{
+ 				$('#mobile').parent().children('.error').text('').hide();;
+ 			}
+ 			
+ 			//验证手机号格式是否正确
+ 			if(mobile.search(/^1(3|4|5|7|8)\d{9}$/) == -1){
+ 				$('#mobile').parent().children('.error').text("{:lang('member_enter_correct_phone_format')}").show();
+ 				return false;
+ 			}else{
+ 				$('#mobile').parent().children('.error').text('').hide();;
+ 			}
+ 			
+ 			$.ajax({
+ 		         url: __URL(SHOPMAIN+"/components/mobileverificationcode"),
+ 		         data: {"mobile": mobile,"vertification":vertification },
+ 		         type: "post",
+ 		         success: function (res) {
+ 		        	// alert(JSON.stringify(res));
+ 		        	if(res['code']==0){
+ 		        		$('#sendOutCode').val(120);
+ 		        		$('#sendOutCode').attr('disabled',true);
+ 		        		updateEndTime();
+ 		        	}else{
+ 		        		$.msg(res['message']);
+ 		        		$(".verifyimg").attr("src","{:__URL('SHOP_MAIN/captcha')}");
+ 		        	}
+ 		           
+ 		         }
+ 		     })
+
+ 		}else if($(this).attr('name')=='code_email'){		     //邮箱验证
+ 			var email = $('#email').val();
+ 			if(email == ''){
+ 				$('#email').parent().children('.error').text("{:lang('member_email_must_not_empty')}").show();;
+ 				return false;
+ 			}else{
+ 				$('#email').parent().children('.error').text('').hide();;
+ 			}
+ 			
+ 			//验证邮箱格式是否正确
+ 			if(email.search(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/) == -1){
+ 				$('#email').parent().children('.error').text("{:lang('member_enter_correct_email_format')}").show();
+ 				return false;
+ 			}else{
+ 				$('#email').parent().children('.error').text('').hide();;
+ 			}
+ 			
+ 			
+ 			 $.ajax({
+ 		         url:  __URL(SHOPMAIN+"/components/emailverificationcode"),
+ 		         data: {"email": email,"vertification":vertification  },
+ 		         type: "post",
+ 		         success: function (res) {
+ 		        	//alert(JSON.stringify(res));
+ 		        	if(res['code']==0){
+ 		        		$('#sendOutCode').val("120{:lang('second')}");
+ 		        		$('#sendOutCode').attr('disabled',true);
+ 		        		updateEndTime();
+ 		        	}else{
+ 		        		$.msg(res['message']);
+ 		        		$(".verifyimg").attr("src","{:__URL('SHOP_MAIN/captcha')}");
+ 		        	}
+ 		           
+ 		         }
+ 		     })
+ 		}
+ 		
+ 	})
+ })
+
+ 
+ 
+ </script>
+<!-- <script type="text/javascript" src="__TEMP__/{$style}/public/js/verification_code.js"></script>  -->
+{/block}

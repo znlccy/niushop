@@ -1,0 +1,16 @@
+<!-- 底部菜单 -->
+<div class="fixed bottom">
+	<div class="distribution-tip" id="distribution-tip" style="display: none;"></div>
+	<dl class="sub-nav nav-b5">
+		{foreach $custo_footer as $k=>$footer_val}
+		<dd id="buttom_home">
+			<a href="{:__URL('APP_MAIN/'.$footer_val['href'])}">
+				<div class="nav-b5-relative">
+					<img src="__UPLOAD__/{$footer_val['img_src']}"/>
+					<span style="color:{$footer_val['color']};">{$footer_val['menu_name']}</span>
+				</div>
+			</a>
+		</dd>
+		{/foreach}
+	</dl>
+</div>

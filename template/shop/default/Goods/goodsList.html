@@ -1,0 +1,59 @@
+{extend name="shop/default/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件 -->
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/ns_shop_common.css">
+<style>
+.crumbs-arrow{
+    font-family: simsun;
+	font-style: normal;
+}
+.index{
+	margin-right: 8px;
+}
+.recommend{
+	position: absolute;
+	width: 40px;
+	margin-top:-5px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="w1210">
+	<div class="breadcrumb clearfix">
+		<a href="{:__URL('SHOP_MAIN')}" class="index">{:lang('home_page')}</a>
+		<span class="last js-nav">
+		{if condition="is_array($category_name)"}
+			{foreach $category_name as $vo}
+				&nbsp;<span class="crumbs-arrow">></span>&nbsp;<a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo['category_id'])}">{$vo.category_name}</a>
+			{/foreach}
+		{else /}
+			&nbsp;<span class="crumbs-arrow">></span>&nbsp;{$category_name}
+		{/if}
+		</span>	
+	</div>
+	{if condition="$category_id!=0"}
+	{include file='shop/default/Goods/controlGoodsCategoryConditions' /}
+	{/if}
+	<div class="content-wrap category-wrap clearfix">
+	{include file='shop/default/Goods/controlGoodsLeft' is_new_recommend='1' is_sale_ranking='1' /}
+	<!--is_new_recommend新品推荐显示 is_sale_ranking销售排行显示-->
+	{include file='shop/default/Goods/controlGoodList' /}
+	</div>
+	{include file='shop/default/controlLoveOrHistory' /}
+</div>
+{/block}
+{block name="javascript"}
+<script>
+var attr_item = "";
+var spec_item = "";
+$(function() {
+	if('{$attr_str}' != ""){
+		attr_item = '{$attr_str}';
+	}
+	if('{$spec_str}' != ""){
+		spec_item = '{$spec_str}'
+	}
+	
+})
+</script>
+{/block}

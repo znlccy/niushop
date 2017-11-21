@@ -1,0 +1,149 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<style type="text/css">
+/* .input-append .add-on, .input-prepend .add-on{height:22px;} */
+.input-append, .input-prepend {
+    font-size: 1px;
+}
+.help-inline {
+    padding-top: 5px;
+}
+.binding{
+	margin-top: 10px;
+}
+.input-prepend .add-on{
+    margin-right: -4px;
+}
+</style>
+{/block}
+{block name="main"}
+<div style="padding:30px;">
+	<div class="smallTitle mt30">
+		<span class="text">绑定开发者账号</span><span class="muted">（选填，用于配置自定义菜单）</span>
+	</div>
+	<div class="binding">
+		<div class="input-prepend control-group">
+			<span class="add-on"><i class="icon-user"></i></span>
+			<input class="span2 input-common" id="appid" placeholder="AppID" value="{$wchat_config.appid}" type="text" style="width:150px;">
+			<span class="help-inline" id="appiderror" style="color:red;"></span>
+		</div>
+		<div class="mt8"></div>
+		<div class="input-prepend control-group">
+			<span class="add-on"><i class="icon-lock"></i></span>
+			<input class="span2 input-common" id="appsecret" type="text" placeholder="Appsecret" value="{$wchat_config.appsecret}" style="width:150px;">
+			<span class="help-inline" id="appsecreterror" style="color:red;"></span>
+		</div>
+		<p class="muted mt8">
+			AppID以及Appsecret来自于您申请开发接口时提供的账号和密码。
+			<!--<a class="ahelp" href="javascript:;">详细绑定步骤</a> -->
+		</p>
+	</div>
+	
+	<div class="smallTitle mt30">
+		<span class="text">服务器配置</span><span class="muted">（用于接收用户消息）</span>
+	</div>
+	
+	<div class="serve">
+		<dl>
+			<dt>URL:</dt>
+			<dd>
+				<input class="text" style="background-color: white; border: none;min-width: 400px;display: inline-block;" readonly="readonly" id="empowerUrl" value="{$call_back_url}">
+				<button onclick="JScopy('empowerUrl')" type="button" class="btn">复制</button>
+			</dd>
+			<dt>Token:</dt>
+			<dd>
+				<input type="text" class="input-common" style="background-color: white; min-width: 386px;display: inline-block;" id="empowerToken" value="{$wchat_config.token}" maxlength="32" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" onpaste="return false">
+				<button onclick="JScopy('empowerToken')" type="button" class="btn">复制</button><span class="help-inline" id="tokenerror" style="color:red;"></span>
+				<p class="muted" style="margin-top: 5px;">Token必须为英文或数字，长度为3-32字符。如不填写则默认为“TOKEN”。</p>
+			</dd>
+		</dl>
+		<p class="muted">
+			请将以上URL及Token填到微信公众平台中，以完成绑定。
+			<!--<a class="ahelp" href="javascript:;">详细绑定步骤</a> -->
+		</p>
+	</div>
+	<div class="smallTitle mt30">
+		<span class="text">设置业务域名</span><span class="muted">（设置业务域名，用户在相应域名上进行输入时不再出现防欺诈盗号等安全提示）</span>
+	</div>
+	
+	<div class="setdomain">
+		<p class="titlestep">
+			<a href="https://mp.weixin.qq.com/" target="_blank">登录微信公众平台</a>点击公众号设置&gt;功能设置&gt;业务域名设置，一次填写：
+		</p>
+		<p class="text-success">
+			<span class="muted">域名1：</span>{$url}
+		</p>
+		<p class="titlestep mt30">
+			<a href="https://mp.weixin.qq.com/" target="_blank">登录微信公众平台</a>点击公众号设置&gt;开发者中心&gt;网页授权获取用户基本信息&gt;修改：
+		</p>
+		<p class="text-success">
+			<span class="muted">填写授权回调页面域名：</span>{$url}
+		</p>
+		<p>业务域名设置完毕！</p>
+	</div>
+	<p class="button mt20">
+		<button class="btn-common btn-big" onclick="save();">保存</button>
+		<input type="hidden" id="IsChange" value="true">
+	</p>
+</div>
+<script>
+$(function(){
+	$("#appid").keyup(function(){
+		if($("#appid").val().length > 100){
+			$("#appiderror").text('AppID长度不能超过100');
+			$("#appiderror").show();
+			$("#apppid").focus();
+			return false;
+		}else{
+			$("#appiderror").text('');
+		}
+	})
+	$("#appsecret").keyup(function(){
+		if($("#appsecret").val().length > 100){
+			$("#appsecreterror").text('Appsecret长度不能超过100');
+			$("#appsecreterror").show();
+			$("#appsecret").focus();
+			return false;
+		}else{
+			$("#appsecreterror").text('');
+		}
+	});
+});
+
+	
+function save() {
+	var appid = $("#appid").val();
+	var appsecret = $("#appsecret").val();
+	var token = $("#empowerToken").val();
+	if(token.length != 0 && token.length <3){
+		$("#tokenerror").text('Token长度不能小于3位');
+		$("#tokenerror").show();
+		$("#empowerToken").focus();
+		return false;
+	}else{
+		$("#tokenerror").hide();
+	}
+	if(token.length == 0) token = "TOKEN";
+	if(appid.length < 100 && appsecret.length < 100){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/wchat/setinstancewchatconfig')}",
+			data : { "appid" : appid, "appsecret" : appsecret, "token" : token },
+			success : function(res) {
+				if (res.code > 0) {
+					showMessage('success', res["message"]);
+				} else {
+					showMessage('error', res["message"]);
+				}
+			}
+		});
+	}
+}
+
+function JScopy(obj){
+	var url = document.getElementById(obj);
+	url.select();
+	document.execCommand("Copy");
+}
+</script>
+{/block}

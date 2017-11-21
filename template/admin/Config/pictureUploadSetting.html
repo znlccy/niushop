@@ -1,0 +1,115 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+
+.radio.inline{
+/* 	display:inline-block; */
+	width:122px;
+}
+input[type="checkbox"] {
+    margin: 0;
+    margin-top: 1px \9;
+    line-height: normal;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style"style="padding-top:100px;">
+	
+	
+	<dl style="display:none;">
+		<dt>支持格式后缀:</dt>
+		<dd>
+			<textarea rows="2" id="upload_ext" class="textarea input-common" maxlength="50">{$info["upload_ext"]}</textarea>
+			<p class="hint">支持上传文件格式后缀(后缀之间以,隔开)。</p>
+		</dd>
+	</dl>
+	<dl style="display:none;">
+		<dt>文件大小限制:</dt>
+		<dd>
+			<input id="upload_size" type="number" min="0" step="1" value="{$info['upload_size']}" class="input-common" />
+			<p class="hint">注意考虑php.ini的配置(0为不限制)</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>缩略图</dt>
+		<dd>
+			<div class="controls">
+			<!-- {if condition ="$info['thumb_type'] eq 1"}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="1" checked>等比例缩放</label>
+			{else/}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="1">等比例缩放</label>
+			{/if} -->
+			{if condition ="$info['thumb_type'] eq 2"}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="2" checked>缩放后填充</label>
+			{else/}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="2">缩放后填充</label>
+			{/if}
+			{if condition ="$info['thumb_type'] eq 3"}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="3" checked>居中裁剪</label>
+			{else/}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="3">居中裁剪</label>
+			{/if}			
+			{if condition ="$info['thumb_type'] eq 4"}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="4" checked>左上角裁剪</label>
+			{else/}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="4">左上角裁剪</label>
+			{/if}
+				<br/>
+			{if condition ="$info['thumb_type'] eq 5"}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="5" checked>右下角裁剪</label>
+			{else/}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="5">右下角裁剪</label>
+			{/if}
+			{if condition ="$info['thumb_type'] eq 6"}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="6" checked>固定尺寸缩放</label>
+			{else/}
+			<label class="radio inline"><input type="checkbox" name="thumb_type" value="6">固定尺寸缩放</label>
+			{/if}
+			</div>
+			<br/>
+			<p class="hint">请选择缩略图的类型。</p>
+		</dd>
+	</dl>
+
+	<dl>
+		<dt></dt>
+		<dd><button class="edit_button" onclick="setConfigAjax();">提交</button></dd>
+	</dl>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("input[name='thumb_type']").click(function(){
+		$("input[name='thumb_type']").prop("checked", false);
+		$(this).prop("checked", true);
+	})
+	
+})
+
+function setConfigAjax(){
+	var thumb_type = $("input[name='thumb_type']:checked").val();
+	var upload_size = $("#upload_size").val();
+	var upload_ext = $("#upload_ext").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/pictureUploadSetting')}",
+		data : {
+			"thumb_type" : thumb_type,
+			"upload_size": upload_size,
+			"upload_ext" : upload_ext
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showMessage('success', data["message"], "{:__URL('ADMIN_MAIN/config/pictureUploadSetting')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,161 @@
+{extend name="admin/base" /} 
+{block name="resources"/}
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/config/addRoutingRules')}" ><i class="fa fa-plus-circle"></i>&nbsp;添加路由规则</a></li>
+{/block}
+{block name="main"}
+<div class="operation">
+	<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+</div>
+<div class="mod-table">
+	<div class="con style0list">
+		<table>
+			<colgroup>
+				<col style="width: 1%">
+				<col style="width: 15%">
+				<col style="width: 25%">
+				<col style="width: 10%">
+				<col style="width: 10%">
+				<col style="width: 20%">
+				<col style="width: 10%">
+			</colgroup>
+			<thead>
+				<tr align="center">
+					<th><input type="checkbox" onClick="CheckAll(this)" id="chek_all"></th>
+					<th style="text-align: left;">伪静态路由规则</th>
+					<th style="text-align: left;">路由地址</th>
+					<th>是否开启</th>
+					<th>路由模块</th>
+					<th>简介</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<colgroup>
+				<col style="width: 1%">
+				<col style="width: 15%">
+				<col style="width: 25%">
+				<col style="width: 10%">
+				<col style="width: 10%">
+				<col style="width: 20%">
+				<col style="width: 10%">
+			</colgroup>
+			<tbody></tbody>
+		</table>	
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	LoadingInfo(1);
+})
+
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/customPseudoStaticRule')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			var html = "";
+			if(data["data"].length > 0){
+				for(var i = 0; i < data["data"].length; i++){
+					var item = data["data"][i];
+					html += '<tr align="center">';
+					if(item["is_system"] == 0){
+						html += '<td><input name="sub" type="checkbox" value="'+ item["routeid"] +'"></td>';
+					}else{
+						html += '<td><input name="sub" type="checkbox" value="'+ item["routeid"] +'" disabled></td>';
+					}
+					html += '<td style="text-align: left;">'+ item["rule"] +'</td>';
+					html += '<td style="text-align: left;">'+ item["route"] +'</td>';
+					if(item["is_open"] == 0){
+						html += '<td>否</td>';
+					}else{
+						html += '<td>是</td>';
+					}
+					switch(item["route_model"]){
+						case 1 :
+						html += '<td>shop</td>';
+						break;
+						case 2 :
+						html += '<td>wap</td>';
+						break;
+						case 3 :
+						html += '<td>admin</td>';
+						break;
+					}
+					html += '<td>'+ item["remark"] +'</td>';
+					if(item["is_system"] == 0){
+						html += '<td style="text-align:center;"><a href="'+__URL(ADMINMAIN+"/config/updateRoutingRule?routeid="+item["routeid"])+'">修改</a> <a href="javascript:;" onclick="delete_url_route('+item["routeid"]+');">删除</a></td>';
+					}else{
+						html += '<td style="text-align:center;"><a href="'+__URL(ADMINMAIN+"/config/updateRoutingRule?routeid="+item["routeid"])+'">修改</a></td>';
+					}
+				}
+			}
+			$(".style0list table tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	})
+}
+
+//删除
+function delete_url_route(routeid){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/config/delete_url_route')}",
+					data : { "routeid" : routeid.toString() },
+					success : function(data) {
+						if (data["code"] > 0) {
+							showMessage('success', data["message"], "{:__URL('ADMIN_MAIN/config/customPseudoStaticRule')}");
+						}else{
+							showMessage('error', data["message"]);
+						}
+					}
+				})
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否删除该路由规则？",
+	});
+}
+//全选
+function CheckAll(event){
+	if($(event).is(":checked")){
+		$(".style0list table tbody tr input[name='sub']").not(":disabled").prop("checked",true);
+	}else{
+		$(".style0list table tbody tr input[name='sub']").not(":disabled").prop("checked",false);
+	}
+}
+//批量删除
+function batchDelete() {
+	var routeid= new Array();
+	$(".style0list table tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			routeid.push($(this).val());
+		}
+	});
+	if(routeid.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	delete_url_route(routeid);
+}
+</script>
+{/block}

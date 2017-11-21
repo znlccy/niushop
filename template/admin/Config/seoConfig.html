@@ -1,0 +1,69 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>标题附加字：</dt>
+		<dd>
+			<input id="title" type="text" value="{$info.seo_title}" /> 
+			<p class="hint">网页标题通常是搜索引擎关注的重点，本附加字设置出现在标题中商城名称后，如有多个关键字，建议用分隔符分隔</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商城关键词：</dt>
+		<dd>
+			<input id="meta" type="text"  value="{$info.seo_meta}" /> 
+			<p class="hint">Keywords项出现在页面头部的标签中，用于记录本页面的关键字，多个关键字请用分隔符分隔</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>关键词描述：</dt>
+		<dd>
+			<input id="desc" type="text" value="{$info.seo_desc}" /> 
+			<p class="hint">Description出现在页面头部的Meta标签中，用于记录本页面的摘要与描述，建议不超过80个字</p>
+		</dd>
+	</dl>	
+	<dl>
+		<dt>其他页头信息：</dt>
+		<dd>
+			<textarea  id="other" class="textarea w400" maxlength="50">{$info.seo_other}</textarea>
+			<p class="hint">如需在中添加其他的HTML代码，可以使用本设置，否则请留空</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setConfigAjax();">提交</button>
+</div>
+
+<script>
+	function setConfigAjax(){
+		var title = $('#title').val();
+		var meta = $("#meta").val();
+		var desc = $("#desc").val();
+		var other = $("#other").val();
+		$.ajax({
+			type:"post",
+			url : "{:__URL('ADMIN_MAIN/config/seoconfig')}",
+			async : true,
+			data : {
+				"seo_title" : title,
+				"seo_meta" : meta,
+				"seo_desc" : desc,
+				"seo_other" : other
+			},
+			success : function(data){
+				if(data['code'] > 0)
+					{
+						showMessage('success', data["message"]);
+						location.href=__URL("ADMIN_MAIN/config/seoconfig");
+					}else{
+						showMessage('error', data["message"]);
+					}
+			}
+		})
+	}
+</script>
+{/block}

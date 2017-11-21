@@ -1,0 +1,86 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/reviewCommodity.css">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/review.js"></script>
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('member_additional_evaluation_commodities')}</li>
+				</ul>
+			</div>
+			
+			<a href="javascript:history.go(-1);" style="position: absolute;right: 10px;top: 20px;">{:lang('member_return')}&nbsp;{:lang('member_go_back')}</a>
+			<div class="evaluate_main">
+				<form id="evalform" method="post" action="SHOP_MAIN/member/moditycommodity">
+					<input type="hidden" name="form_submit" value="ok" />
+					<div class="evaluate_block">
+						<h4>{:lang('member_operation_prompt')}：</h4>
+						<ul>
+							<li style="margin-bottom: 6px; float:none;">{:lang('member_evaluation_information')}</li>
+						</ul>
+					</div>
+					<div class="tabmenu2">
+						<ul class="tab" style="border-bottom: solid 1px #E7E7E7;">
+							<li class="active" style="float:none"><a href="javascript:void(0);" style="font-size:16px; font-weight: 600; text-decoration: none; color: #0689e1; padding: 7px 19px 9px 19px;border-bottom: solid 2px #0689e1; cursor: default;">{:lang('member_additional_evaluation_purchased')}</a></li>
+						</ul>
+					</div>
+					<input type="hidden" id="order_id" value="{$order_id}" />
+					<input type="hidden" id="order_no" value="{$order_no}" />
+					{foreach $list as $vo}
+					<div class="evaluate" ogid="{$vo.order_goods_id}" oid="{$vo.order_id}">
+						<div class="evaluate_left">
+							<div class="evaluate_left_top">
+								<img src="{:__IMG($vo['picture_info']['pic_cover_small'])}" />
+							</div>
+							<div class="evaluate_left_bottom">
+								<div class="evaluate_left_bottom_main">
+									<a href="javascript:;">{$vo.goods_name}</a>
+								</div>
+							</div>
+						</div>
+						<div class="evaluate_right" style="height: 87%;margin-top: 24px;">
+							<div class="rate_content">
+								<textarea cols="60" rows="4" placeholder="{:lang('member_content_evaluated')}" style="resize: none;"></textarea>
+								<span class="evaluate_right_two">
+									<input type='file' class="input-file" name='file_upload' id="img_{$vo.order_goods_id}" onchange='UploadImage(this);' />
+								</span>
+								<span class="evaluate_right_three"><i></i>{:lang('member_buyers_slide_show')}</span>
+								<span class="evaluate_right_imgs">
+								</span>
+								<span class="evaluate_right_four">0/5</span>
+							</div>
+						</div>
+					</div>
+					{/foreach}
+					<div class="evaluate_form">
+						<div class="evaluate_bottom">
+							<input id="btn_submit" type="button" class="common-btn" onclick="doSubmit(2)" value="{:lang('member_submit')}"/>
+						</div>
+					</div>
+				</form>
+				<input type="hidden" id="isSub" value="true" />
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+$(function(){
+	
+	$("li[data-href^='{:__URL('SHOP_MAIN/member/orderlist')}'").addClass('current');
+	$(".js-bread-crumb").attr("href",'{:__URL('SHOP_MAIN/member/orderlist')}');
+	$(".js-bread-crumb").text("我的订单{:lang('no_article')}");
+	$(".js-bread-crumb").parent().append('<span class="crumbs-arrow">&gt;</span><a href="{:__URL('SHOP_MAIN/member/reviewagain','orderid='.$order_id)}">商品追加评价{:lang('no_article')}</a>');
+});
+</script>
+{/block}

@@ -1,0 +1,331 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.tr-title { height: 30px; border: 1px solid rgba(234, 233, 233, 0.51);}
+input[type="radio"], input[type="checkbox"] {margin: -1px 5px 0;margin-left: 0px;}
+</style>
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="9%" style="text-align:left;">
+			<button class="btn-common-delete btn-small" onclick="batchDelete()">批量删除</button>
+		</th>
+		<th style="line-height:33px;">
+			评价时间：
+			<input type="text" id="startDate" class="input-medium input-common" placeholder="请选择开始日期" onclick="WdatePicker()" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-medium input-common" onclick="WdatePicker()" />
+			评价用户：<input id="member_name" class="input-medium input-common" type="text" placeholder="请输入用户名称" >
+			评价类型：
+			<select id="explain_type" class="select-common w100">
+				<option value="">全部</option>
+				<option value="1">好评</option>
+				<option value="2">中评</option>
+				<option value="3">差评</option>
+			</select>
+			<input type="button" onclick="LoadingInfo(1)" value="搜索" class="btn-common"/>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 8%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 7%;">
+		<col style="width: 7%;">
+		<col style="width: 5%;">
+	</colgroup>
+	<tbody>
+		<tr class="table-title" style="background: white; z-index: 10; border: 1px solid #E3E3E3;">
+			<th>
+				<input onclick="CheckAll(this)" type="checkbox">
+				<span style="display: inline-block; margin-left: 0px; margin-right: 10px; font-weight: 400;">全选</span>
+			</th>
+			<th colspan="2">商品</th>
+			<th>评价信息</th>
+			<th colspan="1" style="text-align: center;">评价时间</th>
+			<th style="padding-right: 35px; text-align: center;">操作</th>
+		</tr>
+	</tbody>
+	<tbody id="productTbody" style="border: 0;"></tbody>
+</table>
+<input type="hidden" id="type">
+<input type="hidden" id="replyType">
+<div class="modal fade hide" id="evaluate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>评价回复</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td id="myModaltype"><b>评价内容：</b></td>
+							<td id="evaluate_content"></td>
+						</tr>
+						<tr>
+							<td>回复内容：</td>
+							<td><textarea id="evaluate_reply" style="margin-top: 5px;" class="input-common"></textarea></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="hidden" id="evaluate_id">
+				<button type="button" class="btn btn-primary" onclick="replyevaluateAjax()">保存</button>
+				<button type="button" class="btn" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//隐藏商品分组
+function hideEditGroup(){
+	$("#editGroup").popover("hide");
+}
+
+function hideSetRecommend(){
+	$("#setRecommend").popover("hide");
+}
+
+function LoadingInfo(page_index) {
+	var member_name = $("#member_name").val();
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var explain_type = $("#explain_type").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/goodscomment')}",
+		data : {
+			"page_index" : page_index,
+			'page_size' : $("#showNumber").val(),
+			"start_date":start_date,
+			"end_date":end_date,
+			"member_name" : member_name,
+			"explain_type" : explain_type
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr class="tr-title">';
+					html += '<td class="td-14">';
+					html += '<input value="'+data['data'][i]['id']+'" name="sub" type="checkbox" style="margin-left:15px;"></td>';
+					html += '<td colspan="2"><div style="display: inline-block; width: 100%;" class="pro-code"><a href="'+__URL('SHOP_MAIN/goods/goodsinfo?goodsid='+data["data"][i]["goods_id"])+'" target="_blank">';
+					html += '<span style="margin-right:5px;width:60px;float:left;"><img src="'+ __IMG(data["data"][i]["goods_image"])+'"></span>';
+					html += '<span style="width: 335px;">'+ data["data"][i]["goods_name"]+'</span></a></div></td>';
+					html += '<td><span class="pro-code">评价用户： '+ data["data"][i]["member_name"]+'</span><br><span class="pro-code" >';
+					switch(data["data"][i]["explain_type"]){
+						case 1:
+							html += '用户评价： 好评</span><br>';
+							break;
+							case 2:
+							html += '用户评价： 中评</span><br>';
+							break;
+							case 3:
+							html += '用户评价： 差评</span><br>';
+						break;
+					}
+					html += '<span class="pro-code">用户评分： '+ data["data"][i]["scores"]+'分</span></td>';
+					html += '<td colspan="1"><span class="pro-code" style="margin-left:10px;">评价时间：'+ timeStampTurnTime(data["data"][i]["addtime"])+'</span></td>';
+					if(data['data'][i]['is_show'] == 1){
+						html += '<td><a href="javascript:;" title="点击隐藏" onclick="setEvaluteShowStatuAjax('+data['data'][i]['id']+');">隐藏</a>';
+						html += '<a href="javascript:void(0)" data-placement="bottom" onclick="deleteEvaluate('+data['data'][i]['id']+')" data-original-title="删除"><span class="del" style="display: inline-block;"><i class="icon-trash" style="width: initial;"></i>删除</span></a></td></tr>';
+					}else{
+						html += '<td><a href="javascript:;" title="点击显示" onclick="setEvaluteShowStatuAjax('+data['data'][i]['id']+');">显示</a>';
+						html += '<a href="javascript:void(0)" data-placement="bottom" onclick="deleteEvaluate('+data['data'][i]['id'] +')" data-original-title="删除"><span class="del" style="display: inline-block;"><i class="icon-trash" style="width: initial;"></i>删除</span></a></td></tr>';
+					}
+					html += '<tr><td colspan="5" style="background: white;"><p><b>评价内容:</b>';
+					if(data['data'][i]['content'].length > 0){
+						html +='<span class="evaluate_content">'+data['data'][i]['content']+'</span><br>';
+						if(data['data'][i]['image']!= ''){
+							var imgs_arr=data['data'][i]['image'].split(',');
+							html += '<span class="evaluate_content" style="margin-left: 50px;">';
+							for(var key in imgs_arr){
+								html += '<img src="'+__IMG(imgs_arr[key])+'" alt="" style="max-height:60px;margin-right:10px;">';
+							}
+							html += '</span></p>';
+						}
+					}else{
+						html += '<span class="evaluate_content"></span><br></p>';
+					}	
+					if(data['data'][i]['explain_first'].length > 0){
+						html += '<p><b>回复内容:</b> <span class="evaluate_reply">'+data['data'][i]['explain_first']+'</span></p></td>';
+						html += '<td style="background: white;"><div class="bs-docs-example tooltip-demo" style="text-align: left;"><a href="javascript:;" data-placement="bottom" data-original-title="回复"><span class="edit" onclick="replyevaluate('+data['data'][i]['id'] +',this)"><i class="icon-edit" style="width: initial;"></i>回复</span></a></div></td></tr>';
+					}else{
+						html += '<td style="background: white;"><div class="bs-docs-example tooltip-demo" style="text-align: left;"><a href="javascript:;" data-placement="bottom" data-original-title="回复"><span class="edit" onclick="replyevaluate('+data['data'][i]['id'] +',this)"><i class="icon-edit" style="width: initial;"></i>回复</span></a></div></td></tr>';
+					}
+					if(data['data'][i]['again_content'].length > 0){
+						html += '<tr><td colspan="5" style="background: white;"><p><b>追评内容:</b>';
+						html +='<span class="evaluate_content">'+data['data'][i]['again_content']+'</span><br>';
+						if(data['data'][i]['again_image'].length > 0){
+							var imgs_arr=data['data'][i]['again_image'].split(',');
+							html += '<span class="evaluate_content" style="margin-left: 50px;">';
+							for(var key in imgs_arr){
+								html += '<img src="'+__IMG(imgs_arr[key])+'" alt="" style="max-height:60px;margin-right:10px;">';
+							}
+							html += '</span></p>';
+						}
+						if (data['data'][i]['again_explain'].length > 0) {
+							html += '<p><b>追评回复:</b> <span class="evaluate_reply">'+data['data'][i]['again_explain']+'</span></p></td>';
+							html += '<td style="background: white;"><div style="text-align: left;"><a href="javascript:;" data-placement="bottom" data-original-title="回复"><span class="edit" onclick="replyevaluateAgain('+data['data'][i]['id'] +',this)"><i class="icon-edit" style="width: initial;"></i>回复</span></a>';
+						}else{
+							html += '<td style="background: white;"><div style="text-align: left;"><a href="javascript:;" data-placement="bottom" data-original-title="回复"><span class="edit" onclick="replyevaluateAgain('+data['data'][i]['id'] +',this)"><i class="icon-edit" style="width: initial;"></i>回复</span></a>';
+						}
+					}
+				}
+			}else {
+				html += '<tr align="center"><td colspan="6" style="text-align: center;">暂无符合条件的数据记录</td></tr>';
+			}
+			$("#productTbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function batchDelete() {
+	var evaluate_id= new Array();
+	$("#productTbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			evaluate_id.push($(this).val());
+		}
+	});
+	if(evaluate_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteEvaluate(evaluate_id);
+}
+
+// 删除
+function deleteEvaluate(evaluate_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/deleteevaluateajax')}",
+					data : { "evaluate_id" : evaluate_id.toString() },
+					dataType : "json",
+					success : function(data) {
+						if(data['code'] > 0){
+							LoadingInfo(getCurrentIndex(evaluate_id,'#productTbody','tr[class="tr-title"]'));
+							showMessage('success', data['message']);
+						}else{
+							showMessage('error', data['message']);
+						}
+					}
+				});
+			},
+			"取消,#e57373" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$("#productTbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+//回复 弹出框
+function replyevaluate(evaluate_id, event){
+	var evaluate_content = $(event).parents('tr').find('.evaluate_content').html();
+	var evaluate_reply = $(event).parents('tr').find('.evaluate_reply').html();
+	if(evaluate_reply == undefined){
+		evaluate_reply = '';
+	}
+	$("#replyType").val(1);
+	$("#myModalLabel").text("评价回复");
+	$("#myModaltype").text("评价内容：");
+	$("#evaluate").modal('show');
+	$("#evaluate_id").val(evaluate_id);
+	$("#evaluate_content").html(evaluate_content);
+	$("#evaluate_reply").text(evaluate_reply);
+}
+
+function replyevaluateAgain(evaluate_id, event){
+	var evaluate_content = $(event).parents('tr').find('.evaluate_content').html();
+	var evaluate_reply = $(event).parents('tr').find('.evaluate_reply').html();
+	if(evaluate_reply == undefined){
+		evaluate_reply = '';
+	}
+	$("#replyType").val(2);
+	$("#myModalLabel").text("追评回复");
+	$("#myModaltype").text("追评内容：");
+	$("#evaluate").modal('show');
+	$("#evaluate_id").val(evaluate_id);
+	$("#evaluate_content").html(evaluate_content);
+	$("#evaluate_reply").text(evaluate_reply);
+}
+
+// 回复提交
+function replyevaluateAjax(){
+	var evaluate_id = $("#evaluate_id").val();
+	var evaluate_reply = $("#evaluate_reply").val();
+	var replyType = $("#replyType").val(); //1为评价回复 2为追评回复
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/replyevaluateajax')}",
+		data : {
+			"evaluate_id" : evaluate_id, 
+			"evaluate_reply" : evaluate_reply,
+			"replyType" : replyType
+		},
+		success : function(data) {
+			if(data['code'] > 0){
+				showMessage('success', data['message'], "{:__URL('ADMIN_MAIN/goods/goodscomment')}");
+			}else{
+				showMessage('error', data['message']);
+			}
+		}
+	});
+}
+
+//设置显示状态
+function setEvaluteShowStatuAjax(evaluate_id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/setevaluteshowstatuajax')}",
+		data : {"evaluate_id" : evaluate_id},
+		success : function(data) {
+			if(data['code'] > 0){
+				location.reload();
+			}else{
+				showMessage('error', data['message']);
+			}
+		}
+	});
+}
+
+document.onkeydown = function(e){ 
+	var ev = document.all ? window.event : e;
+	if(ev.keyCode==13) {
+		LoadingInfo(1);
+	}
+}
+</script>
+{/block}

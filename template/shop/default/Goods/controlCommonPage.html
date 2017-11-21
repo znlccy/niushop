@@ -1,0 +1,104 @@
+<div id="pagination" class="page" style="display:none;">
+	<div class="pagination-goto" style="display:none;">,{:lang('reach')}<input class="ipt form-control goto-input" type="text" id="pageindex">{:lang('page')}
+		<button class="btn btn-default goto-button" title="{:lang('jump_to_specified_page')}" onclick="GetDataList(0)">{:lang('goods_determine')}</button>
+		<a class="goto-link" data-go-page=""></a>
+	</div>
+	<div class="page-wrap fr">
+		<div class="total">共<span id="pagecount"></span>{:lang('page')}<span id="totalcount" style="display: none;"></span>{:lang('record_in_the')}
+	<!-- 	每页显示：
+		<select class="select m-r-5" id="pagesize" data-page-size="12" onchange="GetDataList(1)" >
+			<option value="5">5</option>
+			<option value="10">10</option>
+			<option value="20">20</option>
+			<option value="30">30</option>
+			<option value="50">50</option>
+		</select>条 -->
+		<input type="hidden" id="pagesize" name="pagesize" value="8"/>
+		</div>
+	</div>y
+	<div class="page-num fr">
+		<span id="home_page"><a class="num prev disabled" data-go-page="1" title="{:lang('first_page')}" >{:lang('home_page')}</a></span>
+		<span id="pre_page"><a class="num prev disabled " title="{:lang('goods_previous_page')}" >{:lang('goods_previous_page')}</a></span>
+		<div id="page_list" style="float: left;"></div>
+		<span id="next_page"><a class="num next disabled" title="{:lang('goods_next_page')}" >{:lang('goods_next_page')}</a></span>
+		<span id="last_page"><a class="num next disabled" title="{:lang('goods_next_page')}" >{:lang('shadowe')}</a></span>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	GetDataList(1);	
+})
+
+function page_display(pagecount,pageindex){
+	if(pagecount==""||pagecount==0){
+		$("#pagination").hide();
+	}else{
+		$("#pagination").show();
+		var pagehtml='',pag_end_html='',page_start_html='';
+		var page_display_num=8;  //总共显示的页的个数必须为奇数
+		
+		//结束页数计算
+		var pageend=pagecount;
+		
+		//开始页面计算
+		var pagestart=pageindex-(page_display_num-1)/2;
+		pagestart=(pageindex==pageend)?pageend-page_display_num+1:pagestart;
+		pagestart=(pageend-pageindex)<3?pageend-page_display_num+1:pagestart;
+		pagestart=pagestart<1?1:pagestart;
+		for(var i=pagestart;i<=pageend;i++){
+			if(pageindex==i){
+				pagehtml+='<span class="num curr" onclick="GetDataList('+i+')"><a data-cur-page="'+i+'" >'+i+'</a></span>	';
+				var pre_page=(i==1)?1:i-1;
+				var next_page=(i==pagecount)?pagecount:i+1;
+				if(i==1){
+					$('#home_page>a').addClass('disabled');
+					$('#pre_page>a').addClass('disabled');
+					$('#home_page').attr('onclick','');
+					$('#pre_page').attr('onclick','');	
+				}else{
+					$('#home_page').attr('onclick','GetDataList(1)');
+					$('#pre_page').attr('onclick','GetDataList("'+pre_page+'")');
+					$('#home_page>a').removeClass('disabled');
+					$('#pre_page>a').removeClass('disabled');
+				}
+				if(i<pagecount){
+					$('#next_page').attr('onclick','GetDataList("'+next_page+'")');
+					$('#last_page').attr('onclick','GetDataList("'+pagecount+'")');
+					$('#last_page>a').removeClass('disabled');
+					$('#next_page>a').removeClass('disabled');
+				}else{
+					$('#next_page').attr('onclick','');
+					$('#last_page').attr('onclick','');
+					$('#last_page>a').addClass('disabled');
+					$('#next_page>a').addClass('disabled');
+				}
+				/*省略点显示*/
+				if((pageend-page_display_num)>0 && i>(page_display_num/2+1)){
+					page_start_html='<span class="shenglue">...</span>';
+				}
+				if(pageend>page_display_num){
+					pageend=page_display_num;
+					if((pageindex+((page_display_num-1)/2))<=pagecount && i>(page_display_num/2+1)){
+						pageend=pageindex+((page_display_num-1)/2);	
+					}
+					if(i<pagecount){
+						pag_end_html='<span class="shenglue">...</span>';
+					}
+					if((pagecount-pageindex)<=((page_display_num-1)/2)){
+						pageend=pagecount;
+						pag_end_html='';
+					}
+				}
+			}else{
+				pagehtml+='<span class="num"  onclick="GetDataList('+i+')"><a data-cur-page="'+i+'" >'+i+'</a></span>	';	
+			}
+		}
+		if(pagehtml==''){
+			$('#page_list').html('<span class="num curr"><a data-cur-page="1">1</a></span>');
+		}else{
+			$('#page_list').html(pagehtml);
+		}
+	}
+}
+</script>

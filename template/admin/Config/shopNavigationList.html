@@ -1,0 +1,214 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.fun-a {
+	margin-top: 0px;
+	padding: 6px 15px 0 15px;
+}
+.style0list tbody td a{
+	    margin-left: 8px;
+	}
+.num{width:40px;text-align:center;}	
+.cell_total{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:250px;display: block;}
+.style0list table input {
+	margin-bottom: 0px;
+}
+
+.style0list table input.sort {
+	width: auto;
+	text-align: center;
+}
+
+.style0list tbody td {
+	line-height: 28px;
+}
+.cell_total{
+	width:120px;
+}
+</style>
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/config/addshopnavigation')}" ><i class="fa fa-plus-circle"></i>&nbsp;添加导航栏</a></li>
+{/block}
+{block name="main"}
+<div class="operation">
+	<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+</div>
+<div class="mod-table">
+	<div class="con style0list">
+			<table>
+				 <colgroup>
+                    <col style="width: 1%">
+                    <col style="width: 8%;">
+                    <col style="width: 8%;">
+                    <col style="width: 25%;">
+                    <col style="width: 10%;">
+                    <col style="width: 20%;">
+                    <col style="width: 15%;">
+                    <col style="width: 15%">
+                    </colgroup>
+				<thead>
+					<tr align="center">
+						  <th><label><input type="checkbox" onClick="CheckAll(this)" id="chek_all"></label></th>
+                          <th class="x-tab"><div class="iconbg-arrow up">排序</div></th>
+                          <th class="x-tab tal"><div class="iconbg-arrow up">导航名称</div></th>
+                          <th class="x-tab tal"><div class="iconbg-arrow up">链接地址</div></th>
+                          <th class="x-tab"><div class="iconbg-arrow up">所在位置</div></th>
+                          <th class="x-tab"><div class="iconbg-arrow up">创建时间</div></th>
+                          <th class="x-tab">是否新窗口打开</th>
+					      <th class="x-tab">操作</th>
+					</tr>
+				</thead>
+				<colgroup>
+                    <col style="width: 1%">
+                    <col style="width: 8%;">
+                    <col style="width: 8%;">
+                    <col style="width: 25%;">
+                    <col style="width: 10%;">
+                    <col style="width: 20%;">
+                    <col style="width: 15%;">
+                    <col style="width: 15%">
+                    </colgroup>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+</div>
+{/block} {block name="script"}
+
+<script type="text/javascript">
+
+//分页数据
+ function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/shopnavigationlist')}",
+		async : true,
+		data : {
+			"page_index" : page_index, "page_size" : $("#showNumber").val()
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><div class="cell"><label ><input name="sub" type="checkbox" value="'+ data['data'][i]['nav_id']+'" ></label></div></td>';
+					html += '<td><input type="number" min="0" value="'+ data["data"][i]["sort"]+'"  nav_id="'+ data['data'][i]['nav_id']+'" class="num" ></td>';	
+					html += '<td class="cell_total tal" title="'+data["data"][i]["nav_title"]+'"><a href="'+ __URL('SHOP_MAIN'+data['data'][i]['nav_url'])+'" target="_blank">' + data["data"][i]["nav_title"]+ '</a></td>';
+					if(data["data"][i]["nav_type"] == 0){
+						html += '<td class="tal" style="word-break:break-word;">' + data["data"][i]["template_name"]+ '</td>';
+					}else if(data["data"][i]["nav_type"] == 1){
+						html += '<td class="tal" style="word-break:break-word;">' + data["data"][i]["nav_url"]+ '</td>';
+					}
+
+					if(data["data"][i]["type"]==1){
+						html += '<td>头部</td>';	
+					}else if(data["data"][i]["type"]==2){ 
+						html += '<td>中部</td>';
+					}else if(data["data"][i]["type"]==3){ 
+						html += '<td>底部</td>';
+					}else{ 
+						html += '<td>&nbsp;</td>';
+					}
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"])+ '</td>';
+					if(data['data'][i]['is_blank'] ==0 ){
+						html += '<td>否</td>';	
+					}else if(data['data'][i]['is_blank'] ==1){
+						html += '<td>是</td>';	
+					}
+			        html += '<td><a href="'+__URL('ADMIN_MAIN/config/updateshopnavigation?nav_id='+ data['data'][i]['nav_id'])+'">修改</a><a style="cursor: pointer;" onclick="deleteArticle('+data['data'][i]['nav_id']+')">删除</a></td> ';
+				    html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="7">暂无导航信息</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			load();
+		}
+	});
+}	
+
+
+function batchDelete() {
+	var nav_id= new Array();
+	$(".style0list tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			nav_id.push($(this).val());
+		}
+	});
+	if(nav_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteArticle(nav_id);
+}
+
+//删除菜单
+function deleteArticle(nav_id){
+	$( "#dialog" ).dialog({
+        buttons: {
+            "确定": function() {
+                $(this).dialog('close');
+                $.ajax({
+    				type : "post",
+    				url : "{:__URL('ADMIN_MAIN/config/delshopnavigation')}",
+    				data : {
+    					"nav_id" : nav_id.toString()
+    				},
+    				success : function(data) {
+    					if (data["code"] > 0) {
+    						LoadingInfo(getCurrentIndex(nav_id,'.style0list tbody'));
+    						$('#chek_all').prop('checked',false);
+    						showMessage('success', data["message"]);
+    					}else{
+    						showMessage('error', data["message"]);
+    					}
+    				}
+    				})
+            },
+            "取消,#e57373": function() {
+                $(this).dialog('close');
+            }
+        },
+        contentText:"是否删除菜单？",
+    });
+}
+/*修改排序*/
+function load(){
+	$('.num').change(function(){
+		var nav_id = $(this).attr('nav_id');
+		var sort = $(this).val();
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/config/modifyshopnavigationsort')}",
+			data:{'nav_id':nav_id,'sort':sort},
+			async:true,
+			success: function (data) {
+				if(data['code'] > 0){
+					/* showMessage('success', data["message"]); */
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		}); 
+	});
+}
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+}
+</script>
+{/block}

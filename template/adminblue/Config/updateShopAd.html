@@ -1,0 +1,129 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<style  type="text/css">
+.class-logo{background-color: #FFF;position: relative;z-index: 1;}
+.class-logo p{width: 200px;height: 60px;line-height: 0;background-color: #FFF;text-align: center;vertical-align: middle;display: table-cell;*display: block;overflow: hidden;margin: 0 0 10px;border: dashed 1px #e5e5e5;}
+.class-logo p img{max-width: 200px;max-height: 60px;border: medium none;vertical-align: middle;margin-top: expression(60-this.height/2);*margin-top: expression(30-this.height/2);}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>图片:</dt>
+		<dd>
+			<div class="class-logo"><p><img id="imgLogo"src="{:__IMG($info['ad_image'])}"></p></div>
+			<div class="upload-btn">
+				<span>
+					<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
+					<input type="hidden"id="Logo" value="{$info['ad_image']}"/>
+				</span>
+				<p><i class="fa fa-cloud-upload"></i>上传图片</p>
+			</div>
+			<p class="hint"><span style="color:orange;">建议使用宽100像素-高100像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>链接地址:</dt>
+		<dd>
+			<p><input id="link_url" type="text" value="{$info['link_url']}" class="input-common"></p>
+			<p class="error">请输入链接地址</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>类型:</dt>
+		<dd>
+			<p><select id="type">
+				<option value="0" {if condition="$info['type'] eq 0"}selected="selected"{/if}>PC端</option>
+				<option value="1" {if condition="$info['type'] eq 1"}selected="selected"{/if}>手机端</option>
+			</select></p>
+			<p class="error">请选择类型</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>背景色:</dt>
+		<dd>
+			<p><input id="background" type="color" value="{$info['background']}" class="input-common"></p>
+			<p class="error">请选择类型</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序:</dt>
+		<dd>
+			<p><input id="sort" type="text" value="{$info['sort']}" class="input-common"></p>
+			<p class="error">请输入序号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="updateShopAdAjax();">提交</button></dd>
+	</dl>
+</div>
+<input id="id" type="hidden" value="{$info['id']}"/>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+//模块输入信息验证
+function verify( ad_image,link_url){
+	if(ad_image == ''){
+		$("#ad_image").parent().next().show();
+		return flase;
+	}else{
+		$(".error").hide();
+	}
+	if(link_url == ''){
+		$("#link_url").parent().next().show();
+		return flase;
+	}else{
+		$(".error").hide();
+	}
+}
+
+//添加模块
+function updateShopAdAjax() {
+	var id = $("#id").val();
+	var ad_image = $("#Logo").val();
+	var link_url = $("#link_url").val();
+	var type = $("#type").val();
+	var sort = $("#sort").val();
+	var background = $("#background").val();
+	verify(ad_image, link_url);
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/updateshopad')}",
+		data : {
+			'id' : id,
+			'ad_image' : ad_image,
+			'link_url' : link_url,
+			'type' : type,
+			'sort' : sort,
+			'background' : background,
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', "店铺广告编辑成功","{:__URL('ADMIN_MAIN/config/shopadlist')}");
+			}else{
+				showMessage('error', "店铺广告编辑失败");
+			}
+		}
+	});
+}
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var data = { 'file_path' : UPLOADADV };
+	uploadFile(fileid,data,function(res){
+		if(res.code){
+			$("#imgLogo").attr("src",__IMG(res.data));
+			$("#Logo").val(res.data);
+			showTip(res.message,"success");
+		}else{
+			showTip(res.message,"error");
+		}
+	});
+}
+</script>
+{/block}

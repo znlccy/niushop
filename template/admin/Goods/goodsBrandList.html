@@ -1,0 +1,175 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.brand_img{
+	width: 140px;
+	height: 25px;
+	text-align: center;
+	vertical-align: middle;
+}
+.brand_img img{
+	max-width: 100%;
+	max-height: 100%;
+}
+</style>
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="javascript:;" onclick="addBrand()"><i class="fa fa-plus-circle"></i>&nbsp;添加品牌</a></li>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="10%" style="text-align: left;">
+			<button class="btn btn-small" onclick="batchDelete()">批量删除</button>
+		</th>
+		<th width="20%">
+			<input type="text" id = 'search_text' placeholder="输入品牌名称" class="input-common"/>
+			<input type="button" onclick="LoadingInfo(1)" value="搜索" class="btn-common"/>
+		</th>
+	</tr>
+</table>
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="con style0list">
+			<table>
+				<colgroup>
+					<col style="width: 1%;">
+					<col style="width: 8%;">
+					<col style="width: 11%;">
+					<col style="width: 11%;">
+					<col style="width: 11%;">
+					<col style="width: 12%;">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>
+							<label style="display: inline-block;position: relative;">
+								<input type="checkbox" onclick="CheckAll(this)" />
+							</label>
+						</th>
+						<th class="tal">图片</th>
+						<th class="tal">品牌名称</th>
+						<th>品牌首字母</th>
+						<th>商品分类</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 8%;">
+					<col style="width: 11%;">
+					<col style="width: 11%;">
+					<col style="width: 11%;">
+					<col style="width: 12%;">
+				</colgroup>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+	/* 跳转到添加品牌 */
+	function addBrand() {
+		location.href = "{:__URL('ADMIN_MAIN/goods/addgoodsbrand')}";
+	}
+	
+	//批量删除
+	function batchDelete(){
+		var brand_ids = new Array();
+		$(".style0list tbody input[type='checkbox']:checked").each(function() {
+			if (!isNaN($(this).val())) {
+				brand_ids.push($(this).val());
+			}
+		});
+		if(brand_ids.length==0){
+			$( "#dialog" ).dialog({
+				buttons: {
+					"确定,#e57373": function() {
+						$(this).dialog('close');
+					}
+				},
+				contentText:"请选择需要操作的记录",
+				title:"消息提醒",
+			});
+			return false;
+		}
+		delBrand(brand_ids);
+	}
+
+	//加载数据
+	function LoadingInfo(page_index) {
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/goods/goodsbrandlist')}",
+			data : {
+				"page_index" : page_index,
+				"page_size" : $("#showNumber").val(),
+				"search_text" : $("#search_text").val()
+			},
+			success : function(data) {
+				//alert(JSON.stringify(data));
+				var html = '';
+				if (data["data"].length > 0) {
+					for (var i = 0; i < data["data"].length; i++) {
+						html += '<tr align="center">';
+						html += '<td><div class="cell"><label ><input name="sub" type="checkbox" value="'+ data["data"][i]["brand_id"] +'" ></label></div></td>';
+						if(data["data"][i]["brand_pic"]==''){
+							html += '<td class="tal"></td>';
+						}else{
+							html += '<td class="tal"><div class="brand_img"><img src="'+ __IMG(data["data"][i]["brand_pic"]) +'"></div></td>';
+						}
+						html += '<td class="tal">' + data["data"][i]["brand_name"] + '</td>';
+						html += '<td>' + data["data"][i]["brand_initial"] + '</td>';
+						html += '<td>'+data["data"][i]['category_id_1_name']+'&nbsp;'+data["data"][i]['category_id_2_name']+'&nbsp;'+data["data"][i]['category_id_3_name']+'</td>';
+						html += '<td><a href="'+__URL('ADMIN_MAIN/goods/updategoodsbrand?brand_id=' + data["data"][i]["brand_id"]) +'">修改</a>  <a href="javascript:delBrand(' + data["data"][i]["brand_id"] + ')">删除</a></td> ';
+						html += '</tr>';
+					}
+				} else {
+					html += '<tr align="center"><th colspan="9">暂无符合条件的数据记录</th></tr>';
+				}
+				$(".style0list tbody").html(html);
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+		});
+	}
+	
+	/* 删除品牌 */
+	function delBrand(brand_id) {
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定": function() {
+					$(this).dialog('close');
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/goods/deletegoodsbrand')}",
+						data : {
+							'brand_id' : brand_id.toString()
+						},
+						dataType : "json",
+						success : function(data) {
+							if (data['code'] > 0) {
+								LoadingInfo(getCurrentIndex(brand_id,'.style0list tbody'));
+								showMessage('success', data["message"]);
+							}else{
+								showMessage('error', data["message"]);
+							}
+						}
+					});
+				},"取消,#e57373" : function(){
+					$(this).dialog('close');
+				}
+			},
+			contentText:"你确定删除吗？",
+			title:"消息提醒"
+		});
+	}
+	//全选
+	function CheckAll(event){
+		var checked = event.checked;
+		$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+	}
+</script>
+{/block}

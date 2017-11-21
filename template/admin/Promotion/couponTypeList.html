@@ -1,0 +1,182 @@
+{extend name="admin/base" /} 
+{block name="resources"/}
+<style>
+.modal-infp-style{
+width:90%;
+	margin:10px auto;
+}
+.modal-infp-style table{
+	width:100%;
+}
+.modal-infp-style table tr td{
+	border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+</style>
+{/block}
+{block name="right_tab"} 
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/promotion/addcoupontype')}"><i class="fa fa-plus-circle"></i>&nbsp;添加优惠券</a></li>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+	<table class="mytable">
+	<tr>
+		<th width="10%"><input type="text" id = 'search_text' placeholder="请输入优惠券名称" /><input type="button" onclick="searchData()" value="搜索" /></th>
+	</tr>
+</table>
+	<div class="con style0list">
+		<table>
+			<thead>
+				<tr align="center">
+					<th><label style="margin-left: 5px;"><input type="checkbox" onclick="CheckAll(this)"></label>
+					</th>
+					<th class="tal">类型名称</th>
+					<th class="tal">面额</th>
+					<th>发放数量</th>
+					<th>有效期开始时间</th>
+					<th>有效期结束时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+	function LoadingInfo(page_index) {
+		var search_text = $("#search_text").val();
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/coupontypelist')}",
+			data : {
+				"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text
+			},
+			success : function(data) {
+				var html = '';
+				if (data["data"].length > 0) {
+					for (var i = 0; i < data["data"].length; i++) {
+						html += '<tr align="center">';
+						html += '<td><div class="cell"><label ><input name="sub" type="checkbox" value="'+ data["data"][i]["coupon_type_id"]+'" ></label></div></td>';
+						if (data["data"][i]["coupon_name"] == null || "" == data["data"][i]["coupon_name"]) {
+							html += '<td class="tal">--</td>';
+						} else {
+							html += '<td class="tal">' + data["data"][i]["coupon_name"] + '</td>';
+						}
+						html += '<td class="tal">' + data["data"][i]["money"] + '</td>';;
+						html += '<td>' + data["data"][i]["count"] + '</td>';
+						html += '<td>' + timeStampTurnTime(data["data"][i]["start_time"]) + '</td>';
+						html += '<td>' + timeStampTurnTime(data["data"][i]["end_time"]) + '</td>';
+						html += '<td><a href="'+__URL('ADMIN_MAIN/Promotion/updateCouponType?coupon_type_id=' + data["data"][i]["coupon_type_id"])+'">编辑</a>&nbsp;';
+						html += '<a href="javascript:void(0);"onclick="couponTypeInfo('+data["data"][i]["coupon_type_id"]+')">详情</a>&nbsp;'; 
+						html += '<a href="javascript:;" onclick="deletecouponType('+data["data"][i]["coupon_type_id"]+');">删除</a></td>';
+						html += '</tr>';
+					}
+				} else {
+					html += '<tr align="center"><th colspan="9">暂无符合条件的数据记录</th></tr>';
+				}
+				$(".style0list tbody").html(html);
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+		});
+	}
+	//全选
+	function CheckAll(event){
+		var checked = event.checked;
+		$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+	}
+
+	function searchData(){
+		LoadingInfo(1);
+	}
+	function couponTypeInfo(coupon_type_id){
+		$("#couponTypeInfo").modal("show");
+		$.ajax({
+			type:"post",
+			url : "{:__URL('ADMIN_MAIN/promotion/getcoupontypeinfo')}",
+			data : {
+				"coupon_type_id" : coupon_type_id
+			},
+			success : function(data) {
+				$("#coupon_name").text(data["coupon_name"]);
+				$("#money").text(data["money"]+"元");
+				$("#count").text(data["count"]);
+				if(data["max_fetch"] == 0){
+					$("#max_fetch").text('不限');
+				}else{
+					$("#max_fetch").text(data["max_fetch"]+"次");
+				}
+				$("#at_least").text(data["at_least"]+"元");
+				$("#time").text(timeStampTurnTime(data["start_time"])+"到"+timeStampTurnTime(data["end_time"]));
+			}
+		})
+	}
+	function deletecouponType(coupon_type_id){
+		$.ajax({
+			type:"post",
+			url : "{:__URL('ADMIN_MAIN/promotion/delcoupontype')}",
+			data : { "coupon_type_id" : coupon_type_id},
+			dataType : "json",
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/promotion/coupontypelist')}");
+				}else if(data["code"] == -1){
+					showMessage('error', '已被领取的优惠券不可删除！');
+				}else{
+					showMessage('error', data['message']);
+				}
+			}
+		})
+	}
+</script>
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="couponTypeInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">优惠券详情</h4>
+            </div>
+            <div class="modal-body">
+            	<div class="modal-infp-style">
+            		<table>
+            			<tr>
+            				<td>类型名</td>
+            				<td id="coupon_name"></td>
+            			</tr>
+            			<tr>
+            				<td>面额</td>
+            				<td id="money"></td>
+            			</tr>
+            			<tr>
+            				<td>发放数量</td>
+            				<td id="count"></td>
+            			</tr>
+            			<tr>
+            				<td>每人最大领取数</td>
+            				<td id="max_fetch"></td>
+            			</tr>
+            			<tr>
+            				<td>满多少元使用</td>
+            				<td id="at_least"></td>
+            			</tr>
+            			<tr style="display:none;">
+            				<td>领取人等级</td>
+            				<td id="need_user_level"></td>
+            			</tr>
+            			<tr>
+            				<td>有效时间</td>
+            				<td id="time"></td>
+            			</tr>
+            		</table>
+            	</div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">关闭</button></div>
+        </div>
+    </div>
+</div>
+{/block}

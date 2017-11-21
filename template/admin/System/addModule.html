@@ -1,0 +1,345 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style  type="text/css">
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 200px;
+	height: 60px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	    margin: 0 0 10px;
+		border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 200px;
+	max-height: 60px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+.edit_button{
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:30px;
+	padding-right:30px;
+	background-color:#51A351;
+	color:#FFF;
+	margin:20px auto;
+	border:none;
+	display:block;
+}
+.error{
+	font-size: 12px;
+    line-height: 16px;
+    color: red;
+    margin-top: 10px;
+	display:none;
+}
+.set-style dl dd p{
+	margin-bottom:0;
+}
+</style>
+ {/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>模块名:</dt>
+		<dd>
+			<p><input name="UserCode" id="module_name" type="text"> </p>
+			<p class="error">请输入模块名</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>上级菜单:</dt>
+		<dd>
+			<p>
+				<select class="form-control input-sm" id="pid">
+					<option value="0">顶级菜单</option> {foreach name="list" item="v1"}
+					<option value="{$v1['data']['module_id']}">&nbsp;&nbsp;&nbsp;{$v1['data']['module_name']}</option>
+					{foreach name="v1['sub_menu']" item="v2"}
+					<option value="{$v2['module_id']}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$v2['module_name']}</option>
+					{/foreach} {/foreach}
+				</select>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>控制器名:</dt>
+		<dd>
+			<p><input name="UserCode" id="controller" type="text"></p>
+			<p class="error">请输入控制器名</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>方法名:</dt>
+		<dd>
+			<p><input name="UserCode" id="method" type="text"></p>
+			<p class="error">请输入方法名</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>URL:</dt>
+		<dd>
+			<p><input name="UserCode" id="url" type="text"></p>
+			<p class="error">请输入url地址</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否是菜单:</dt>
+		<dd>
+			<p><input type="checkbox" id="is_menu" class="checkbox"></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否控制权限:</dt>
+		<dd>
+			<p>
+					<input id="is_control_auth" type="checkbox" class="checkbox" checked="checked" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否仅开发者模式可见:</dt>
+		<dd>
+			<p><input id="is_dev" type="checkbox" class="checkbox"  checked="checked" /></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序:</dt>
+		<dd>
+			<p><input name="UserCode" id="sort" type="number" value="0"></p>
+			<p class="error">请输入序号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>图片:</dt>
+		<dd>
+			<div class="class-logo"><p><img id="imgLogo"src="" ></p></div>
+			<div class="ncsc-upload-btn"> 
+			    <a href="javascript:void(0);"><span>
+			          <input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImg" nc_type="change_store_label" type="file" onchange="imgUpload(this);">
+			        <input type="hidden"id="Logo"value=""/></span><p>
+			        <i class="fa fa-cloud-upload text"></i>上传图片</p>
+			    </a> 
+			</div>
+			<p class="hint"><br><span style="color:orange;">建议使用宽50像素-高50像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述:</dt>
+		<dd>
+			<p><textarea id="desc"></textarea></p>
+			<p class="error">请输入模块描述</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="addModuleAjax()">提交</button>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+
+<script>
+	/**
+	*图片上传
+	*/
+	function imgUpload(event) {
+		var fileid = $(event).attr("id");
+		var data = { 'file_path' : UPLOADCOMMON };
+		uploadFile(fileid,data,function(res){
+			if(res.code){
+				$("#imgLogo").attr("src",__IMG(res.data));
+				$("#Logo").val(res.data);
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		});
+	}
+	/**
+	*模块输入信息验证
+	*/
+	function verify(module_name, controller, method, url,  sort, desc){
+		if(module_name == ''){
+			$("#module_name").parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(controller == ''){
+			$("#controller").parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(method == ''){
+			$("#method").parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(url == ''){
+			$("#url").parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+// 		if(sort == ''){
+// 			$("#sort").parent().next().show();
+// 			return false;
+// 		}else{
+// 			$(".error").hide();
+// 		}
+// 		if(desc == ''){
+// 			$("#desc").parent().next().show();
+// 			return false;
+// 		}else{
+// 			$(".error").hide();
+// 		}
+		return true;
+	}
+	var flag = false;//防止重复提交
+	/**
+	*添加模块
+	*/
+	function addModuleAjax() {
+		var pid = $("#pid").val();
+		var module_name = $("#module_name").val();
+		var controller = $("#controller").val();
+		var method = $("#method").val();
+		var url = $("#url").val();
+		var is_menu = $("#is_menu").val();//是否是菜单
+		var is_control_auth = 1;//是否控制权限，默认控制
+		var is_dev = $("#is_dev").val();//是否仅开发者模式可见
+		var sort = $("#sort").val();
+		var desc = $("#desc").val();
+		if($("#is_menu").prop("checked")){
+			var is_menu = 1;
+		}else{
+			var is_menu = 0;
+		}
+		if(!$("#is_control_auth").prop("checked")){
+			is_control_auth = 0;
+		}
+		if($("#is_dev").prop("checked")){
+			var is_dev = 1;
+		}else{
+			var is_dev = 0;
+		}
+		var module_picture = $("#Logo").val();
+		if(verify(module_name, controller, method, url, sort, desc)){
+			if(flag){
+				return;
+			}
+			flag = true;
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/system/addmodule')}",
+				data : {
+					'pid' : pid,
+					'module_name' : module_name,
+					'controller' : controller,
+					'method' : method,
+					'url' : url,
+					'is_menu' : is_menu,
+					'is_control_auth' : is_control_auth,
+					'is_dev' : is_dev,
+					'sort' : sort,
+					'module_picture' : module_picture,
+					'desc' : desc
+				},
+				success : function(data) {
+					if (data["code"] > 0) {
+						showMessage('success', data["message"],"ADMIN_MAIN/system/modulelist");
+					}else{
+						showMessage('error', data["message"]);
+					}
+					flag = false;
+				}
+			});
+		}
+	}
+</script>
+{/block}

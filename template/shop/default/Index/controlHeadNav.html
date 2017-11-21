@@ -1,0 +1,41 @@
+<!--
+	创建人：王永杰
+	创建时间：2017年2月7日 12:05:24
+	功能描述： 首页导航栏、 菜单栏、、商品分类、轮播图（目前只有首页才拥有这个组件）
+-->
+<ul id="fullScreenSlides" class="full-screen-slides"></ul>
+<ul class="full-screen-slides-pagination"></ul>
+<script type="text/javascript">
+	//轮播图
+	var ap_id=[ap_id];
+	var data=platformAdvLoad(ap_id);
+	var bannerhtml='';
+	var slideshtml='';
+	if(data !=null && data.length>0){
+		for(var i=0;i<data.length;i++){
+
+			if(data[i]['adv_image'] == ''){
+				if(i==0){
+					bannerhtml+='<li style="display: list-item;background: url(__TEMP__/{$style}/public/images/style_red_banner.png) no-repeat center;background-size: auto"><a href="javascript:;" target="_blank" >&nbsp;</a> </li>';
+				}
+				
+			}else{
+				
+				if(i==0){
+					bannerhtml+='<li style="display: list-item;background: url('+__IMG(data[i]['adv_image'])+') no-repeat center;background-color:'+data[i]['background']+';background-size: auto"><a href="'+data[i]['adv_url']+'" target="_blank" >&nbsp;</a> </li>';
+				}else{
+					bannerhtml+='<li style="display: none;background: url('+__IMG(data[i]['adv_image'])+') no-repeat center;background-color:'+data[i]['background']+';background-size: auto"><a href="'+data[i]['adv_url']+'" target="_blank" >&nbsp;</a> </li>';
+				}
+			}
+		}
+		for(var i=1;i<=data.length;i++){
+			if(i==1){
+				slideshtml+='<li class="current"><a href="javascript:void(0);">'+i+'</a></li>';	
+			}else{
+				slideshtml+='<li><a href="javascript:void(0);">'+i+'</a></li>';
+			}
+		}
+	}
+	$('#fullScreenSlides').html(bannerhtml);
+	$('.full-screen-slides-pagination').html(slideshtml);
+</script>

@@ -1,0 +1,114 @@
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/shopping_cart.js"></script>
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/user.css" />
+<style>
+.member-menu .user-info .logo {
+    height: 80px;
+	line-height:80px;
+    border-radius: 55px;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid #e6e6e6;
+}
+</style>
+<div class="breadcrumb">
+	<a href="{:__URL('SHOP_MAIN')}" class="index">{:lang('home_page')}</a>
+	<span class="crumbs-arrow">&gt;</span>
+	<a href="{:__URL('SHOP_MAIN/member/index')}" class="js-bread-crumb"></a>
+</div>
+<div class="member-menu">
+	<div class="user-info">
+		<header>
+			<span class="level-name">{$member_detail.level_name}</span>
+			<span class="exit" onclick="logout()" title="{:lang('login_out')}{:lang('login')}"><i class="icon i-exit"></i>{:lang('login_out')}</span>
+		</header>
+		<div class="logo" onclick="location.href='{:__URL('SHOP_MAIN/member/person')}';" title="{:lang('member_view_personal_data')}">
+			{if condition="$member_img neq '' and $member_img neq '0'"}
+			<img id="headImagePath" src="{:__IMG($member_img)}" style="border-radius: 0;display: block;"/>
+			{else/}
+			<img id="headImagePath" src="__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png" style="border-radius: 0;display: block;"/>
+			{/if}
+		</div>
+		<strong onclick="location.href='{:__URL('SHOP_MAIN/member/person')}';" title="{:lang('member_view_personal_data')}">{$member_info['user_info']['nick_name']}</strong>
+	</div>
+	<article class="list">
+		<div class="item">
+			<h3>
+				<i class="icon i-member-center"></i>
+				<span>{:lang('member_member_center')}</span>
+			</h3>
+			<ul>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/index')}';" data-href="{:__URL('SHOP_MAIN/member/index')}" class="item">
+					<span>{:lang('member_welcome_page')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/person')}';" data-href="{:__URL('SHOP_MAIN/member/person')}">
+					<span>{:lang('member_personal_data')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/usersecurity')}';" data-href="{:__URL('SHOP_MAIN/member/usersecurity')}">
+					<span>{:lang('member_account_security')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/addresslist')}';" data-href="{:__URL('SHOP_MAIN/member/addresslist')}">
+					<span>{:lang('member_delivery_address')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/balancelist')}';" data-href="{:__URL('SHOP_MAIN/member/balancelist')}">
+					<span>{:lang('member_account_balance')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/balancewithdrawlist')}';" data-href="{:__URL('SHOP_MAIN/member/balancewithdrawlist')}">
+					<span>{:lang('member_cash_register')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/vouchers')}';" data-href="{:__URL('SHOP_MAIN/member/vouchers')}">
+					<span>{:lang('member_my_coupon')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/integrallist')}';" data-href="{:__URL('SHOP_MAIN/member/integrallist')}">
+					<span>{:lang('member_my_points')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+			</ul>
+		</div>
+		<div class="item">
+			<h3>
+				<i class="icon i-trading-center"></i>
+				<span>{:lang('member_trading_center')}</span>
+			</h3>
+			<ul>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/orderlist')}';" data-href="{:__URL('SHOP_MAIN/member/orderlist')}">
+					<span>{:lang('member_my_order')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/backlist')}';" data-href="{:__URL('SHOP_MAIN/member/backlist')}">
+					<span>{:lang('refund_return_maintenance')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/goodsevaluationlist')}';" data-href="{:__URL('SHOP_MAIN/member/goodsevaluationlist')}">
+					<span>{:lang('commodity_evaluation_drying_list')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/goodscollectionlist')}';" data-href="{:__URL('SHOP_MAIN/member/goodscollectionlist')}">
+					<span>{:lang('member_merchandise_collection')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+			</ul>
+		</div>
+	</article>
+</div>
+<script type="text/javascript">
+$(function(){
+	//选中
+	var path_info='{$path_info}';
+	if(path_info==''||path_info=="member"){
+		$("li[data-href^='{:__URL('SHOP_MAIN/member/index')}']").addClass('current');
+		$(".js-bread-crumb").attr("href",$("li[data-href^='{:__URL('SHOP_MAIN/member/index')}']").attr("data-href"));
+		$(".js-bread-crumb").text($("li[data-href^='{:__URL('SHOP_MAIN/member/index')}']").text());
+	}else{
+		$("li[data-href^='{:__URL('SHOP_MAIN/'.$path_info)}']").addClass('current');
+		$(".js-bread-crumb").attr("href",$("li[data-href^='{:__URL('SHOP_MAIN/'.$path_info)}").attr("data-href"));
+		$(".js-bread-crumb").text($("li[data-href^='{:__URL('SHOP_MAIN/'.$path_info)}']").text());
+	}
+});
+</script>

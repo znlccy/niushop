@@ -1,0 +1,88 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/member/addmemberlevel')}';">添加等级</button>
+</div>
+<table class="table-class">
+	<thead>
+		<tr align="center">
+			<th><input type="checkbox" onclick="CheckAll(this)"></th>
+			<th>等级名称</th>
+			<th>升级条件</th>
+			<th>折扣率（%）</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : __URL("ADMIN_MAIN/member/memberlevellist"),
+		data : { "page_index" : page_index, "page_size" :  $("#showNumber").val() },
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><input name="sub" type="checkbox" value="'+ data["data"][i]["level_id"]+'" ></td>';
+					html += '<td>'+ data["data"][i]["level_name"]+'</td>';
+					if(data['data'][i]['upgrade']==1){
+						html += '<td>累计积分满' + data['data'][i]['min_integral'] +'分</td>';
+					}else if(data['data'][i]['upgrade']==2){
+						html += '<td>消费额度满' + data['data'][i]['quota'] +'元</td>';
+					}else if(data['data'][i]['upgrade']==3 && data['data'][i]['relation']==1){
+						html += '<td>累计积分满' + data['data'][i]['min_integral'] +'分&nbsp;或&nbsp;消费额度满' + data['data'][i]['quota'] +'元</td>';
+					}else if(data['data'][i]['upgrade']==3 && data['data'][i]['relation']==2){
+						html += '<td>累计积分满' + data['data'][i]['min_integral'] +'分&nbsp;且&nbsp;消费额度满' + data['data'][i]['quota'] +'元</td>';
+					}else if(data['data'][i]['upgrade']==0){
+						html += '<td>无条件</td>';
+					}
+					html += '<td>' + data['data'][i]['goods_discount'] * 100 + '</td>';
+					if(data['data'][i]['is_default'] == 1){
+						html += '<td> <a href="'+__URL('ADMIN_MAIN/member/updatememberlevel?level_id='+ data['data'][i]['level_id'])+'">修改</a></td>';
+					}else{
+						html += '<td><a href="'+__URL('ADMIN_MAIN/member/updatememberlevel?level_id='+ data['data'][i]['level_id'])+'">修改</a>&nbsp;&nbsp;&nbsp;<a href="javascript:deleteMember('+data['data'][i]['level_id']+');">删除</a></td>';
+					}
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="5">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+function deleteMember(level_id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/deleteMemberLevel')}",
+		data : { 'level_id' : level_id },
+		success : function(data) {
+			if (data['code'] > 0) {
+				showMessage('success', data["message"]);
+				location.href=__URL("ADMIN_MAIN/member/memberlevellist");
+			} else {
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

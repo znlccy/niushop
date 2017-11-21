@@ -1,0 +1,426 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style  type="text/css">
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 200px;
+	height: 60px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	    margin: 0 0 10px;
+		border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 200px;
+	max-height: 60px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+.edit_button{
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:30px;
+	padding-right:30px;
+	background-color:#51A351;
+	color:#FFF;
+	margin:20px auto;
+	border:none;
+	display:block;
+}
+.error{
+	font-size: 12px;
+    line-height: 16px;
+    color: red;
+    margin-top: 10px;
+	display:none;
+}
+.set-style dl dd p{
+	margin-bottom:0;
+}
+</style>
+ {/block}
+{block name="main"}
+<div class="ncsc-picture-list">
+      <div class="alert alert-info"> <strong>注：在使用‘替换上传’功能时，请保持图片的扩展名与被替换图片相同。</strong> </div>
+      <ul>
+		<li style="opacity: 1;" class="">
+		<dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=918&amp;class_id=1&amp;curpage=1&amp;start_index=0"> <img id="img_918" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_05327773485824559_240.jpg"></a></div>
+              <input id="C918" name="id[]" value="918" type="checkbox" class="checkbox">
+              <input id="918" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="640" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2016-11-18</p>
+              <p>原图尺寸：539x350</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_918" id="file_918" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=918"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(918)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=918');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=917&amp;class_id=1&amp;curpage=1&amp;start_index=1"> <img id="img_917" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04423412474341466_240.png"></a></div>
+              <input id="C917" name="id[]" value="917" type="checkbox" class="checkbox">
+              <input id="917" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="3" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2014-01-06</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_917" id="file_917" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=917"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(917)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=917');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=916&amp;class_id=1&amp;curpage=1&amp;start_index=2"> <img id="img_916" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04423412434387147_240.png"></a></div>
+              <input id="C916" name="id[]" value="916" type="checkbox" class="checkbox">
+              <input id="916" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="2" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2014-01-06</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_916" id="file_916" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=916"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(916)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=916');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=915&amp;class_id=1&amp;curpage=1&amp;start_index=3"> <img id="img_915" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04423412221350722_240.jpg"></a></div>
+              <input id="C915" name="id[]" value="915" type="checkbox" class="checkbox">
+              <input id="915" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="副本" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2014-01-06</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_915" id="file_915" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=915"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(915)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=915');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li class="" style="opacity: 1;">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=914&amp;class_id=1&amp;curpage=1&amp;start_index=4"> <img id="img_914" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04423411880302392_240.png"></a></div>
+              <input id="C914" name="id[]" value="914" type="checkbox" class="checkbox">
+              <input id="914" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="1" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2014-01-06</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_914" id="file_914" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=914"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(914)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=914');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=913&amp;class_id=1&amp;curpage=1&amp;start_index=5"> <img id="img_913" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04423392645620711_240.jpg"></a></div>
+              <input id="C913" name="id[]" value="913" type="checkbox" class="checkbox">
+              <input id="913" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="副本" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2014-01-06</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_913" id="file_913" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=913"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(913)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=913');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=912&amp;class_id=1&amp;curpage=1&amp;start_index=6"> <img id="img_912" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04423392298369303_240.jpg"></a></div>
+              <input id="C912" name="id[]" value="912" type="checkbox" class="checkbox">
+              <input id="912" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="5" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2014-01-06</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_912" id="file_912" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=912"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(912)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=912');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=461&amp;class_id=1&amp;curpage=1&amp;start_index=7"> <img id="img_461" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04418254463390448_240.jpg"></a></div>
+              <input id="C461" name="id[]" value="461" type="checkbox" class="checkbox">
+              <input id="461" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="34" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2013-12-31</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_461" id="file_461" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=461"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(461)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=461');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=460&amp;class_id=1&amp;curpage=1&amp;start_index=6"> <img id="img_460" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04418254270788167_240.jpg"></a></div>
+              <input id="C460" name="id[]" value="460" type="checkbox" class="checkbox">
+              <input id="460" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="33" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2013-12-31</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_460" id="file_460" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=460"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(460)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=460');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=459&amp;class_id=1&amp;curpage=2&amp;start_index=0"> <img id="img_459" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04418254243309723_240.jpg"></a></div>
+              <input id="C459" name="id[]" value="459" type="checkbox" class="checkbox">
+              <input id="459" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="32" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2013-12-31</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_459" id="file_459" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=459"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(459)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=459');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=458&amp;class_id=1&amp;curpage=2&amp;start_index=1"> <img id="img_458" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04418254218437108_240.jpg"></a></div>
+              <input id="C458" name="id[]" value="458" type="checkbox" class="checkbox">
+              <input id="458" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="31" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2013-12-31</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_458" id="file_458" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=458"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(458)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=458');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=457&amp;class_id=1&amp;curpage=2&amp;start_index=2"> <img id="img_457" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04418254171863431_240.jpg"></a></div>
+              <input id="C457" name="id[]" value="457" type="checkbox" class="checkbox">
+              <input id="457" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="24" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2013-12-31</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_457" id="file_457" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=457"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(457)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=457');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=456&amp;class_id=1&amp;curpage=2&amp;start_index=3"> <img id="img_456" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04418254147327427_240.jpg"></a></div>
+              <input id="C456" name="id[]" value="456" type="checkbox" class="checkbox">
+              <input id="456" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="23" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2013-12-31</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_456" id="file_456" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=456"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(456)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=456');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+                        <li style="opacity: 1;" class="">
+          <dl>
+            <dt>
+              <div class="picture"><a href="index.php?act=store_album&amp;op=album_pic_info&amp;id=455&amp;class_id=1&amp;curpage=2&amp;start_index=4"> <img id="img_455" src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_04418254118588220_240.jpg"></a></div>
+              <input id="C455" name="id[]" value="455" type="checkbox" class="checkbox">
+              <input id="455" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="21" title="双击名称可以进行编辑" style="cursor:pointer;">
+              <span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt>
+            <dd class="date">
+              <p>上传时间：2013-12-31</p>
+              <p>原图尺寸：1x1</p>
+            </dd>
+            <dd class="buttons">
+              <div class="upload-btn"><a href="javascript:void(0);"> <span>
+                <input type="file" name="file_455" id="file_455" class="input-file" size="1" hidefocus="true" nctype="replace_image">
+                </span>
+                <div class="upload-button"><i class="icon-upload-alt"></i>替换上传</div>
+                <input id="submit_button" style="display:none" type="button" value="" onclick="submit_form($(this))">
+                </a></div>
+              <a href="JavaScript:void(0);" nc_type="dialog" dialog_title="转移相册" uri="index.php?act=store_album&amp;op=album_pic_move&amp;cid=1&amp;id=455"><i class="icon-move"></i>转移相册</a> <a href="JavaScript:void(0);" onclick="cover(455)"><i class="icon-picture"></i>设为封面</a> <a href="javascript:void(0)" onclick="ajax_get_confirm('您确定进行该操作吗?\n注意：使用中的图片也将被删除','index.php?act=store_album&amp;op=album_pic_del&amp;id=455');"><i class="icon-trash"></i>删除图片</a> </dd>
+          </dl>
+        </li>
+		</ul>
+    </div>
+{/block}

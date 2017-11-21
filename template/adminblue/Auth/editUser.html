@@ -1,0 +1,113 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+{/block}
+{block name="main"}
+<div class="set-style">
+	<input type="hidden" id="uid" value="{$ua_info.uid}" />
+	<dl>
+		<dt><span class="required">*</span>用户名:</dt>
+		<dd>
+			<p><input id="admin_name" type="text" value="{$ua_info.admin_name}" class="input-common"></p>
+			<p class="error">请输入用户名</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>所属用户组:</dt>
+		<dd>
+			<p>
+				<select class="select-common" id="group_id">
+					<option value="-1">请选择用户组</option>
+					{foreach name="auth_group" item="v1"}
+					<option value="{$v1['group_id']}" {if condition="$v1['group_id'] eq $ua_info['group_id_array']"}selected{/if}>&nbsp;&nbsp;{$v1['group_name']}</option>
+					{/foreach}
+				</select>
+			</p>
+			<p class="error">请选择用户组</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述:</dt>
+		<dd>
+			<p><textarea id="desc" class="input-common">{$ua_info.desc}</textarea></p>
+			<p class="error">请输入描述信息</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="editUserAjax();">提交</button></dd>
+	</dl>
+</div>
+<script>
+/**
+ *模块输入信息验证
+ */
+function verify() {
+	var admin_name = $("#admin_name").val();
+	var group_id = $("#group_id").val();
+	if (admin_name == '') {
+		$("#admin_name").parent().next().show();
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if(group_id == -1){
+		$("#group_id").parent().next().show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+
+var flag = false;//是否重复提交
+/**
+*用户修改
+*/	
+function editUserAjax() {
+	var uid = $("#uid").val();
+	var admin_name = $("#admin_name").val();
+	var group_id = $("#group_id").val();
+	var desc = $("#desc").val();
+	if(verify()){
+		if(flag){
+			return;
+		}
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/auth/edituser')}",
+			data : {
+				'admin_name' : admin_name,
+				'group_id' : group_id,
+				'uid' : uid,
+				'desc' : desc
+			},
+			success : function(data) {
+				if (data['code'] > 0) {
+					$("#dialog").dialog({
+						buttons : {
+							"确定,#51A351" : function() {
+								$(this).dialog('close');
+							}
+						},
+						contentText : data["message"],
+						time : 2,
+						timeHref : "{:__URL('ADMIN_MAIN/auth/userlist')}",
+					});
+				} else {
+					$("#dialog").dialog({
+						buttons : {
+							"确定,#e57373" : function() {
+								$(this).dialog('close');
+								flag = false;
+							}
+						},
+						contentText : data["message"]
+					});
+				}
+			}
+		});
+	}
+}
+</script>
+{/block}

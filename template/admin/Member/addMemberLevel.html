@@ -1,0 +1,133 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
+<style type="text/css">
+.required{color:red;margin-right:10px;}
+.total>div { text-align: left;font-size: 12px;width:100%;height: 43px;overflow:hidden;color:#666;font-weight: normal;}
+.total>div input { margin: 0 5px 0 0;} 
+.total label {float:left;text-align: left;font-size: 12px; width:12%;overflow:hidden;color:#666;font-weight: normal;}
+.total label input {margin: 0 5px 0 0;} 
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>等级名称:</dt>
+		<dd>
+			<input type="text" id="level_name" value="">
+			<p class="error">请输入等级名称</p>
+			<p class="hint">设置会员等级名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>升级条件:</dt>
+		<dd  class="total">
+				<div>
+				      <input type="checkbox" value="1" name=""/>累计积分满&nbsp;&nbsp;&nbsp;
+					  <input class="w70" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" min="0" id="min_integral" style="margin-bottom: 0px; " value="" placeholder="0">分&nbsp;&nbsp;&nbsp;
+					  <span class="hint">设置会员等级所需要的累计积分且必须大于等于0</span>
+				</div>
+		        <div>
+		              <input type="checkbox" value="2" name=""/>消费额度满&nbsp;&nbsp;&nbsp;
+		              <input class="w70" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" min="0" id="quota" style="margin-bottom: 0px; " value="" placeholder="0">元&nbsp;&nbsp;&nbsp;
+		              <span class="hint">设置会员等级所需要的消费额度且必须大于等于0,单位：元</span>
+		     
+		        </div>
+		        <label for="navigationtype1"><input type="radio" value="1" name="navigationtype" id="navigationtype1" checked/>或</label>
+		        <label for="navigationtype2"><input type="radio" value="2" name="navigationtype" id="navigationtype2" />且</label>
+	        	<label class="hint" style="margin-left:22px;margin-top: 2px;width:27%;font-size:12px ;color:#BBB;">设置会员升级条件的关系</label>
+	 	<p class="error">至少勾选一个升级条件</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>折扣率:</dt>
+		<dd>
+			<input class="input-mini w70" type="text" id="goods_discount" value="">
+			<p class="error">折扣率必须为0-100的正整数</p>
+			<p class="hint">折扣率单位为百分比，如输入90，表示该会员等级的用户可以以商品原价的90%购买</p>
+		</dd>
+
+	</dl>
+	<dl>
+		<dt>等级描述:</dt>
+		<dd>
+			<textarea id="desc"></textarea>
+			<p class="hint">会员等级描述信息</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="addGift();">提交</button>
+</div>
+
+<script>	
+     var flag = false;//防止重复提交
+	//保存
+	function addGift(){
+		var level_name = $("#level_name").val();
+		var min_integral = $("#min_integral").val();
+		var quota = $("#quota").val();
+		var goods_discount = $("#goods_discount").val();
+		var desc = $("#desc").val();
+		var reg = /^(?:0|[1-9][0-9]?|100)$/;
+		var relation = $("input[name='navigationtype']:checked").val();
+		var upgrade = new Array();
+		$(".total input[type='checkbox']:checked").each(function() {
+			if (!isNaN($(this).val())) {
+				upgrade.push($(this).val());
+			}
+		});
+		if(upgrade=='1,2'){
+			upgrade=3;
+		}
+		if (level_name == '') {
+			$("#level_name").next().show().css("display","inline-block");
+			$("#level_name").focus();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+
+		if (upgrade == '') {
+			$(".total .error").show();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+
+		if(!reg.test(goods_discount)){
+			$("#goods_discount").next().show().css("display","inline-block");
+			$("#goods_discount").focus();
+			return false;
+		}else {
+			$(".error").hide();
+		}
+	
+		if(flag){
+			return false;
+		}
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/addmemberlevel')}",
+			data : {
+				'level_name' : level_name,
+				'min_integral' : min_integral,
+				'quota' : quota,
+				'upgrade' : upgrade.toString(),
+				'goods_discount' : goods_discount,
+				'desc' : desc,
+				'relation' : relation
+			},
+			async : true,
+			success : function(data) {
+				//alert(JSON.stringify(data));
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/member/memberlevellist')}");
+				}else{
+					showMessage('error', data["message"]);
+				}	
+				flag = false;
+			}
+		});
+	}
+</script>
+{/block}

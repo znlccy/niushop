@@ -1,0 +1,110 @@
+@CHARSET "UTF-8";
+
+.tab_right {
+	padding: 10px 30px;
+	width: 43%;
+	display: inline-block;
+	border: solid 1px #EEE;
+	min-height: 174px;
+}
+
+.tab_right dl {
+	font-size: 0;
+	display: block;
+	margin-bottom: 5px;
+	border-bottom: dotted 1px #E7E7E7;
+}
+
+.tab_right dl dd {
+	font: normal 16px/32px "microsoft yahei", Arial;
+	color: #333;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+}
+
+.tab_right ul {
+	margin-left: 40px;
+}
+
+.user-right .box ul li {
+	float: none;
+}
+
+.mall-msg {
+	font-size: 12px;
+	font-weight: 600;
+	color: #999;
+	position: absolute;
+	z-index: 1;
+	bottom: 295px;
+	right: 120px;
+}
+
+.mall-msg a {
+	color: #06C;
+}
+
+.logistics-tip {
+	background: #fff;
+	padding: 0;
+	color: #333;
+	text-align: left;
+	overflow: hidden;
+}
+
+.logistics-tip .title {
+	margin: -10px 0 0 -10px;
+	height: 35px;
+	line-height: 35px;
+	padding: 0 0 0 20px;
+	font-weight: 700;
+	border-bottom: 1px solid #e3e3e3;
+}
+
+.logistics-tip .content {
+	position: relative;
+	margin-left: 15px;
+	max-height: 410px;
+	overflow-y: auto;
+	padding-left: 5px;
+	margin-bottom: 20px;
+	line-height: 20px;
+}
+
+.logistics-tip .content li i {
+	display: block;
+	position: absolute;
+	top: 21px;
+	left: -4px;
+	width: 8px;
+	height: 8px;
+	overflow: hidden;
+	background: url(../../images/order/order-icons.png) -17px -115px
+		no-repeat;
+	vertical-align: middle;
+}
+
+.logistics-tip .content li.first {
+	color: #e4393c;
+}
+
+.logistics-tip .content li.first i {
+	background-position: 0 -115px;
+}
+
+.logistics-tip .content li {
+	position: relative;
+	overflow: visible;
+	padding: 15px 0 0 15px;
+	border-left: 1px solid #e3e3e3;
+}
+
+.logistics-tip .content li a {
+	color: #333333;
+}
+
+.ftx-13 {
+	color: #aaaaaa;
+}

@@ -1,0 +1,304 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<style>
+.set-style dl dd{line-height: 32px;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>用户名:</dt>
+		<dd>
+			<span class="user_name_span">{$info['user_name']} &nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="updateUserName()">修改</a></span>
+			<span class="user_name_input" style="display:none;">
+				<input name="" id="user_name" type="text" value="{$info['user_name']}"/>
+				&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="updateUserNameConfirm()">确定</a>
+				&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="updateUserNameCancel()">取消</a>
+			</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>头像:</dt>
+		<dd>
+			<div class="class-logo"><p>
+			{if condition="$info['user_headimg'] eq ''"}
+			<img id="imgLogo">
+			{else/}
+			<img id="imgLogo" src="{:__IMG($info['user_headimg'])}" >
+			{/if}
+			</p></div>
+			<div class="ncsc-upload-btn"> 
+				<a href="javascript:void(0);">
+					<span>
+						<input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImg" nc_type="change_store_label" type="file">
+						<input type="hidden" id="Logo" value="{$info['user_headimg']}"/>
+					</span>
+					<p><!-- <i class="icon-upload-alt"></i> -->上传图片</p>
+				</a> 
+			</div>
+			<p class="hint"><br><span style="color:orange;">建议使用宽100像素-高100像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>手机:</dt>
+		<dd>
+			<span class="user_tel_span">{$info['user_tel']} &nbsp;&nbsp;
+				<a href="javascript:;" onclick="updateUserTel()" style='{if condition="$info['user_tel_bind'] eq 1"}display:none;{/if}'>修改</a>&nbsp;&nbsp;
+				{if condition="$info['user_tel'] neq ''"}
+				<a class="user_tel_bind" href="javascript:;" onclick="userTelBind()" style='{if condition="$info['user_tel_bind'] eq 1"}display:none;{/if}'>绑定</a>
+				{/if}
+				<a class="remove_user_tel_bind" href="javascript:;" onclick="removeUserTelBind()" style='{if condition="$info['user_tel_bind'] eq 0"}display:none;{/if}'>解绑</a>
+			</span>
+			<span class="user_tel_input" style="display:none;">
+				<input name="" id="user_tel" type="text" value="{$info['user_tel']}"/>
+				&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="updateUserTelConfirm()">确定</a>
+				&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="updateUserTelCancel()">取消</a>
+			</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>邮箱:</dt>
+		<dd>
+			<span class="user_email_span">{$info['user_email']} &nbsp;&nbsp;
+				<a href="javascript:;" onclick="updateUserEmail()" style='{if condition="$info['user_email_bind'] eq 1"}display:none;{/if}'>修改</a>&nbsp;&nbsp;
+				{if condition="$info['user_email'] neq ''"}
+				<a class="user_email_bind" href="javascript:;" onclick="userEmailBind()" style='{if condition="$info['user_email_bind'] eq 1"}display:none;{/if}'>绑定</a>
+				{/if}
+				<a class="remove_user_email_bind" href="javascript:;" onclick="removeUserEmailBind()" style='{if condition="$info['user_email_bind'] eq 0"}display:none;{/if}'>解绑</a>
+			</span>
+			<span class="user_email_input" style="display:none;">
+				<input name="" id="user_email" type="text" value="{$info['user_email']}"/>
+				&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="updateUserEmailConfirm()">确定</a>
+				&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="updateUserEmailCancel()">取消</a>
+			</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>QQ:</dt>
+		<dd>
+			<input id="user_qq" type="text" value="{$info['user_qq']}" style="width:200px;"/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>社交账号:</dt>
+		<dd>
+<!-- 			<a class="" href="javascript:;"><i class="fa fa-weixin"></i> 绑定微信</a>&nbsp;&nbsp;&nbsp; -->
+<!-- 			<a class="" href="javascript:;"><i class="fa fa-weibo"></i> 绑定微博</a>&nbsp;&nbsp;&nbsp; -->
+			<span class="user_qq_a" style='{notempty name="info['qq_openid']"}display:none;{/notempty}'><a href="{:__URL('APP_MAIN/login/oauthlogin?type=QQLOGIN')}"><i class="fa fa-qq"></i> 绑定QQ</a></span>
+			<span class="user_qq_span" style='{empty name="info['qq_openid']"}display:none;{/empty}'>
+				{notempty name="info['qq_openid']"}
+				<img alt="" src="{$info['qq_info_array']['figureurl_qq_1']}">
+				{/notempty}
+				<a class="" href="javascript:removeUserEmailBind();"> 解绑</a></span>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setUserBasicAjax();">提交</button>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+function setUserBasicAjax(){
+	var user_headimg = $("#Logo").val();
+	var user_qq = $("#user_qq").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/auth/userdetail')}",
+		data:{ 'user_headimg':user_headimg, 'user_qq':user_qq },
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],'{:__URL("ADMIN_MAIN/auth/userdetail?type=basic")}');
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//显示 修改邮箱
+function updateUserEmail(){
+	$(".user_email_span").hide();
+	$(".user_email_input").show();
+}
+
+//取消
+function updateUserEmailCancel(){
+	$(".user_email_span").show();
+	$(".user_email_input").hide();
+}
+
+//修改 用户 邮箱
+function updateUserEmailConfirm(){
+	var user_email = $("#user_email").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/auth/modifyuseremail')}",
+		data:{ 'user_email' : user_email },
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/auth/userdetail')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//解除 会员邮箱绑定
+function removeUserEmailBind(){
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/auth/removeuseremailbind')}",
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/auth/userdetail')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//会员邮箱 绑定
+function userEmailBind(){
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/auth/useremailbind')}",
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/auth/userdetail')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//显示手机号
+function updateUserTel(){
+	$(".user_tel_span").hide();
+	$(".user_tel_input").show();
+}
+
+//取消
+function updateUserTelCancel(){
+	$(".user_tel_span").show();
+	$(".user_tel_input").hide();
+}
+
+//修改 用户手机号
+function updateUserTelConfirm(){
+	var user_tel = $("#user_tel").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/auth/modifyuserTel')}",
+		data:{'user_tel':user_tel},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/auth/userdetail')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//解除 会员手机绑定
+function removeUserTelBind(){
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/auth/removeusertelbind')}",
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/auth/userdetail')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//会员手机绑定
+function userTelBind(){
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/auth/usertelbind')}",
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/auth/userdetail')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//解除 用户 qq 绑定
+function removeUserQQBind(){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定,#e57373": function() {
+			$(this).dialog('close');
+			$.ajax({
+				type:"post",
+				url:"{:__URL('ADMIN_MAIN/auth/removeuserqqbind')}",
+				success:function (data) {
+					if (data["code"] > 0) {
+						showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/auth/userdetail')}");
+					}else{
+						showMessage('error', data["message"]);
+					}
+				}
+			});
+		},
+		"取消": function() {
+			$(this).dialog('close');
+		}
+	},
+	contentText:"确定解除绑定吗？"
+	});
+}
+
+//图片上传
+$("#uploadImg").live("change",function(){
+	var data = { 'file_path' : UPLOADAVATOR };
+	uploadFile("uploadImg",data,function(res){
+		if(res.code){
+			$("#imgLogo").attr("src",__IMG(res.data));
+			$("#Logo").val(res.data);
+			showTip(res.message,"success");
+		}else{
+			showTip(res.message,"error");
+		}
+	});
+});
+
+//修改会员用户名显示
+function updateUserName(){
+	$(".user_name_span").hide();
+	$(".user_name_input").show();
+}
+
+//修改用户名提交
+function updateUserNameConfirm(){
+	var user_name = $("#user_name").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/auth/modifyusername')}",
+		data:{ 'user_name':user_name },
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/auth/userdetail')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//修改用户名取消
+function updateUserNameCancel(){
+	$(".user_name_span").show();
+	$(".user_name_input").hide();
+}
+</script>
+{/block}

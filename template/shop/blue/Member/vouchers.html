@@ -1,0 +1,40 @@
+{extend name="shop/blue/base" /}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('member_my_coupon')}</li>
+				</ul>
+			</div>
+			<div class="mar_top">
+				<div id="tab_tab1_1">
+					{if condition="count($list) neq ''"}
+					<ul class="bonus_con">
+						{foreach name="list" item="vo"}
+						<li>
+							<p class="bonus_con_1">
+								<strong>￥</strong>
+								<span class="type_money">{$vo.money}</span>
+								<span class="bonus_status">{$vo.state}</span>
+							</p>
+							<p>{:lang('preference_type')}：{$vo.coupon_name}</p>
+							<p>{:lang('member_coupon_encoding')}：{$vo.coupon_code}</p>
+							<p>{:lang('member_effective_time')}：{:lang('member_by')}{$vo.end_time | getTimeStampTurnTime}</p>
+						</li>
+						{/foreach}
+					</ul>
+					{else/}
+					<div>
+						<div class="emptyFrame"> <i class="user_coupon"></i><span>{:lang('member_no_coupon_yet')}！</span> </div>
+					</div>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="RightSideBar"}{/block}

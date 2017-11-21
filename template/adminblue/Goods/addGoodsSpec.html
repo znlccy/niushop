@@ -1,0 +1,193 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<style type="text/css"> 
+.set-style{padding:20px;}
+.error {padding-left: 5px !important;}
+.table{width:98%;display:table;border-left: 1px dotted #e5e5e5;border-right: 1px dotted #e5e5e5;border-bottom: 1px dotted #e5e5e5;background: rgba(204, 204, 204, 0.09);padding: 0px 10px 10px 10px;}
+.table-body{min-height:50px;max-height:410px;overflow-y:auto;overflow-x:hidden;}
+.inline-block{display:inline-block;}
+.w5{width:5%;}
+.w75{width:84%;}
+.w19{width:10%;text-align:center;}
+.w100{width:100% !important;height: 40px;line-height: 40px;border-bottom: 1px dotted #e5e5e5;}
+.add-spec{height: 40px;line-height: 40px;border-bottom:1px dotted #E6E6E6;}
+input{vertical-align: initial;}
+.table input[type="text"], input[type="password"], input.text, input.password {font: 12px/20px Arial;color: #777;background-color: #FFF;vertical-align: baseline;margin-bottom:0px;}
+.set-style dl dt {text-align:right;width: 10%;}
+label.line-label{display:inline-block;margin-right:10px;font-weight:normal;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>规格名称:</dt>
+		<dd>
+			<input id="spec_name" type="text" placeholder="请输入规格名称" class="input-common"/>
+			<span class="error">请输入规格名称</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">&nbsp;</span>规格排序:</dt>
+		<dd>
+			<input id="sort" type="text" value="0" onkeyup='this.value=this.value.replace(/\D/gi,"")' class="input-common"/>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">&nbsp;</span>是否启用:</dt>
+		<dd>
+			<input id="is_visible" type="checkbox" class="checkbox" checked="checked" />
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">&nbsp;</span>是否筛选:</dt>
+		<dd>
+			<input id="is_screen" type="checkbox" class="checkbox" checked="checked" />
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">&nbsp;</span>展示方式:</dt>
+		<dd>
+			<label class="line-label"><input type="radio" name="show_type" id="show_type1" value="1" checked="checked" onchange="change_show_type(1)">文字</label>
+			<label class="line-label"><input type="radio" name="show_type" id="show_type2" value="2" onchange="change_show_type(2)">颜色</label>
+			<label class="line-label"><input type="radio" name="show_type" id="show_type3" value="3" onchange="change_show_type(3)">图片</label>
+		</dd>
+	</dl>
+	<div class="table">
+		<div class="w100">
+			<div class="inline-block w5"></div>
+			<div class="inline-block w75">属性名称</div>
+			<div class="inline-block w19">操作</div>
+		</div>
+		<div class="table-body">
+		<div class="w100 spec_data">
+			<div class="inline-block w5"><label style="margin-left: 5px;"> <input type="checkbox"></label></div>
+			<div class="inline-block w75">
+				<input type="text" name="spec_value" style="margin-right: 20px;" class="input-common">
+			</div>
+			<div class="inline-block w19"><a href="javascript:;" onclick="delSpecValue(this)">删除</a></div>
+		</div>
+		</div>
+		<div><a href="javascript:;" onclick="addSpecValue(this)"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加一个属性</a></div>
+	</div>
+	<div style="text-align: center;">
+		<button class="btn-common btn-big" onclick="addGoodsSpec();">提交</button>
+	</div>
+</div>
+<script>
+var flag = false;//防止重复提交
+function addSpecValue(e){
+	var show_type = $("input[name='show_type']:checked").val();
+	var spec_data_num = $(".spec_data").length;
+	var html = '<div class="w100 spec_data">';
+		html += '<div class="inline-block w5" style="padding-right:3px;"><label style="margin-left: 5px;"> <input type="checkbox"></label></div>';
+	if(show_type ==2){
+		html += '<div class="inline-block w75" style="margin-right: 4px;"><input type="text" name="spec_value" style="margin-right:20px;" class="input-common">&nbsp;<input type="color" name="spec_value_data" style="width:60px;margin-top:5px;" class="input-common"/></div>';
+	}else{
+		html += '<div class="inline-block w75" style="margin-right: 4px;"><input type="text" name="spec_value" style="margin-right:20px;" class="input-common"></div>';
+	}
+	html += '<div class="inline-block w19"><a href="javascript:;" onclick="delSpecValue(this)">删除</a></div></div>';
+	$(e).parents(".table").find(".table-body").append(html);
+}
+
+function delSpecValue(e){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$(e).parents('.w100').remove();
+			},"取消,#e57373" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+
+function addGoodsSpec() {
+	var spec_name = trim($("#spec_name").val());
+	var sort = $("#sort").val();
+	var show_type = $("input[name='show_type']:checked").val();
+	if ($("#is_visible").prop("checked")) {
+		var is_visible = 1;
+	} else {
+		var is_visible = 0;
+	}
+	if ($("#is_screen").prop("checked")) {
+		var is_screen = 1;
+	} else {
+		var is_screen = 0;
+	}
+	
+	if(show_type==2){
+		var data_obj = $(".spec_data");
+		var spec_value_str = '';
+		data_obj.each(function(i){
+			if(data_obj.eq(i) != ''){
+				var spec_value_name = trim(data_obj.eq(i).find("input[name='spec_value']").val());
+				var spec_value_data = data_obj.eq(i).find("input[name='spec_value_data']").val();
+				var new_str = '';
+				new_str = spec_value_name+ ':' +spec_value_data;
+				spec_value_str = spec_value_str + ',' + new_str;
+			}
+		});
+		spec_value_str = spec_value_str.substr(1);
+	}else{
+		var spec_value_obj = $("input[name='spec_value']");
+		var spec_value_str = '';
+		spec_value_obj.each(function(i){
+			if(trim(spec_value_obj.eq(i).val()) != ''){
+				spec_value_str += ',' + trim(spec_value_obj.eq(i).val());
+			}
+		});
+		spec_value_str = spec_value_str.substr(1);
+	}
+	if(spec_name == ''){
+		showMessage('error', "规格名称不能为空");
+		return false;
+	}
+	if(spec_value_str == ''){
+		showMessage('error', "属性名称不能为空！");
+		return false;
+	}
+	if(flag){
+		return;
+	}
+	flag = true;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/addgoodsspec')}",
+		data : {
+			'spec_name' : spec_name,
+			'sort' : sort,
+			'is_visible' : is_visible,
+			'show_type' : show_type,
+			'spec_value_str' : spec_value_str,
+			'is_screen':is_screen
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', "添加成功","{:__URL('ADMIN_MAIN/goods/goodsspeclist')}");
+			} else {
+				showMessage('error', "添加失败");
+				flag = false;
+			}
+		}
+	});
+}
+//改变展示方式
+function change_show_type(type){
+	if(type==2){
+		$("input[name='spec_value']").after('&nbsp;<input type="color" style="width:60px;margin-top:5px;" name="spec_value_data" class="input-common" />');
+	}else{
+		$("input[name='spec_value']").next("input[type='color']").remove();
+	}
+}
+</script>
+{/block}

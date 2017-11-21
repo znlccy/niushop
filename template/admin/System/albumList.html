@@ -1,0 +1,296 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style type="text/css">
+.dislog-style {
+	width: 80%;
+	margin: 40px auto;
+}
+
+.modal.fade {
+	top: 50%;
+}
+
+.dislog-style ul {
+	width: 100%;
+}
+
+.dislog-style ul li span {
+	display: inline-block;
+	width: 60px;
+	text-align: center;
+	height: 40px;
+	line-height: 31px;
+}
+
+.dislog-style ul li input {
+	width: 200px;
+}
+#albumList{
+	border-top:1px solid #E3E3E3;
+}
+#albumList>li:hover {
+	background-color: rgb(230, 230, 230);
+}
+
+#albumList>li:hover .buttons {
+	display: block;
+}
+.input-file{
+	position: absolute;
+	top: -10px !important;
+	right: 9px !important;
+	height: 26px !important;
+	width: 94px !important;
+	filter: alpha(opacity : 0) !important;
+	opacity: 0 !important;
+	line-height:auto;
+}
+</style>
+{/block}
+{block name="right_tab"}
+	<li><a class="ncsc-btn ncsc-btn-green" style="right: 100px; position: static;" data-toggle="modal" data-target="#addalbum"><i class="fa fa-file-photo-o"></i>创建相册</a></li>
+	<li>
+		<a id="open_uploader" style="right: 100px; position: static;" class="ncsc-btn ncsc-btn-acidblue" >
+		<i class="fa fa-cloud-upload" ></i>上传图片
+		</a>
+		<input  style="top:-12px !important; width:89px !important;right:10px !important;height: 30px !important;cursor:pointer;font-size:0;" type="file" id="fileupload" hidefocus="true" size="1" class="input-file" name="file_upload" multiple="multiple"/>	
+	</li>	
+
+{/block}{block name="main"}
+<input type="hidden" id="album_id" value="{$default_album_id}"/>
+<table class="mytable">
+	<tr>		
+		<th width="10%">
+			<input type="text" id='search_text' placeholder="请输入相册名称" />
+			<input type="button" onclick="searchData()" value="搜索" />
+		</th>
+	</tr>
+</table>
+<div id="pictureIndex" class="ncsc-picture-folder">
+	<div class="ncsc-album">
+		<ul id="albumList"></ul>
+	</div>
+</div>
+<!-- 相册创建  -->
+<div class="modal fade hide" id="addalbum" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">相册创建</h4>
+			</div>
+			<div class="modal-body">
+				<div class="dislog-style">
+					<ul>
+						<li>
+							<span>相册名称</span>
+							<input type="text" value="" id="album_name" />
+							<span style="width: inherit;color: red;display:none;">请输入相册名称</span>
+						</li>
+						<li><span>排序</span> <input type="text" value="" id="sort" onkeyup='this.value=this.value.replace(/\D/gi,"")' /></li>
+						<li style="display: none;"><span>相册封面</span>
+							<div class="ncsc-upload-btn" style="margin-top: -1px;">
+								<a href="javascript:void(0);">
+									<span><input hidefocus="true" size="1" id="uploadPhoto"class="input-file" name="file_upload" id="imgClassSave" nc_type="change_store_label" type="file" onchange="imgUpload(this);"></span>
+									<p><i></i>图片上传</p>
+								</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onclick="addAlbumClass();">创建</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 相册编辑  -->
+<div class="modal fade hide" id="editalbum" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">相册编辑</h4>
+			</div>
+			<div class="modal-body">
+				<div class="dislog-style">
+					<input type="hidden" id="editAlbum_id" />
+					<ul>
+						<li><span>相册名称</span><input type="text" id="edit_album_name" /><span style="width: inherit;color: red;display:none;">请输入相册名称</span></li>
+						<li><span>排序</span><input type="text" id="edit_sort" onkeyup='this.value=this.value.replace(/\D/gi,"")' /></li>				
+					</ul>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onclick="updateAlbumClass();">保存</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{include file="admin/System/uploadAlbumImg"/}
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/albumlist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text },
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					if(i==0||i%5==0){
+						html += '<li style="opacity: 1;border-width:0 1px 1px 1px;"><dl><dt><div class="covers">';
+					}else{
+						html += '<li style="opacity: 1;border-width:0 1px 1px 0;"><dl><dt><div class="covers">';
+					}
+					html += '<a href="'+__URL('ADMIN_MAIN/system/albumpicturelist?album_id='+ data["data"][i]["album_id"])+'">';
+					if($.trim(data['data'][i]['album_cover']) !="" && $.trim(data["data"][i]["pic_album_cover"]) != ''){
+						html += '<img src="'+__IMG(data["data"][i]["pic_album_cover"])+'"/>';
+					}else{
+						html += '<img src="ADMIN_IMG/album/album_cover_default.png">';
+					}
+					html += '</a></div>';
+					html += '<h3><a href="'+__URL('ADMIN_MAIN/system/albumpicturelist?album_id='+ data["data"][i]["album_id"]+ '&&album_name='+ data["data"][i]["album_name"])+'">'
+							+ data["data"][i]["album_name"]
+							+ '</a></h3></dt><dd class="date">共'+data["data"][i]["pic_count"]+'张</dd>';
+					html += '<dd class="buttons"><span>';
+					html += '<a href="JavaScript:void(0);" onclick="editBoxShow('
+							+ data["data"][i]["album_id"]
+							+ ');"><i class="icon-pencil"></i>编辑</a></span>';
+					if (data["data"][i]["is_default"] != 1) {
+						html += '<a href="javascript:void(0)" onclick="deleteAlbumClass('
+								+ data["data"][i]["album_id"]
+								+ ')"><i class="icon-remove-sign"></i>删除</a>';
+					}
+					html += '</dd></dl></li>';
+				}
+			} else {
+				html += '暂无符合条件的数据记录';
+			}
+			$("#albumList").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+function searchData(){
+	LoadingInfo(1);
+}
+
+//创建相册
+function addAlbumClass() {
+	var album_name = $("#album_name").val();
+	var sort = $("#sort").val();
+	if(album_name == ""){
+		$("#album_name").focus();
+		$("#album_name").next().show();
+		return;
+	}
+	if(sort == ""){
+		sort = $("#albumList li").length+1;//如果没有输入排序，则取长度+1（最后一个）
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/addalbumclass')}",
+		data : {
+			"album_name" : album_name,
+			"sort" : sort,
+		},
+		success : function(data) {
+			if (data['code'] > 0) {
+				LoadingInfo(1);
+				showMessage('success', data["message"]);
+				$("#addalbum").modal('hide');
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	})
+}
+
+//弹出编辑页面
+function editBoxShow(album_id) {
+	$('#editalbum').modal(show);
+	$("#editAlbum_id").val(album_id);
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/getalbumclassdetail')}",
+		async : false,
+		data : { "album_id" : album_id },
+		success : function(data) {
+			if (data) {
+				$("#edit_album_name").val(data.album_name);
+				$("#edit_sort").val(data.sort);
+			}
+		}
+	})
+}
+
+//删除相册
+function deleteAlbumClass(aclass_id_array) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/system/deletealbumclass')}",
+					data : { "aclass_id_array" : aclass_id_array },
+					success : function(data) {
+						if(data['code'] > 0){
+							LoadingInfo(getCurrentIndex(aclass_id_array.toString(),'#albumList'));
+							showMessage('success', data['message']);
+						}else{
+							showMessage("error",data['message']);
+						}
+					}
+				})
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"删除相册?\n注意：相册内的图片将转移到默认相册",
+	});
+}	
+	
+//修改相册
+function updateAlbumClass() {
+	var album_name = $("#edit_album_name").val();
+	var sort = $("#edit_sort").val();
+	var album_id = Number($("#editAlbum_id").val());
+	if(album_name == ""){
+		$("#edit_album_name").focus();
+		$("#edit_album_name").next().show();
+		return;
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/updatealbumclass')}",
+		data : {
+			"album_name" : album_name,
+			"sort" : sort,
+			"album_id" : album_id
+		},
+		success : function(data) {
+			if (data['code'] > 0) {
+				LoadingInfo(getCurrentIndex(album_id,'#albumList'));
+				showMessage('success', data['message']);
+				$("#editalbum").modal('hide');
+			}else{
+				showMessage("error",data['message']);
+			}
+		}
+	})
+}
+</script>
+<div id="append_parent"></div>
+{/block}

@@ -1,0 +1,181 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab pngFix">
+					<li class="first active">{:lang('member_new_delivery_address')}</li>
+				</ul>
+			</div>
+			<div class="alert alert-success">
+				<h4>{:lang('member_operation_prompt')}:</h4>
+				<ul>
+					<li>{:lang('member_operation_addresses')}</li>
+				</ul>
+			</div>
+			<input type="hidden" id="adressid" value="{$address_id}" />
+			<input type="hidden" id="hidUrl" value="" />
+			<input type="hidden" id="provinceid" value="-1" />
+			<input type="hidden" id="cityid" value="-1" />
+			<input type="hidden" id="districtid" value="-1" />
+			<input type="hidden" value="-1" id="AddressID">
+			<div class="mar_top">
+			<form action="" method="post" name="theForm">
+				<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee">
+					<tr>
+						<td align="right" width="10%">{:lang('member_distribution_area')}：</td>
+						<td colspan="3" align="left">
+							<select name="province" id="seleAreaNext" onchange="GetProvince();getSelCity();" class="inputBg">
+								<option value="">{:lang('member_select_province')}</option>
+							</select>
+							<select name="city" id="seleAreaThird" onchange="getSelCity();" class="inputBg">
+								<option value="">{:lang('member_select_city')}</option>
+							</select>
+							<select name="district" id="seleAreaFouth" class="inputBg">
+								<option value="-1">{:lang('goods_select_district_or_county')}</option>
+							</select>
+							({:lang('member_required')})
+						</td>
+					</tr>
+					<tr>
+						<td align="right" width="10%">{:lang('member_consignee_name')}：</td>
+						<td align="left" width="40%"><input name="consignee" type="text" class="inputBg" id="Name" />({:lang('member_required')}) </td>
+					</tr>
+					<tr>
+						<td align="right">{:lang('member_detailed_address')}：</td>
+						<td align="left" colspan="3"><input name="address" type="text" class="inputBg" id="AddressInfo" style="width: 692px;"/>({:lang('member_required')})</td>
+					</tr>
+					<tr>
+						<td align="right">{:lang('member_phone')}：</td>
+						<td align="left"><input name="mobile" type="text" class="inputBg" id="Moblie" />({:lang('member_required')})</td>
+					</tr>
+					<tr>
+						<td colspan="4" align="center"><input type="button" name="button" class="common-btn"  value="{:lang('member_new_delivery_address')}" onclick="saveAddress()"/></td>
+					</tr>
+				</table>
+			</form>
+			<div class="blank10"></div>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script src="__TEMP__/{$style}/public/js/address.js"></script>
+<script type="text/javascript">
+$(function() {
+
+	$("li[data-href^='{:__URL('SHOP_MAIN/member/addresslist')}']").addClass('current');
+	$(".js-bread-crumb").attr("href",__URL('SHOP_MAIN/member/addresslist'));
+	$(".js-bread-crumb").text("{:lang('member_delivery_address')}");
+	$(".js-bread-crumb").parent().append('<span class="crumbs-arrow">&gt;</span><a href="{:__URL('SHOP_MAIN/member/addressinsert')}">{:lang('member_add_delivery_address')}</a>');
+	
+	var selCity = $("#seleAreaNext")[0];
+	for (var i = selCity.length - 1; i >= 0; i--) {
+		selCity.options[i] = null;
+	}
+	var opt = new Option("{:lang('member_select_province')}", "-1");
+	selCity.options.add(opt);
+	// 添加省
+	$.ajax({
+		type : "post",
+		url : __URL('SHOP_MAIN/member/getprovince'),
+		dataType : "json",
+		success : function(data) {
+			if (data != null && data.length > 0) {
+				for (var i = 0; i < data.length; i++) {
+					var opt = new Option(data[i].province_name,
+							data[i].province_id);
+					selCity.options.add(opt);
+				}
+				$("#seleAreaNext").val($("#provinceid").val());
+			}
+		}
+	});
+	
+	var address_id = $("#adressid").val();
+	if (address_id != 0) {
+		// 查询这个收货地址的详细地址
+		$.ajax({
+			type : "post",
+			url : __URL('SHOP_MAIN/member/member_address_info_select'),
+			dataType : "json",
+			data : {
+				"address_id" : address_id
+			},
+			success : function(data) {
+				var address_info = data["data"][0][0];
+				var consigner = address_info["consigner"];
+				var mobile = address_info["mobile"];
+				var province = address_info["province"];
+				var city = address_info["city"];
+				var district = address_info["district"];
+				var address = address_info["address"];
+				$("#Name").val(consigner);
+				$("#Moblie").val(mobile);
+				$("#AddressInfo").val(address);
+				$("#seleAreaNext").val(province);
+				$("#provinceid").val(province);
+				$("#cityid").val(city);
+				$("#districtid").val(district);
+				// 加载市
+				var selCity = $("#seleAreaThird")[0];
+				for (var i = selCity.length - 1; i >= 0; i--) {
+					selCity.options[i] = null;
+				}
+				var opt = new Option("{:lang('member_select_city')}", "-1");
+				selCity.options.add(opt);
+				$.ajax({
+					type : "post",
+					url : __URL('SHOP_MAIN/member/getcity'),
+					dataType : "json",
+					data : {
+						"ID" : province
+					},
+					success : function(data) {
+						if (data != null && data.length > 0) {
+							for (var i = 0; i < data.length; i++) {
+								var opt = new Option(data[i].CityName, data[i].cityId);
+								selCity.options.add(opt);
+							}
+							$("#seleAreaThird").val(city);
+						}
+					}
+				});
+				// 加载区县
+				var selArea = $("#seleAreaFouth")[0];
+				for (var i = selArea.length - 1; i >= 0; i--) {
+					selArea.options[i] = null;
+				}
+				var opt = new Option("{:lang('member_select_city')}", "-1");
+				selArea.options.add(opt);
+				$.ajax({
+					type : "post",
+					url : __URL('SHOP_MAIN/member/area'),
+					dataType : "json",
+					data : {
+						"ID" : city
+					},
+					success : function(data) {
+						if (data != null && data.length > 0) {
+							for (var i = 0; i < data.length; i++) {
+								var opt = new Option(data[i].DistrictName, data[i].districtId);
+								selArea.options.add(opt);
+							}
+							$("#seleAreaFouth").val(district);
+						}
+					}
+				});
+			}
+		});
+	}
+});
+</script>
+{/block}

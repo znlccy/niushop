@@ -1,0 +1,249 @@
+@CHARSET "UTF-8";
+.custom-search form .custom-search-input {
+	padding: 8px 8px 8px 15px;
+}
+.order_div {
+	border-bottom: 1px solid #efefef;
+	height: 40px;
+	line-height: 40px;
+}
+.order_div>span {
+	color: #333;
+	line-height: 40px;
+	border-right: 2px solid #f8f8f8;
+	width: 24%;
+}
+.order_div>span a {
+	position: relative;
+}
+.order_div>span:LAST-CHILD {
+	border-right: 0;
+}
+.shop-info {
+	min-height: 65px;
+	background: #fff;
+	position: relative;
+	padding: 10px;
+	border-bottom: 1px solid #efefef;
+}
+.main {
+	width: 100%;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	margin-top: 80px;
+	margin-bottom: 48px;
+}
+.shop-list {
+	width: 100%;
+	position: relative;
+}
+.shop-logo {
+	float: left;
+	vertical-align: top;
+	width: 65px;
+	height: 65px;
+}
+.shop-logo img {
+	width: 65px;
+	margin-top: 14px;
+}
+.shop-content {
+	display: block;
+	margin: 0 0 0 75px;
+	position: relative;
+}
+.shop-content dt {
+	height: 23px;
+	line-height: 23px;
+	font-size: 13px;
+	color: #666;
+	zoom: 1;
+	margin-bottom: 4px;
+}
+.shop-content dd {
+	margin-bottom: 10px;
+	height: 16px;
+	line-height: 16px;
+	position: relative;
+}
+.shop-name {
+	max-width: 180px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: #222;
+	font-size: 16px;
+	font-weight: bold;
+}
+.shop-desc p {
+	height: 16px;
+	color: #666;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 12px;
+}
+.shop_credit {
+	display: inline-block;
+	line-height: 16px;
+	color: #666;
+	vertical-align: top;
+}
+.total_content {
+	width: 100%;
+	height: 60%;
+	z-index: 115;
+	background: #F1F2F3;
+	position: fixed;
+	top: 86px;
+}
+.total_left {
+	background: #fff;
+	width: 100%;
+	float: left;
+	height: 100%;
+	overflow-y: scroll;
+}
+.total_left li {
+	height: 35px;
+	line-height: 35px;
+	padding: 0 0.4rem 0 0.75rem;
+	border-bottom: 1px solid #f6f6f9;
+	position: relative;
+}
+.total_left li .selected {
+	color: red;
+}
+.desc, .desc_selected, .asc_selected, .asc, .screening {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
+	position: absolute;
+	top: 3px;
+	right: -30px;
+}
+.desc {
+	background: url("../images/shopstreet_desc.png") no-repeat;
+}
+.desc_selected {
+	background: url("../images/shopstreet_desc_selected.png") no-repeat;
+}
+.asc {
+	background: url("../images/shopstreet_asc.png") no-repeat;
+}
+.asc_selected {
+	background: url("../images/shopstreet_asc_selected.png") no-repeat;
+}
+.screening {
+	background: url("../images/store_screening.png") no-repeat;
+	top: 0px;
+	right: -26px;
+	background-size: 80%;
+}
+.shop-list li {
+	border-bottom: 1px solid #efefef;
+	overflow: hidden;
+	margin: 10px 0;
+	background: #ffffff;
+}
+.store-logo {
+	width: 58px;
+	padding: 30px 10px;
+	height: 100%;
+}
+.store-item {
+	position: relative;
+	padding: 5px;
+}
+.store-right {
+	display: inline-block;
+	width: 70%;
+	position: absolute;
+	top: 15%;
+}
+.store-name {
+	padding: 10px;
+	border-bottom: 1px solid #efefef;
+}
+.store-name h1 {
+	display: inline-block;
+	font-size: 16px;
+	font-weight: normal;
+	padding: 0 10px 0 0;
+	vertical-align: middle;
+}
+.flag-stores, .flag-brand, .flag-security {
+	color: #ffffff;
+	background: #FF4D24;
+	border-radius: 2px;
+	padding: 5px;
+	font-size: 12px;
+}
+.flag-stores {
+	background: #FF4D24;
+}
+.flag-brand {
+	background: #FF3061;
+}
+.flag-security {
+	background: #48B1FF;
+}
+.right-arrow {
+	display: inline-block;
+	width: 10px;
+	float: right;
+	vertical-align: middle;
+	margin: 3px 5px 0 0;
+}
+.store-detail {
+	overflow: hidden;
+}
+.scope-business, .good-rate {
+	color: #999999;
+}
+.scope-business strong, .good-rate  strong {
+	color: #333333;
+	font-weight: normal;
+}
+.credibility {
+	color: #999999;
+	margin-top: 5px;
+}
+.store-detail .left, .store-detail .right {
+	float: left;
+}
+.store-detail .left {
+	width: 62.5%;
+}
+.store-detail .right {
+	width: 35%;
+	text-align: center;
+	margin-left: 2px;
+}
+.store-detail .right address {
+	font-style: normal;
+	color: #999999;
+}
+.store-detail .right span {
+	color: #999999;
+	display: block;
+	margin-top: 5px;
+}
+.store-detail .right span strong {
+	color: #333;
+	font-weight: normal;
+}
+@media only screen and (min-width: 466px) {
+	.scope-business {
+		float: left;
+		margin-right: 10px;
+	}
+	.store-detail .left {
+		margin-top: 11px;
+	}
+	.store-detail .right {
+		margin-top: 27px;
+	}
+}

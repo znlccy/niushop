@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>NiuFrameWork</title>
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/portal.css">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/banner.js"></script>
+<style>
+#main {
+	border: 1px solid red;
+	background: #F2F2F2;
+	height: 1000px;
+}
+
+#main div {
+	width: 1200px;
+	margin: 0 auto;
+	height: 100%;
+}
+
+#main div aside {
+	float: left;
+	height: 100%;
+	width: 30%;
+}
+
+#main div article {
+	height: 100%;
+	border: 1px solid blue;
+	float: left;
+	width: 60%;
+}
+
+.main-section-one, .main-section-two {
+	border: 1px solid #fff;
+	background: #fff;
+	box-shadow: 3px 3px 5px #DFDFDF;
+	margin: 20px 10px;
+	padding: 10px;
+}
+
+.main-section-one h3, .main-section-two h3 {
+	margin: 15px 0;
+	font-weight: 400;
+	font-size: 18px;
+	color: #000;
+}
+
+.main-section-two ul li, .main-section-one ul li {
+	list-style: none;
+	margin-bottom: 5px;
+	color: #333;
+}
+
+.main-section-two ul li span, .main-section-one ul li span {
+	color: #14A12E;
+	margin-right: 5px;
+}
+
+.main-section-two h5, .main-section-one h5 {
+	font-weight: 400;
+	color: #14A12E;
+	font-size: 14px;
+}
+
+.main-section-one table {
+	width: 100%;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.main-section-one input {
+	color: #14A131;
+	width: 83%;
+	margin: 0 20px 20px;
+	padding: 10px;
+	background: transparent;
+	border: 1px solid #14A131;
+	border-radius: 5px;
+	font-size: 18px;
+	box-shadow: 0 3px 5px #D9D9D9;
+}
+</style>
+</head>
+<body>
+	<header>
+		<img src="__TEMP__/{$style}/public/images/niuframework_logo.png" /><input type="button"
+			class="header-register" value="{:lang('register')}" /><input type="button" value="{:lang('login')}"
+			class="header-login" /> <input type="text" placeholder="{:lang('please_enter_keyword_search')}"
+			class="header-search" />
+	</header>
+	<nav>
+		<div>
+			<ul>
+				<li>{:lang('home_page')}</li>
+				<li>NiuFramWork{:lang('open_source_framework')}</li>
+				<li>{:lang('source_code_download')}</li>
+				<li>{:lang('version_updates')}</li>
+				<li>API{:lang('development_handbook')}</li>
+				<li>{:lang('discuss')}</li>
+				<li>{:lang('about_us')}</li>
+			</ul>
+		</div>
+	</nav>
+	<section>
+		<div class="banner" style="opacity: 0.85;">
+			<ul class="banner-img">
+				<li style="display: block;"><a href="javascript:;"> <img
+						src="__TEMP__/{$style}/public/images/shuffling_1.png"
+						style="width: 100%; display: inline;">
+				</a></li>
+				<li style="display: none;"><a href="javascript:;"> <img
+						src="__TEMP__/{$style}/public/images/shuffling_1.png"
+						style="width: 100%; display: inline;">
+				</a></li>
+				<li style="display: none;"><a href="javascript:;"> <img
+						src="__TEMP__/{$style}/public/images/shuffling_1.png"
+						style="width: 100%; display: inline;">
+				</a></li>
+				<li style="display: none;"><a href="javascript:;"> <img
+						src="__TEMP__/{$style}/public/images/shuffling_1.png"
+						style="width: 100%; display: inline;">
+				</a></li>
+				<li style="display: none;"><a href="javascript:;"> <img
+						src="__TEMP__/{$style}/public/images/shuffling_1.png"
+						style="width: 100%; display: inline;">
+				</a></li>
+			</ul>
+		</div>
+		<ul class="banner-circle">
+			<li><a class=""></a> <a class="noli"></a> <a class=""></a> <a
+				class=""></a> <a class=""></a></li>
+		</ul>
+	</section>
+	<div id="main">
+		<div>
+			<aside>
+				<section class="main-section-one">
+					<h3>{:lang('quick_convenient_login_section')}</h3>
+					<ul>
+						<li><span>●</span>{:lang('according_user_login_function_associated_habit_of_setting')}</li>
+						<li><span>●</span>{:lang('third_party_platform_with_high_utilization_ratio')}</li>
+						<li><span>●</span>{:lang('use_the_user_to_complete_operation_quickly')}</li>
+						<li><span>●</span>{:lang('convenient_fast_to_avoid_the_loss_of_user_groups')}</li>
+					</ul>
+					<h5>{:lang('log_directly_with_following_account_number')}</h5>
+					<table>
+						<tr>
+							<td><img src="__TEMP__/{$style}/public/images/temp_sina.png" /></td>
+							<td><img src="__TEMP__/{$style}/public/images/temp_wechat.png" /></td>
+							<td><img src="__TEMP__/{$style}/public/images/temp_github.png" /></td>
+						</tr>
+					</table>
+					<table>
+						<tr>
+							<td><img src="__TEMP__/{$style}/public/images/temp_qq.png" /></td>
+							<td><img src="__TEMP__/{$style}/public/images/temp_no.png" /></td>
+							<td><img src="__TEMP__/{$style}/public/images/temp_google.png" /></td>
+						</tr>
+					</table>
+					<input type="button" value="{:lang('mailbox_mobile_registration')}" />
+				</section>
+				<section class="main-section-two">
+					<h3>{:lang('intuitive_simple_rights_management')}</h3>
+					<ul>
+						<li><span>●</span>{:lang('according_functional_division_of_user_habits_background_design')}</li>
+						<li><span>●</span>{:lang('minimalist_flat_interface_style')}</li>
+						<li><span>●</span>{:lang('not_need_any_training_you_can_easily_get_started')}</li>
+					</ul>
+					<h5>{:lang('to_experience_background')}&gt;</h5>
+					<img src="__TEMP__/{$style}/public/images/temp_img.png" />
+				</section>
+			</aside>
+			<article>article</article>
+		</div>
+	</div>
+	<footer>
+		<section>
+			<div>
+				<article>
+					<h1>NiuFrameWork</h1>
+					<p>{:lang('based_on_a_two_open_source_framework_for_the_development_of_php_language')}</p>
+					<p>{:lang('has_nine_characteristics_powerful_aura_with_god')}</p>
+					<p>{:lang('use')}NiuFrameWork{:lang('open_source_framework')},{:lang('quickly_complete_the_design_and_development_of_application_system')}</p>
+				</article>
+				<aside>
+					<p>
+						{:lang('scan')}<br />{:lang('click_attention')}
+					</p>
+					<img src="__TEMP__/{$style}/public/images/temp_qrcode.jpg" />
+				</aside>
+			</div>
+		</section>
+		<article>
+			<div>
+				<ul>
+					<li>{:lang('home_page')}</li>
+					<li>NiuFramWork{:lang('open_source_framework')}</li>
+					<li>{:lang('source_code_download')}</li>
+					<li>{:lang('version_updates')}</li>
+					<li>API{:lang('development_handbook')}</li>
+					<li>{:lang('discuss')}</li>
+					<li>{:lang('about_us')}</li>
+				</ul>
+			</div>
+		</article>
+	</footer>
+</body>
+</html>

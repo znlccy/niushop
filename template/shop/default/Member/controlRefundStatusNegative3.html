@@ -1,0 +1,90 @@
+<div class="alert">
+	<h4>{:lang('member_operation_prompt')}：</h4>
+	<ul>
+		<li>1. {:lang('member_fill_correct_information')}</li>
+		<li>2. {:lang('member_refund_alipay_or_account')}</li>
+	</ul>
+</div>
+
+<h3>{:lang('member_apply_or_complain')}</h3>
+<dl>
+	<dt>{:lang('member_treatment_mode')}：</dt>
+	<dd>
+		<select id="refund_require" class="inputBg">
+			{if condition="$detail.refund_type eq 1"}
+			<option value="1" selected="selected">{:lang('member_refund_goods')}</option>
+			{else}<option value="1">{:lang('member_refund_goods')}</option>
+			{/if}
+			{neq name="$detail.shipping_status" value="3"} 
+				{if condition="$detail.refund_type eq 2"}
+				<option value="2" selected="selected">{:lang('member_refund_goods_and_money')}</option>
+				{else }<option value="2">{:lang('member_refund_goods_and_money')}</option>
+				{/if}
+			{/neq}
+		</select>
+	</dd>
+</dl>
+
+<dl>
+	<dt>{:lang('member_refund_reason')}：</dt>
+	<dd>
+		<select id="refund_reason" class="inputBg">
+			{if condition="$detail.refund_reason eq lang('member_buyer_and_seller_agrees')"}
+			<option value="{:lang('member_buyer_and_seller_agrees')}" selected="selected">{:lang('member_buyer_and_seller_agrees')}</option>
+			{else}<option value="{:lang('member_buyer_and_seller_agrees')}">{:lang('member_buyer_and_seller_agrees')}</option>
+			{/if}
+			{if condition="$detail.refund_reason eq lang('member_wrong_and_no_want')"}
+				<option value="{:lang('member_wrong_and_no_want')}" selected="selected">{:lang('member_wrong_and_no_want')}</option>
+				{else}<option value="{:lang('member_wrong_and_no_want')}">{:lang('member_wrong_and_no_want')}</option>
+			{/if}
+			{if condition="$detail.refund_reason eq lang('member_commodity_quality_problems')"}
+				<option value="{:lang('member_commodity_quality_problems')}" selected="selected">{:lang('member_commodity_quality_problems')}</option>
+				{else}<option value="{:lang('member_commodity_quality_problems')}">{:lang('member_commodity_quality_problems')}</option>
+			{/if}
+			{if condition="$detail.refund_reason eq lang('member_goods_not_received')"}
+				<option value="{:lang('member_goods_not_received')}" selected="selected">{:lang('member_goods_not_received')}</option>
+				{else}<option value="{:lang('member_goods_not_received')}">{:lang('member_goods_not_received')}</option>
+			{/if}
+			{if condition="$detail.refund_reason neq lang('member_buyer_and_seller_agrees') || $detail.refund_reason neq lang('member_wrong_and_no_want') || 
+			 $detail.refund_reason neq lang('member_commodity_quality_problems') || $detail.refund_reason neq lang('member_goods_not_received')" ||
+			 $detail.refund_reason eq lang('member_other')"
+			}
+				<option value="{:lang('member_other')}" selected="selected">{:lang('member_other')}</option>
+				{else}<option value="{:lang('member_other')}">{:lang('member_other')}</option>
+			{/if}
+		</select>
+	</dd>
+</dl>
+
+<dl>
+	<dt>{:lang('member_refund_amount')}：</dt>
+	<dd>
+		{if condition="$refund_money > 0"}
+		<input value="" id="refund_money" class="maxRefund inputBg" type="text" placeholder="{:lang('member_refund_at_most')}{$refund_money}{:lang('element')}" onblur="maxRefund()">{:lang('element')}
+		{/if}
+		<input value="{$refund_money}" id="maxRefundMoney" type="hidden" />
+		{if condition="$refund_balance>0"}
+		<span>（{:lang("member_refund_balance_auto")}<strong style="color:#ff4000;">{$refund_balance}</strong>{:lang('element')}）</span>
+		{/if}
+	</dd>
+</dl>
+{if condition="$detail.refund_reason neq lang('member_buyer_and_seller_agrees') || $detail.refund_reason neq lang('member_wrong_and_no_want') || 
+$detail.refund_reason neq lang('member_commodity_quality_problems') || $detail.refund_reason neq lang('member_goods_not_received')" || 
+$detail.refund_reason eq lang('member_other')"}
+<dl id="description_dl">
+{else}
+<dl id="description_dl" style="display: none;">
+{/if}
+	<dt><i class="required">*</i>{:lang('member_refund_description')}：</dt>
+	<dd>
+		<textarea name="buyer_message" id="description" rows="3" class="textarea w400"></textarea>
+		<br>
+		<span class="error"></span>
+	</dd>
+</dl>
+<div class="bottom">
+	<label class="submit-border">
+		<input type="submit" name="submit" class="main-btn main-btn-large" value="{:lang('member_confirm_submission')}" onclick="btnSave()">
+	</label>
+	<a href="javascript:history.go(-1);" class="main-btn main-btn-large">{:lang('member_cancel_and_return')}</a>
+</div>

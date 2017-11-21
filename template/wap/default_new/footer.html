@@ -1,0 +1,38 @@
+<!-- 底部菜单 -->
+<div class="fixed bottom">
+	<div class="distribution-tip" id="distribution-tip" style="display: none;"></div>
+	<dl class="sub-nav nav-b5">
+		<dd id="bottom_home">
+			<a href="{:__URL('APP_MAIN')}">
+				<div class="nav-b5-relative">
+					<img src="__TEMP__/{$style}/public/images/home_check.png"/>
+					<span>{:lang('home_page')}</span>
+				</div>
+			</a>
+		</dd>
+		<dd id="bottom_classify">
+			<a href="{:__URL('APP_MAIN/goods/goodsclassificationlist')}">
+				<div class="nav-b5-relative">
+					<img src="__TEMP__/{$style}/public/images/classify_uncheck.png"/>
+					<span>{:lang('category')}</span>
+				</div>
+			</a>
+		</dd>
+		<dd id="bottom_cart">
+			<a href="{:__URL('APP_MAIN/goods/cart')}">
+				<div class="nav-b5-relative">
+					<img src="__TEMP__/{$style}/public/images/cart_uncheck.png"/>
+					<span>{:lang('goods_cart')}</span>
+				</div>
+			</a>
+		</dd>
+		<dd id="bottom_member">
+			<a href="{:__URL('APP_MAIN/member/index')}">
+				<div class="nav-b5-relative">
+					<img src="__TEMP__/{$style}/public/images/user_uncheck.png"/>
+					<span>{:lang('member_member_center')}</span>
+				</div>
+			</a>
+		</dd>
+	</dl>
+</div>

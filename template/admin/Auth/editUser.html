@@ -1,0 +1,235 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style  type="text/css">
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"],.set-style dl dd input[type="password"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 200px;
+	height: 60px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	margin: 0 0 10px;
+	border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 200px;
+	max-height: 60px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+.edit_button{
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:30px;
+	padding-right:30px;
+	background-color:#51A351;
+	color:#FFF;
+	margin:20px auto;
+	border:none;
+	display:block;
+}
+.error{
+	font-size: 12px;
+    line-height: 16px;
+    color: red;
+    margin-top: 10px;
+	display:none;
+}
+.set-style dl dd p{
+	margin-bottom:0;
+}
+.required{color:red;margin-right:10px;}
+</style>
+ {/block}
+{block name="main"}
+<div class="set-style">
+	<input type="hidden" id="uid" value="{$ua_info.uid}" /> 
+	<dl>
+		<dt><span class="required">*</span>用户名:</dt>
+		<dd>
+			<p><input  id="admin_name" type="text" value="{$ua_info.admin_name}"></p>
+			<p class="error">请输入用户名</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>所属用户组:</dt>
+		<dd>
+			<p>
+				<select class="form-control input-sm" id="group_id">
+					<option value="-1">请选择用户组</option>
+					{foreach name="auth_group" item="v1"}
+					<option value="{$v1['group_id']}" {if condition="$v1['group_id'] eq $ua_info['group_id_array']"}selected{/if}>&nbsp;&nbsp;{$v1['group_name']}</option>
+					{/foreach}
+				</select>
+			</p>
+			<p class="error">请选择用户组</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述:</dt>
+		<dd>
+			<p><textarea id="desc">{$ua_info.desc}</textarea></p>
+			<p class="error">请输入描述信息</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="editUserAjax();">提交</button>
+</div>
+<script>
+/**
+ *模块输入信息验证
+ */
+function verify() {
+	var admin_name = $("#admin_name").val();
+	var group_id = $("#group_id").val();
+	if (admin_name == '') {
+		$("#admin_name").parent().next().show();
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if(group_id == -1){
+		$("#group_id").parent().next().show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+
+var flag = false;//是否重复提交
+/**
+*用户修改
+*/	
+function editUserAjax() {
+	var uid = $("#uid").val();
+	var admin_name = $("#admin_name").val();
+	var group_id = $("#group_id").val();
+	var desc = $("#desc").val();
+	if(verify()){
+		if(flag){
+			return;
+		}
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/auth/edituser')}",
+			data : {
+				'admin_name' : admin_name,
+				'group_id' : group_id,
+				'uid' : uid,
+				'desc' : desc
+			},
+			success : function(data) {
+// 				alert(JSON.stringify(data));
+				if (data['code'] > 0) {
+					$("#dialog").dialog({
+						buttons : {
+							"确定,#51A351" : function() {
+								$(this).dialog('close');
+							}
+						},
+						contentText : data["message"],
+						time : 2,
+						timeHref : "{:__URL('ADMIN_MAIN/auth/userlist')}",
+					});
+				} else {
+					$("#dialog").dialog({
+						buttons : {
+							"确定,#e57373" : function() {
+								$(this).dialog('close');
+								flag = false;
+							}
+						},
+						contentText : data["message"]
+					});
+				}
+			}
+		});
+	}
+	
+}
+</script>
+{/block}

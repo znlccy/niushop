@@ -1,0 +1,92 @@
+<style>
+.coupon-all{
+	height: 90px;
+	padding: 10px 0 0 0;
+	background: #fff;
+	margin-bottom: 10px;
+	white-space: nowrap;
+	overflow-y: auto;
+}
+.coupon-all::-webkit-scrollbar {
+	display: none;
+}
+.coupon-all .coupon{
+	width: 160px;
+	height: 80px;
+	background: red;
+	margin-left: 10px;
+	border-radius: 5px;
+	display: inline-block;
+	position: relative;
+	top: 0px;
+}
+.coupon-all .coupon p{
+	position: absolute;
+	z-index: 5;
+	font-size: 20px;
+	color: #fff;
+	margin-left: 15px;
+	line-height: 80px;
+}
+.coupon-all .coupon p span{
+	font-size: 14px;
+}
+.coupon-all .coupon img.background_img{
+	max-height: 100%;
+	max-width: 100%;
+	position: absolute;
+	z-index: 1;
+}
+.coupon-all .coupon img.already_received{
+	max-height: 60%;
+	max-width: 60%;
+	position: absolute;
+	z-index: 10;
+	display: none;
+}
+.coupon-all .coupon:last-child{
+	margin-right: 10px;
+}
+</style>
+<div  class="coupon-all">
+	{volist name="coupon_list" id="vo" }
+	{if condition="$vo['money'] gt 0 && $vo['money'] elt 10"}
+   		<div class="coupon" style="background: #FFA72A;"  onclick="coupon_receive(this,{$vo.coupon_type_id})">
+   	{elseif condition="$vo['money'] gt 10 && $vo['money'] elt 100"}
+   		<div class="coupon" style="background: #FF4D5B;"  onclick="coupon_receive(this,{$vo.coupon_type_id})">
+   	{elseif condition="$vo['money'] gt 100"}
+   		<div class="coupon" style="background: #34D71E;"  onclick="coupon_receive(this,{$vo.coupon_type_id})">
+   	{/if}
+   		<img src="__TEMP__/{$style}/public/images/index_coupon.png" alt="" class="background_img">
+   		<p><span>￥</span>{$vo.money}</p>
+   		<img src="__TEMP__/{$style}/public/images/already_received.png" alt="" class="already_received">
+   	</div> 
+   {/volist}
+</div>
+  
+<script type="text/javascript">
+var is_have = true;
+function coupon_receive(event,coupon_type_id){
+	if(is_have){
+		is_have = false;
+		$.ajax({
+			type:"post",
+			url : "{:__URL('APP_MAIN/index/getCoupon')}",
+			async: false,
+			dataType:"json",
+			data:{ 'coupon_type_id' : coupon_type_id },
+			success : function(data){
+				if(data['code']>0){
+					showBox("恭喜您，领取成功！");
+					$(event).children(".already_received").show();
+				}else if(data['code'] == -2009){
+					location.href="{:__URL('APP_MAIN/login/index')}";
+				}else{
+					showBox(data['message']);
+					is_have = true;
+				}
+			}
+		})
+	}
+}
+</script>

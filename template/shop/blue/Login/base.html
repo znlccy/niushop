@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta name="renderer" content="webkit" />
+<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+<title>{if condition="$title_before neq ''"}{$title_before}&nbsp;-&nbsp;{/if}{$title}{if condition="$seoconfig.seo_title neq ''"}-{$seoconfig.seo_title}{/if} </title>
+
+<link rel="shortcut icon" href="__TEMP__/{$style}/public/images/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/ns_shop_login_common.css" />
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/passport.css" />
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/layer.css" id="layuicss-skinlayercss">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery_email.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.validate.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/messages_zh222.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/placeholder.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.json.js"></script>
+
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/base_common.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/user.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/layer.js"></script>
+<script src="__STATIC__/js/load_bottom.js" type="text/javascript"></script>
+
+<!-- logo样式 -->
+<link type="text/css" rel="stylesheet" href="__STATIC__/shop_css_logo/shop_logo.css" />
+</head>
+<body>
+{include file='shop/blue/urlModel'/}
+<script>
+var APPMAIN='APP_MAIN';//外置JS调用
+var STATIC = "__STATIC__";
+function erweima1(obj, sType) { var oDiv = document.getElementById(obj); if (sType == 'show') {oDiv.style.display = 'block';} if (sType == 'hide') {oDiv.style.display = 'none';} }
+</script>
+{block name="resource"}
+<style type="text/css">
+.header {
+    width: 990px;
+    min-width: 990px;
+    height: 90px;
+    padding: 0px;
+}
+.header .logo-info {
+    width: 430px;
+    height: 80px;
+    line-height: 80px;
+    float: left;
+}
+.header .logo-info a.logo {
+	display: block;
+	max-width: 240px;
+	height: 80px;
+	float: left;
+	overflow: hidden;
+}
+.header .logo-info a.logo img {
+    max-width: 100%;
+    max-height: 100%;
+    vertical-align: middle;
+}
+.logo-info span.findpw {
+    border-left: 1px #eee solid;
+    width: auto;
+    height: 44px;
+    line-height: 44px;
+    font-size: 28px;
+    margin: 18px 0px 0px 15px;
+    float: left;
+    padding: 0px 15px;
+    color: #333;
+}
+.error {
+    background: #FFFDEE;
+    border: 1px #EDD28B solid;
+    color: #666;
+    width: auto;
+    max-width: 260px;
+     padding: 5px 10px; 
+    margin-left: 10px;
+    display: inline-block;
+    font-size: 12px;
+    color: #999;
+}
+</style>
+
+{/block}
+     {block name="main"}
+     <!--找回密码模板主体-->
+     {/block}
+<div class="site-footer">
+	<div class="footer-related">
+		<div class="footer-info">
+			<div class="info-text">
+				<!-- 底部导航 -->
+				<div class="txt" id="bottom_copyright">
+					<p style="color: #666;">
+					<span id="copyright_desc"></span>
+					<br><a href="http://www.niushop.com.cn" target="_blank" style="text-decoration: none;color:#666;" id="copyright_companyname"></a>
+						<label id="copyright_meta"></label>
+					</p>
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>     
+     
+<!-- <div class="site-footer">
+    <div class="footer-related">
+  		    <div class="footer-info clearfix">
+      <div class="info-text">
+      	        <p class="nav_bottom">
+                                    <a href="http://demo.coolhong.com/" target="_blank">关于我们</a><em >|</em>
+                        <a href="http://demo.coolhong.com/" target="_blank">联系我们</a><em >|</em>
+                        <a href="apply_index.php" >商家入驻</a><em >|</em>
+                        <a href="#" >友情链接</a><em >|</em>
+                        <a href="#" >手机商城</a><em >|</em>
+                        <a href="#" >销售联盟</a><em >|</em>
+                        <a href="#" >商城社区</a><em >|</em>
+                        <a href="#" >企业文化</a><em >|</em>
+                        <a href="help.php" >帮助中心</a><em >|</em>
+                        <a href="message.php" >留言板</a><em style="display:none">|</em>
+                                            </p>
+                                                                                                                                           	</p>
+      </div>
+    </div>
+<img src="api/cron.php?t=" alt="" style="width:0px;height:0px;display:none;" />
+
+<script type="text/javascript">
+Ajax.call('api/okgoods.php', '', '', 'GET', 'JSON');
+//预售
+Ajax.call('pre_sale.php?act=check_order', '', '', 'GET', 'JSON');
+</script>
+<script type="text/javascript" src="themes/ecshop_jdbuy/js/base.js" ></script>
+  </div>
+</div> -->
+
+</body>
+<script type="text/javascript">
+var process_request = "正在处理您的请求...";
+var username_chana = "- 用户名不能有中文。";
+var msg_uname_length = "- 用户名不能超过 20 个字符。";
+var username_empty = "- 用户名不能为空。";
+var username_shorter = "- 用户名长度不能少于 3 个字符。";
+var username_invalid = "- 用户名只能是由字母数字以及下划线组成。";
+var password_empty = "- 登录密码不能为空。";
+var password_shorter = "- 登录密码不能少于 6 个字符。";
+var confirm_password_invalid = "- 两次输入密码不一致";
+var email_empty = "- Email 为空";
+var email_invalid = "- Email 不是合法的地址";
+var agreement = "- 您没有接受协议";
+var msn_invalid = "- msn地址不是一个有效的邮件地址";
+var qq_invalid = "- QQ号码不是一个有效的号码";
+var home_phone_invalid = "- 家庭电话不是一个有效号码";
+var office_phone_invalid = "- 办公电话不是一个有效号码";
+var mobile_phone_invalid = "- 手机号码不是一个有效号码";
+var msg_un_blank = "- 用户名不能为空";
+var msg_un_chine = "- 用户名不能为中文";
+var msg_un_length = "- 用户名不得超过14个字符";
+var msg_un_format = "- 用户名含有非法字符";
+var msg_un_registered = "- 用户名已经存在,请重新输入";
+var msg_can_rg = "* 可以注册";
+var msg_email_blank = "- 邮件地址不能为空";
+var msg_email_registered = "- 邮箱已存在";
+var msg_email_format = "- 邮件地址不合法";
+var msg_mobile_phone_blank = "- 手机号码不能为空";
+var msg_mobile_phone_registered = "- 手机号码已存在";
+var msg_mobile_phone_format = "- 手机号码不是一个有效号码";
+var msg_blank = "- 不能为空";
+var no_select_question = "- 您没有完成密码提示问题的操作";
+var passwd_balnk = "* 密码中不能包含空格";
+var msg_email_code_blank = "- 邮箱验证码不能为空";
+var msg_mobile_phone_code_blank = "- 手机验证码不能为空";
+var msg_captcha_blank = "- 验证码不能为空";
+var msg_register_type_blank = "- 注册类型不能为空";
+var username_exist = "用户名 %s 已经存在";
+</script>
+</html>

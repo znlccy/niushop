@@ -1,0 +1,354 @@
+<html>
+	<head>
+		<script src="__STATIC__/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="__STATIC__/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="__STATIC__/css/common.css">
+		<link rel="stylesheet" type="text/css" href="__STATIC__/css/seller_center.css">
+		<link rel="stylesheet" type="text/css" href="__STATIC__/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="ADMIN_CSS/dialogalbumlist.css">
+		<script src="ADMIN_JS/art_dialog.source.js"></script>
+		<script src="ADMIN_JS/iframe_tools.source.js"></script>
+		<script src="__STATIC__/bootstrap/js/bootstrap.js"></script>
+		{include file="adminblue/controlCommonVariable" }
+	</head>
+	<body>
+		<table class="mytable dialog" style="display:none;">
+			<tr>
+				<th width="45%"></th>
+				<th width="9%"></th>
+				<th width="14%"></th>
+				<th width="12%">
+					<a class="ncsc-btn ncsc-btn-green" style="right: 100px;cursor:pointer; position: static;" data-toggle="modal" data-target="#addalbum">
+					<i class="fa fa-folder-open "></i>创建相册</a>
+				</th>
+				<th width="12%" style="padding-right: 8px;cursor:pointer;">
+					<a id="open_uploader" style="right: 100px; cursor:pointer;position: static;" class="ncsc-btn ncsc-btn-acidblue">
+					<i class="fa fa-cloud-upload"></i>上传图片</a>
+					<input type="file" style="cursor:pointer;font-size:0;"id="fileupload" hidefocus="true" size="1" class="input-file" name="file_upload" multiple="multiple" onclick="imgUpload();"/>
+				</th>
+			</tr>
+		</table>
+		<input type="hidden" id="album_id" value="{$default_album_id}"/>
+		<div class='dialog_main'>
+			<img src="ADMIN_CSS/icons/loading.gif"/>
+			<div class="dialog_body">
+				<aside>
+					<ul id="album_list"></ul>
+				</aside>
+				<article>
+					<ul id="albumList"></ul>
+					<div style="clear: both;"></div>
+					<div style="position:relative;bottom:0;width:100%;"></div>
+					{include file="adminblue/pageCommon" /}
+				</article>
+			</div>
+			<footer>
+				<span id="select_count"></span>
+				<input type="button" value="确认" id="confirm" />
+			</footer>
+		</div>
+		<!-- 公共的操作提示弹出框 common-success：成功，common-warning：警告，common-error：错误，-->
+		<div class="common-tip-message js-common-tip">
+			<div class="inner"></div>
+		</div>
+		<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script> 
+		<script type="text/javascript" src="__STATIC__/js/jquery.ui.widget.js" charset="utf-8"></script>
+		<script type="text/javascript" src="__STATIC__/js/jquery.fileupload.js" charset="utf-8"></script>
+		<script type="text/javascript">
+		var count = 0;//图片选择数量
+		var img_array = new Object();
+		img_array["img_id"] = new Array();
+		img_array["img_path"] = new Array();
+		var is_auto = true;
+		var dialog_page_index = 1;//相册 当前页
+		getAlbumClassList(dialog_page_index,10);
+		$(".js-album-class-loading-more").live("click",function(){
+			
+			if(!$(this).attr("data-is-disabled")){
+				dialog_page_index++;
+				$(this).html('<i class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom"></i>').attr("data-is-disabled",1);
+				getAlbumClassList(dialog_page_index,10);
+			}
+		})
+		
+		function showTip(msg,flag){
+			var curr_class = "common-"+flag;
+			$(".js-common-tip").removeClass("common-success common-warning common-error")
+			.addClass(curr_class)
+	//		.css("top",$(window).scrollTop()/2)
+			.fadeIn(400)
+			.children().text(msg);
+			setTimeout("$('.js-common-tip').fadeOut()",2000);
+		}
+
+		//分类查询相册
+		function SelectAlbumByType(obj) {
+			indexPage = 1;
+			$(".select_type").removeClass("select_type");
+			$(obj).addClass("select_type");
+			$("#select_count").css("visibility", "hidden");
+			$("#confirm").removeClass("input_blue");
+			jumpNumber = 1;
+			LoadingInfo(1);
+		}
+
+		//查询图片列表
+		function LoadingInfo(page_index) {
+			img_array["img_id"] = new Array();
+			img_array["img_path"] = new Array();
+			if(is_auto){
+				$("#showNumber").val("15");
+				is_auto = false;
+			}
+			var album_id = $(".select_type").attr("data-album_id");
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/system/albumpicturelist')}",
+				data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "album_id" : album_id },
+				success : function(data) {
+					count = 0;
+					$("#select_count").css("visibility", "hidden");
+					var html = '';
+					if (data["data"].length > 0) {
+						for (var i = 0; i < data["data"].length; i++) {
+							html += "<li class='img-li' title='"+data["data"][i]["pic_name"]+"' data-id=" + data["data"][i]["pic_id"] + " img_path='" + data['data'][i]['pic_cover'] + "' onclick='select_img(this," + data["data"][i]["pic_id"] + ")'>";
+							html += '<img src="' + __IMG(data["data"][i]["pic_cover"]) + '" />';
+							html += "<img src='__STATIC__/images/icon_ok.png' class='icon_ok' /></li>";
+						}
+					} else {
+						html += '<div class="none_info">暂无符合条件的数据记录！</div>';
+					}
+					$("#albumList").html(html);
+					initPageData(data["page_count"],data['data'].length,data['total_count']);
+					$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+				}
+			});
+		}
+
+		//查询相册
+		function getAlbumClassList(page_index,page_size) {
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/system/getAlbumClassList')}",
+				async : false,
+				data : { "page_index" : page_index, "page_size" : page_size },
+				success : function(data) {
+					$(".dialog.mytable").show();
+					$(".dialog_main>img").hide();
+					$(".dialog_main>.dialog_body").show();
+					$(".dialog_main>footer").show();
+					$(".js-album-class-loading-more").remove();
+					var html = '';
+					if(data.total_count>0){
+						for (var i = 0; i < data['data'].length; i++) {
+							var curr = data['data'][i];
+							if (curr["is_default"] == 1) {
+								html += "<li class='select_type' onclick='SelectAlbumByType(this)' data-album_id='" + curr['album_id'] + "'>";
+								html += "<b class='album-title'>" + curr['album_name'] + "</b><span class='album-img-active'>" + curr['pic_count'] + "</li>";
+							} else {
+								html += "<li onclick='SelectAlbumByType(this)' data-album_id=" + curr["album_id"] + ">";
+								html += "<b class='album-title'>" +curr["album_name"] + "</b><span  class='album-img'>" + curr["pic_count"] + "</span></li>";
+							}
+						}
+							html += '<li class="js-album-class-loading-more" title="加载更多" data-flag="1">加载更多</li>';
+					} else {
+						html += '<li>暂无符合条件的数据记录！</li>';
+					}
+
+					$("#album_list").append(html);
+					var top = $(".dialog_body aside").scrollTop() + $("#album_list li").outerHeight()*10;
+					$(".dialog_body aside").scrollTop(top);
+					if(!$("#album_list li.select_type").attr("data-album_id")){
+						$("#album_list li:first").addClass("select_type");
+					}
+					
+					if(($("#album_list li").length-1) == data.total_count) $(".js-album-class-loading-more").hide();
+
+				}
+			})
+		}
+	
+		function refreshCount(){
+			if (count == 0) {
+				$("#select_count").css("visibility", "hidden");
+				$("#confirm").removeClass("input_blue");
+			} else {
+				$("#select_count").css("visibility", "visible");
+				$("#confirm").addClass("input_blue");
+			}
+			if (count > {$number} && {$number} > 0) {
+				$("#select_count").text("最多选取"+{$number}+"张照片");
+				$("#select_count").css("color", "red");
+				$("#confirm").removeClass("input_blue");
+			} else {
+				$("#select_count").text("已选择" + count + "张");//张照片
+				$("#select_count").css("color", "black");
+			}
+		}
+
+		function select_img(obj) {
+			var id = $(obj).attr("data-id");
+			var path = $(obj).attr("img_path");
+			if ($(obj).hasClass("select_img")) {
+				$(obj).removeClass("select_img");
+				$(obj).find(".icon_ok").css("display", "none");
+				//删除数组中的元素
+				var id_index = $.inArray(id, img_array["img_id"]);
+				img_array["img_id"].splice(id_index, 1);
+				img_array["img_path"].splice(id_index, 1);
+				--count;
+			} else {
+				$(obj).addClass("select_img");
+				$(obj).find(".icon_ok").css("display", "block");
+				//在数组中`添加本元素id
+				img_array["img_id"].push(id);
+				img_array["img_path"].push(path);
+				++count;
+			}
+			refreshCount();
+		}
+	
+		$("#confirm").click(function() {
+			if ($("#confirm").hasClass("input_blue")) {
+				var id_arr = img_array["img_id"].join(",");
+				var src_arr = img_array["img_path"].join(",");
+				var win = art.dialog.open.origin;
+				win.location = "javascript:PopUpCallBack('" + id_arr + "','" + src_arr + "',{$upload_type},{$spec_id},{$spec_value_id})";
+				art.dialog.close();
+			}
+		});
+
+		/**
+		* 创建相册
+		*/
+		function addAlbumClass() {
+			var album_name = $("#album_name").val();
+			var sort = $("#sort").val();
+			if(album_name == ""){
+				$("#album_name").focus();
+				$("#album_name").next().show();
+				return;
+			}
+			if(sort == ""){
+				sort = $("#album_list li").length+1;//如果没有输入排序，则取长度+1（最后一个）
+			}
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/system/addalbumclass')}",
+				data : { "album_name" : album_name, "sort" : sort },
+				success : function(data) {
+					if (data) {
+						location.reload();
+					}
+				}
+			})
+		}
+
+		/**
+		*添加图片框体切换
+		*/
+		function addImgBox() {
+			if ($("#uploader").is(":hidden")) {
+				$("#uploader").show();
+			} else {
+				$("#uploader").hide();
+			}
+		}
+
+		function imgUpload(){
+			// ajax 多图上传
+			var upload_num = 0; // 上传图片成功数量
+			$('#fileupload').fileupload({
+				url: "{:__URL('APP_MAIN/upload/photoalbumupload')}",
+				dataType: 'json',
+				formData:{"album_id" : $("#album_list li[class='select_type']").attr("data-album_id"),"type" : "1,2,3,4",'file_path' : UPLOADGOODS},
+				add: function (e,data) {
+					//显示上传图片框
+					if($("#uploader").is(":hidden")){
+						$("#uploader").show();
+					}
+					$.each(data.files, function (index, file) {
+						$('<div nctype="' + file.name.replace(/\./g, '_') + '"><p>'+ file.name +'</p><p class="loading"></p></div>').appendTo('div[nctype="file_loading"]');
+					});
+					data.submit();
+				},
+				done: function (e,data) {
+					var param = data.result;
+					$this = $('div[nctype="' + param.origin_file_name.replace(/\./g, '_') + '"]');
+					$this.fadeOut(3000, function(){
+						$(this).remove();
+						if ($('div[nctype="file_loading"]').html() == '') {
+							$("#uploader").hide();
+							LoadingInfo(1);
+						}
+					});
+					if(param.state == 1){
+						upload_num++;
+						$('div[nctype="file_msg"]').html('<i class="icon-ok-sign">'+'</i>'+'成功上传'+upload_num+'张图片');
+					} else {
+						showTip(param.message,"warning");
+						$this.find('.loading').html(param.message).removeClass('loading');
+					}
+				}
+			});
+		}
+		/**
+		* 处理图片路径
+		*/
+		function __IMG(img_path){
+			var path = "";
+			if(img_path.indexOf("http://") == -1 && img_path.indexOf("https://") == -1){
+				path = UPLOAD+"\/"+img_path;
+			}else{
+				path = img_path;
+			}
+			return path;
+		}
+		</script>
+		<script src="__STATIC__/js/page.js" type="text/javascript"></script>
+		<!-- 相册创建  -->
+		<div class="modal fade" id="addalbum" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">相册创建</h4>
+					</div>
+					<div class="modal-body">
+						<div class="dislog-style">
+							<ul>
+								<li>
+									<span>相册名称</span>
+									<input type="text" id="album_name" placeholder="请输入相册名称" />
+									<span style="width: inherit;color: red;display:none;">请输入相册名称</span>
+								</li>
+								<li>
+									<span>排序</span>
+									<input type="text" id="sort" onkeyup='this.value=this.value.replace(/\D/gi,"")' />
+								</li>
+								<li style="display: none;"><span>相册封面</span>
+									<div class="ncsc-upload-btn" style="margin-top: -1px;">
+										<a href="javascript:void(0);">
+											<span><input hidefocus="true" size="1" class="input-file" name="file_upload" id="imgClassSave" nc_type="change_store_label" type="file" onchange="imgUpload(this);"></span>
+											<p><i></i>图片上传</p>
+										</a>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" onclick="addAlbumClass()">创建</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 图片上传弹出框 -->
+		<div class="upload-con" id="uploader" style="display:none;">
+			<div nctype="file_msg"></div>
+			<div class="upload-pmgressbar" nctype="file_loading"></div>
+			<div class="upload-txt"><span>支持Jpg、Png格式，大小不超过1024KB的图片上传；浏览文件时可以按住ctrl或shift键多选。</span> </div>
+		</div>
+	</body>
+</html>

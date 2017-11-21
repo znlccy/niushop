@@ -1,0 +1,124 @@
+{extend name="adminblue/base" /}
+{block name="resources"} 
+<style>
+ul.mater{border:1px solid #e7e7eb;border-radius:5px;margin:0;}
+ul.mater li{padding:5px;border-bottom:1px solid #e7e7eb;}
+ul.mater li:first-child{padding:13px 5px;}
+ul.mater li:last-child{border-bottom:0px solid #e7e7eb;}
+.type_name{display:inline-block;background:#01b044;color:#fff;padding:3px 8px;margin-right:10px;border-radius:3px;}
+.table-class tr td{vertical-align:middle;}
+.table-class tr td:frist-child{text-align:left;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+<tr>
+	<th width="20%" style="text-align: left;">
+		<button class="btn-common btn-small" style="margin:0 5px 0 0 !important;" onclick="location.href='{:__URL('ADMIN_MAIN/wchat/addmedia')}';">添加消息</button>
+	</th>
+	<th width="10%">
+		<input type="text" id = 'search_text' placeholder="请输入消息名称" class="input-common"/>
+		<input type="button" onclick="searchData()" value="搜索" class="btn-common"/>
+	</th>
+</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 50%;">
+		<col style="width: 30%;">
+		<col style="width: 20%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th style="text-align:left;">标题</th>
+			<th>创建时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<colgroup>
+		<col style="width: 50%;">
+		<col style="width: 30%;">
+		<col style="width: 20%;">
+	</colgroup>
+	<tbody></tbody>
+</table>
+<input type="hidden" id="type" value="{$type}">
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	var type = $("#type").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/wchat/materialmessage')}",
+		data : { "page_index" : page_index, "page_size" :$("#showNumber").val(),"search_text" : search_text, "type" : type },
+		success : function(data) {
+			var html = '';
+// 			console.log(data);
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					if(data['data'][i]['type'] == 1){
+						var type_name = '文本 ';
+					}else if(data['data'][i]['type'] == 2){
+						var type_name = '单图文 ';
+					}else if(data['data'][i]['type'] == 3){
+						var type_name = '多图文 ';
+					}
+					html += '<tr align="center">';
+					html += '<td style="text-align:left;"><ul class="mater">';
+					html += '';
+					for(var l=0; l<data['data'][i]['item_list'].length; l++){
+						html += '<li><span class="type_name">'+ type_name +' </span><a href="#">' + data['data'][i]['item_list'][l]['title'] + '</a></li>';
+					}
+					html += '';
+					html += '</ul></td>';
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"]) + '</td>';
+					html += '<td><a href="'+__URL('ADMIN_MAIN/wchat/updatemedia?media_id=' + data["data"][i]["media_id"])+'">修改</a>&nbsp;&nbsp; ';
+					html += '<a href="javascript:void(0);" onclick="deleteWeixinMedia(' + data["data"][i]["media_id"] + ')">删除</a></td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="4">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+function deleteWeixinMedia(media_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/wchat/deleteweixinmedia')}",
+						data : {"media_id" : media_id},
+						success : function(res){
+							if(res>0){
+								showMessage('success', "操作成功", "{:__URL('ADMIN_MAIN/wchat/materialmessage')}");
+							}else{
+							showMessage('error', "操作失败");
+						}
+					}
+				})
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+				return 0;
+			}
+		},
+		contentText:"确定要删除吗",
+	});
+}
+</script>
+{/block}

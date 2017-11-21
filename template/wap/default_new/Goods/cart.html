@@ -1,0 +1,165 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/order.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/cart.css">
+<script src="__TEMP__/{$style}/public/js/cart.js" type="text/javascript"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/weixincommon.js"></script>
+<style>
+	.group img{
+		margin-top: 0!important;
+	}
+	input{
+		appearance:none;
+    	-moz-appearance:none;
+	    -webkit-appearance:none; 
+	    outline: none;
+	    -moz-outline: none;
+	    -webkit-outline: none;
+	}
+	.num{
+		border-radius: 0;
+		-webkit-border-radius: 0;
+		border-left: 1px;
+		-webkit-border-left: 1px;
+		box-shadow: none;
+		margin-left: -1px;
+		margin-right: -1px;
+	}
+</style>
+{/block}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title"><span style="margin-left: 40px;">{:lang('goods_cart')}</span>{include file="wap/default_new/controGroup" /}</div>
+</section>
+{/block}
+
+{block name="main"}
+<div class="popup" id="popup" style="display: none"></div>
+<div class="h50"></div>
+<div class="cart-detail">
+	<section class="cart-prolist">
+		<ul class="cart-prolist-ul" style="border: 0;">
+		{foreach name="list" item="cart" key="i"}
+		<?php $shop_info= explode(",",$i); ?>
+			<li data-parent-shopid="<?php echo $shop_info[0]; ?>">
+				<h2 class="title">
+					<div class="custom-store-img"></div>
+					{:lang('shop_name')}：{$title}
+					<div class="cart_ed" >
+						<a id="cart_edit<?php echo $shop_info[0]; ?>" data-shopid="<?php echo $shop_info[0]; ?>" onclick="cart_edit(this,<?php echo $shop_info[0]; ?>)" style="display: block;">{:lang('edit')}</a>
+						<a id="edit_success<?php echo $shop_info[0]; ?>" onclick="cart_succ(this,<?php echo $shop_info[0]; ?>)" style="display: none;">{:lang('member_complete')}</a>
+					</div>
+				</h2>
+			</li>
+			{foreach name="cart" item="list" key="k"}
+			<li class="cart-list-li" data-shopid="{$list.shop_id}">
+				<div class="checkbox" is_check="yes" is_del='no'></div>
+				<div class="product">
+					<div class="pic">
+						<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$list['goods_id'])}">
+							<img src="{:__IMG($list['picture_info']['pic_cover_small'])}" alt="{:lang('goods_image')}">
+						</a>
+					</div>
+					<div class="info">
+						<p class="info-name">
+							<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$list['goods_id'])}">{$list.goods_name}<span><br />
+							{notempty name="$list['sku_name']"}
+							规格：{$list.sku_name}
+							{/notempty}</span></a>
+						</p>
+						<!-- 	<p class="info-price">
+						¥<span name="goods_price">{$list.price}</span>
+							{if condition="$list.point_exchange_type==1 "}
+							<span name="goods_integral" data-point="{$list.point_exchange}">
+								{if condition=" $list.point_exchange>0"}
+									+{$list.point_exchange}积分
+								{/if}
+							</span>
+							{/if}
+						</p> -->
+						<div class="number">
+							¥<span name="goods_price">{$list.price}</span>
+							{if condition="$list.point_exchange_type==1 "}
+							<span name="goods_integral" data-point="{$list.point_exchange}">
+								{if condition=" $list.point_exchange>0"}
+									+{$list.point_exchange}{:lang('goods_integral')}
+								{/if}
+							</span>
+							{/if}
+							<div name="edit_num{$list.shop_id}" style="display: inline-block;float: right;position: absolute;bottom: 10px;right: 20px;">
+								<span class="ui-number">
+									<button type="button" class="decrease" onclick="Cart.changeBar(&#39;-&#39;,{$list.cart_id},this,{$list.goods_id})" title="{:lang('member_reduce')}">-</button>
+									<input class="num" name="quantity" autocomplete="off" data-default-num="{$list.num}" value="{$list.num}" min="1" max="{$list.stock}" min_buy="{$list.min_buy}"  max_buy="{$list.max_buy}" data-cartid="{$list.cart_id}" data-shopid="{$list.shop_id}">
+									<button type="button" class="increase" onclick="Cart.changeBar(&#39;+&#39;,{$list.cart_id},this,{$list.goods_id})" title="{:lang('plus')}">+</button>
+								</span>
+								<span name="succ_amount" style="display: none;">{$list.num}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>
+			{/foreach}
+		{/foreach}
+		</ul>
+	</section>
+</div>
+<input type="hidden" id="countlist" value="{$countlist}">
+<section class="cart-none" id="cart-none" style="display: none">
+	<i class="cart-big"></i>
+	<p class="text">{:lang('your_shopping_cart_is_not_available_yet')}！</p>
+	{if condition="$shop_id ==0"}
+	<a href="{:__URL('APP_MAIN')}" class="btn">{:lang('go_for_a_stroll')}</a>
+	{else/}
+	<a href="{:__URL('APP_MAIN/shop/index?shop_id='.$shop_id)}" class="btn">{:lang('go_for_a_stroll')}</a>
+	{/if}
+</section>
+{/block}
+{block name="bottom"}
+{notempty name="list"}
+<div class="fixed bottom">
+	<div class="btn_wrap btn_wrap_static">
+		<div class="btn ttn_server" id="div_selected">
+			<div style="float: left;height: 20px;width: 20px;padding-left:10px;">
+				<img src="__TEMP__/{$style}/public/images/cartp2.png" is_check="yes" is_del="no" id="select_all" style="width:100%;"/>
+			</div>
+			<span id="sel_text">{:lang('goods_select_all')}</span>
+		</div>
+		<div id="price_info">
+			{:lang('summation')}： ¥<span id="orderprice" class="price"></span>
+			<br />
+			<!-- <span style="color: #999;">不含运费</span> -->
+		</div>
+		<button class="btn btn_buy" onclick="settlement()">
+			<span id="settlement">{:lang('settle_accounts')}()</span>
+		</button>
+	</div>
+</div>
+{else/}
+<div style="height:58px;"></div>
+{include file='wap/default_new/footer'/}
+{/notempty}
+<div class="h60"></div>
+<script type="text/javascript">
+var cart1 = "__TEMP__/{$style}/public/images/cartp1.png";
+var cart2 = "__TEMP__/{$style}/public/images/cartp2.png";
+//页面加载触发事件
+$(function () {
+	if(parseInt($("#countlist").val()) == 0){
+		$(".cart-prolist").hide();
+		$("#cart-none").show();
+		// $(".fixed.bottom").hide();
+	}
+	bottomActive("#bottom_cart");
+});
+</script>
+<script type="text/javascript">
+$("#head_back").click(function (){
+    var json ={
+            "center" : "2"
+        }
+    window.webkit.messageHandlers.center.postMessage(json);
+})
+</script>
+{/block}

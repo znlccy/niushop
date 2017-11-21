@@ -1,0 +1,111 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/group_goods_list.css">
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{include file='wap/default_new/Index/controlSearch'/}</div>
+</section>
+{/block}
+{block name="main"}
+<!-- 搜索框样式 -->
+<div class="custom-tag-list clearfix">
+	<div class="custom-tag-list-menu-block">
+		<ul class="custom-tag-list-side-menu" style="position: relative;" id='goods_group'>
+		{foreach name="tree_list" item="group" key="k"}
+			{if condition="$group.pid==0"}
+				<li>
+					<a data-groupid="{$group.group_id}" onclick="showChild(this,{$group.group_id},'{$group.group_name}')"  {if condition="$k==0"}class="selected"{/if}>
+						<span>{$group.group_name}</span>
+					</a>
+				</li>
+			{/if}
+		{/foreach}
+		</ul>
+	</div>
+	
+	<div class="custom-tag-list-goods" id='good_list'>
+	<div class="nothing-data" align="center" style="display:none;">
+		<img src="__TEMP__/{$style}/public/images/wap_nodata.png"/>
+		<div>{:lang('goods_no_goods_you_want')}…</div>
+	</div>
+	{foreach name="tree_list" item="group" key="k"}
+		{if condition="$group.pid!=0 && $group.goods_list_count >0"}
+			<div data-pid="{$group.pid}" style="display:none;">
+				<p style="padding:10px;">{$group.group_name}</p>
+				<ul>
+				{foreach name="group.goods_list" item="goods" key="k"}
+					<li class="custom-tag-list-single-goods clearfix">
+						<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$goods['goods_id'])}" class="custom-tag-list-goods-img">
+							<img class="js-lazy" src="{:__IMG($goods['picture_info']['pic_cover_micro'])}" style="display: block;">
+						</a>
+						<div class="custom-tag-list-goods-detail">
+							<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$goods['goods_id'])}" class="custom-tag-list-goods-title">{$goods.goods_name}</a>
+							<span class="custom-tag-list-goods-price">￥{$goods.promotion_price}</span>
+							<a class="custom-tag-list-goods-buy js-custom-tag-list-goods-buy" href="javascript:CartGoodsInfo({$goods.goods_id},{$goods.state})" data-buyway="1" data-alias="m2nx2p6x" data-postage="0" data-id="22569525" data-isvirtual="0">
+								<img src="__TEMP__/{$style}/public/images/goodsList_01.png">
+							</a>
+						</div>
+					</li>
+				{/foreach}
+				</ul>
+			</div>
+		{else/}
+		{if condition="$group.pid==0 && $group.goods_list_count >0"}
+		<div data-pid="{$group.group_id}" style="display:none;">
+				<p style="padding:10px;">{$group.group_name}</p>
+				<ul>
+				{foreach name="group.goods_list" item="goods" key="k"}
+					<li class="custom-tag-list-single-goods clearfix">
+						<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$goods['goods_id'])}" class="custom-tag-list-goods-img">
+							<img class="js-lazy" src="{:__IMG($goods['picture_info']['pic_cover_micro'])}" style="display: block;">
+						</a>
+						<div class="custom-tag-list-goods-detail">
+							<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$goods['goods_id'])}" class="custom-tag-list-goods-title">{$goods.goods_name}</a>
+							<span class="custom-tag-list-goods-price">￥{$goods.promotion_price}</span>
+							<a class="custom-tag-list-goods-buy js-custom-tag-list-goods-buy" href="javascript:CartGoodsInfo({$goods.goods_id},{$goods.state})" data-buyway="1" data-alias="m2nx2p6x" data-postage="0" data-id="22569525" data-isvirtual="0">
+								<img src="__TEMP__/{$style}/public/images/goodsList_01.png">
+							</a>
+						</div>
+					</li>
+				{/foreach}
+				</ul>
+			</div>
+			{/if}
+		{/if}
+	{/foreach}
+	</div>
+	{if condition="$carcount neq 0"}
+		<a class="get_into_cart select" href="{:__URL('APP_MAIN/goods/cart')}"></a>
+	{else /}
+		<a class="get_into_cart" href="{:__URL('APP_MAIN/goods/cart')}"></a>
+	{/if}
+</div>
+<script>
+function showChild(obj,group_id,group_name){
+	$(".custom-tag-list-side-menu li a").removeClass("selected");
+	$(obj).addClass("selected");
+	$("#good_list").find("div[data-pid]").hide();
+	if($("#good_list").find("div[data-pid='"+group_id+"'] ul li").length==0){
+		$("div[class='nothing-data']").show();
+	}else{
+		$("div[class='nothing-data']").hide();
+		$("#good_list").find("div[data-pid='"+group_id+"']").show();
+	}
+}
+
+var defaultGroup = $(".custom-tag-list-side-menu li a[class='selected']");
+var group_id = defaultGroup.attr("data-groupid");//第一次加载
+var group_name = defaultGroup.text();
+$("#good_list").find("div[data-pid]").hide();
+if($("#good_list").find("div[data-pid='"+group_id+"'] ul li").length==0){
+	$("div[class='nothing-data']").show();
+}else{
+	$("div[class='nothing-data']").hide();
+	$("#good_list").find("div[data-pid='"+group_id+"']").show();
+}
+</script>
+{/block}
+{block name="bottom"} {/block}

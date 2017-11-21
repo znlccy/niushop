@@ -1,0 +1,382 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style type="text/css">
+.form-horizontal .control-label{
+	width: 70px;
+}
+.form-horizontal .controls{
+	margin-left: 0px;
+}
+.modal-footer button{
+	float: right;
+	margin-right: 10px;
+}
+.input-error{
+	font-size: 12px;
+	color: red;
+	line-height: 32px;
+	display: none;
+}
+.s{
+	color: red;
+	font-size: 18px;
+	line-height: 24px;
+}
+label{
+	font-weight: 100;
+}
+label input[type='radio']{
+	margin-top: -1px;
+	margin-right: 3px;
+
+}
+.style0list tbody td a{
+	margin-left: 8px;
+}
+.num{
+	width:40px;
+	text-align:center;
+}
+.style0list table input {
+	margin-bottom: 0px;
+    width: auto;
+}
+.style0list tbody td {
+	line-height: 28px;
+}	
+.tal{text-align:left;}
+.tip-box{
+	width: 975px;
+	line-height: 150px;
+	text-align: center;
+}
+</style>
+{/block} 
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="javascript:addUpdateArticleClassShow(0);">添加</a></li>
+{/block} 
+{block name="main"}
+<div class="operation">
+	
+</div>
+<div class="mod-table">
+	<div class="con style0list">
+		{notempty name="$list"}
+		<table>
+			<colgroup>
+				<col style="width: 5%">
+				<col style="width: 10%;">
+				<col style="width: 70%;">
+				<col style="width: auto;">
+			</colgroup>
+			<thead>
+				<tr align="center">
+					<th></th>
+					<th class="x-tab tal"><div class="iconbg-arrow up">排序</div></th>
+					<th class="x-tab tal"><div class="iconbg-arrow up">分类名称</div></th>
+					<th class="x-tab">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+		{foreach name="list" item="v1"}
+		<tr class="pid_0" style="height: 30px;">
+			<td class="tal" style="vertical-align:middle;">
+				{if condition="$v1['child_list'] neq array()"}
+				<a href="javascript:;" onclick="tab_switch({$v1['class_id']})" class="tab_jia_{$v1['class_id']}" style="display: block;"><i class="fa fa-plus-circle"></i></a>
+				<a href="javascript:;" onclick="tab_switch({$v1['class_id']})" class="tab_jian_{$v1['class_id']}" style="display: none;"><i class="fa fa-minus-circle"></i></a>
+				{/if}
+			</td>
+			<td class="tal"><input type="number" min="0" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="sort"
+					fieldid="{$v1['class_id']}" fieldname="sort" value="{$v1['sort']}"
+					size="1" style="width:50px;"></td>
+				<td class="tal"><input type="text" fieldid="{$v1['class_id']}"
+					fieldname="name" value="{$v1['name']}"></td>
+				<td style="text-align: center;"><a href="javascript:void(0);"  onclick="addUpdateArticleClassShow({$v1['class_id']});">修改</a>
+					<a href="javascript:void(0);"
+					onclick="deleteArticleClass({$v1['class_id']})">删除</a></td>
+			</tr>
+			{foreach name="v1['child_list']" item="v2"}
+			<tr class="pid_{$v1['class_id']}"
+				style="height: 30px; display: none;">
+				<td class="tal" style="vertical-align:middle;">
+				 <!--   {if condition="$v2['name'] neq array()"}
+					   <a  href="javascript:void(0)" onclick="tab_switch({$v2['class_id']})" class="tab_jian_{$v2['class_id']} tab_jian_{$v1['class_id']}" style="display: block;"><i class="fa fa-minus-circle"></i></a>
+					   <a  href="javascript:void(0)" onclick="tab_switch({$v2['class_id']})" class="tab_jia_{$v2['class_id']} tab_jia_{$v1['class_id']}" style="display: none;"><i class="fa fa-plus-circle"></i></a> 
+				   {/if} -->
+				</td>
+				<td class="tal"><input type="number" min="0" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="sort"
+					fieldid="{$v2['class_id']}" fieldname="sort" value="{$v2['sort']}"
+					size="1" style="width:50px;"></td>
+				<td class="tal"><span style="color: #ccc;">|——</span> <input type="text"
+					fieldid="{$v2['class_id']}" fieldname="name"
+					value="{$v2['name']}"></td>
+				<!--<th>控制器名</th>
+									<th>方法名</th>
+									<th>url</th>-->
+				<!--<td>{$v2['is_menu'] ? '是' : '否'}</td>
+						<td>{$v2['is_menu'] ? '是' : '否'}</td>-->
+				<td style="text-align: center;"><a href="javascript:void(0);"  onclick="addUpdateArticleClassShow({$v2['class_id']});">修改</a>
+					<a href="javascript:void(0);"
+					onclick="deleteArticleClass({$v2['class_id']})">删除</a></td>
+			</tr>
+			{/foreach} 
+		{/foreach}
+			</tbody>
+		</table>
+		{else/}
+			<div class="tip-box">
+		  		当前系统还没有文章分类，<a href="javascript:addUpdateArticleClassShow(0);">马上添加</a>
+		  	</div>
+		{/notempty}
+	</div>
+	
+	<!--添加分类-->
+	<div id="addEditArticleClass" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel" class="box-title">添加分类</h3>
+		</div>
+		<div class="modal-body">
+			<div class="form-horizontal">
+				<div class='table-div'>
+					<table>
+						<tr>
+							<td colspan='2' class='back-f5f5f5'><div class='table-title-font'><span>信息填写</span></td>
+						</tr>
+						<tr>
+							<td class='table-1td'><label class="control-label" for="inputError">分类名称</label></td>
+							<td>
+								<div class="control-group" id="txtContactsError">
+									<div class="controls">
+										<input id="article_class_name" name="article_class_name" type="text">
+										<span class="input-error" id='article_class_name_Prompt'>分类名称不能为空</span>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class='table-1td'><label class="control-label" for="inputError">上级分类</label></td>
+							<td>
+								<div class="control-group" id="cityError">
+									<div class="controls">
+										<select id="pid" name="account" class="form-control m-b">
+												<option value="0">顶级分类</option> 
+												 {volist name="list" id="vo"}
+												<option value="{$vo.class_id}" pid="{$vo.pid}">&nbsp;&nbsp;&nbsp;{$vo.name}</option>
+												{/volist}
+										</select>
+									<!-- 	<span class="input-error" id='sortPrompt'><span class="s">×</span>不可为空</span> -->
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class='table-1td'><label class="control-label" for="inputError">排序</label></td>
+							<td>
+								<div class="control-group" id="cityError">
+									<div class="controls">
+										<input  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" name="sort" id="sort" value="0"/>
+										<span class="input-error" id='sortPrompt'>排序不可为空</span>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer" style='text-align:center;'>
+			<button class="btn" data-dismiss="modal" aria-hidden="true" style='padding:10px 35px;'>关闭</button>
+			<button class="btn btn-info" id="addBtn" data-dismiss="modal" aria-hidden="false" style='padding:10px 35px;background-color:#5BB75B;'  onClick="save()">保存</button>
+		</div>
+	</div>
+	<!--end 发货地址-->
+	<input type="hidden" name="class_id" id="class_id" value="" />
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	//弹框添加关闭
+	$('[aria-hidden="true"]').click(function(){
+		$(this).parents('div[role="dialog"]').hide();
+	})
+})	
+//添加修改弹框显示
+function addUpdateArticleClassShow(class_id){
+	$('#article_class_name_Prompt').hide();
+	$('#class_id').val(class_id);
+	if(class_id>0){
+		$(".box-title").text("修改分类");
+		$.ajax({
+			type:'post',
+			url:"{:__URL('ADMIN_MAIN/cms/articleclassinfo')}",
+			data:{'class_id':class_id},
+			success:function(data){
+				$('#article_class_name').val(data['name']);
+				$('#sort').val(data['sort']);
+				$("#addEditArticleClass").show();
+				if(data['pid'] == 0){
+					$("#pid option:gt(0)").hide();
+				}else{
+					$("#pid option:gt(0)").show();
+				}
+				$("#pid").val(data['pid']);
+			}
+		});
+	}else{
+		$(".box-title").text("添加分类");
+		$('#article_class_name').val('');
+		$('#sort').val('0');
+		$("#addEditArticleClass").show();
+		$("#pid").val(0);
+		$("#pid option:gt(0)").show();
+	}
+}
+
+//添加修改的保存
+function save(){
+	var class_id=$('#class_id').val();
+	var name=$('#article_class_name').val();
+	var sort=$('#sort').val();
+	var  pid = $("#pid").val();
+	if(name==''){
+		$('#article_class_name').focus();
+		$('#article_class_name_Prompt').show();
+		return false;
+	}else{
+		$('#article_class_name_Prompt').hide();
+	}
+	if(sort==''){
+		$('#sort').focus();
+		$('#sortPrompt').show();
+		return false;
+	}else{
+		$('#sortPrompt').hide();
+	}
+	$.ajax({
+		type:'post',
+		url:"{:__URL('ADMIN_MAIN/cms/addupdatearitcleclass')}",
+		data:{
+			'class_id':class_id,
+			'name':name,
+			'sort':sort,
+			"pid":pid
+		},
+		success:function(res){
+			$('#addEditArticleClass').hide();
+			if(res['code']>0){
+				showMessage('success',res['message']);
+				location.reload();
+			}else{
+				showMessage('error', res['message']);
+			}
+		}
+	});
+}
+
+function batchDelete() {
+	var class_id= new Array();
+	$(".style0list tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			class_id.push($(this).val());
+		}
+	});
+	if(class_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteArticleClass(class_id);
+}
+//删除分类
+function deleteArticleClass(class_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/cms/deletearticleclass')}",
+					dataType : "json",
+					data : { "class_id" : class_id.toString() },
+					success : function(data) {
+						if (data["code"] > 0) {
+							showMessage('success', data["message"], "{:__URL('ADMIN_MAIN/cms/articleclasslist')}");
+						}else{
+							showMessage('error', data["message"]);
+						}
+					}
+				})
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"是否删除分类？",
+	});
+}
+
+/*修改排序*/
+function load(event){
+	var fieldid = $(event).attr('fieldid');
+	var sort = $(event).val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/Cms/modifyField')}",
+		data:{'fieldid':fieldid,'sort':sort},
+		async:true,
+		success: function (data) {
+			if(data['code'] <= 0){
+				showMessage('error', data["message"]);
+			}
+		}
+	}); 
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+//展开树形数
+function tab_switch(class_id){
+	if($(".pid_"+class_id).css('display') != 'none'){
+		$(".tab_jian_"+class_id).hide();
+		$(".tab_jia_"+class_id).show();
+		$(".pid_"+class_id).hide(300);
+	}else{
+		$(".tab_jian_"+class_id).show();
+		$(".tab_jia_"+class_id).hide();
+		$(".pid_"+class_id).show(500);
+	}
+}
+
+$(".style0list table input").change(function(){
+	var fieldid = $(this).attr('fieldid');
+	var fieldname = $(this).attr('fieldname');
+	var fieldvalue = $(this).val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/cms/cmsfield')}",
+		data:{'fieldid':fieldid,'fieldname':fieldname,'fieldvalue':fieldvalue},
+		async:true,
+		success: function (data) {
+			var flag = "error";
+			if(data.code>0){
+				flag = "success";
+			}
+			showTip(data['message'],flag);
+		}
+	});
+});
+</script>
+{/block}

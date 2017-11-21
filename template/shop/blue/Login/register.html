@@ -1,0 +1,247 @@
+{extend name="shop/blue/Login/registerBase"}
+{block name="main"}
+<script>
+$(document).ready(function(){
+	$("#mobileregistermodel-username").change(function(){
+		if($(this).val().length >= 3 && $(this).val().length <=16 && $(this).val()!=''){
+			var user_name = $(this).val();
+			$(this).css("border","1px solid #ccc");
+			$("#usernameyz").css("color","black").text("");
+			$("#isset_username").attr("value","1");
+			$.ajax({
+				type: "get",
+				url:"{:__URL('SHOP_MAIN/login/register')}",
+				data: { "username" : user_name },
+				success: function(data){
+					if(data){
+						$("#mobileregistermodel-username").css("border","1px solid red");
+						$("#usernameyz").css("color","red").text("{:lang('user_name_already_exists')}");
+						$("#isset_username").attr("value","2");
+					}
+				} 
+			});
+		}
+	});
+	$("#password").keyup(function(){
+		var password = $("#password").val();
+		if(password.length<5){
+			$("#password").trigger("focus");
+			$('#password').css("border","1px solid red");
+			$("#yzpassword").css("color","red").text("密码最小长度为5");
+			return false;
+		}else{
+			$('#password').css("border","1px solid #ccc");
+			$("#yzpassword").css("color","red").text("");
+		}
+	})
+	$("#repass").keyup(function(){
+		var password = $("#password").val();
+		var repass = $("#repass").val();
+		if(!(repass == password)){
+			$("#repass").trigger("focus");
+			$('#repass').css("border","1px solid red");
+			$("#qrrepass").css("color","red").text("两次密码输入不相同");
+			return false;
+		}else{
+			$('#repass').css("border","1px solid #ccc");
+			$("#qrrepass").css("color","red").text("");
+		}
+	})
+	var verify_code_error = 0;
+	$("#btn_submit").click(function(){
+		var username = $("#mobileregistermodel-username").val();
+		var password = $("#password").val();
+		var repass = $("#repass").val();
+		var isset_username = $("#isset_username").attr("value");
+		var re =  /^(?!\d+$)[\da-zA-Z]*$/i;
+		var verify_code = $("#verify_code").val(); 
+		if(!(username.length >= 3 && username.length <=16)){
+			$("#mobileregistermodel-username").trigger("focus");
+			$('#mobileregistermodel-username').css("border","1px solid red");
+			$("#usernameyz").css("color","red").text("{:lang('user_name_length')}");
+			return false;
+		}else{
+			$('#mobileregistermodel-username').css("border","1px solid #ccc");
+			$("#usernameyz").css("color","red").text("");
+		}
+		var is_username_true = verifyUsername(username);
+		
+		if(is_username_true > 0){
+			return false;
+		}else{
+			$("#mobileregistermodel-username").trigger("focus");
+			$('#mobileregistermodel-username').css("border","1px solid #ccc");
+			$("#usernameyz").css("color","red").text("");
+		}
+		if(isset_username == "2"){
+			$("#mobileregistermodel-username").trigger("focus");
+			$('#mobileregistermodel-username').css("border","1px solid red");
+			$("#usernameyz").css("color","red").text("{:lang('user_name_already_exists')}");
+			return false;
+		}else{
+			$("#mobileregistermodel-username").trigger("focus");
+			$('#mobileregistermodel-username').css("border","1px solid #ccc");
+			$("#usernameyz").css("color","red").text("");
+		}
+		var is_password_true = verifyPassword(password);
+		if(is_password_true > 0){
+			return false;
+		}
+		if(!(repass == password)){
+			$("#repass").trigger("focus");
+			$('#repass').css("border","1px solid red");
+			$("#qrrepass").css("color","red").text("{:lang('two_password_not_same')}");
+			return false;
+		}else{
+			$('#repass').css("border","1px solid #ccc");
+			$("#qrrepass").css("color","red").text("");
+		}
+		// 验证码
+		{if condition = "$login_verify_code['pc'] == 1"}
+		if(verify_code == ""){
+			$('#verify_code').css("border","1px solid red");
+			$("#verify_code").focus();
+			$("#code_error").css("color","red").text("请输入验证码");
+			return false;
+		}else{
+			if(verify_code_error == 0){
+				$.ajax({
+					type : "post",
+					url : "{:__URL('SHOP_MAIN/login/vertify')}",
+					async: false,
+					data : { "vertification" : verify_code},
+					success : function(data){
+						if(data["code"] == 0){
+							verify_code_error = 0;
+						}else{
+							verify_code_error = 1;
+						}
+					}
+				})
+			}	
+			if(verify_code_error == 0){
+				$('#verify_code').css("border","1px solid red");
+				$("#verify_code").focus();
+				$("#code_error").css("color","red").text("验证码错误");
+				$(".verifyimg").click();
+				return false;
+			}else{
+				$('#verify_code').css("border","1px solid #ccc");
+				$("#code_error").text("");
+			}
+		}
+		{/if}
+		if(!$("#remember1").prop("checked")){
+			$("#yzremember").css("color","red").text("{:lang('have_not_agreed_registration_agreement')}");
+			return false;
+		}else{
+			$("#yzremember").css("color","red").text("");
+		}
+		
+		$("#EmailRegisterModel").submit();
+	});
+});
+
+</script>
+<div class="header w990">
+	<div class="logo-info">
+		<a href="{:__URL('SHOP_MAIN')}" class="web-logo-a"><img alt="logo" src="{:__IMG($web_info['logo'])}" class="weblogo"/></a>
+	</div>
+</div>
+<div class="reg-content">
+	<div class="w990">
+		<div class="reg-form">
+			<div class="reg-con">
+				{include file='shop/blue/loginTopNav'/}
+				<div class="reg-wrap">
+					<div class="reg-wrap-con" style="background: url(__TEMP__/{$style}/public/images/register_bg_image.png) no-repeat right 70px;">
+						<form id="EmailRegisterModel" class="form-horizontal" name="EmailRegisterModel" action="{:__URL('SHOP_MAIN/login/register')}" method="post">
+						<input type="hidden" name="_csrf" value="Q2dXM2NPVXYbFDZYMT0TNycsLkklHQ1HAQsGAA5/OjAaHxtUG3s7Dg==">
+							<!-- 用户名 -->
+							<div class="form-group form-group-spe">
+								<label for="mobileregistermodel-mobile" class="input-left">
+									<span class="spark">*</span>
+									<span>{:lang('user_name')}：</span>
+								</label>
+								<div class="form-control-box">
+									<input type="text" id="mobileregistermodel-username" class="form-control" name="username" placeholder="{:lang('please_enter_your_user_name')}" />
+									<span id="usernameyz"></span>
+									<input type="hidden" value="{:lang('non_existent')}" id="isset_username"/>
+								</div>
+								<div class="invalid"></div>
+							</div>
+							
+							<!-- 密码 -->
+							<div class="form-group form-group-spe">
+								<label for="emailregistermodel-password" class="input-left">
+									<span class="spark">*</span>
+									<span>{:lang('password')}：</span>
+								</label>
+								<div class="form-control-box">
+									<input type="password" id="password" class="form-control" name="password" autocomplete="off" placeholder="{:lang('please_input_password')}">
+									<!--  <i class="fa fa-eye-slash pwd-toggle" data-id="password"></i>	-->
+									<span id="yzpassword"></span>
+								</div>
+								<div class="invalid"></div>
+							</div>
+							
+							<!-- 密码 -->
+							<div class="form-group form-group-spe">
+								<label for="emailregistermodel-password" class="input-left">
+									<span class="spark">*</span>
+									<span>{:lang('member_confirm_password')}：</span>
+								</label>
+								<div class="form-control-box">
+									<input type="password" id="repass" class="form-control" name="qrpassword" autocomplete="off" placeholder="{:lang('please_enter_confirmation_password')}">
+									<!--  <i class="fa fa-eye-slash pwd-toggle" data-id="password"></i>	-->
+									<span id="qrrepass"></span>
+								</div>
+								<div class="invalid"></div>
+							</div>
+							<!-- 验证码 -->
+							{if condition = "$login_verify_code['pc'] == 1"}
+							<div class="form-group form-group-spe">
+								<label for="verify_code" class="input-left">
+									<span class="spark">*</span>
+									<span>验证码：</span>
+								</label>
+								<div class="form-control-box">
+									<input type="text" id="verify_code" class="form-control" name="qrpassword" autocomplete="off" placeholder="请输入验证码" style="width: 120px;" maxlength="4">
+									<label class="img" style="margin-left: 5px"> 
+										<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()"  alt="captcha" style="vertical-align: middle; cursor: pointer; height: 35px;" /> 
+									</label>	
+									<span id="code_error"></span>
+								</div>
+								<div class="invalid"></div>
+							</div>
+							{/if}
+							<div class="form-group m-10">
+								<label class="input-left">&nbsp;</label>
+								<div class="form-control-box">
+									<label for="remember1">
+										<input type="checkbox"  name="remember" id="remember1" class="checkbox  m-b-6"/>
+										<span>{:lang('read_and_agreed')}<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=17&class_id=6')}" class="user_protocol" target="_blank">《{:lang('user_registration_protocol')}》</a></span>
+										&nbsp;&nbsp;&nbsp;&nbsp;
+										<span id="yzremember"></span>
+									</label>
+								</div>
+							</div>
+							
+							<div class="reg-btn">
+								<div class="form-group form-group-spe">
+									<label for="" class="input-left"></label>
+									<div class="form-control-box">
+					  					<input type="button" class="btn-img btn-entry bg-color" id="btn_submit" name="btn_submit" value="{:lang('agreement_and_registrationr')}">
+									</div>
+									<div class="invalid"></div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{/extend}

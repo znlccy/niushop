@@ -1,0 +1,100 @@
+<!--
+	创建时间：2017年2月7日 12:08:45
+	功能描述： 顶部， 
+-->
+<style>
+#menu-login{text-align:center;}
+#menu-login .register{margin-right:10px;}
+</style>
+<div class="header-top">
+	<div class="header-box">
+		<font id="login-info" class="login-info"></font>
+		<ul>
+<!-- 			<li><a class="menu-hd home" href="{:__URL('SHOP_MAIN')}" target="_top"><i></i>{:lang('shop_index')}</a></li> -->
+			<li class="menu-item">
+				<div class="menu" id="menu-login">
+					<a class="login color js-login-flag" href="{:__URL('SHOP_MAIN/login/index')}" target="_top">{:lang('login')}</a>
+					<span class="js-login-flag" style="color:#e2e2e2;border-left:1px solid #e2e2e2;width:1px;height:18px;margin:0 7px 0 5px;"></span>
+					<a class="register js-login-flag" href="{:__URL('SHOP_MAIN/login/registerbox')}" target="_top">{:lang('free_registration')}</a>
+					
+					<a class="menu-hd myinfo" href="{:__URL('SHOP_MAIN/member/index')}" target="_blank" style="display:none;"><b></b></a>
+					<div id="menu-2" class="menu-bd">
+						<span class="menu-bd-mask"></span>
+						<div class="menu-bd-panel">
+							<a href="{:__URL('SHOP_MAIN/member/index')}" target="_blank">{:lang('member_center')}</a>
+							<a href="{:__URL('SHOP_MAIN/member/orderlist')}" target="_blank">{:lang('member_buy_treasure')}</a>
+							<a href="{:__URL('SHOP_MAIN/member/addresslist')}" target="_blank">{:lang('member_address_management')}</a>
+							<a href="{:__URL('SHOP_MAIN/member/goodscollectionlist')}" target="_blank">{:lang('member_baby_collection')}</a>
+							<a href="javascript:logout();">{:lang('loginout')}</a>
+						</div>
+					</div>
+				</div>
+			</li>
+			<!-- <li class="menu-item cartbox"><a class="menu-hd cart" href="{:__URL('SHOP_MAIN/goods/cart')}" target="_top"><i></i>&nbsp;{:lang('goods_cart')}</a></li> -->
+			<li class="menu-item">
+				<div class="menu">
+					<a class="menu-hd we-chat" href="javascript:;" target="_top"><!-- <i></i> -->{:lang('attention_mall')}<b></b>
+					</a>
+					<div id="menu-5" class="menu-bd we-chat-qrcode">
+						<span class="menu-bd-mask"></span> <a target="_top"> <img src="{:__IMG($web_info['web_qrcode'])}" alt="{:lang('official_wechat')}"></a>
+						<p class="font-14">{:lang('concerned_official_wechat')}</p>
+					</div>
+				</div>
+			</li>
+<!-- 			<li class="menu-item"> -->
+<!-- 				<div class="menu"> -->
+<!-- 					<a href="{:__URL('SHOP_MAIN/helpcenter/index')}" class="menu-hd site-nav" target="_blank"> 商家支持 <b></b></a> -->
+<!-- 					<div id="menu-7" class="menu-bd site-nav-main"> -->
+<!-- 						<span class="menu-bd-mask"></span> -->
+<!-- 						<div class="menu-bd-panel"> -->
+<!-- 							<div class="site-nav-con"> -->
+<!-- 								<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=2')}" target="_blank" title="常见问题">常见问题</a> -->
+<!-- 								<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=7')}" target="_blank" title="网上支付">网上支付</a> -->
+<!-- 								<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=5')}" target="_blank" title="验货与签收">验货与签收</a> -->
+<!-- 								<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=9')}" target="_blank" title="退款说明">退款说明</a> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</li> -->
+			<li class="menu-item"><a  href="{:__URL('APP_MAIN')}" class="menu-hd wap-nav" ><!-- <i></i> -->{:lang('mobile_terminal')}</a></li>
+			<li class="menu-item"><a href="{:__URL('SHOP_MAIN/helpcenter/index')}" class="menu-hd site-nav" target="_blank">{:lang('shop_help_center')}</a></li>
+		</ul>
+	</div>
+</div>
+
+<script type="text/javascript">
+getTopLoginInfo();
+function getTopLoginInfo(){
+	$.ajax({
+		type:"post",
+		url:"{:__URL('SHOP_MAIN/components/getlogininfo')}",
+		success:function(data){
+			if(data!=null && data!=""){
+				$(".myinfo").html(data["user_info"]["nick_name"]+'<b></b>').show();
+				$("#hidden_uid").val(data["uid"]);
+				$("#menu-login .js-login-flag").hide();
+			}else{
+				$(".myinfo").hide();
+				$("#menu-login .js-login-flag").show();
+			}
+		}
+	});
+}
+function logout(){
+	$.ajax({
+		url: "{:__URL('SHOP_MAIN/member/logout')}",
+		type: "post",
+		success: function (res) {
+			if (res['code'] > 0) {
+				$.msg("{:lang('quit_successfully')}！");
+				window.location.reload();
+			} else {
+				if(res["message"]!=null){
+					$.msg(res["message"]);
+				}
+			}
+		}
+	})
+}
+</script>

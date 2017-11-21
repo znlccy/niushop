@@ -1,0 +1,497 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/easydrag.js" type="text/javascript"></script>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="ADMIN_JS/image_common.js" type="text/javascript"></script>
+<style>
+.movefield{width: 145px;height: 26px;line-height: 26px;margin: 5px 0 0 5px;padding: 0 0 0 5px;border: 1px solid #ff4200;cursor: move;background-color: #fef5e6;color: #000;font-size: 16px;}
+.btn {padding:25px;}
+.btn p{font-size: 12px;line-height: 20px;background-color: #F5F5F5;color: #999;text-align: center;color: #666;width: 78px;height: 20px;padding: 4px 0;border: solid 1px;border-color: #DCDCDC #DCDCDC #B3B3B3 #DCDCDC;position: absolute;left: 12px;top: 9px;z-index: 1;}
+.style0page{padding:20px;}
+.width-margin{width:880px;margin:0 auto;}
+</style>
+{/block}
+{block name="main"}
+<div class="style0page">
+	<ul class="width-margin" id="sysTemplate">
+		<li class="list-li" style="content: '';clear: both;display: inline-block;">
+			<div class="float-l w130" style="width: 100px;float: left;">
+				<span class="star" style="float:left;">*&nbsp;&nbsp;&nbsp;</span>
+				<label>快递公司:</label>
+			</div>
+			<div class="float-l" style="float:left;">
+				<label>{$express_company_select.company_name}</label>
+			</div>
+			<div class="float-l">
+				<span class="prompt"></span>
+			</div>
+		</li>
+	</ul>
+	<ul class="width-margin">
+		<li class="list-li _selfTemplate" style="display: none;">
+			<div class="float-l w130" style="width:200px;">
+				<span class="star" style="float:left;">*&nbsp;&nbsp;&nbsp;</span>
+				<label>模版名称</label>
+			</div>
+			<div class="float-l"><input type="text" class="w230" id="selfTemplateName" value="{$express_shipping_select.template_name}"></div>
+			<div class="float-l">
+				<span class="prompt"></span>
+			</div>
+		</li>
+		<li class="list-li _selfTemplate" style="display: none;">
+			<div class="float-l w130">
+				<span class="star">*</span>
+				<label>快递公司</label>
+			</div>
+			<div class="float-l">
+				<select class="w242" name="ExpressName" id="ExpressName"></select>
+			</div>
+			<div class="float-l" style="float:left;">
+				<span class="prompt"></span>
+			</div>
+			<div class="clear"></div>
+		</li>
+		<li class="list-li _selfTemplate" style="display: none;">
+			<div class="float-l w130">
+				<span class="star">*</span>
+				<label>尺寸</label>
+			</div>
+			<div class="float-l">
+				<select id="measureType">
+					<option value="pxMeasure">像素（px）</option>
+					<option value="mmMeasure">毫米（mm）</option>
+				</select>
+				&nbsp;&nbsp;&nbsp;&nbsp; 宽&nbsp;
+				<input id="sysTemplateWidth" value="869.00" type="text" onblur="javascript:picAttrChange();" onkeyup="value=value.replace(/[^\d]/g,&#39;&#39;)" class="v5-input in50 l5">
+				<label class="l30">高&nbsp;</label>
+				<input id="sysTemplateHeight" onblur="javascript:picAttrChange();" onkeyup="value=value.replace(/[^\d]/g,&#39;&#39;)" value="480.00" type="text" class="v5-input in50 l5">
+			</div>
+			<div class="float-l" style="float:left;">
+				<span class="prompt"></span>
+			</div>
+			<div class="clear"></div>
+		</li>
+		<li class="list-li">
+			<div class="float-l w130" style="width:200px;">
+				<span class="star" style="float:left;">*&nbsp;&nbsp;&nbsp;</span>
+				<label>选择打印项</label>
+			</div>
+			<div class="overflow width-margin">
+				<ul class="overflow" id="Template_All" style="overflow:hidden;">
+					{if condition="$print neq ''"}
+					{foreach name="print" item="v" }
+					<li style="float:left;width:140px;margin-bottom:5px;">
+						<input id="ckb_{$v.field_name}" {if condition="$v['is_print'] eq 1"}checked="checked"{/if} type="checkbox" onclick="javascript:ckbClick(event);" style="float:left;margin:4px 4px 0 0;" >
+						<label for="ckb_{$v.field_name}">{$v.field_display_name}</label>
+					</li>
+					{/foreach}
+					{/if}
+				</ul>
+				<div class="clear"></div>
+				<!--设置快递单 begin-->
+				<div class="templet" style="position: relative;z-index:0;">
+					<div class="file01 w800 t10">
+						{if condition="$express_shipping_select.image eq '' "}
+						<img id="imgLogo" style="width: 100%; height: 480px;">
+						{else/}
+						<img id="imgLogo" src="{:__IMG($express_shipping_select.image)}" style="width: 100%; height: 480px;">
+						{/if}
+						<input type="hidden"id="Logo"value="{$express_shipping_select.image}"/>
+						<div class="upload-btn">
+							<span>
+								<input class="input-file" name="file_upload" id="fileUploadImg" type="file" onchange="javascript:btnUploadFile();">
+							</span>
+							<p><i class="fa fa-cloud-upload"></i>上传图片</p>
+						</div>
+					</div>
+					<div class="templet-label" style="padding:-5px;margin:-5px;">
+						<div class="col01">
+							{foreach name="print" item="v" key="k"}
+							{if condition="$v['is_print'] eq 1"}
+							<div class="field movefield" id="field_drag{$v.field_name}" onclick="DragRule(event);" style="position: absolute; display:block; top: {$v.y}px; left: {$v.x}px; cursor: move;">
+								<span class="field-name">{$v.field_display_name}</span>
+								<a id="A_{$v.field_name}" style="float:right;position:absolute;width:20px;height:26px;" onclick="javascript:closeA(event);" class="closeA" href="javascript:void(0)">X</a>
+							</div>
+							{else/}
+							<div class="field movefield" id="field_drag{$v.field_name}" onclick="DragRule(event);" style="position: absolute; display:none; top: {$v.y}px; left: {$v.x}px; cursor: move;">
+								<span class="field-name">{$v.field_display_name}</span>
+								<a id="A_{$v.field_name}" style="float:right;position:absolute;width:20px;height:26px;" onclick="javascript:closeA(event);" class="closeA" href="javascript:void(0)">X</a>
+							</div>
+							{/if}
+							{/foreach}
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</li>
+	</ul>
+	<!--自定义模版 end-->
+	<div class="l156 t30 b20" style="margin:0 0 10px 0px; text-align: center;z-index:100">
+		<input type="button" id="btnSave" class="btn-common btn-big" onclick="javascript:SaveState();" value="保存">
+		<button onclick="javascript:cancel()" class="btn-common-cancle btn-big" style="margin-left:10px;">取消</button>
+		<input type="hidden" value="869.00" id="firstPicWidth">
+		<input type="hidden" value="480.00" id="firstPicHeight">
+		<input type="hidden" value="sysTemplate" id="isSysOrSelf">
+		<input type="hidden" value="{$express_id}" id="update_expressid">
+		<input type="hidden" value="{$express_shipping_select.sid}" id="templateID">
+	</div>
+</div>
+<!--------------公用js开始-------->
+<script type="text/javascript">
+var picWidth;
+var picHeight;
+
+$(function () {
+	// 要实现拖拽的DIV标签
+	$('.field').easydrag();
+	// 第一次加载图片
+	onLoadPic();
+	
+	// 初始加载布局
+	tipsLayout();
+	
+	// 显示或者隐藏模版设置
+	displaySelfOrSysTemplate();
+
+	// 度量单位改变时
+	measureTypeChange();
+	
+});
+
+// 度量单位改变时
+function measureTypeChange() {
+	$("#measureType").change(function () {
+		var measureType = $("#measureType").val();
+		var length = $("#sysTemplateWidth").val();
+		var width = $("#sysTemplateHeight").val();
+		if (measureType == "pxMeasure") { // px
+			length = length * 3.78;
+			width = width * 3.78;
+		} else { // mm 单位
+			length = length / 3.78;
+			width = width / 3.78;
+		}
+		if (length > 0) {
+			$("#sysTemplateWidth").val(length);
+		}
+		if (width > 0) {
+			$("#sysTemplateHeight").val(width);
+		}
+	});
+};
+
+// 显示或者隐藏模版设置
+function displaySelfOrSysTemplate() {
+	var isSysOrSelf = $("#isSysOrSelf").val();
+	if ("sysTemplate" == isSysOrSelf) {
+		$("#sysTemplate").css("display", "block");
+		$("._selfTemplate").css("display", "none");
+	} else if ("selfTemplate" == isSysOrSelf) {
+		$("#sysTemplate").css("display", "none");
+		$("#selfTemplate").css("display", "block");
+	}
+};
+
+// 初始加载布局
+function tipsLayout() {
+	return false;
+// 先将所有的checkbox的选中状态为false及tip都隐藏
+// $("#Template_All input[type=checkbox]").each(function () {
+// $(this).attr({ "checked": false });
+// });
+
+	for (var i = 1; i < 20; i++) {
+		var tip = "#field_dragA" + i;
+		if ($('#Template_All #ckb_A' + i).attr("checked") == "checked") { // jquery 的这个版本 要用true 和false判断
+			var tip = "#field_dragA" + i;
+			$(tip).css("display", "block");
+		}else{
+			$(tip).css("display", "none");
+		}
+	}
+
+	var templateID = $("#templateID").val();
+	$.getJSON("GetTemPalteElement", "templateID=" + templateID + "", function (returnData) {
+		// var ImageUrl = returnData.ImageUrl;
+		// var Length = returnData.Length;
+		// var Width = returnData.Width;
+		// tips 坐标的集合
+		var templateElements = returnData;
+		// 循环把每一个tip的坐标放上去
+		var elementID = 0;
+		alert(JSON.stringify(templateElements));
+		for (var i = 0; i < templateElements.length; i++) {
+			// 取到 elementID
+			elementID = templateElements[i].ElementID;
+			// 控制checkbox和 tips 的显隐
+			var tip = "#field_drag" + elementID;
+			$(tip).css("display", "block");
+			$(tip).css('top', templateElements[i].OffSetY + "px");
+			$(tip).css('left', templateElements[i].OffSetX + "px");
+			var ckb = "#ckb_A" + elementID;
+			$(ckb).attr("checked", "checked");
+		}
+	});
+}
+
+// checkBox的点击事件
+function ckbClick(event) {
+	event = event ? event : window.event;
+	var eventSrc = event.srcElement ? event.srcElement : event.target;
+	// 如果选中了对应的checkBox 将对应的tip显示出来
+	if ($(eventSrc).attr("checked") == "checked") { // jquery 的这个版本 要用true 和false判断
+		// 当前点击的 checkbox 的id  ckb_12
+		var ckbClick = $(eventSrc).attr("id");
+		var ckbID = ckbClick.substring(ckbClick.indexOf('_') + 1, ckbClick.length);
+		// 让对应的tip 显示
+		var tip = "#field_drag" + ckbID;
+		$(tip).css("display", "block");
+	} else {
+		// 当前点击的 checkbox 的id  ckb_12
+		var ckbClick = $(eventSrc).attr("id");
+		var ckbID = ckbClick.substring(ckbClick.indexOf('_') + 1, ckbClick.length);
+		// 让对应的tip 显示
+		var tip = "#field_drag" + ckbID;
+		$(tip).css("display", "none");
+	}
+}
+
+// 点击a标签关闭时
+function closeA(event) {
+	event = event ? event : window.event;
+	var eventSrc = event.srcElement ? event.srcElement : event.target;
+	var currentA = $(eventSrc).attr("id");
+	var AID = currentA.substring(currentA.indexOf('_') + 1, currentA.length);
+	var currentCkeck = "#ckb_" + AID;
+	$(currentCkeck).attr("checked", false);
+	// 关闭当前的tip
+	$(eventSrc).parent().css("display", "none");
+}
+
+// 默认加载快递公司图片
+function onLoadPic() {
+	var width = $("#firstPicWidth").val();
+	var height = $("#firstPicHeight").val();
+	$("#TemplatePic").css("width", width + "px");
+	$("#TemplatePic").css("height", height + "px");
+	picWidth = width;
+	picHeight = height;
+}
+
+// 监控tips不能出了范围
+function DragRule(event) {
+	event = event ? event : window.event;
+	var eventSrc = event.srcElement ? event.srcElement : event.target;
+	// 判断当前拖动的对象是谁 必须是 div 不是就装换成 div (防止点击的是<span>)
+	if ($(eventSrc).attr("class") == "field-name") {
+		eventSrc = $(eventSrc).parent();
+	}
+	var Left = $(eventSrc).css("left");
+	var Top = $(eventSrc).css("top");
+	Left = Left.substring(0, Left.indexOf('p'));
+	Top = Top.substring(0, Top.indexOf('p'));
+	if (Left < 0) {
+		$(eventSrc).css("left", "0px");
+	}
+	if (Top < 0) {
+		$(eventSrc).css("top", "0px");
+	}
+	if (Top > picHeight - 30) {
+		$(eventSrc).css("top", picHeight - 30 + "px");  // picHeight-30
+	}
+	if (Left > picWidth - 126) {
+		$(eventSrc).css("left", picWidth - 126 + "px");  // picWidth-126
+	}
+}
+
+// 点击保存 记住所有checkBox 选中的对应的tip的 坐标 以及当前(快递公司的ID,传到后台获取模板ID)
+function SaveState() {
+	var isSysOrSelf = $("#isSysOrSelf").val();
+	// 遍历所有的checkBox
+	var checks = $("#Template_All input[type=checkbox]");
+	var sendDatas = "";
+	for (var i = 0; i < checks.length; i++) {
+		var checked = $(checks[i]).attr("checked");
+		if (checked == "checked") {
+			var is_print = 1;
+		}else{
+			var is_print = 0;
+		}
+		var check = $(checks[i]).attr("id");
+		// 要传输的ID号
+		var sendID = check.substring(check.indexOf('_') + 1, check.length);
+		var name = $('label[for=ckb_' + sendID + ']').text();
+		// 对应的tip
+		var tip = "#field_drag" + sendID;
+		// 取tip的相对图片的left值
+		var sendLeft = $(tip).css("left");
+		var sendTop = $(tip).css("top");
+		//var sendLeft = $(tip).attr("left");
+		sendLeft = sendLeft.substring(0, sendLeft.indexOf('p'));
+		// 取tip的相对图片的top值
+		var sendTop = $(tip).css("top");
+		sendTop = sendTop.substring(0, sendTop.indexOf('p'));
+		sendTop = parseInt(sendTop) + 1;
+		// 组装发送到后台的数据
+		sendDatas += sendID + ',' + name + ',' + is_print + ',' + sendLeft + ',' + sendTop + ';';
+	}
+	var send_Data = "";
+	var templateID = $("#templateID").val();
+	sendDatas = sendDatas.substring(0, sendDatas.length - 1);
+	//背景图片的路径
+	var imgUrl = $("#Logo").val();
+	var express_id=$("#update_expressid").val();
+	var width_length=$("#firstPicWidth").val();
+	var heigth_length=$("#firstPicHeight").val();
+	send_Data = { "sendDatas": sendDatas, "templateID": templateID,"imgUrl": imgUrl, "express_id":express_id, "width_length": width_length, "heigth_length":heigth_length};
+	$.ajax({
+		url: "{:__URL('ADMIN_MAIN/express/setPrinttemplate')}",
+		data: send_Data,
+		dataType:'html',
+		type: "post",
+		success: function (returnData) {
+			if(returnData>0){
+				showMessage('success', "模板修改成功!", "{:__URL('ADMIN_MAIN/express/expresscompany')}");
+			}
+		}
+	});
+}
+
+// 自定义模版要js验证
+function Validate() {
+	$(".prompt").text('');
+	if ($("#selfTemplateName").val() == "") {
+		$("#selfTemplateName").focus();
+		validataPrompt($("#selfTemplateName"), '模版名称不能为空');
+		return false;
+	}
+	if ($("#sysTemplateWidth").val() == "" && $("#sysTemplateHeight").val() != "") {
+		$("#sysTemplateWidth").focus();
+		validataPrompt($("#sysTemplateWidth"), '模版宽不能为空');
+		return false;
+	}
+	if ($("#sysTemplateHeight").val() == "" && $("#sysTemplateWidth").val() != "") {
+		$("#sysTemplateHeight").focus();
+		validataPrompt($("#sysTemplateHeight"), "模版高不能为空");
+		return false;
+	}
+	if ($("#sysTemplateWidth").val() == "" && $("#sysTemplateHeight").val() == "") {
+		$("#sysTemplateWidth").focus();
+		validataPrompt($("#sysTemplateHeight"), "模版宽、高不能为空");
+		return false;
+	}
+	if ($("#TemplatePic").attr("src") == "") {
+		$("#fileUploadImg").focus();
+		validataPrompt($("#fileUploadImg"), "快递单不能为空");
+		return false;
+	}
+	return true;
+}
+
+// 验证提示
+var validataPrompt = function ($element, msg) {
+	$element.parent().next().find(".prompt").text(msg);
+};
+
+// 焦点离开宽高时的事件
+function picAttrChange() {
+	var measureType = $("#measureType").val();
+	var length = $("#sysTemplateWidth").val();
+	var width = $("#sysTemplateHeight").val();
+	if (measureType == "pxMeasure") { // px
+		if (width > 465 || width != "") {
+			$("#sysTemplateHeight").val(465);
+			validataPrompt($("#sysTemplateHeight"), "推荐高度不超过465px");
+		}
+	} else {
+		if (width < 124) {
+			length = length * 3.78;
+			width = width * 3.78;
+		} else {
+			$("#sysTemplateHeight").val(123.1);
+			width = 123.1;
+			validataPrompt($("#sysTemplateHeight"), "推荐高度不超过124mm");
+			length = length * 3.78;
+			width = width * 3.78;
+		}
+	}
+	if (length > 0 && width > 0) {
+		$("#TemplatePic").css({ "width": length, "height": width });
+	}
+}
+
+// 取消
+function cancel() {
+	window.location.href = __URL("ADMIN_MAIN/express/expresscompany");
+}
+</script>
+<!--------------公用js结束-------->
+<!--------------系统模版开始-------->
+<script type="text/javascript"></script>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<!--------------系统模版结束-------->
+<!--------------自定义模版开始-------->
+<script type="text/javascript">
+$(function () {
+	// 快递公司选择变化时
+	expressNameChanging();
+});
+
+// 快递公司变化的事件
+function expressNameChanging() {
+	$("#ExpressName").change(function () {
+		if (confirm('确定要重新载入模板吗？')) {
+			if ($("#ExpressName").val() != "All") {
+				// 快递公司的ID
+				var expressID = $("#ExpressName").val();
+				$.getJSON("/logistics/expressnamechanging", "id=" + expressID + "", function (returnData) {
+					if (returnData != null) {
+						var picUrl = returnData.picUrl;
+						// 把图片替换掉 (src)
+						$("#TemplatePic").attr("src", picUrl);
+					}
+				});
+			}
+		}
+	});
+}
+
+// 上传图片
+function btnUploadFile() {
+	// 在上传图片之前一定要先让用户设置宽和高
+	if ($("#sysTemplateWidth").val() == "" || $("#sysTemplateHeight").val() == "") {
+		validataPrompt($("#sysTemplateHeight"), "上传文件之前请先设置模版的宽或者高");
+		$("#sysTemplateHeight").focus();
+		$("#fileUploadImg").val(''); // 如果不清空文件内容，下次将无法上传图片
+		return false;
+	} else {
+		$(".prompt").text('');
+	}
+	var fileid = "fileUploadImg";
+	var data = { 'file_path' : UPLOADEXPRESS };
+	uploadFile(fileid,data,function(res){
+		if(res.code){
+			$("#imgLogo").attr("src",__IMG(res.data));
+			$("#Logo").val(res.data);
+			showTip(res.message,"success");
+		}else{
+			showTip(res.message,"error");
+		}
+	});
+}
+</script>
+<!--------------自定义模版结束-------->
+<!--确认信息的公用弹层 开始-->
+<div id="dvConfirm" style="display: none;">
+<div class="content" style="min-width: 300px; min-height: 50px;">
+<div class="mod-form">
+<div class="con style0alert">
+<span id="confirmMessage"></span>
+</div>
+</div>
+</div>
+</div>
+<!--确认信息的公用弹层 结束-->
+{/block}

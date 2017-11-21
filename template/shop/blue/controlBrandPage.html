@@ -1,0 +1,26 @@
+{if condition="$page_count neq 0"}
+<div id="pagination" class="page" >
+	<div class="page-num fr">
+		{if condition="$page eq 1"}
+
+			<span id="pre_page"><a href="javascript:;" class="num prev disabled " title="上一页" >＜</a></span>
+
+		{else /}
+
+			<span id="pre_page"><a  href="SHOP_MAIN/{$path_info}?page={$page-1}&{$query_string}"  class="num prev " title="上一页" >＜</a></span>
+
+		{/if}
+
+		{if condition="$page neq $page_count"}
+
+			<span id="next_page"><a href="SHOP_MAIN/{$path_info}?page={$page+1}&{$query_string}" class="num next" title="下一页"  >＞</a></span>
+		
+		{else /}
+		
+			<span id="next_page"><a href="javascript:;" class="num next disabled" title="下一页" >＞</a></span>
+			
+		{/if}
+		
+	</div>
+</div>
+{/if}

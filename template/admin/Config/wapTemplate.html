@@ -1,0 +1,72 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/wap_template.css">
+<style>
+.app-template li{width:220px;}
+</style>
+{/block}
+{block name="main"}
+{if condition="$not_readable_count && $not_writable_count"}
+<div class="alert">
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+	<strong>警告,请检查以下文件是否可读可写！</strong>
+	<div style="margin-top:5px;">
+		
+		{if condition="$not_readable_count"}
+		<span>发现{$not_readable_count}个文件不可读！</span>
+		<ul style="margin-bottom: 10px;">
+			{foreach name="not_readable_list" item="not_readable"}
+			<li>{$not_readable}</li>
+			{/foreach}
+			</ul>
+		{/if}
+		
+		{if condition="$not_readable_count"}
+		<span>发现{$not_writable_count}个文件不可写！</span>
+		<ul>
+			{foreach name="not_writeable_list" item="not_writeable"}
+			<li>{$not_writeable}</li>
+			{/foreach}
+		</ul>
+		{/if}
+		
+	</div>
+</div>
+{/if}
+<div class="app-template">
+	<ul>
+		{foreach name="$template_list" item="template" key="k"}
+		<li {if condition="$template['use']==1"}class="selected"{/if} data-folder="{$template['folder']}"
+			{if condition="$k>0 &&($k+1)%5==0"}style="margin-right:0;"{/if}>
+			<div class="img">
+				<img width="170" height="353" alt="template" src="__STATIC__/wap_template/img/{$template['preview']}">
+			</div>
+			<div class="advice">{$template['advice']}</div>
+			<div class="name">{$template['theme']}</div>
+		</li>
+		{/foreach}
+	</ul>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	$(".app-template li").click(function(){
+		$(this).siblings("li").removeClass("selected");
+		$(this).addClass("selected");
+		$.ajax({
+			type : "post",
+			url :  "{:__URL('ADMIN_MAIN/Config/updateWapTemplateUse')}",
+			data : { 'folder' : $(this).attr("data-folder") },
+			success : function(res){
+				if(res){
+					showTip("操作成功","success");
+				}else{
+					showTip("操作失败","error");
+				}
+			}
+		});
+	})
+});
+</script>
+{/block}

@@ -1,0 +1,123 @@
+﻿@charset "utf-8";
+/* CSS Document */
+/*--------------wechatpay-------------*/
+.wechatpay .main{padding:20px 45px 0 45px;}
+.wechatpay .ahelp{ float:right;color:#00acec;}
+.wechatpay .ahelp i{margin-right:5px;}
+.wechatpay .ahelp:hover{text-decoration:underline;}
+.wechatpay .applyStep{list-style:none;}
+.wechatpay .applyStep li{position:relative;padding:15px;margin-bottom:20px;border:1px solid #e7e7e7;
+		-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+				-o-border-radius:3px;
+					border-radius:3px;}
+.wechatpay .applyStep .arrow{position:absolute;left:-11px;}
+.wechatpay .applyStep a{color:#00acec;}
+.wechatpay .applyStep a:hover{text-decoration:underline;}
+.wechatpay .applyStep .content{margin:0;padding:0;font-size:15px;line-height:25px;color:#333;}
+.wechatpay .applyStep .explanation{margin:0 0 20px 0;}
+.wechatpay .applyStep .explanation05{margin:0 0 10px 0;}
+.wechatpay .applyStep .explanation05-2{margin:30px 0 10px 0;}
+.wechatpay .applyStep .input-label{width:auto;margin-right:15px;color:#999;font-size:12px;}
+.wechatpay .applyStep .input-fare{text-align:left;}
+.wechatpay .applyStep .fare{margin-bottom:0;}
+.wechatpay .applyStep .title{color:#999;font-size:12px;line-height:30px;}
+.wechatpay .applyStep .text{color:#00acec;font-size:12px;}
+.wechatpay .applyStep .number{position:absolute;left:-60px;top:15px;width:26px;height:26px;line-height:26px;background:#55bce2;text-align:center;color:#fff;z-index:2;
+		-webkit-border-radius:13px;
+			-moz-border-radius:13px;
+				-o-border-radius:13px;
+					border-radius:13px;
+}
+.wechatpay .applyStep .line{position:absolute;left:-47px;top:0;bottom:0;margin-bottom:-50px;margin-top:15px;width:3px;background:#dcdcdc;z-index:1;}
+.wechatpay .controls input{margin-bottom:0;}
+.wechatpay .tip{margin:0 0 0 25px;}
+.wechatpay .tabbable{margin:10px 0 0 25px;}
+.wechatpay .tabbable .applyStep{margin:10px 0 0 0;}
+.wechatpay .tabbable .applyStep li{border:0;margin-bottom:0;}
+.wechatpay-help-c01 h5{font-weight:bold;}
+.wechatpay-help-c01 li{margin:10px;}
+/*--------------wechatlimits-------------*/
+.wechatlimits .main{padding:20px 45px 0 45px;}
+.wechatlimits .ahelp{ float:right;color:#00acec;}
+.wechatlimits .ahelp i{margin-right:5px;}
+.wechatlimits .ahelp:hover{text-decoration:underline;}
+.wechatlimits .applyStep{list-style:none;}
+.wechatlimits .applyStep li{position:relative;padding:15px;margin-bottom:20px;border:1px solid #e7e7e7;
+		-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+				-o-border-radius:3px;
+					border-radius:3px;}
+.wechatlimits .applyStep .arrow{position:absolute;left:-11px;}
+.wechatlimits .applyStep a{color:#00acec;}
+.wechatlimits .applyStep a:hover{text-decoration:underline;}
+.wechatlimits .applyStep .content{margin:0;padding:0;font-size:15px;line-height:25px;color:#333;}
+.wechatlimits .applyStep .explanation{margin:0 0 20px 0;}
+.wechatlimits .applyStep .explanation05{margin:0 0 10px 0;}
+.wechatlimits .applyStep .explanation05-2{margin:30px 0 10px 0;}
+.wechatlimits .applyStep .input-label{width:auto;margin-right:15px;color:#999;font-size:12px;}
+.wechatlimits .applyStep .input-fare{text-align:left;}
+.wechatlimits .applyStep .fare{margin-bottom:0;}
+.wechatlimits .applyStep .title{color:#999;font-size:12px;line-height:30px;}
+.wechatlimits .applyStep .text{color:#00acec;font-size:12px;}
+.wechatlimits .applyStep .number{position:absolute;left:-60px;top:15px;width:26px;height:26px;line-height:26px;background:#55bce2;text-align:center;color:#fff;z-index:2;
+		-webkit-border-radius:13px;
+			-moz-border-radius:13px;
+				-o-border-radius:13px;
+					border-radius:13px;
+}
+.wechatlimits .applyStep .line{position:absolute;left:-47px;top:0;bottom:0;margin-bottom:-50px;margin-top:15px;width:3px;background:#dcdcdc;z-index:1;}
+.wechatlimits .controls input{margin-bottom:0;}
+
+/*--------------wechatlimits-------------*/
+.wechatlimits .main{padding:20px 45px 0 45px;}
+.wechatlimits .ahelp{color:#00acec;}
+.wechatlimits .ahelp i{margin-right:5px;}
+.wechatlimits .ahelp:hover{text-decoration:underline;}
+.wechatlimits .form-horizontal .control-label{width:60px;}
+.wechatlimits .form-horizontal .controls{margin-left:80px;}
+.wechatlimits .serve{padding:15px;margin-bottom:10px;border-bottom:1px solid #e7e7e7;
+		-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+				-o-border-radius:3px;
+					border-radius:3px;}
+.wechatlimits .serve .text{min-width:400px;display:inline-block;}
+.wechatlimits .publicaccount{padding:15px;margin-bottom:20px;border-bottom:1px solid #e7e7e7;
+		-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+				-o-border-radius:3px;
+					border-radius:3px;}
+.wechatlimits .binding{padding:15px;margin-bottom:10px;border-bottom:1px solid #e7e7e7;
+		-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+				-o-border-radius:3px;
+					border-radius:3px;}
+.wechatlimits .binding .input-prepend{display:block;font-size:14px;}
+.wechatlimits .binding .input-prepend .add-on:first-child,.wechatlimits .binding .input-prepend .btn:first-child{margin-right:-5px;}
+.wechatlimits .setdomain{padding:15px;margin-bottom:10px;border-bottom:1px solid #e7e7e7;
+		-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+				-o-border-radius:3px;
+					border-radius:3px;}
+.wechatlimits .titlestep{}
+.wechatlimits .titlestep a{color:#00acec;}
+.wechatlimits .titlestep a:hover{text-decoration:underline;}
+.wechatlimits .applyStep .arrow{position:absolute;left:-11px;}
+.wechatlimits .applyStep a{color:#00acec;}
+.wechatlimits .applyStep a:hover{text-decoration:underline;}
+.wechatlimits .applyStep .content{margin:0;padding:0;font-size:15px;line-height:25px;color:#333;}
+.wechatlimits .applyStep .explanation{margin:0 0 20px 0;}
+.wechatlimits .applyStep .explanation05{margin:0 0 10px 0;}
+.wechatlimits .applyStep .explanation05-2{margin:30px 0 10px 0;}
+.wechatlimits .applyStep .fare{margin-bottom:0;}
+.wechatlimits .applyStep .title{color:#999;font-size:12px;line-height:30px;}
+.wechatlimits .applyStep .text{color:#00acec;font-size:12px;}
+.wechatlimits .applyStep .number{position:absolute;left:-60px;top:15px;width:26px;height:26px;line-height:26px;background:#55bce2;text-align:center;color:#fff;z-index:2;
+		-webkit-border-radius:13px;
+			-moz-border-radius:13px;
+				-o-border-radius:13px;
+					border-radius:13px;
+}
+.wechatlimits .applyStep .line{position:absolute;left:-47px;top:0;bottom:0;margin-bottom:-50px;margin-top:15px;width:3px;background:#dcdcdc;z-index:1;}
+.wechatlimits .controls input{margin-bottom:0;}
+

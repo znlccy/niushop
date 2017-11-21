@@ -1,0 +1,101 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+  .alert{
+	  border-radius:0px;
+  }
+</style>
+{/block}
+{block name="main"}
+ <!--加载弹层代码-->
+    <!--big title end-->
+    <input type="hidden" id="link" value="{$one_key_url['url']}">
+    <div class="main">
+      <div style="background: #FCF8E3;width: 780px;margin-left:65px;padding: 10px;border:1px solid #eee;">
+        <h5 style="color: #CD9F5B;font-family:'microsoft yahei' ">重要提示<i class=""></i></h5>
+        <p style="color: #CD9F5B;font-size: 14px;">设置“一键关注”，需要你先在微信公众平台创建一条新的图文信息，你可以下载提示图片和压缩包到电脑中，也可以自己制作图片上传，尺寸360x200像素；创建之后，复制这条图文信息的链接并粘贴到下方的对话框，提交网址即可。</p>
+        <input id="urlInput" value="{$one_key_url['url']}" type="text" class="form-control input-xxlarge" placeholder="粘贴微信公众平台图文素材网址" style="border-radius: 3px;width: 450px;">
+          <p id="tishi" style="font-size:12px;color: red;display: none; ">您输入的网址为空或不正确</p>
+          <button class="btn btn-primary btn-sm" style='background: #00ACEC; border-radius:3px;font-size: 15px;margin-left: 0px;' type="button" id="btnSim" >提交网址</button>
+        
+      </div>
+      <!--help begin-->
+         <!--small title-->
+         <!--small title-->
+         <ul class="applyStep ml90">
+           <li>
+           
+           </li>
+           <li>
+             <span class="arrow"></span>
+             <div class="content">根据提示说明，登录微信公众平台，选择管理→素材管理，并创建一条新的图文消息，以下图为例：<br><br>
+             <img src="ADMIN_IMG/onekey02.jpeg"><br><br>
+             相信大家对创建图文消息的方法都已经很熟悉，这里我们就不再赘述了，只需要注意下边几点：<br>
+<span class="color-red">1、在第二步中下载的图片，这里要作为封面图片上传到图文消息，并选择封面图片显示在正文中；<br>2、这一条图文消息不必添加原文链接。</span>
+             </div>
+             <span class="number"></span>
+             <span class="line"></span>
+           </li>
+           <li>
+             <span class="arrow"></span>
+             <div class="content">保存该条图文消息，并在图文素材列表中找到它，对消息标题单击鼠标右键，选择复制链接。<br><br>
+             <img src="ADMIN_IMG/onekey03.jpeg"> </div>
+             <span class="number"></span>
+             <span class="line"></span>
+           </li>
+           <li>
+             <span class="arrow"></span>
+             <div class="content">回到微店管理后台，将复制的链接粘贴到一键关注界面的对话框中，点击提交网址。这样就完成了一键关注的设置。<br><br>
+             <img src="ADMIN_IMG/onekey_04.png" width="600"> </div>
+             <span class="number"></span>
+             <span class="line"></span>
+           </li>
+         </ul>
+      <!--help end-->
+    </div>
+  <!--right end--> 
+
+    <script>
+        $(function () {
+            $("#btnSim").click(function () {
+            	
+            	var link = $("#link").val();
+                var new_link = $("#urlInput").val();
+                if(link == new_link){
+                	showMessage('error', '与原链接相同');
+                	return false;
+                }
+                if(new_link.length > 200){
+                	showMessage('error', '链接过长');
+                	return false;
+                }
+            	if($("#urlInput").val()=='' || !$('#urlInput').val().match(/^((https|http|ftp|rtsp|mms)?:\/\/)+[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/)){
+                    $('#tishi').fadeIn();
+                    return false;
+                }else{
+                    $('#tishi').fadeOut();
+                    $("#btnSim").attr("disabled", true);
+                }
+                // if($("#urlInput").val()=='')
+                // {
+                // 	Show("error", '请填写网址'); 
+                // 	return ;
+                // }	
+                $.ajax({
+                    url:"{:__URL('ADMIN_MAIN/wchat/onekeysubscribe')}",
+                    type: "post",
+                    async: true,
+                    data:{"url":$("#urlInput").val()},
+                    success: function (data) {
+        				if(data['code'] <= 0){
+        					showMessage('error', data["message"]);
+        				}else{
+        					showMessage('success', data["message"]);
+        				}
+                    }
+                });
+            });
+        });
+    </script>
+{/block}

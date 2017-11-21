@@ -1,0 +1,187 @@
+<style>
+.floor-layout .floor-content-goods {height: 426px;}
+.floor-layout .floor-content-goods .floor-middle {height: 426px;border-right:1px solid #eee;}
+.floor-layout .floor-content-goods .floor-middle .floor-banner {height: 426px;}
+.floor-layout .floor-content-goods .floor-middle .floor-banner ul {height: 426px;}
+.floor-layout .floor-content-goods .floor-middle .floor-banner ul li {height: 426px;line-height: 0px;}
+.floor-layout .floor-content-goods .floor-middle .floor-banner ul li a{display: block;text-align: center;height: 300px;width: 100%;line-height: 290px;}
+.goods-list-padding-block{width:100%;margin:10px auto;position: relative;}
+.goods-list-padding-block>div:nth-child(1){height:130px;text-align:center;}
+.goods-list-padding-block>div:nth-child(1) img{max-height:100%;max-width:100%;}
+.goods-list-padding-block>div:nth-child(2){text-align:left;padding: 5px 10px;font-size:13px;height: 32px;width: 90%;margin:0 auto;display: -webkit-box; /** 将对象作为伸缩盒子模型显示 **/-webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/-webkit-line-clamp: 2; /** 显示的行数 **/overflow: hidden;  /** 隐藏超出的内容 **/}
+.goods-list-padding-block>div:nth-child(3){text-align:left;padding: 5px 10px;color:red;width: 90%;margin:0 auto;font-size:15px;}
+.bland-list li {border-bottom:1px solid #eee;width:49.5%;float:left;height:106px;text-align:center;}
+.bland-list li a {height:106px;line-height:106px;}
+.bland-list li a img{display: inline-block !important;vertical-align: middle !important;max-width: 100% !important;max-height: 100% !important;height: auto !important;}
+.bland-list li:nth-child(odd){border-right:1px solid #eee;border-left:1px solid #eee;}
+.bland-list li:nth-child(7),.bland-list li:nth-child(8){border-bottom:none;}
+.goods-list-ul{overflow:hidden;}
+.goods-list-ul li{width: 33%;height: 213px;float:left;text-align: center;border-left: 1px solid #eee;border-bottom: 1px solid #eee;}
+.goods-block{float:left;overflow:hidden;}
+.goodslist{border-left: 1px solid #eee;}
+.li-hover:hover{color:#0d84d4;}
+.category-block-h2{font-size:17px;}
+.ad-title{height:50px;line-height:70px;font-size:16px;text-align:center;}
+.ad-subtitle{height:50px;line-height:20px;font-size:13px;text-align:center;}
+.floor-layout .floor-content-goods{height:auto;}
+.floor-layout .floor-content{height:auto;}
+.recommend{position: absolute;z-index: 10;top:-10px;left: 10px;width: 40px;}
+</style>
+<!-- 首页楼层开始 -->
+<script>
+//移入事件
+function hoverGoodsList(obj,id){
+	var parend_obj = $(obj).parent().parent().parent().parent();
+	parend_obj.find(".goods-list-ul").hide();
+	parend_obj.find(".goods-list-ul-"+id).show();
+}
+//移除事件
+function levelGoodsList(obj){
+	$(obj).find(".goods-list-ul").hide();
+	$(obj).find(".goods-list-ul-index").show();
+} 
+</script>
+{volist name="block_list" id="vo"}
+{if condition ="!empty($vo['goods_list'])"}
+<div class="w1210 floor-list" onmouseleave ="levelGoodsList(this)">
+	<div class="floor">
+		<div class="floor-layout">
+			<div class="floor-con floor-con5">
+				<!-- 楼层顶部内容开始 -->
+				<div class="floor-title">
+					<!--推荐名称-->
+					<h2 class="category-block-h2" style="{if $vo['color'] == '#ffffff'}border-left:5px solid #0689e1;{else}border-left:5px solid {$vo['color']};{/if}height:29px;line-height:29px;">
+						<a href=javascript:;" target="_blank" >{$vo['category_alias']}</a>
+						<input type="hidden" class="NS-SHORT-NAME" value="{if !empty($vo['short_name'])}{$vo['short_name']}{elseif !empty($vo['category_alias'])}{php} echo mb_substr($vo['category_alias'],0,4,'utf-8'); {/php}{else}{php} echo mb_substr($vo['category_name'],0,4,'utf-8'); {/php}{/if}"/>
+					</h2>
+					<!--推荐类型-->
+					<ul class="floor-tabs-nav" style="width:82%;overflow:hidden;">
+						<li style="float:right;">
+							
+							<h3 style="padding:0 10px;">
+								<a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo['category_id'])}">{:lang('floor_more')}</a>
+							</h3>
+							
+						</li>
+						<!-- 如果多图广告位不为空 -->
+						{if condition="!empty($vo['child_category'])"}
+							{volist name="vo['child_category']" id="v"}
+								{if condition="!empty($v['goods_list'])"}
+								<li class="floor-tabs-selected li-hover" style="float:right;" onmouseenter ="hoverGoodsList(this,{$v['category_id']});"><a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$v['category_id'])}"><h3 style="padding:0 10px;">{$v['category_name']}</h3></a></li>
+								{/if}
+							{/volist}
+						{/if}
+					</ul>
+				</div>
+				<!-- 楼层顶部内容结束 -->
+				<hr style="border:0;border-bottom:1px solid #F5F5F5;-webkit-margin-before: 0.5em; -webkit-margin-after: 0em;" />
+				<!-- 楼层main -->
+				
+				<div class="floor-content floor-content-goods" style="border:none;">
+				<!-- 楼层左侧广告位开始 -->
+				{if condition = "$vo['ad_picture'] neq ''"}
+					<div class="floor-middle" style="width: 20%;float:left;">
+						<div class="floor-banner" style="width:100%;">
+								<ul class="hiSlider">
+									<!-- 幻灯片循环 -->
+									<li class="hiSlider-item" style="width:100%;">
+										<a href="{$vo['ad_list']['url']}" target="_blank">
+											<img class="lazy" src="{:__IMG($vo['ad_list']['picture'])}">
+										</a>
+										<div style="height:100px;color:#fff;font-size:15px;{if $vo['ad_list']['background'] == '#ffffff'}background:#0689e1;{else}background:{$vo['ad_list']['background']};{/if}"><p  class="ad-title">{$vo['ad_list']['title']}</p><p class="ad-subtitle">{$vo['ad_list']['subtitle']}</p></div>
+									</li>
+								</ul>
+						</div>
+					</div>
+				{/if}
+					<!-- 左侧广告位结束 -->
+					<!--中间商品图开始 -->
+					<div class="floor-tabs-panel goods-block" style="width:{$vo['block_width']}%;margin-right:-1px;">
+						<ul class="goods-list-ul goods-list-ul-index">
+						{foreach $vo['goods_list'] as $k=>$v}
+						{if condition="$k < $vo['goods_num']"}
+							{if condition="$k == (count($vo['goods_list'])-1) && ($k+1) != $vo['goods_num'] && ($k+1) != ($vo['goods_num']/2)"}
+								
+									<li class="goodslist" style="width:{$vo['goods_block_width']}%;border-right: 1px solid #eee;{if condition='($k+1) eq 1  or ($k+1) eq ($vo.goods_num/2+1)'}border-left:none;{/if}{if condition='($k+1) > ($vo.goods_num/2)'}border-bottom:none;{/if}">
+								
+							{else/}
+									<li class="goodslist" style="width:{$vo['goods_block_width']}%; {if condition='($k+1) eq 1  or ($k+1) eq ($vo.goods_num/2+1)'}border-left:none;{/if}{if condition='($k+1) > ($vo.goods_num/2)'}border-bottom:none;{/if}">
+							{/if}
+								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$v['goods_id'])}" target="_blank">
+									<div class="goods-list-padding-block">
+										<div><img src="{:__IMG($v['pic_cover_mid'])}" /></div>
+										<div>{$v['goods_name']}</div>
+										<div>¥{$v['price']}</div>
+										{if condition="$v['is_hot'] eq 1"}
+											<img src="__TEMP__/{$style}/public/images/hot.png" alt="" class="recommend">
+										{/if}
+										{if condition="$v['is_recommend'] eq 1"}
+											<img src="__TEMP__/{$style}/public/images/recommend.png" alt="" class="recommend">
+										{/if}
+										{if condition="$v['is_new'] eq 1"}
+											<img src="__TEMP__/{$style}/public/images/new.png" alt="" class="recommend">
+										{/if}
+									</div>
+								</a>
+							</li>
+							
+						{/if}
+						{/foreach}
+						</ul>
+						
+						{if condition="!empty($vo['child_category'])"}
+							{volist name="vo['child_category']" id="goods" }
+								{if condition="!empty($goods['goods_list'])"}
+								<ul class="goods-list-ul goods-list-ul-{$goods['category_id']}" style="display:none;margin-left: -1px;">
+									{foreach $goods['goods_list'] as $ck=>$list}
+										{if condition="$ck lt $vo['goods_num']"}
+											{if condition="$ck == (count($goods['goods_list'])-1) && ($ck+1) != $vo['goods_num'] && ($ck+1) != ($vo['goods_num']/2)"}
+											<li class="goodslist" style="width:{$vo['goods_block_width']}%;border-right: 1px solid #eee;{if condition='($ck+1) eq 1  or ($ck+1) eq ($vo.goods_num/2+1)'}border-left:none;{/if}{if condition='($ck+1) > ($vo.goods_num/2)'}border-bottom:none;{/if}">
+											{else/}
+											<li class="goodslist" style="width:{$vo['goods_block_width']}%;{if condition='($ck+1) eq 1  or ($ck+1) eq ($vo.goods_num/2+1)'}border-left:none;{/if}{if condition='($ck+1) > ($vo.goods_num/2)'}border-bottom:none;{/if}">
+											{/if}
+												<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$list['goods_id'])}" target="_blank">
+													<div class="goods-list-padding-block">
+														<div><img src="{:__IMG($list['pic_cover_mid'])}" /></div>
+														<div>{$list['goods_name']}</div>
+														<div>¥{$list['price']}</div>
+														{if condition="$list['is_hot'] eq 1"}
+														<img src="__TEMP__/{$style}/public/images/hot.png" alt="" class="recommend">
+														{/if}
+														{if condition="$list['is_recommend'] eq 1"}
+														<img src="__TEMP__/{$style}/public/images/recommend.png" alt="" class="recommend">
+														{/if}
+														{if condition="$list['is_new'] eq 1"}
+															<img src="__TEMP__/{$style}/public/images/new.png" alt="" class="recommend">
+														{/if}
+													</div>
+												</a>
+											</li>
+										{/if}
+									{/foreach}
+								</ul>
+								{/if}
+							{/volist}
+						{/if}
+					</div>
+					
+					<!-- 中间商品图结束 -->
+					<!-- 右侧商品品牌 -->
+				{if condition="!empty($vo['brand_list'])  and $vo['is_show_brand'] eq 1"}
+					<div class="floor-tabs-panel" style="width:20%;height:426px;float:left;">
+						<ul  class="bland-list" style="height:426px;">
+						{volist name="vo['brand_list']" id="brandlist" key<8}
+							<li><a href="{:__URL('SHOP_MAIN/goods/goodslist','brand_id='.$brandlist['brand_id'])}"><img src="{$brandlist['brand_pic']}" style="max-width:100%;max-height:100%;vertical-align: middle;" title="{$brandlist['brand_name']}"/></a></li>
+						{/volist}
+						</ul>
+					</div>
+				{/if}
+				<!-- 右侧商品品牌 -->
+				</div>
+			<!-- 楼层main -->
+			</div>
+		</div>
+	</div>
+</div>
+{/if}
+{/volist}

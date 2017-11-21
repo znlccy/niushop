@@ -1,0 +1,215 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style  type="text/css">
+.modal-div{
+	width:90%;
+	margin:auto;
+}
+.modal-dl{
+	overflow:hidden;
+}
+.modal-dl dt{
+	line-height:33px;
+	float:left;
+	font-weight:normal;
+}
+.modal-dl dd{
+	float:left;
+}
+.modal-dl dd span{
+	display:block;
+	color:#de533c;
+}
+.btn.off{
+	background-color:#e26f6f;
+	color:#FFF;
+}
+.btn.sure{
+	color:#FFF;
+	background-color:#62c462;
+}
+
+
+/*独立*/
+.status-error{
+	display:inline-block;
+	padding-left:5px;
+	padding-right:5px;	
+	padding-bottom:3px;
+	padding-top:3px;
+	color:#FFF;
+	background-color:#de533c;
+}
+/*独立*/
+.status-success{
+	display:inline-block;
+	color:#FFF;
+	padding-left:5px;
+	padding-right:5px;	
+	padding-bottom:3px;
+	padding-top:3px;
+	background-color:#5be15b;
+}
+.mlr15{
+	margin:0;
+}
+
+</style>
+
+ {/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/system/addblock')}"><i class="fa fa-plus-circle"></i>&nbsp;添加楼层</a></li> 
+{/block}
+{block name="main"}
+<div class="mb10 mlr15">
+       <div class="tiphelp-info"><strong>提示：</strong>首页楼层显示。<br>
+                点击“添加首页楼层”按钮，楼层添加成功后需要处于开启状态前台才会显示，下方“√”、“×”点击进行相应切换，“√”代表前台显示，“×”代表不显示，在列表中可以点击“编辑”按钮，对楼层内容重新设置，同时也可以进行删除操作。详见开发文档
+       </div>
+</div>
+	
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="con style0list">
+			<table>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+				</colgroup>
+				<thead>
+					<tr>
+						<th><label style="margin-left: 5px;"> <input type="checkbox"  onclick="CheckAll(this)"></label></th>
+						<th>楼层名称</th>
+						<th>色彩风格</th>
+						<th>更新时间</th>
+						<th>是否显示</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+				</colgroup>
+				<tbody id="list">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+$(function(){
+	LoadingInfo(1);
+})
+function LoadingInfo(page_index) {
+	var search_text = null;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/blocklist')}",
+		async : true,
+		data : {
+			"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text
+		},
+		success : function(data) {
+			var html = '';
+			if (data['data'].length > 0) {
+				for (var i = 0; i < data['data'].length; i++) {
+					var block_id = data['data'][i]['block_id'];
+					html += '<tr>';
+					html += '<td><label style="margin-left: 10px;"> <input type="checkbox" name="sub" value="'+ block_id+'"></lable></td>';
+					html += '<td class="center">'+ data['data'][i]['block_name']+'</td>';
+					html += '<td class="center"><span style="display:inline-block;width:20px;height:20px;background:' + data['data'][i]["block_color"] + ';"></span></td>';
+					html += '<td class="center">' + timeStampTurnTime(data['data'][i]["modify_time"]) + '</td>';
+					if(data['data'][i]["is_display"] == 0){
+						html += '<td class="center"><a href="javascript:void(0);" onclick="setWebBlockIsBlock(this,'+block_id+',1)" class data-toggle="class"><i class="fa fa-times text-danger text"></i></a></td>';
+					}else{
+						html += '<td class="center"><a href="javascript:void(0);" onclick="setWebBlockIsBlock(this,'+block_id+',0)" class="active" data-toggle="class"><i class="fa fa-check text-success text-active"></i></a></td>';
+					}
+					html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/updateblock?block_id=' + block_id)+'">编辑</a>&nbsp;&nbsp;<a href="javascript:;" onclick="delBlock(' + block_id + ')">删除</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr><th colspan="6">暂无符合条件的数据记录</th></tr>';
+			}
+			$("#list").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}	
+$("#search_text").keypress(function(e){
+	if(e.keyCode == 13){
+		LoadingInfo(1);
+	}
+});
+//删除 楼层
+function delBlock(block_id){
+	$( "#dialog" ).dialog({
+        buttons: {
+            "确定": function() {
+                $(this).dialog('close');
+                $.ajax({
+        			type : "post",
+        			url : "{:__URL('ADMIN_MAIN/system/delblock')}",
+        			async : true,
+        			data : {
+        				"block_id" : block_id
+        			},
+        			success : function(data) {
+        				if(data["code"] > 0 ){
+        					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/system/blocklist')}");
+        				}else{
+        					showMessage('error', data["message"]);
+        				}
+        			}
+        		})
+            },
+            "取消,#e57373": function() {
+                $(this).dialog('close');
+            }
+        },
+        contentText:"你确定删除吗？",
+        title:"消息提醒"
+    });
+}
+
+/**
+ * 显示与不显示
+ */
+function setWebBlockIsBlock(eve,block_id,is_block){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/setwebblockisblock')}",
+		async : true,
+		data : {
+			"block_id" : block_id,
+			"is_display" : is_block
+		},
+		success : function(data) {
+			
+			if(data["code"] > 0 ){
+				showTip('设置成功','success');
+				if(is_block==1){
+					$(eve).addClass('active').attr('onclick','setWebBlockIsBlock(this,'+block_id+',0)').html('<i class="fa fa-check text-success text-active"></i>');
+				}else{
+					$(eve).removeClass('active').attr('onclick','setWebBlockIsBlock(this,'+block_id+',1)').html('<i class="fa fa-times text-danger text"></i>');
+				}
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	})
+}
+</script>
+{/block}

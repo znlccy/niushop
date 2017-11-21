@@ -1,0 +1,1230 @@
+@charset "utf-8";
+/* CSS Document */
+body, button, input, select, textarea {
+	font: 12px/150% microsoft yahei;
+	color: #666666;
+	background: #FFF none repeat scroll 0 0;
+	margin: 0;
+	padding: 0;
+}
+input:focus, textarea:focus {
+	outline: none;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-size: 100%;
+	padding: 0px;
+	margin: 0px;
+	font-size: 1em;
+	font-style: normal;
+	font-weight: normal;
+}
+html, body, div, ul, ol, li, dl, dt, dd, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, fieldset, input {
+	padding: 0px;
+	margin: 0px;
+}
+.blank {
+	height: 10px;
+	line-height: 10px;
+	clear: both;
+	visibility: hidden;
+}
+.blank5 {
+	height: 5px;
+	line-height: 5px;/* _margin:-3px 0;*/
+	clear: both;
+	visibility: hidden;
+}
+.blank10 {
+	height: 10px;
+	line-height: 10px;
+	clear: both;
+	visibility: hidden;
+}
+.blank15 {
+	height: 15px;
+	line-height: 15px;
+	clear: both;
+	visibility: hidden;
+}
+.blank20 {
+	height: 20px;
+	line-height: 20px;
+	clear: both;
+}
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.fr {
+	float: right;
+}
+.fl {
+	float: left;
+}
+.left-con {
+	width: 210px;
+	float: left;
+	overflow: hidden;
+}
+.right-con {
+	width: 985px;
+	float: right;
+	overflow: hidden;
+}
+.right-inner {
+	border: 1px solid #eee;
+}
+ul, ol {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+fieldset, img {
+	border: 0
+}
+button, input, select, textarea {
+	font-size: 100%
+}
+a {
+	text-decoration: none;
+	color: #666666;
+	outline: medium none;
+	text-decoration: none;
+}
+a:active {
+	text-decoration: none;
+}
+a:hover {
+	color: #E31939;
+	text-decoration: none;
+}
+.main-color {
+	color: #E31939;
+}
+.main-bg-color {
+	background-color: #E31939;
+}
+.main-btn {
+	line-height: 12px;
+	font-size: 12px;
+	display: inline-block;
+	text-align: center;
+	text-decoration: none;
+	color: #fff;
+	background-color: #E31939;
+	overflow: visible;
+	border: 0 none;
+	outline: 0;
+	padding: 7px;
+	cursor: pointer
+}
+.main-btn-large {
+	padding: 8px 15px;
+}
+.main-btn:hover {
+	color: #fff;
+}
+.inputBg {
+	border: 1px solid #DDDDDD;
+	height: 30px;
+	width: 200px;
+	line-height: 30px;
+	padding: 0px 5px;
+	margin-right: 5px
+}
+select {
+	border: 1px solid #DDDDDD;
+	height: 30px;
+	width: auto;
+	line-height: 30px;
+	padding: 0px 5px;
+}
+label {
+	cursor: pointer;
+}
+label input[type="radio"] {
+	vertical-align: middle;
+}
+textarea {
+	border: 1px solid #DDDDDD;
+}
+i, cite, em, strong, th {
+	font-style: normal;
+	font-weight: normal;
+}
+.block {
+	display: block;
+}
+.none {
+	display: none;
+}
+.price {
+	font-weight: bold;
+	color: #E31939;
+}
+.mt30 {
+	margin-top: 30px !important;
+}
+.w1210 {
+	width: 1210px !important;
+	margin: 0 auto;
+}
+/*顶部内容样式*/
+.header-menu li a i, .header-line span, .user-joinin dd, .indextip .title i, .joinin-step ul li, .joinin-index-step span.arrow, .joinin-index-step span.step i, .breadcrumb .icon-home {
+	background: url(../images/apply/joinin-icon.png) no-repeat;
+}
+.main .explain a.point{
+	color: red;
+	margin: 0px 5px;
+}
+.header {
+	width: 1000px;
+	height: 80px;
+	margin: 0 auto;
+}
+.header-logo {
+	width: 240px;
+	height: 60px;
+	text-align: left;
+	float: left;
+	margin: 12px auto auto 10px;
+}
+.header-logo img {
+	max-width: 240px;
+	max-height: 60px;
+}
+.header-menu {
+	width: 480px;
+	height: 24px;
+	float: right;
+	margin-top: 30px
+}
+.header-menu li {
+	text-align: center;
+	width: 160px;
+	float: left;
+}
+.header-menu li a {
+	font: 600 14px/24px "microsoft yahei";
+	color: #555;
+	margin: 0 auto;
+}
+.header-menu li a i {
+	vertical-align: middle;
+	display: inline-block;
+*display: inline;
+	width: 24px;
+	height: 24px;
+	margin-right: 6px;
+*zoom: 1;
+}
+.header-menu li a.joinin i {
+	background-position: 0 0;
+}
+.header-menu li a.login i {
+	background-position: -30px 0;
+}
+.header-menu li a.faq i {
+	background-position: -60px 0;
+}
+.header-menu li a.joinin:hover, .header-menu li.current a.joinin {
+	text-decoration: none;
+	color: #27A9E3;
+}
+.header-menu li a.login:hover, .header-menu li.current a.login {
+	text-decoration: none;
+	color: #28B779;
+}
+.header-menu li a.faq:hover, .header-menu li.current a.faq {
+	text-decoration: none;
+	color: #FFB748;
+}
+.header-menu li a.joinin:hover i, .header-menu li.current a.joinin i {
+	background-position: -90px 0;
+}
+.header-menu li a.login:hover i, .header-menu li.current a.login i {
+	background-position: -120px 0;
+}
+.header-menu li a.faq:hover i, .header-menu li.current a.faq i {
+	background-position: -150px 0;
+}
+.header-line {
+	font-size: 0;
+	line-height: 2px;
+	background-color: #E31939;
+	width: 100%;
+	height: 2px;
+	border-bottom: solid 2px #EEE;
+	position: relative;
+	z-index: 1;
+}
+.header-line span {
+	font-size: 0;
+	line-height: 2px;
+	background-position: 0 -30px;
+	display: block;
+	width: 480px;
+	height: 2px;
+	margin-left: 20px;
+	position: absolute;
+	z-index: 1;
+	left: 50%;
+	top: 0;
+}
+/* 满屏背静切换焦点图 */
+.banner {
+	width: 100%;
+	height: 350px;
+	margin-top: -2px;
+	position: relative;
+	z-index: 9999;
+}
+.user-box {
+filter:progid:DXImageTransform.Microsoft.gradient(enabled='true', startColorstr='#3F000000', endColorstr='#3F000000');
+	background: rgba(0,0,0,0.25);
+	margin-left: -470px;
+	width: 280px;
+	height: 300px;
+	position: absolute;
+	z-index: 9;
+	top: 25px;
+	left: 50%;
+	border-radius: 5px;
+}
+.user-login {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+}
+.user-login h3 {
+	font: 600 16px/24px "microsoft yahei";
+	color: #FFF;
+	padding: 12px 10px 4px 10px;
+	margin: 0 10px 10px;
+	box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+}
+.user-login h3 em {
+	font-size: 12px;
+	color: #FC9;
+}
+.user-login dl {
+	font-size: 0;
+*word-spacing:-1px/*IE6、7*/;
+	padding: 10px 0;
+	margin: 0 10px;
+}
+.user-login dt, .user-login dd {
+	font-size: 12px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+*display: inline;
+*zoom: 1;
+}
+.user-login dt {
+	line-height: 28px;
+	color: #FFF;
+	text-align: right;
+	width: 28%;
+	margin-right: 2%;
+}
+.user-login dd {
+	color: #FFF;
+	text-align: left;
+	width: 70%;
+	position: relative;
+	z-index: 1;
+}
+.user-login dd .text {
+	width: 150px;
+	border: none !important;
+	padding: 4px !important;
+}
+.user-login dd .button {
+	font: 600 14px/30px "microsoft yahei";
+	color: #FFF;
+	background: #FF7F00 none;
+	width: 80px;
+	height: 30px;
+	margin-right: 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	box-shadow: 2px 2px 0 rgba(0,0,0,0.25);
+}
+.user-login dd a {
+	color: #FFF;
+}
+.user-login label.error {
+	color: #FC6;
+	line-height: 20px;
+	background: none;
+	display: block;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	position: absolute;
+	z-index: 1;
+	top: 26px;
+	left: 2px;
+	text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+}
+.user-login .register {
+	color: #CCC;
+filter:progid:DXImageTransform.Microsoft.gradient(enabled='true', startColorstr='#7F000000', endColorstr='#7F000000');
+	background: rgba(0,0,0,0.5);
+	text-align: center;
+	width: 100%;
+	padding: 10px 0;
+	border-radius: 0 0 5px 5px;
+	position: absolute;
+	z-index: 1;
+	bottom: 0;
+	left: 0;
+}
+.user-login .register a {
+	color: #FF0;
+}
+.user-joinin {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+}
+.user-joinin h3 {
+	font: 600 16px/24px "microsoft yahei";
+	color: #FFF;
+	padding: 12px 10px 8px 10px;
+	margin: 0 10px 10px;
+	box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+}
+.user-joinin dl {
+	font-size: 12px;
+	line-height: 22px;
+	color: #FFF;
+	margin: 0 20px;
+}
+.user-joinin dt {
+	font-size: 12px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+*display: inline;
+*zoom: 1;
+}
+.user-joinin dd {
+	background-position: -470px -60px;
+	padding: 10px 0 10px 10px;
+}
+.user-joinin dd a {
+	color: #FFB748;
+}
+.user-joinin .bottom {
+	color: #CCC;
+filter:progid:DXImageTransform.Microsoft.gradient(enabled='true', startColorstr='#7F000000', endColorstr='#7F000000');
+	background: rgba(0,0,0,0.5);
+	text-align: center;
+	width: 100%;
+	padding: 15px 0;
+	border-radius: 0 0 5px 5px;
+	position: absolute;
+	z-index: 1;
+	bottom: 0;
+	left: 0;
+}
+.user-joinin .bottom a {
+	font: 600 14px/20px "microsoft yahei";
+	color: #FFF;
+	background: #FF7F00 none;
+	display: inline-block;
+*display: inline;
+	height: 20px;
+	padding: 5px 10px;
+	margin-right: 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	box-shadow: 2px 2px 0 rgba(0,0,0,0.25);
+	zoom: 1;
+}
+.full-screen-slides {
+	width: 100%;
+	height: 350px;
+	position: relative;
+	z-index: 1;
+	text-align: center
+}
+.full-screen-slides a img {
+	margin: 0 auto;
+}
+.full-screen-slides li {
+	background-repeat: no-repeat;
+	background-position: center top;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+}
+.full-screen-slides-pagination {
+	font-size: 0;
+*word-spacing:-1px/*IE6、7*/;
+	text-align: center;
+	display: block;
+	list-style: none;
+	width: 100px;
+	height: 10px;
+	margin-left: -50px;
+	position: absolute;
+	z-index: 9;
+	bottom: 15px;
+	left: 50%;
+}
+.full-screen-slides-pagination li {
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+*display:inline/*IE6、7*/;
+	list-style: none;
+	width: 12px;
+	height: 12px;
+	margin-left: 8px;
+filter:progid:DXImageTransform.Microsoft.gradient(enabled='true', startColorstr='#BF000000', endColorstr='#BF000000');
+	background: rgba(0,0,0,0.75);
+	overflow: hidden;
+	border-radius: 6px;
+	cursor: pointer;
+*zoom: 1;
+}
+.full-screen-slides-pagination a {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	text-indent: -9999px;
+}
+.full-screen-slides-pagination .current {
+	background: #FFF;
+	box-shadow: inset 1px 1px 1px rgba(0,0,0,0.5);
+}
+.indextip {
+	color: #777;
+	background-color: #EEE;
+	width: 100%;
+	height: 60px;
+}
+.indextip .container {
+	width: 1000px;
+	height: 60px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+.indextip .title {
+	width: 60px;
+	height: 48px;
+	display: inline-block;
+*display: inline;
+	padding: 6px 12px 6px 24px;
+*zoom: 1;
+}
+.indextip .title i {
+	background-position: -190px 0;
+	display: block;
+	width: 24px;
+	height: 24px;
+	float: left;
+	margin: 0 18px;
+}
+.indextip .title h3 {
+	font: 14px/24px "microsoft yahei";
+	text-align: center;
+	width: 100%;
+	height: 24px;
+	clear: both;
+}
+.indextip .content {
+	font: 12px/20px "microsoft yahei";
+	vertical-align: top;
+	display: inline-block;
+*display: inline;
+	width: 880px;
+	padding: 10px;
+*zoom: 1;
+}
+.breadcrumb {
+	font-size: 0;
+*word-spacing:-1px/*IE6、7*/;
+	width: 1000px;
+	height: 20px;
+	padding: 10px 0;
+	margin: 0 auto;
+}
+.breadcrumb span {
+	font-size: 12px;
+	color: #999;
+	vertical-align: middle;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+*display: inline;
+*zoom: 1;
+}
+.breadcrumb a {
+	color: #777;
+}
+.breadcrumb .icon-home {
+	background-position: -240px 0;
+	width: 16px;
+	height: 16px;
+	margin-right: 4px;
+}
+.breadcrumb .arrow {
+	line-height: 20px;
+	color: #AAAAAA;
+	font-family: "宋体";
+	margin: 0 6px;
+}
+.w1000 {
+	width: 1000px;
+	padding: 0;
+	margin: 0 auto;
+	overflow: hidden;
+}
+.w1000 .index-title {
+	font: 600 16px/20px "microsoft yahei";
+	color: #333;
+	width: 950px;
+	padding: 5px 15px;
+	margin: 0 auto;
+	border-bottom: dotted 1px #CCC;
+}
+.joinin-index-step {
+	font-size: 0;
+*word-spacing:-1px/*IE6、7*/;
+	width: 800px;
+	height: 110px;
+	margin: 30px auto;
+	overflow: hidden;
+}
+.joinin-index-step span {
+	font-size: 12px;
+	vertical-align: middle;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+*display: inline;
+*zoom: 1;
+}
+.joinin-index-step span.step {
+	line-height: 20px;
+	text-align: center;
+	width: 80px;
+}
+.joinin-index-step span.step i {
+	display: block;
+	width: 80px;
+	height: 80px;
+	margin-bottom: 10px;
+}
+.joinin-index-step span.step i.a {
+	background-position: 0 -40px;
+}
+.joinin-index-step span.step i.b {
+	background-position: -80px -40px;
+}
+.joinin-index-step span.step i.c {
+	background-position: -160px -40px;
+}
+.joinin-index-step span.step i.d {
+	background-position: -240px -40px;
+}
+.joinin-index-step span.step i.e {
+	background-position: -320px -40px;
+}
+.joinin-index-step span.arrow {
+	background-position: -410px -40px;
+	width: 14px;
+	height: 22px;
+	margin: 0 41px;
+}
+/*页内整体布局*/
+.w1000 {
+	width: 1000px;
+	padding: 0;
+	margin: 0 auto 10px auto;
+	overflow: hidden;
+}
+/*申请流程*/
+.joinin-step ul {
+	font-size: 0;
+*word-spacing:-1px/*IE6、7*/;
+	width: 616px;
+	height: 46px;
+	margin: 40px auto 20px auto;
+}
+.joinin-step ul li {
+	font-size: 12px;
+	background-position: 0 -130px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+*display: inline;
+	width: 120px;
+	height: 16px;
+	position: relative;
+	z-index: 1;
+*zoom: 1;
+}
+.joinin-step ul li.step1 {
+	background-position: -52px -130px;
+	width: 68px;
+}
+.joinin-step ul li.step6 {
+	width: 68px;
+}
+.joinin-step ul li.current {
+	background-position: -120px -130px;
+}
+.joinin-step ul li.step1.current {
+	background-position: -172px -130px;
+}
+.joinin-step ul li span {
+	color: #999;
+	text-align: center;
+	width: 120px;
+	height: 20px;
+	margin-left: -60px;
+	position: absolute;
+	z-index: 1;
+	bottom: -30px;
+	left: 50%;
+}
+.joinin-step ul li.step1 span {
+	margin-left: -86px;
+}
+.joinin-step ul li.step6 span {
+	margin-left: -36px;
+}
+/*提示文字*/
+.alert {
+	color: #C09853;
+	background-color: #FCF8E3;
+	padding: 8px 35px 8px 14px;
+	margin: 10px auto;
+	border: 1px solid #FBEED5;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.alert a {
+	color: #927036;
+	text-decoration: underline;
+}
+.alert h4 {
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 1.5em;
+	margin-bottom: 2px;
+}
+.alert ul {
+	margin-bottom: 10px
+}
+.alert li {
+	margin: 4px 0;
+}
+.alert li em {
+	font-weight: 600;
+	color: #F30;
+	margin: 0 2px;
+}
+.alert i {
+	font-size: 14px;
+	margin-right: 4px;
+	vertical-align: middle;
+}
+.joinin-info {
+	width: 980px;
+	margin: 10px auto 0 auto;
+	overflow: hidden;
+}
+.joinin-info .tabs-nav {
+	font-size: 0;
+*word-spacing:-1px/*IE6、7*/;
+	background-color: #F5F5F5;
+	width: 984px;
+	border-bottom: solid 2px #0286D8;
+}
+.joinin-info .tabs-nav li {
+	font: 14px/20px "microsoft yahei";
+	color: #333;
+	vertical-align: middle;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: center;
+	display: inline-block;
+*display: inline;
+	width: 242px;
+	padding: 10px 0;
+	border-right: solid 4px #FFF;
+*zoom: 1;
+}
+.joinin-info .tabs-nav li.tabs-selected {
+	background-color: #0286D8;
+}
+.joinin-info .tabs-nav li.tabs-selected h3 {
+	color: #FFF;
+	font-weight: 600;
+}
+.joinin-info .tabs-panel {
+	margin: 15px 0;
+}
+.joinin-info .tabs-hide {
+	display: none;
+}
+/*商家入驻表单*/
+.joinin-pay {
+	background-color: #FFF;
+}
+.store-joinin {
+	background-color: #FFF;
+	width: 100%;
+	line-height: 20px;
+	margin-bottom: 20px;
+	border-style: solid;
+	border-width: 0 0 1px 1px;
+	border-color: transparent transparent #C9DDE0 #C9DDE0;
+	box-shadow: 2px 2px 2px rgba(204,204,204,0.25);
+}
+.store-joinin thead th {
+	font-weight: 600;
+	color: #214752;
+	background-color: #E3EFF0;
+	height: 20px;
+	padding: 6px 4px;
+	border-style: solid;
+	border-width: 1px 1px 0 0;
+	border-color: #C9DDE0 #C9DDE0 transparent transparent;
+}
+.store-joinin tbody th {
+	color: #555555;
+	background-color: #F0F7FA;
+	text-align: right;
+	width: 108px;
+	height: 20px;
+	padding: 6px 4px;
+	border-style: solid;
+	border-width: 1px 1px 0 0;
+	border-color: #C9DDE0 #C9DDE0 transparent transparent;
+}
+.store-joinin tbody td {
+	color: #333;
+	min-width: 119px;
+	height: 20px;
+	padding: 4px 6px;
+	border-style: solid;
+	border-width: 1px 1px 0 0;
+	border-color: #C9DDE0 #C9DDE0 transparent transparent;
+}
+.store-joinin tbody td img {
+	max-width: 100px;
+	max-height: 100px;
+	padding: 4px;
+	border: solid 1px #EEE;
+	vertical-align: middle;
+}
+.store-joinin tbody td textarea {
+	width: 400px;
+	height: 100px;
+}
+table.type {
+	width: 700px;
+	border: solid 1px #EEE;
+}
+table.type thead th {
+	color: #555;
+	background-color: #F7F7F7;
+	text-align: center;
+	padding: 4px;
+	border-color: #EEE;
+}
+table.type tbody td {
+	color: #777;
+	text-align: center;
+	padding: 4px;
+	border-color: #EEE;
+}
+table.type tbody td input {
+	width: 60px;
+	padding: 0;
+}
+#banner {
+	position: relative
+}
+#ctrl1 {
+	position: absolute;
+	left: 50%;
+	bottom: 10px;
+	z-index: 10
+}
+#ctrl1 span {
+	display: inline-block;
+	height: 10px;
+	width: 10px;
+	border-radius: 50%;
+	background: #333;
+	margin-left: 5px;
+	cursor: pointer
+}
+#ctrl1 span.hov {
+	background: #c40000
+}
+/**************网站底部***************/
+.site-footer {
+	font-size: 14px;
+	line-height: 1.5em;
+	margin-top: 20px;
+	position: relative;
+	z-index: 101
+}
+.footer-related {
+	padding: 20px 0 10px;
+	background: #3A3A3A;
+	color: #cccccc;
+}
+.site-footer .footer-info {
+	padding: 10px 0;
+	font-size: 12px;
+}
+.site-footer .info-text {
+	width: 100%;
+	margin: 0 auto;
+	text-align: center;
+	margin-bottom: 10px;
+}
+.site-footer .info-text .nav_bottom a {
+	padding: 0px 8px;
+	color: #ccc;
+}
+.site-footer .info-text .nav_bottom a:hover {
+	color: #E31939;
+}
+.site-footer .info-text .sep {
+	margin: 0 3px
+}
+.site-footer .info-text p {
+	margin: 0;
+	line-height: 25px
+}
+.site-footer .info-text p a {
+	color: #ccc;
+}
+.site-footer .info-text p a:hover {
+	color: #E31939;
+}
+.site-footer .info-links {
+	clear: both
+}
+.site-footer .info-links img {
+	width: auto;
+	height: 20px
+}
+/*入驻步骤*/
+.w1210 {
+	width: 990px !important;
+}
+.w50 {
+	width: 50px !important;
+}
+.w100 {
+	width: 100px;
+}
+.w200 {
+	width: 200px !important;
+}
+.progress .passed, .progress .ongoing, .progress .defeated, .progress .tobe, .progress .number i.tick, .main .explain i, .main .explain1 i, .main table.all tbody th i, .main .note i {
+	background: url(../images/apply/apply.png) no-repeat;
+}
+input[type="button"], input[type="submit"] {
+	color: #fff;
+	background-color: #E31939;
+	display: inline-block;
+	height: 22px;
+	padding: 0 4px;
+	border: none;
+	cursor: pointer;
+}
+input[type="text"] {
+	height: 20px;
+	line-height: 20px;
+	background-color: #ffffff;
+	vertical-align: middle;
+	display: inline-block;
+	padding: 5px;
+	border: solid 1px #ddd;
+}
+.headerLayout {
+	background: #fff;
+	padding-top: 15px;
+	padding-bottom: 5px;
+	width: 100%
+}
+.headerCon {
+	margin: 0 auto;
+	width: 990px;
+	height: 84px;
+}
+#mallLogo {
+	padding: 0px;
+	width: 330px;
+	height: 84px;
+	float: left;
+}
+.panel-heading {
+	padding: 7px 10px;
+	background: #fff;
+	overflow: hidden;
+}
+.panel-heading .more {
+	float: right;
+}
+.progress {
+	clear: both;
+	overflow: hidden;
+	padding-top: 5px;
+	padding-right: 5px;
+	position: relative;
+}
+.progress .progress-wrap {
+	width: 116px;
+	text-align: center;
+	float: left;
+}
+.progress .progress-item {
+	width: 120px;
+}
+.progress .passed {
+	background-position: 0px -45px;
+	color: #a5d4f4;
+	position: relative;
+}
+.progress .ongoing {
+	background-position: 0px -92px;
+	position: relative;
+	color: #48a7e7;
+}
+.progress .tobe {
+	background-position: 0px 0px;
+	color: #aaa;
+}
+.progress .number {
+	display: block;
+	height: 22px;
+	line-height: 22px;
+	margin-bottom: 5px;
+	color: #fff;
+	font-weight: bold;
+	position: relative;
+}
+.progress .number i.tick {
+	background-position: 0px -140px;
+	position: absolute;
+	width: 10px;
+	height: 8px;
+	top: 7px;
+	left: 55px;
+}
+#id-hand-s {
+	background: url(../images/apply/id-hand.jpg) no-repeat;
+	width: 346px;
+	height: 90px;
+}
+#id-front-s {
+	background: url(../images/apply/id-front.jpg) no-repeat;
+	width: 346px;
+	height: 89px;
+}
+#id-back-s {
+	background: url(../images/apply/id-back.jpg) no-repeat;
+	width: 346px;
+	height: 90px;
+}
+.store-joinin-apply {
+filter:progid:DXImageTransform.Microsoft.gradient(enabled='true', startColorstr='#D8FFFFFF', endColorstr='#D8FFFFFF');
+	background: #fff;
+	opacity: 0.85;
+	width: 790px;
+	padding: 20px 100px;
+	margin: 20px auto;
+}
+.store-joinin-apply h3 {
+	font: lighter 18px/24px "microsoft yahei";
+	text-align: center;
+	margin-bottom: 20px;
+}
+.apply-agreement-content {
+	height: 300px;
+	padding: 10px;
+	border: solid 1px #EEE;
+	overflow: auto;
+}
+.apple-agreement {
+	text-align: center;
+	height: 20px;
+	line-height: 20px;
+	margin: 20px 0 0;
+}
+.apple-agreement input{
+	vertical-align: middle;
+	margin-top: -3px;	
+}
+.main {
+	width: 790px;
+	border-radius: 4px;
+}
+.main .explain {
+	font: 16px/32px "microsoft yahei";
+	color: #777;
+	text-align: center;
+	margin: 120px 0 100px 0
+}
+.main .explain i {
+	background-position: 0px -160px;
+	vertical-align: middle;
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	margin-right: 8px;
+}
+.main .note {
+	color: #1279BB;
+	line-height: 16px;
+	padding: 10px 0;
+	margin-bottom: 10px;
+	border-bottom: dashed 1px #CBDDE6;
+}
+.main .note i {
+	background-position: -62px -140px;
+	vertical-align: top;
+	display: inline-block;
+	width: 11px;
+	height: 16px;
+	margin-right: 6px;
+}
+.main .explain1 {
+	font: 16px/32px "microsoft yahei";
+	color: #777;
+	text-align: left;
+	margin: 10px 0 20px 0
+}
+.main .explain1 i {
+	background-position: 0px -160px;
+	vertical-align: middle;
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	margin-right: 8px;
+}
+.main table.all {
+	line-height: 22px;
+	color: #555;
+	width: 790px;
+	margin-top: 20px;
+	border-bottom: dashed 1px #CBDDE6;
+}
+.main table.all thead th {
+	font: 14px/22px "microsoft yahei";
+	color: #333;
+	height: 22px;
+	padding: 8px 4px;
+}
+.main table.all thead th em {
+	color: #F00;
+	margin-left: 12px;
+}
+.main table.all tbody th {
+	vertical-align: top;
+	text-align: right;
+	width: 180px;
+	height: 22px;
+	padding: 8px 4px;
+}
+.main table.all tbody th i {
+	line-height: -999px;
+	background-position: -51px -140px;
+	vertical-align: middle;
+	display: inline-block;
+	width: 7px;
+	height: 7px;
+	margin-right: 6px;
+	overflow: hidden;
+}
+.main table.all tbody th i {
+*display: inline/*IE7*/;
+}
+.main table.all tbody td {
+	vertical-align: top;
+	text-align: left;
+	height: 20px;
+	padding: 8px 4px
+}
+.main table.all tbody td span {
+*display: none/*IE7*/;
+	color: #777;
+	clear: both;
+	float: left;
+	margin-top: 10px;
+}
+.main table.all tbody td span.block {
+	display: block;
+	width: 600px
+}
+.main table.all tbody td p.emphasis {
+	color: #F30;
+}
+.main tabel.all tfoot td {
+	line-height: 20px;
+	height: 20px;
+	padding: 0;
+}
+.main table.type {
+	width: 600px;
+	margin: 0 auto;
+	border: solid 1px #DDD;
+}
+.main table.type thead th {
+	color: #777;
+	text-align: center;
+	background-color: #F7F7F7;
+	width: 25%;
+}
+.main table.type tbody td {
+	text-align: center;
+	border-style: solid;
+	border-width: 1px 1px 0 0;
+	border-color: #DDD #DDD transparent transparent;
+}
+.main table.type tbody td a {
+	color: #F30;
+}
+.main .bottom, .apply-agreement .bottom, .joinin-pay .bottom {
+	text-align: center;
+	height: 30px;
+	margin: 30px 0 10px 0;
+}
+.main .btn, .apply-agreement .btn, .joinin-pay .btn {
+	display: inline-block;
+	height: 40px;
+	padding: 0px 12px;
+	margin-right: 10px;
+	border: none;
+	cursor: pointer;
+}

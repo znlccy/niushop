@@ -1,0 +1,120 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<!-- <link rel="stylesheet" type="text/css" href="ADMIN_CSS/haidao.css"> -->
+<!-- <link rel="stylesheet" type="text/css" href="ADMIN_CSS/admin.css"> -->
+<style>
+.btn-test{
+	font-family: "microsoft yahei";
+	border-radius: 4px;
+	padding: 5px 20px;
+	background-color: #51A351;
+	color: #FFF;
+	margin: 0 10px;
+	border: none;
+}
+.table tbody+tbody {
+     border-top: 0; 
+}
+.table-striped tbody>tr:nth-child(odd)>td, .table-striped tbody>tr:nth-child(odd)>th {
+     background-color: none;
+}
+.text{
+	color: #fb6b5b;
+}
+a :hover{
+	text-decration:none;
+}
+</style>
+{/block}
+{block name="main"}
+<!-- 邮箱设置 -->
+<div class="set-style">
+	<div class="tab-pane active">
+		<table class="table table-striped table-main" border="0">
+			<colgroup>
+				<col width="33%">
+				<col width="33%">
+				<col width="34%">
+			</colgroup>
+			<tbody>
+				<tr class="table-title" style="background: white;z-index: 10;border: 1px solid #E3E3E3;">
+					<th style="text-align: center;">通知类型</th>
+					<th style="text-align: center;border-left:1px solid #e5e5e5;border-right:1px solid #e5e5e5;">状态</th>
+					<th style="text-align: center;">操作</th>
+				</tr>
+			</tbody>
+			<tbody>
+				{volist name="$notify_list" id="notify_obj"}
+					<tr style="border:1px solid #e5e5e5;border-top:0;background:none;">
+					     <td style="background:none;text-align:center;">{$notify_obj.notify_name}</td>
+					     {if condition="$notify_obj.is_use eq 1"}
+					     <td style="text-align: center;background:none;" class="is_use_{$notify_obj.id}"><i class="fa fa-check text-success text-active"></i></td>
+					     {else/}
+					     <td style="text-align: center;background:none;"><i class="fa fa-times text-danger text"></i></td>
+						 {/if}					     	
+					     <td style="text-align: center;background:none;">
+					     	{if condition="$notify_obj.key eq 'EMAILMESSAGE'"}
+					     	<span>
+					  			<a href="{:__URL('ADMIN_MAIN/config/messageconfig?type=email')}">配置</a></span>
+					  		{else/}
+					  			<span><a href="{:__URL('ADMIN_MAIN/config/messageconfig?type=sms')}">配置</a></span>
+							{/if}	
+							{if condition="$notify_obj.key eq 'EMAILMESSAGE'"}				  		  
+					  		 <span><a href="{:__URL('ADMIN_MAIN/config/notifytemplate?type=email')}">模板</a></span>
+					  		{else/}
+					  		<span><a href="{:__URL('ADMIN_MAIN/config/notifytemplate?type=sms')}">模板</a></span>
+					  		{/if}
+					  		{if condition="$notify_obj.key eq 'EMAILMESSAGE'"}				  		  
+					  		 <span><a href="{:__URL('ADMIN_MAIN/config/businessnotifytemplate?type=email')}">商家通知</a></span>
+					  		{else/}
+					  		<span><a href="{:__URL('ADMIN_MAIN/config/businessnotifytemplate?type=sms')}">商家通知</a></span>
+					  		{/if}
+					  		{if condition="$notify_obj.key eq 'EMAILMESSAGE'"}
+						  		{if condition="$notify_obj.is_use eq 1"}
+						  		 <span class="is_close_{$notify_obj.id}"><a href="javascript:;"  onclick="setIsUse({$notify_obj.id},0);">关闭</a></span>
+						  		{else/}
+						  		 <span class="is_close_{$notify_obj.id}"><a href="javascript:;" onclick="setIsUse({$notify_obj.id},1);">开启</a></span>
+						  		{/if}
+					  		{else/}
+						  		{if condition="$notify_obj.is_use eq 1"}
+						  		 <span class="is_close_{$notify_obj.id}"><a href="javascript:;" onclick="setIsUse({$notify_obj.id},0);">关闭</a></span>
+						  		{else/}
+						  		 <span  class="is_close_{$notify_obj.id}"><a href="javascript:;" onclick="setIsUse({$notify_obj.id},1);">开启</a></span>
+						  		{/if}
+					  		{/if}
+					  	</td>
+					</tr>
+				{/volist}
+			</tbody>
+		</table>
+	</div>
+								
+</div>
+<script type="text/javascript">
+
+function setIsUse(id,value){
+	var is_use = value;
+	$.ajax({
+		type : "post",
+        url: "{:__URL('ADMIN_MAIN/config/updatenotifyenable')}",
+        data: { "id": id, "is_use": is_use },
+        async : false, // 让它同步执行
+        success: function (data) {
+        	if (data["code"] > 0) {
+				showMessage('success', '提交成功');
+				 window.location.href=__URL("ADMIN_MAIN/config/notifyindex");
+			}else{
+				showMessage('error', '提交失败');
+			}	
+        }
+    });
+}
+
+
+
+</script>
+
+
+
+
+{/block}

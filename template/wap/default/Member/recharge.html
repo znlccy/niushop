@@ -1,0 +1,84 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_balance.css">
+<style type="text/css">
+.ns-table td {
+	width: 100%;
+}
+
+.ns-lf {
+	float: left;
+}
+
+.ns-rg {
+	color: red;
+	font-size: 14px;
+	float: right;
+}
+
+.ns-rg-time {
+	font-size: 14px;
+	float: right
+}
+</style>
+<script type="text/javascript">
+window.onerror = function() {
+	return true;
+}
+function check_pay_money(event){
+	var pay_money = parseFloat($(event).val()).toFixed(2);
+	if(isNaN(pay_money)){
+		pay_money = 0.00; 
+	}
+	$(event).val(pay_money);
+}
+var is_submint = false;
+function calculateRecharge(){
+	var pay_no = $("#pay_no").val();
+	var pay_money = $("#pay_money").val();
+
+	if(pay_money < 0 || pay_money == '' || pay_money == 0){
+		$("#pay_money").val(0).focus();
+		$.msg("{:lang('member_amount_greater_zero')}");
+		return false;
+	}
+
+	if(is_submint){
+		return false;
+	}
+	is_submint = true;
+    $.ajax({
+        url: "{:__URL('APP_MAIN/member/createrechargeorder')}",
+        type: "post",              
+        async: false,
+        data: { "recharge_money": pay_money, "out_trade_no": pay_no},
+        dataType: "json",
+        success: function (response) {
+        	if(response.code>0){
+        		window.location.href = __URL("APP_MAIN/pay/getpayvalue?out_trade_no="+pay_no);
+         	}else{
+         		is_submint = false;
+         		showBox("{:lang('member_recharge_failed')}");
+         	}
+        }
+    });
+}
+</script>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('recharge_balance')}</div>
+</section>
+{/block}
+{block name="main"}
+<div id="main" class="detail-main">
+	<div class="payment"><span>{:lang('member_amount_money')}</span><input class="pay-money" id="pay_money"  type="number" placeholder ="{:lang('member_input_balance')}" onblur="check_pay_money(this)"></div>
+	<input type="hidden" id="pay_no" value="{$pay_no}">
+	<section class="s-btn" style="position: fixed; left: 0; right: 0; bottom: 0; height: 50px; padding: 0; z-index: 5;">
+	<button class="alipay" type="button" onclick="calculateRecharge()">{:lang('confirm_payment')}</button>
+	</section>
+</div>
+
+{/block}
+{block name="bottom"}{/block}

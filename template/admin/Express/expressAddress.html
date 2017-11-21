@@ -1,0 +1,618 @@
+{extend name="admin/base" /} {block name="resources"/}
+<style type="text/css">
+	.form-horizontal .control-label{
+		width: 70px;
+	}
+	.form-horizontal .controls{
+		margin-left: 0px;
+	}
+	.modal-footer button{
+		float: right;
+		margin-right: 10px;
+	}
+	.input-error{
+		font-size: 12px;
+	    color: #74828D;
+	    line-height: 30px;
+	    display: none;
+	}
+	.s{
+		color: red;
+	    font-size: 18px;
+	    line-height: 24px;
+	}
+	label{
+		font-weight: 100;
+	}
+	label input[type='radio']{
+	    margin-top: -1px;
+    	margin-right: 3px;
+	}
+</style>
+ {/block} {block
+name="right_tab"}
+<li><a class="nscs-table-handle_green"
+	href="javascript:;" onclick="addExpressAddressDialog(0)"><i class="fa fa-plus-circle"></i>&nbsp;添加物流</a></li>
+{/block} {block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+	<table class="mytable">
+	<tr>				
+		<th width="10%"><input type="text" id = 'search_text' placeholder="请输入公司名称" /><input type="button" onclick="searchData()" value="搜索" /></th>
+	</tr>
+</table>
+	
+		<div class="con style0list">
+			<table>
+				 <colgroup>
+                    <col style="width: 5%">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 15%;">
+                    <col style="width: 15%;">
+                    <col style="width: 10%;">
+                    <col style="width: 15%;">
+                    <col style="width: 10%;">
+                    <col style="width: auto;"></colgroup>
+				<thead>
+					<tr align="center">
+						  <th>
+                                <label>
+                                    <input value="" name="" id="ckall" type="checkbox" onClick="CheckAll(event)"></label>
+                            </th>
+                            <th class="x-tab">
+                                <div class="iconbg-arrow up">发货地址</div>
+                            </th>
+                            <th class="x-tab">
+                                <div class="iconbg-arrow up">收货地址</div>
+                            </th>
+                            <th class="x-tab">
+                                <div class="iconbg-arrow up">联系人</div>
+                            </th>
+                            <th class="x-tab">
+                                <div class="iconbg-arrow up">所在地</div>
+                            </th>
+                            <th class="x-tab">
+                                <div class="iconbg-arrow up">地址</div>
+                            </th>
+                            <th class="x-tab">
+                                <div class="iconbg-arrow up">电话</div>
+                            </th>
+                            <th class="x-tab">
+                                <div class="iconbg-arrow up">公司名称</div>
+                            </th>
+                            <th class="x-tab">操作</th>
+					</tr>
+				</thead>
+				 <colgroup>
+                    <col style="width: 5%">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 15%;">
+                    <col style="width: 15%;">
+                    <col style="width: 10%;">
+                    <col style="width: 15%;">
+                    <col style="width: 10%;">
+                    <col style="width: auto;"></colgroup>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	
+	<!--添加发货地址-->
+	 <div style="display: none;" id="addExpressAddressDialog" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">添加发货地址</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                    	<div class='table-div'>
+							<table>
+								<tr>
+									<td colspan='2' class='back-f5f5f5'><div class='table-title-font'><span>信息填写</span>
+									</td>
+								</tr>
+								<tr>
+									<td class='table-1td'>
+										<label class="control-label" for="inputError">联系人</label>
+									</td>
+									<td>
+										<div class="control-group" id="txtContactsError">
+				                            
+				                            <div class="controls">
+				                                <input id="contact" name="contact" type="text">
+				                                <span class="input-error" id='contactPrompt'><span class="s">×</span></span>
+				                            </div>
+				                        </div>
+									</td>
+								</tr>
+								<tr>
+									<td class='table-1td'>
+										<label class="control-label" for="inputError">所在地</label>
+									</td>
+									<td>
+										<div class="control-group" id="cityError">
+				                            
+				                            <div class="controls">
+				                                <select id="selProvince" class="input-small"  name="selProvince"></select>
+				                                <select class="input-small" id="selCity"  name="selCity"></select>
+				                                <select class="input-small"  id="selArea" name="selArea"></select>
+				                                <span class="input-error" id='pcaPrompt'><span class="s">×</span>不可为空</span>
+				                            </div>
+				                        </div>
+									</td>
+								</tr>
+								<tr>
+									<td class='table-1td'>
+										<label class="control-label" for="inputError">详细地址</label>
+									</td>
+									<td>
+										<div class="control-group" id="LogisticsPhoneError">
+				                            
+				                            <div class="controls">
+				                                <input name="address" id="address" type="text">
+				                                <span class="input-error" id='addressPrompt'><span class="s">×</span>不可为空</span>
+				                            </div>
+				                        </div>
+									</td>
+								</tr>
+								<tr>
+									<td class='table-1td'>
+										<label class="control-label" for="inputError">邮政编码</label>
+									</td>
+									<td>
+										<div class="control-group" id="txtZipCodeError">
+				                            
+				                            <div class="controls">
+				                                <input name="zipcode" id="zipcode" type="text">
+				                                <span class="input-error" id='zipcodePrompt'><span class="s">×</span>不可为空</span>
+				                            </div>
+				                        </div>
+									</td>
+								</tr>
+								<tr>
+									<td class='table-1td'>
+										<label class="control-label" for="inputError">固定电话</label>
+									</td>
+									<td>
+										<div class="control-group" id="txtZoneError">
+				                            
+				                            <div class="controls">
+				                                <input name="phone" id="phone" type="text">
+				                                <span class="input-error" id='phonePrompt'><span class="s">×</span>不可为空</span>
+				                            </div>
+				                        </div>
+									</td>
+								</tr>
+								<tr>
+									<td class='table-1td'>
+										<label class="control-label" for="inputError">手机</label>
+									</td>
+									<td>
+										<div class="control-group" id="txtCellphoneError">
+				                            
+				                            <div class="controls">
+				                                <input name="mobile" id="mobile" type="text">
+				                                <span class="input-error" id='mobilePrompt'><span class="s">×</span>不可为空</span>
+				                            </div>
+				                        </div>
+									</td>
+								</tr>
+								<tr>
+									<td class='table-1td'>
+										<label class="control-label" for="inputError">公司名称</label>
+									</td>
+									<td>
+										<div class="control-group" id="txtCompsanyError">
+				                            
+				                            <div class="controls">
+				                                <input name="company_name" id="company_name" type="text">
+				                                <span class="input-error" id='company_namePrompt'><span class="s">×</span>不可为空</span>
+				                            </div>
+				                        </div>
+									</td>
+								</tr>
+								
+							</table>
+						</div>
+ 
+                    </div>
+                </div>
+                <div class="modal-footer" style='text-align:center;'>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true" style='padding:10px 35px;'>关闭</button>
+                    <button class="btn btn-info" id="addBtn" data-dismiss="modal" aria-hidden="false" style='padding:10px 35px;background-color:#5BB75B;'  onClick="addExpressAddress()">保存</button>
+                </div>
+        </div>
+        <!--end 发货地址-->
+        
+    <input type="hidden" name="cityid" id="cityid" value="0" />
+    <input type="hidden" name="districtid" id="districtid" value="0" />
+    <input type="hidden" name="express_address_id" id="express_address_id" value="" />
+	
+</div>
+{/block} {block name="script"}
+<script type="text/javascript">
+//查询用户列表
+	function LoadingInfo(pageIndex) {
+		var search_text = $("#search_text").val();
+		$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/express/expressaddress')}",
+					async : true,
+					data : {
+						"pageIndex" : pageIndex, "search_text" : search_text
+					},
+					success : function(data) {
+						$("#page_count").val(data["page_count"]);
+						$("#pageNumber a").remove();
+						var html = '';
+						if (data["data"].length > 0) {
+							for (var i = 0; i < data["data"].length; i++) {
+								html += '<tr align="center">';
+								html += '<td><div class="cell"><label ><input name="sub" type="checkbox" value="'+ data['data'][i]['express_address_id']+'" ></label></div></td>';
+								
+								/* 发货地址 */
+								if(data["data"][i]["is_consigner"]==1){
+									html += '<td><label for="consigner'+i+'"><input type="radio" name="consigner" id="consigner'+i+'" checked="checked" >默认</label></td>';	
+								}else{
+									html += '<td><label for="consigner'+i+'"><input type="radio" name="consigner" id="consigner'+i+'" onclick="DefaultAddress(0,'+data["data"][i]["express_address_id"]+')">默认</label></td>';
+								}
+								/* 收货地址 */
+								if(data["data"][i]["is_receiver"]==1){
+									html += '<td><label for="receiver'+i+'"><input type="radio" name="receiver" id="receiver'+i+'" checked="checked"  >默认</label></td>';
+								}else{
+									html += '<td><label for="receiver'+i+'"><input type="radio" name="receiver" id="receiver'+i+'" onclick="DefaultAddress(1,'+data["data"][i]["express_address_id"]+')">默认</label></td>';
+								}
+								
+								html += '<td>' + data["data"][i]["contact"]
+										+ '</td>';
+								html += '<td>' + data["data"][i]["address_info"]
+								+ '</td>';
+								html += '<td>' + data["data"][i]["address"]
+										+ '</td>';
+								html += '<td>' + data["data"][i]["mobile"]
+										+ '</td>';
+								html += '<td>' + data["data"][i]["company_name"]
+								+ '</td>';
+								html += '<td><a href="javascript:addExpressAddressDialog('+data["data"][i]["express_address_id"]+');">修改|</a><a style="cursor: pointer;" onclick="DelExpressCompany('+data["data"][i]["express_address_id"]+')">删除</a></td> ';
+							
+								html += '</tr>';
+							}
+						} else {
+							html += '<tr align="center"><th colspan="9">暂无符合条件的数据记录</th></tr>';
+						}
+						$(".style0list tbody").html(html);
+						var totalpage = $("#page_count").val();
+						if (totalpage == 1) {
+							changeClass("all");
+						}
+						var $html = pagenumShow(jumpNumber,totalpage,{$pageshow})
+						$("#pageNumber").append($html);
+					}
+				});
+	}	
+	//全选
+	function CheckAll(event){
+		var checked = event.checked;
+		$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+	}
+	function searchData(){
+		LoadingInfo(1);
+	}
+	//物流地址删除
+	function DelExpressCompany(express_address_id){
+		$( "#dialog" ).dialog({				
+            buttons: {
+                "确定,#e57373": function() {
+                    $(this).dialog('close');
+                    $.ajax({
+        				type : "post",
+        				url : "{:__URL('ADMIN_MAIN/express/deleteshopexpressaddress')}",
+        				async : true,
+        				data : {
+        					"express_address_id" : express_address_id
+        				},
+        				success : function(data) {
+        					if (data["code"] > 0) {
+        						showMessage('success', data["message"]);
+        						LoadingInfo(1);
+        					}else{
+        						showMessage('error', data["message"]);
+        					}
+        				}
+        				})
+                },
+                "取消": function() {
+                    $(this).dialog('close');
+                }
+            },
+            contentText:"是否删除物流地址？",
+        });
+	
+	}
+	
+	//设置默认地址
+	function DefaultAddress(addressType,express_address_id){
+		  $.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/express/modifyshopexpressaddress')}",
+				async : true,
+				data : {
+					"addressType":addressType,
+					"express_address_id" : express_address_id
+				},
+				success : function(res) {
+					if(res['code']>0){
+						//showMessage('success',res['message']);
+						LoadingInfo(1);
+					}else{
+						showMessage('error', res['message']);
+					}
+				}
+		  });
+	}
+	
+	
+	$(function(){
+		
+		//三级联动js
+		$('[name="selProvince"]').html('<option value="-1">请选择省份</option>')
+		$('[name="selCity"]').html('<option value="-1">请选择市</option>')
+		$('[name="selArea"]').html('<option value="-1">请选择区/县</option>')
+		
+		/*省加载*/
+		$.ajax({
+				type:'post',
+				url:"{:__URL('ADMIN_MAIN/express/getprovincelist')}",
+				async : true,
+				datatype:'json',
+				success : function(data) {
+					var optionhtml="";
+					for(var i=0;i<data.length;i++){
+						optionhtml+='<option value="'+data[i]['province_id']+'">'+data[i]['province_name']+'</option>';
+					}
+					$('[name="selProvince"]').append(optionhtml);
+					if(isnull($('#cityid').val())){
+						$('[name="selProvince"]').change();
+					}
+				}
+		});	
+		
+		/*市加载*/
+		$('[name="selProvince"]').change(function(){
+			if($(this).val()!='-1'){
+				$('[name="selCity"]').html('<option value="-1">请选择市</option>')
+				$.ajax({
+					type:'post',
+					url:"{:__URL('ADMIN_MAIN/express/getcitylist')}",
+					async : true,
+					data:{'province':$(this).val()},
+					datatype:'json',
+					success : function(data) {
+						var optionhtml="";
+						for(var i=0;i<data.length;i++){
+							optionhtml+='<option value="'+data[i]['city_id']+'">'+data[i]['city_name']+'</option>';
+						}
+						$('[name="selCity"]').append(optionhtml);
+						var cityid=$('#cityid').val();
+						if(cityid>0){
+							$('[name="selCity"]').val(cityid);	
+						}
+						if(isnull($('#districtid').val())){
+							$('[name="selCity"]').change();
+						}
+					}
+				});	
+			}
+		})
+		/*区/县加载*/
+		$('[name="selCity"]').change(function(){
+			if($(this).val()!='-1'){
+				$('[name="selArea"]').html('<option value="-1">请选择区/县</option>')
+				$.ajax({
+					type:'post',
+					url:"{:__URL('ADMIN_MAIN/express/getdistrictlist')}",
+					async : true,
+					data:{'city':$(this).val()},
+					datatype:'json',
+					success : function(data) {
+						var optionhtml="";
+						for(var i=0;i<data.length;i++){
+							optionhtml+='<option value="'+data[i]['district_id']+'">'+data[i]['district_name']+'</option>';
+						}
+						$('[name="selArea"]').append(optionhtml);
+						var districtid=$('#districtid').val();
+						if(districtid>0){
+							$('[name="selArea"]').val(districtid);	
+						}
+					}
+				});	
+			}
+		})
+		
+		$('[aria-hidden="true"]').click(function(){
+			$(this).parents('div[role="dialog"]').hide();
+		})
+	})
+	
+	/**
+	 * 物流地址添加框显示
+	 * @express_address_id 0添加 非0修改的id
+	 */
+	function addExpressAddressDialog(express_address_id){
+		$('#express_address_id').val(express_address_id);
+		if(express_address_id>0){
+			$.ajax({
+				type:'post',
+				url:"{:__URL('ADMIN_MAIN/express/expressaddressinfo')}",
+				data:{'express_address_id':express_address_id},
+				async:true,
+				success:function(data){
+					$('#contact').val(data['contact']);
+					$('#mobile').val(data['mobile']);
+					$('#phone').val(data['phone']);
+					$('#company_name').val(data['company_name']);
+					$('#zipcode').val(data['zipcode']);
+					$('#address').val(data['address']);
+					$('#selProvince').val(data['province']);
+					$('#cityid').val(data['city']);
+					$('#districtid').val(data['district']);
+					$('#selProvince').change();
+				}
+			})
+			$("#addExpressAddressDialog").show();
+		}else{
+			$('#addExpressAddressDialog input[type="text"]').val('');
+			$('#addExpressAddressDialog select').val('-1');
+			$('#addExpressAddressDialog select[name="selCity"]').html('<option value="-1">请选择市</option>');
+			$('#addExpressAddressDialog select[name="selArea"]').html('<option value="-1">请选择区/县</option>');
+			$("#addExpressAddressDialog").show();	
+		}
+		
+	}
+	/**
+	 * 错误提示
+	 * @param {Object} message 提示内容
+	 * @param {Object} promptid 提示id
+	 */
+	function Prompt(message,promptid){
+		$('.input-error').hide();
+		$(promptid).show().html('<span class="s">×</span>'+message);
+	}
+	/**
+	 * 判断非空 为空返回 false
+	 * @param {Object} values
+	 */
+	function isnull(values){
+		if(values=="" || values=="0" || values=="-1"){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	/**
+	 * 判断是否为手机号 真为true
+	 * @param {Object} values
+	 */
+	function ismobile(values){
+		var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/; 
+		if(!myreg.test(values)) 
+	    {  
+	        return false; 
+	    }else{
+	    	return true;
+	    }
+	}
+	/**
+	 * 物流地址添加
+	 */
+	function addExpressAddress(){
+		var contact=$('#contact').val();
+		var mobile=$('#mobile').val();
+		var phone=$('#phone').val();
+		var company_name=$('#company_name').val();
+		var province=$('#selProvince').val();
+		var city=$('#selCity').val();
+		var district=$('#selArea').val();
+		var zipcode=$('#zipcode').val();
+		var address=$('#address').val();
+		
+		if(!isnull(contact)){
+			Prompt("不可为空",'#contactPrompt');
+			return false;
+		}
+		if(!isnull(district)){
+			Prompt("不可为空",'#pcaPrompt');
+			return false;
+		}
+		if(!isnull(address)){
+			Prompt("不可为空",'#addressPrompt');
+			return false;
+		}
+		if(!isnull(zipcode)){
+			Prompt("不可为空",'#zipcodePrompt');
+			return false;
+		}
+		if(!isnull(phone)){
+			Prompt("不可为空",'#phonePrompt');
+			return false;
+		}
+		if(!isnull(mobile)){
+			Prompt("不可为空",'#mobilePrompt');
+			return false;
+		}
+		if(!ismobile(mobile)){
+			Prompt("手机号格式不正确",'#mobilePrompt');
+			return false;
+		}
+		if(!isnull(company_name)){
+			Prompt("不可为空",'#company_namePrompt');
+			return false;
+		}
+		var express_address_id=$('#express_address_id').val();
+		//如果为空或者0就是添加
+		if(!isnull(express_address_id)){
+			$.ajax({
+				type:'post',
+				url:":__URL('ADMIN_MAIN/express/addexpressaddress')",
+				async : true,
+				data:{
+					'contact':contact, 
+					'mobile':mobile,
+					'phone':phone, 
+					'company_name':company_name, 
+					'province':province, 
+					'city':city, 
+					'district':district,
+					'zipcode':zipcode,
+					'address':address
+				},
+				datatype:'json',
+				success : function(res) {
+					$('#addExpressAddressDialog').hide();
+					if(res['code']>0){
+						showMessage('success',res['message']);
+						LoadingInfo(1);
+					}else{
+						showMessage('error', res['message']);
+					}
+				}
+			});		
+		}else{
+				$.ajax({
+				type:'post',
+				url:"{:__URL('ADMIN_MAIN/express/updateexpressaddress')}",
+				async : true,
+				data:{
+					'express_address_id':express_address_id,
+					'contact':contact, 
+					'mobile':mobile,
+					'phone':phone, 
+					'company_name':company_name, 
+					'province':province, 
+					'city':city, 
+					'district':district,
+					'zipcode':zipcode,
+					'address':address
+				},
+				datatype:'json',
+				success : function(res) {
+					$('#addExpressAddressDialog').hide();
+					if(res['code']>0){
+						showMessage('success',res['message']);
+						LoadingInfo(1);
+					}else{
+						showMessage('error', res['message']);
+					}
+				}
+			});	
+		}
+		
+	}
+</script>
+{/block}

@@ -1,0 +1,89 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<!-- 这个版本需要的js -->
+<link rel="stylesheet" type="text/css" href="__STATIC__/blue/bootstrap/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_blue_common.css" />
+<!-- 	<script src="__STATIC__/blue/bootstrap/js/bootstrap.js"></script> -->
+<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_table_style.css">
+
+<link rel="stylesheet" href="ADMIN_CSS/plugin/tooltips.css">
+<link rel="stylesheet" href="ADMIN_CSS/defau.css">
+<link rel="stylesheet" href="ADMIN_CSS/plugin/tooltips.css">
+<link rel="stylesheet" href="ADMIN_CSS/plugin//video-js.css">
+<!-- <link rel="stylesheet" href="__STATIC__/plugin/audio/index.css" media="screen"> -->
+<link rel="stylesheet" href="__STATIC__/custom_template/css/custom_template.css">
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.config.common.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.all.common.js"></script>
+<script src="ADMIN_JS/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
+<style>
+body{background: #ffffff !important;}
+</style>
+{/block}
+{block name="main"}
+<div class="mb10"></div>
+<!-- <article class="custom-resolution"> -->
+<!-- 	<button class="btn-common" data-width="320">320*0</button> -->
+<!-- 	<button class="btn-common" data-width="375">375*0</button> -->
+<!-- 	<button class="btn-common" data-width="425">425*0</button> -->
+<!-- 	<button class="btn-common" data-width="768">768*0</button> -->
+<!-- 	<button class="btn-common" data-width="1024">1024*0</button> -->
+<!-- </article> -->
+<article class="custom-template">
+	<header data-custom-flag="CustomTemplateName">
+		<img src="__STATIC__/custom_template/img/titlebar.png" />
+		<h4 title="{$template_name}" data-custom-template-name="{$template_name}">{$template_name}</h4>
+	</header>
+	<div class="custom-main"></div>
+	<div class="caret-up"></div>
+	<div class="plug-in">
+		<h4>添加内容</h4>
+		<ul>
+			<li data-control-name="GoodsSearch" data-class-name="control-search draggable-element">商品搜索</li>
+<!-- 			<li data-control-name="Carousel" data-class-name="control-carousel carousel slide draggable-element" data-additional-attr="id='carouselControl'">轮播图</li> -->
+			<li data-control-name="GoodsList" data-class-name="control-goods-list draggable-element">商品列表</li>
+			<li data-control-name="Title" data-class-name="control-title draggable-element">标题</li>
+			<li data-control-name="NavText" data-class-name="control-nav-text draggable-element">文本导航</li>
+			<li data-control-name="Notice" data-class-name="control-notice draggable-element">公告</li>
+			<li data-control-name="ImgAd" data-class-name="control-img-ad carousel draggable-element" data-additional-attr="id='carouselImgAd'">图片广告</li>
+			<li data-control-name="NavHybrid" data-class-name="control-nav-img draggable-element">图片导航</li>
+			<li data-control-name="GoodsClassify" data-class-name="control-goods-classify draggable-element">商品分类</li>
+			<li data-control-name="Footer" data-class-name="control-footer draggable-element">底部菜单</li>
+			<!-- 用户可以自己写代码，右侧出来一个富文本编辑器  -->
+			<li data-control-name="RichText" data-class-name="control-rich-text draggable-element">富文本</li>
+			<li data-control-name="CustomModule" data-class-name="control-custom-module draggable-element">自定义模块</li>
+			<li data-control-name="AuxiliaryLine" data-class-name="control-auxiliary-line draggable-element">辅助线</li>
+			<li data-control-name="AuxiliaryBlank" data-class-name="control-auxiliary-blank draggable-element">辅助空白</li>
+			<li data-control-name="Coupons" data-class-name="control-coupons draggable-element">优惠券</li>
+			<li data-control-name="Video" data-class-name="control-video draggable-element">视频</li>
+<!-- 			<li data-control-name="Audio" data-class-name="control-audio draggable-element">音频</li> -->
+			<li data-control-name="ShowCase" data-class-name="control-show-case draggable-element">橱窗</li>
+		</ul>
+	</div>
+	<div style="text-align:center;padding:10px;">
+		<input type="hidden" value="{$id}" id="hidden_id" />
+		<button class="btn-common js-save" style="width: 90%;height:35px;margin:0 !important;">保存</button>
+	</div>
+</article>
+{/block}
+{block name="script"}
+<script>
+var goods_category_list = eval('{$goods_category_list}');//商品分类
+var template_name = "{$template_name}";
+var template_data = eval({$template_data});//组件数据
+var template_list = eval({$template_list});//链接地址
+var coupon_type_list = eval({$coupon_type_list});//优惠券集合
+</script>
+<!-- 插件 -->
+<script src="ADMIN_JS/plugin/drag-arrange.js"></script>
+<script src=ADMIN_JS/plugin/jquery.pure.tooltips.js></script>
+<!-- IE8 video.js -->
+<script src="ADMIN_JS/plugin/videojs-ie8.min.js"></script>
+<script src="ADMIN_JS/plugin/video.min.js"></script>
+<script src="ADMIN_JS/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<!-- <script src="__STATIC__/plugin/audio/audio.min.js"></script> -->
+
+<script src="__STATIC__/custom_template/js/custom_template.js"></script>
+<script src="__STATIC__/custom_template/js/custom_control_add.js"></script>
+<script src="__STATIC__/custom_template/js/custom_control_edit.js"></script>
+{/block}

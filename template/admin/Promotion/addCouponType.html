@@ -1,0 +1,299 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
+<style  type="text/css">
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd input[type="text"].w70{
+	width:70px;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 120px;
+	height: 100px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	margin: 0 0 10px;
+	border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 120px;
+	max-height: 100px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+
+.set-style dl dd p{
+	margin-bottom:0;
+}
+
+.table-div  table tr td{
+	    border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+.goodlist-table tr td{
+	    border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+.form-horizontal .control-group {
+    margin-bottom: 0px;
+}
+.form-horizontal .controls {
+    margin-left: 20px; 
+}
+.help-inline{
+	    height: 30px;
+    	line-height: 30px;
+}
+input[type="radio"]{
+	margin-top:6px;
+}
+.controls table tr td input[type="radio"]{
+	margin:0px;
+}
+.total{width: 100%;overflow: hidden;}
+.total label {float:left;text-align: left;font-size: 15px; width:10%;overflow:hidden;color:#666;font-weight: normal;line-height: 32px;margin-bottom:0px}
+.total label input {margin: 0 5px 0 0;} 
+</style>
+ {/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required" style="color:red;">*</span>&nbsp;&nbsp;名称:</dt>
+		<dd>
+			<input type="text" id="coupon_name" maxlength="10">
+			<p class="error">请输入优惠券名称</p>
+			<p class="hint">10个字以内</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;面额:</dt>
+		<dd><input class="input-mini w70" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="text" id="money"><span class="help-inline">元</span>
+			<p class="error">请输入面额</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;发放数量:</dt>
+		<dd><input class="input-mini w70" onkeyup='this.value=this.value.replace(/\D/gi,"")' type="text" id="count"><span class="help-inline">份</span>
+			<p class="error">请输入发放数量</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;每人最大领取数:<br/>(0无限制)</dt>
+		<dd><input class="input-mini w70" onkeyup='this.value=this.value.replace(/\D/gi,"")' type="text" id="max_fetch"><span class="help-inline">份</span>
+			<p class="error">请输入每人最大领取数</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>满多少元使用:</dt>
+		<dd><input class="input-mini w70" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="text" id="at_least"><span class="help-inline">元</span>
+			<p class="error">请输入满足金额</p>
+		</dd>
+	</dl>
+	<dl style="display:none;">
+		<dt>领取人等级:</dt>
+		<dd><input class="input-mini w70" onkeyup='this.value=this.value.replace(/\D/gi,"")' type="text" id="need_user_level"><span class="help-inline">级</span></dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;有效时间:</dt>
+		<dd>
+			<input class="input-medium" type="text" id="start_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<span class="mlr5">-</span> 
+			<input class="input-medium" size="15"type="text" id="end_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<p class="error">请输入有效时间</p>
+			<p class="hint">生效前买家可以领取但不能使用</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>是否允许首页显示:</dt>
+		<dd>
+			<div class="total">
+				<label for="navigationtype1" class="in"><input type="radio" value="1" name="navigationtype" id="navigationtype1" checked/>开启</label>
+				<label for="navigationtype2" class="out"><input type="radio" value="0" name="navigationtype" id="navigationtype2" />关闭</label>
+			</div>
+		</dd>
+	</dl>
+	{include file="admin/Promotion/selectGoods" /}
+	<button class="edit_button" onclick="addCouponType();">提交</button>
+</div>
+
+<script>
+	var flag = false;//防止重复提交
+	function addCouponType(){
+		var coupon_name = $("#coupon_name").val();
+		var money = $("#money").val();
+		var count = $("#count").val();
+		var max_fetch = $("#max_fetch").val();
+		var at_least = $("#at_least").val();
+		var need_user_level = $("#need_user_level").val();
+		var range_type = $("input[name='range_type']:checked").val();
+		var start_time = $("#start_time").val();
+		var end_time = $("#end_time").val();
+		var is_show = $("input[name='navigationtype']:checked").val();
+		var obj = $(".select-two table tbody tr");
+		var goods_id_array = '';
+		obj.each(function(i){
+			goods_id_array += ','+obj.eq(i).attr("goodsid");
+		});
+		goods_id_array = goods_id_array.substring(1);
+		if(verify(coupon_name, money, count, max_fetch, at_least, start_time, end_time)){
+			if(flag){
+				return;
+			}
+			flag = true;
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/promotion/addcoupontype')}",
+				data : {
+					'coupon_name' : coupon_name,
+					'money' : money,
+					'count' : count,
+					'at_least' : at_least,
+					'max_fetch' : max_fetch,
+					'need_user_level' : need_user_level,
+					'range_type' : range_type,
+					'start_time' : start_time,
+					'end_time' : end_time,
+					'is_show' : is_show,
+					'goods_list' : goods_id_array
+				},
+				success : function(data) {
+					if (data["code"] > 0) {
+						showMessage('success', data["message"]);
+						location.href=__URL("ADMIN_MAIN/promotion/coupontypelist");
+					}else{
+						showMessage('error', data["message"]);
+						flag = false;
+					}
+				}
+			});
+		}
+	}
+	/**
+	*模块输入信息验证
+	*/
+	function verify(coupon_name, money, count, max_fetch, at_least, start_time, end_time){
+		if(coupon_name == ''){
+			$("#coupon_name").parent().find('.error').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(money == ''){
+			$("#money").parent().find('.error').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(count == ''){
+			$("#count").parent().find('.error').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(max_fetch == ''){
+			$("#max_fetch").parent().find('.error').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(start_time == '' || end_time == ''){
+			$("#start_time").parent().find('.error').text("请输入有效时间").show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(start_time > end_time ){
+			$("#start_time").parent().find('.error').text("开始时间不能大于结束时间").show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		return true;
+	}
+</script>
+{/block}

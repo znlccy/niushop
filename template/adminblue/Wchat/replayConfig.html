@@ -1,0 +1,372 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<style>
+.step_0{text-align:center;margin:30px;}
+.step_1{margin:20px;}
+.reply-div{border:1px solid #d3d3d3;width:360px;padding:15px;}
+.cover-div{background:#f5f5f5;position:relative;}
+.cover-title{position:absolute;left:0;bottom:0;background:#000;color:#fff;width:350px;padding:5px;opacity:0.6;}
+.cover-pic{max-width:360px;max-height:200px;margin:auto;display:block;}
+.reply-one p,h5{padding:3px 0;}
+.reply-one p{color:#999;font-size:13px;}
+ul.reply-more li{border-bottom:1px solid #d3d3d3;padding:10px 0;}
+ul.reply-more li:after{content:'';clear:both;display:block;}
+ul.reply-more li:last-child{border-bottom:0px solid #d3d3d3;padding-bottom:0;}
+ul.reply-more li:first-child{padding-top:0;}
+.media-div-l{width:270px;margin-right:10px;float:left;}
+.media-div-r{width:80px;float:right;}
+.media-img{max-width:80px;max-height:200px;margin:auto;display:block;}
+.media-button{border:1px solid #d3d3d3;width:390px;border-top:0px solid #d3d3d3;background:#e7e7eb;display:table;}
+.media-button a{display:inline-block;width:194.5px;text-align:center;padding:10px 0;}
+.media-button a:first-child{border-right:1px solid #d3d3d3;}
+</style>
+{/block}
+{block name="main"}
+<!-- 关注时回复 -->
+{eq name="type" value="1"}
+<div id="type1">
+	<p class="step_0" {empty name="info"}style="display:block;"{else /}style="display:none;"{/empty}>您还未设置回复内容，
+		<a href="javascript:;" onclick="showMaterial()">我要马上设置。</a>
+	</p>
+	
+	<div class="step_1" {empty name="info"}style="display:none;"{else /}style="display:block;"{/empty}>
+	<!-- 样式模板 -->
+		{notempty name="info"}
+			{eq name="info['media_info']['type']" value="1"}
+				<div class="reply-div">
+					<div class="reply-text">
+						<p>{$info['media_info']['title']}</p>
+					</div>
+				</div>
+			{/eq}
+			{eq name="info['media_info']['type']" value="2"}
+				<div class="reply-div">
+					<div class="reply-one">
+						<h5>{$info['media_info']['title']}</h5>
+						<p>xx月xx日</p>
+						<div class="cover-div">
+							{if condition="$info['media_info']['item_list'][0]['cover'] != '' "}
+							<img class="cover-pic" src="{:__IMG($info['media_info']['item_list'][0]['cover'])}">
+							{else/}
+							<img class="cover-pic">
+							{/if}
+						</div>
+						<p>{$info['media_info']['item_list'][0]['summary']}</p>
+					</div>
+				</div>
+			{/eq}
+			{eq name="info['media_info']['type']" value="3"}
+				<div class="reply-div">
+					<ul class="reply-more">
+					{foreach name="info['media_info']['item_list']" item="v" key="k"}
+						{eq name="k" value="0"}
+							<li>
+								<div class="cover-div">
+									{if condition="$v['cover'] != ''"}
+									<img class="cover-pic" src="{:__IMG($v['cover'])}">
+									{else/}
+									<img class="cover-pic">
+									{/if}
+									<p class="cover-title">{$v['title']}<p>
+								</div>
+							</li>
+						{/eq}
+						{gt name="k" value="0"}
+							<li>
+								<div class="media-div-l"><p class="media-title">{$v['title']}</p></div>
+								<div class="media-div-r">
+									{if condition="$v['cover'] != '' "}
+									<img class="media-img" src="{:__IMG($v['cover'])}">
+									{else/}
+									<img class="media-img">
+									{/if}
+								</div>
+							</li>
+						{/gt}
+					{/foreach}
+					</ul>
+				</div>
+			{/eq}
+		{/notempty}
+		<div class="media-button">
+			<a class="" href="javascript:;" onclick="showMaterial()">修改</a>
+			<a class="" href="javascript:;" onclick="delReply()">删除</a>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="id" value="{$info['id']}">
+{include file="adminblue/Wchat/controlWxDialog" /}
+{/eq}
+{eq name="type" value="3"}
+<div id="type3">
+	<p class="step_0" {empty name="info"}style="display:block;"{else /}style="display:none;"{/empty}>您还未设置回复内容，
+		<a href="javascript:;" onclick="showMaterial()">我要马上设置。</a>
+	</p>
+	
+	<div class="step_1" {empty name="info"}style="display:none;"{else /}style="display:block;"{/empty}>
+	<!-- 样式模板 -->
+		{notempty name="info"}
+			{eq name="info['media_info']['type']" value="1"}
+				<div class="reply-div">
+					<div class="reply-text">
+						<p>{$info['media_info']['title']}</p>
+					</div>
+				</div>
+			{/eq}
+			{eq name="info['media_info']['type']" value="2"}
+				<div class="reply-div">
+					<div class="reply-one">
+						<h5>{$info['media_info']['title']}</h5>
+						<p>xx月xx日</p>
+						<div class="cover-div">
+							{if condition="$info['media_info']['item_list'][0]['cover'] == ''"}
+							<img class="cover-pic" >
+							{else/}
+							<img class="cover-pic" src="{:__IMG($info['media_info']['item_list'][0]['cover'])}">
+							{/if}
+						</div>
+						<p>{$info['media_info']['item_list'][0]['summary']}</p>
+					</div>
+				</div>
+			{/eq}
+			{eq name="info['media_info']['type']" value="3"}
+				<div class="reply-div">
+					<ul class="reply-more">
+					{foreach name="info['media_info']['item_list']" item="v" key="k"}
+						{eq name="k" value="0"}
+							<li>
+								<div class="cover-div">
+									{if condition="$v['cover'] !=''"}
+									<img class="cover-pic" src="{:__IMG($v['cover'])}">
+									{else/}
+									<img class="cover-pic">
+									{/if}
+									<p class="cover-title">{$v['title']}<p>
+								</div>
+							</li>
+						{/eq}
+						{gt name="k" value="0"}
+							<li>
+								<div class="media-div-l"><p class="media-title">{$v['title']}</p></div>
+								<div class="media-div-r">
+									{if condition="$v['cover'] != ''"}
+									<img class="media-img" src="{:__IMG($v['cover'])}">
+									{else/}
+									<img class="media-img">
+									{/if}
+								</div>
+							</li>
+						{/gt}
+					{/foreach}
+					</ul>
+				</div>
+			{/eq}
+		{/notempty}
+		<div class="media-button">
+			<a href="javascript:;" onclick="showMaterial()">修改</a>
+			<a href="javascript:;" onclick="delReply()">删除</a>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="id" value="{$info['id']}">
+{include file="adminblue/Wchat/controlWxDialog" /}
+{/eq}
+<!-- 关键字回复 -->
+{eq name="type" value="2"}
+<div class="options-btn">
+	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/wchat/addorupdatekeyreplay')}';">添加关键词回复</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 40%;">
+		<col style="width: 20%;">
+		<col style="width: 30%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th>关键字</th>
+			<th>匹配类型</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<colgroup>
+		<col style="width: 40%;">
+		<col style="width: 20%;">
+		<col style="width: 30%;">
+	</colgroup>
+	<tbody></tbody>
+</table>
+<script>
+$(function(){
+	var type = $("#type").val();
+	if(type == 2){
+		LoadingInfo(1);
+	}
+});
+
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/wchat/keyreplaylist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td>' + data["data"][i]["key"] + '</td>';
+					if(data["data"][i]["match_type"] == 1){
+						html += '<td>模糊匹配</td>';
+					}else{
+						html += '<td>全部匹配</td>';
+					}
+					html += '<td><a href="'+__URL('ADMIN_MAIN/wchat/addorupdatekeyreplay?id=' + data["data"][i]["id"])+'">修改</a>&nbsp;&nbsp; ';
+					html += '<a href="javascript:void(0);" onclick="delKeyReply(' + data["data"][i]["id"] + ')">删除</a></td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="3">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/eq}
+<input type="hidden" id="type" value="{$type}">
+<script>
+function delKeyReply(id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+			$(this).dialog('close');
+				$.ajax({
+					url : __URL(ADMINMAIN + "/wchat/delkeyreply"),
+					type : "post",
+					data : { "id" : id },
+					success : function(data){
+						if(data['code'] > 0){
+							showMessage('success', data['message'], __URL(ADMINMAIN + "/wchat/replayconfig?type=2"));
+						}else{
+							showMessage('error', data['message']);
+						}
+					}
+				});
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"确定删除？",
+	});
+}
+
+function getMaterial(media_id){
+	$.ajax({
+		url : __URL(ADMINMAIN + "/wchat/getweixinmediadetail"),
+		type : "post",
+		data : { "media_id" : media_id },
+		success : function(data){
+			var html = '';
+			if(data){
+				html += '<div class="reply-div">';
+				if(data['type'] == 1){
+					html += '<div class="reply-text">';
+					html += '<p>'+data['title']+'</p>';
+					html += '</div>';
+				}else if(data['type'] == 2){
+					html += '<div class="reply-one">';
+					html += '<h5>'+data['item_list'][0]['title']+'</h5>';
+					html += '<p>xx月xx日</p>';
+					html += '<div class="cover-div"><img class="cover-pic" src="'+__IMG(data['item_list'][0]['cover'])+'"></div>';
+					html += '<p>'+data['item_list'][0]['summary']+'</p>';
+					html += '</div>';
+				}else if(data['type'] == 3){
+					html += '<ul class="reply-more">';
+					for(var i=0; i < data['item_list'].length; i++){
+						if(i < 1){
+							html += '<li><div class="cover-div">';
+							html += '<img class="cover-pic" src="'+__IMG(data['item_list'][i]['cover'])+'">';
+							html += '<p class="cover-title">'+data['item_list'][i]['title']+'<p>';
+							html += '</div></li>';
+						}else{
+							html += '<li>';
+							html += '<div class="media-div-l"><p class="media-title">'+data['item_list'][i]['title']+'</p></div>';
+							html += '<div class="media-div-r"><img class="media-img" src="'+__IMG(data['item_list'][i]['cover'])+'"></div>';
+							html += '</li>';
+						}
+					}
+					html += '</ul>';
+				}
+				html += '</div>';
+			}
+			var type = $("#type").val();
+			$("#type"+type+" .step_0").hide();
+			$("#type"+type+" .step_1").show();
+			$("#type"+type+" .step_1 .reply-div").remove();
+			$("#type"+type+" .step_1 .media-button").before(html);
+			if(type == 1){
+				addOrUpdateFollowReply(media_id);
+			}else if(type == 3){
+				addOrUpdateDefaultReply(media_id);
+			}
+		}
+	})
+}
+
+//添加 或 修改 关注时回复
+function addOrUpdateFollowReply(media_id){
+	var id = $("#id").val();
+	var type = $("#type").val();
+	$.ajax({
+		url : __URL(ADMINMAIN + "/wchat/addorupdatefollowreply"),
+		type : "post",
+		data : { "media_id" : media_id, "id" : id },
+		success : function(data){
+			if(data['code'] > 0){
+				showMessage('success', data['message']);
+			}else{
+				showMessage('error', data['message']);
+			}
+		}
+	})
+}
+
+//添加 或 修改 默认回复
+function addOrUpdateDefaultReply(media_id){
+	var id = $("#id").val();
+	var type = $("#type").val();
+	$.ajax({
+		url : __URL(ADMINMAIN + "/wchat/addorupdatedefaultreply"),
+		type : "post",
+		data : { "media_id" : media_id, "id" : id },
+		success : function(data){
+			if(data['code'] > 0){
+				showMessage('success', data['message']);
+			}else{
+				showMessage('error', data['message']);
+			}
+		}
+	})
+}
+
+//删除 回复
+function delReply(){
+	var type = $("#type").val();
+	$.ajax({
+		url : __URL(ADMINMAIN + "/wchat/delreply"),
+		type : "post",
+		data : { "type" : type},
+		success : function(data){
+			if(data['code'] > 0){
+				showMessage('success', data['message'], __URL(ADMINMAIN + "/wchat/replayconfig?type="+type));
+			}else{
+				showMessage('error', data['message']);
+			}
+		}
+	})
+}
+</script>
+{/block}

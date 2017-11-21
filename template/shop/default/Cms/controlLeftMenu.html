@@ -1,0 +1,43 @@
+<div class="breadcrumb clearfix" style="margin: -5px 10px 10px auto;">
+	<a href="{:__URL('SHOP_MAIN/index')}" class="index">{:lang('home_page')}</a>
+	<span class="crumbs-arrow">&gt;</span>
+	<span class="last">{:lang('article_center')}</span>
+</div>
+<!-- 左半部分内容 -->
+<div class="fl">
+	<div class="store-category">
+		<h3 class="left-title bg-color">{:lang('article_center')}</h3>
+		<div class="left-content tree">
+			<ul>
+				{foreach name="cmsList" id="cms"}
+				{if condition="$cms['pid'] eq '0'"}
+				<li>
+					<h4>
+						<a href="{:__URL('SHOP_MAIN/cms/articlelist','id='.$cms['class_id'].'&class_id='.$cms['pid'])}" title="{$cms.name}" class="tree-first">{$cms.name}</a>
+						<span><i class="icon-plus-sign icon-minus-sign"></i></span>
+					</h4>
+					<!-- 循环文章一级分类 -->
+					{if condition="$cms['class_id'] eq $pid"}
+					<ul style="display: block;">
+					{else/}
+					<ul style="display: none;">
+					{/if}
+					<!-- 循环文章二级分类 -->
+					{foreach name="cmsList" id="cms_item"}
+						{if condition="$cms_item['pid'] eq $cms['class_id']"}
+						<li class="qiyeclick">{if condition="$cms_item['class_id'] eq $class_id"}
+						<a href="{:__URL('SHOP_MAIN/cms/articlelist','id='.$cms_item['class_id'].'&class_id='.$cms_item['pid'])}" class="curr" target="_self" name="ducoment" title="{$cms_item.name}">{$cms_item.name}</a>
+						{else /}
+						<a href="{:__URL('SHOP_MAIN/cms/articlelist','id='.$cms_item['class_id'].'&class_id='.$cms_item['pid'])}" name="ducoment" target="_self" title="{$cms_item.name}">{$cms_item.name}</a>
+						{/if}
+						</li>
+						{/if}
+					{/foreach}
+					</ul>
+				</li>
+				{/if}
+				{/foreach}
+			</ul>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="renderer" content="webkit" />
+<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+<meta content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<title>{if condition="$title_before neq ''"}{$title_before}&nbsp;-&nbsp;{/if}{$platform_shopname}{if condition="$seoconfig.seo_title neq ''"}-{$seoconfig.seo_title}{/if}</title>
+<meta name="keywords" content="{$seoconfig.seo_meta}" />
+<meta name="description" content="{$seoconfig.seo_desc}"/>
+<link rel="shortcut  icon" type="image/x-icon" href="__TEMP__/{$style}/public/images/favicon.ico" media="screen"/>
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/pre_foot.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/pro-detail.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/showbox.css">
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/layer.css" id="layuicss-skinlayercss">
+<script src="__TEMP__/{$style}/public/js/showBox.js"></script>
+<script src="__TEMP__/{$style}/public/js/jquery.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/layer.js"></script>
+<script src="__STATIC__/js/load_task.js" type="text/javascript"></script>
+<script src="__STATIC__/js/load_bottom.js" type="text/javascript"></script>
+<script src="__STATIC__/js/time_common.js" type="text/javascript"></script>
+<script type="text/javascript">
+var CSS = "__TEMP__/{$style}/public/css";
+var APPMAIN='APP_MAIN';
+var UPLOADAVATOR = 'UPLOAD_AVATOR';//存放用户头像
+var UPLOADCOMMON = 'UPLOAD_COMMON';
+var UPLOADCOMMENT = '{$Think.const.UPLOAD_COMMENT}';// 存放评论
+var SHOPMAIN = "SHOP_MAIN";
+var temp = "__TEMP__/";//外置JS调用
+var STATIC = "__STATIC__";
+$(function(){
+	showLoadMaskLayer();
+})
+
+$(document).ready(function(){
+	hiddenLoadMaskLayer();
+	//编写代码
+});
+
+//防止IOS手机返回不刷新
+var isPageHide = false;
+window.addEventListener('pageshow', function () {
+	if (isPageHide) window.location.reload();
+});
+window.addEventListener('pagehide', function () {
+	isPageHide = true;
+});
+
+
+//页面底部选中
+function bottomActive(event){
+	clearButton();
+	if(event == "#bottom_home"){
+		$("#bottom_home").find("img").attr("src","__TEMP__/{$style}/public/images/home_check.png");
+	}else if(event == "#bottom_classify"){
+		$("#bottom_classify").find("img").attr("src","__TEMP__/{$style}/public/images/classify_check.png");
+	}else if(event == "#bottom_stroe"){
+		$("#bottom_stroe").find("img").attr("src","__TEMP__/{$style}/public/images/store_check.png");
+	}else if(event == "#bottom_cart"){
+		$("#bottom_cart").find("img").attr("src","__TEMP__/{$style}/public/images/cart_check.png");
+	}else if(event == "#bottom_member"){
+		$("#bottom_member").find("img").attr("src","__TEMP__/{$style}/public/images/user_check.png");
+	}
+}
+
+function clearButton(){
+	$("#bottom_home").find("img").attr("src","__TEMP__/{$style}/public/images/home_uncheck.png");
+	$("#bottom_classify").find("img").attr("src","__TEMP__/{$style}/public/images/classify_uncheck.png");
+	$("#bottom_stroe").find("img").attr("src","__TEMP__/{$style}/public/images/store_uncheck.png");
+	$("#bottom_cart").find("img").attr("src","__TEMP__/{$style}/public/images/cart_uncheck.png");
+	$("#bottom_member").find("img").attr("src","__TEMP__/{$style}/public/images/user_uncheck.png");
+}
+
+//显示加载遮罩层
+function showLoadMaskLayer(){
+	$(".mask-layer-loading").fadeIn(300);
+}
+
+//隐藏加载遮罩层
+function hiddenLoadMaskLayer(){
+	$(".mask-layer-loading").fadeOut(300);
+}
+</script>
+<style>
+body .sub-nav.nav-b5 dd i {margin: 3px auto 5px auto;}
+body .fixed.bottom {bottom: 0;}
+.mask-layer-loading{position: fixed;width: 100%;height: 100%;z-index: 999999;top: 0;left: 0;text-align: center;display: none;}
+.mask-layer-loading i,.mask-layer-loading img{text-align: center;color:#000000;font-size:50px;position: relative;top:50%;}
+.sub-nav.nav-b5 dd{width:25%;font-size:14px;}
+
+.modal {
+    position: fixed;
+    top: 25%;
+    left: 8%;
+    z-index: 1050;
+    width: 74%;
+    background-color: #ffffff;
+    border: 1px solid #999;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    outline: none;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+}
+.fade {
+    opacity: 1;
+    -webkit-transition: opacity 0.15s linear;
+    -moz-transition: opacity 0.15s linear;
+    -o-transition: opacity 0.15s linear;
+    transition: opacity 0.15s linear;
+	padding:0 16px;
+	border-radius: 6px;
+}
+.modal-title{
+	    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    color: red;
+    font-size: 17px;
+    font-weight: normal;
+}
+.log-cont{
+	margin-top: 15px;
+    height: 40px;
+    line-height: 40px;
+    border: 1px solid #eee;
+    background: #fff;
+    border-radius: 3px;
+	padding: 1px 5px;
+	padding-left: 10px;
+}
+.loginbotton{
+	margin-top: 25px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    background: red;
+    margin-bottom: 33px;
+    border-radius: 3px;
+}
+
+.lang-btn{
+    border: 0;
+    background: red;
+    color: #fff;
+}
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    background-color: rgba(217, 217, 217, 0.29);
+}
+input{
+	border:0;
+	background:#fff;
+}
+.getvilidate{
+    border: 1px solid red;
+    border-radius: 3px;
+    color: red;
+	padding: 0 5px;
+    height: 25px;
+    line-height: 25px;
+    margin-top: 4px;
+}
+body{max-width: 640px;}
+</style>
+{block name="resources"}
+<!-- 添加样式文件 -->
+{/block}
+</head>
+{include file='wap/default/urlModel'/}
+<body class="body-gray" style="margin: auto;">
+	{block name="goodsHead"}
+	<section class="head">
+		<a class="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+		<div class="head-title"></div>
+	</section>
+	{/block}
+	<div class="motify" style="display: none;"><div class="motify-inner">{:lang('pop_up_prompt')}</div></div>
+	{block name="main"}
+
+
+	<!-- 微信登录弹出绑定手机号遮罩层 -->
+<!-- 	{if condition="$tel_is_bind eq 1"} -->
+<!-- 		{include file='wap/default/bindingmobile'/} -->
+<!-- 	{/if} --> 
+
+	{/block}
+	{block name="bottom"}
+	
+		{if condition="$custom_template_is_enable == 1"}
+		
+			<div class="js-bottom-blank" style="height:56px;"></div>
+			{:hook("customtemplate",['type'=>'wap_common_footer'])}
+			
+		{else/}
+		
+			<div style="height:58px;"></div>
+			{include file='wap/default/footer'/}
+			
+		{/if}
+		
+	{/block}
+	
+	<input type="hidden" value="{$uid}" id="uid"/>
+	<!-- 加载弹出层 -->
+	<div class="mask-layer-loading">
+		<img src="__TEMP__/{$style}/public/images/mask_load.gif"/>
+	</div>
+	{block name="javascript"}{/block}
+
+</body>
+</html>

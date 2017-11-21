@@ -1,0 +1,69 @@
+{extend name="adminblue/base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>应用ID[AppID]:</dt>
+		<dd><input id="APP_KEY" type="text" value="{$config['value']['appid']}" class="input-common" /></dd>
+	</dl>
+	<dl>
+		<dt>应用密钥[AppSecrect]:</dt>
+		<dd><input id="APP_SECRET" type="text" value="{$config['value']['appkey']}" class="input-common" /></dd>
+	</dl>
+		<dl>
+		<dt>支付专用签名串[paySignKey]:</dt>
+		<dd><input id="paySignKey" type="text" value="{$config['value']['mch_key']}" class="input-common" /></dd>
+	</dl>
+	<dl>
+		<dt>微信支付商户号[MCHID]:</dt>
+		<dd><input id="MCHID" type="text" value="{$config['value']['mch_id']}" class="input-common" /></dd>
+	</dl>
+	<dl>
+		<dt>支付授权目录:</dt>
+		<dd><span class="text" style="background-color: white; border: none;min-width: 500px;display: inline-block;font-size: 13px;cursor: pointer;color:#468847;" id="empowerUrl" value="">{$root_url}</span></dd>
+	</dl>
+	<dl>
+		<dt>是否启用:</dt>
+		<dd>
+			<p>
+				<input id="is_use" type="checkbox" class="checkbox" {if condition="$config.is_use==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax()">提交</button></dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	var appkey = $("#APP_KEY").val();
+	var appsecret = $("#APP_SECRET").val();
+	var paySignKey = $("#paySignKey").val();
+	var MCHID = $("#MCHID").val();
+	var is_use = 0;
+	if($("#is_use").is(":checked")){
+		is_use = 1;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/payconfig')}",
+		data:{
+			'appkey':appkey,
+			'appsecret':appsecret,
+			'paySignKey':paySignKey,
+			'MCHID':MCHID,
+			'type':'wchat',
+			'is_use' : is_use
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"]);
+				location.href=__URL("ADMIN_MAIN/config/paymentconfig");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,83 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style  type="text/css">
+.total-table{
+	width:80%;
+	margin:40px auto;
+	border:1px solid #e6e6e6;
+}
+.total-table tr td{
+	height:40px;
+	line-height:40px;
+	text-align:center;
+}
+.total-table tr td:nth-child(1){
+	width:25%;
+}
+.total-table tr td:nth-child(2){
+	width:25%;
+}
+.total-table tr td:nth-child(3){
+	width:25%;
+}
+.total-table tr td:nth-child(4){
+	width:25%;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="total">
+	<table class="total-table">
+		<tr>
+			<td rowspan="2">本日</td>
+			<td>总销售额</td>
+			<td>总退款</td>
+			<td>余额</td>
+		</tr>
+		<tr>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=day&type=sale')}">{$account.day.order_sum}</a></td>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=day&type=refund')}">{$account.day.order_refund_sum}</a></td>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=day&type=account')}">{$account.day.order_account}</a></td>
+		</tr>
+	</table>
+	<table class="total-table">
+		<tr>
+			<td rowspan="2">本周</td>
+			<td>总销售额</td>
+			<td>总退款</td>
+			<td>余额</td>
+		</tr>
+		<tr>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=week&type=sale')}">{$account.week.order_sum}</a></td>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=week&type=refund')}">{$account.week.order_refund_sum}</a></td>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=week&type=account')}">{$account.week.order_account}</a></td>
+		</tr>
+	</table>
+	<table class="total-table">
+		<tr>
+			<td rowspan="2">本月</td>
+			<td>总销售额</td>
+			<td>总退款</td>
+			<td>余额</td>
+		</tr>
+		<tr>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=month&type=sale')}">{$account.month.order_sum}</a></td>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=month&type=refund')}">{$account.month.order_refund_sum}</a></td>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=month&type=account')}">{$account.month.order_account}</a></td>
+		</tr>
+	</table>
+	<table class="total-table">
+		<tr>
+			<td rowspan="2">总</td>
+			<td>总销售额</td>
+			<td>总退款</td>
+			<td>余额</td>
+		</tr>
+		<tr>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=all&type=sale')}">{$account.all.order_sum}</a></td>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=all&type=refund')}">{$account.all.order_refund_sum}</a></td>
+			<td><a href="{:__URL('ADMIN_MAIN/account/orderrecordslist','time=all&type=account')}">{$account.all.order_account}</a></td>
+		</tr>
+	</table>
+</div>
+{/block}

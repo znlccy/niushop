@@ -1,0 +1,38 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<style type="text/css">
+.group-child{
+	left:0;
+}
+body{background: #ffffff;}
+.main_content{margin-top: 45px;}
+h3{line-height: 30px;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px 0px;}
+p.fu_title{
+	padding-left: 10px;
+}
+#html_content{padding: 0px 10px;}
+#html_content img{
+	width: 100%;
+}
+</style>
+{/block}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="{:__URL('APP_MAIN/articlecenter')}"><i class="icon-back"></i></a>
+	<div class="head-title" style="margin-left: 11%;">{:lang('article_content')}{include file="wap/default/controGroup" /}</div>
+</section>
+{/block}
+{block name="main"}
+	<div class="main_content">
+		<h3>{$article_info.title}</h3>
+		<p class="fu_title">{:lang('author')}：{$article_info.author}</p>
+		<p class="fu_title">{:lang('position_posted_on')}：{$article_info.public_time|getTimeStampTurnTime}</p>
+		<div id="html_content">{$article_info.content}</div>
+	</div>
+
+{/block}
+{block name="bottom"} {/block}

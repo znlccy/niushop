@@ -1,0 +1,286 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<style type="text/css">
+img{
+ 	max-height: 120px;
+}
+.img {
+	width: 120px;
+	height: 120px;
+	border: 1px solid #e6e6e6;
+	text-align: center;
+	line-height: 120px;
+}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+}
+input[type="number"]{
+	-moz-appearance: textfield;
+}
+.member-menu .user-info .logo {
+    height: 80px;
+	line-height:80px;
+    border-radius: 55px;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid #e6e6e6;
+}
+   
+
+.member-menu .user-info .logo img {
+    border-radius: 0;
+	 max-width: 100%;
+/*     max-height: 100%; */
+}
+</style>
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<article class="member-main">
+		<div class="box"> 
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active" id="tab1" onClick="setTabCatGoods('tab',1,3)">{:lang('member_essential_information')}</li>
+					<li class="normal" id="tab2" onClick="setTabCatGoods('tab',2,3)">{:lang('member_change_avatar')}</li>
+				</ul>
+			</div>
+			<div class="ncm-user-profile">
+				<div class="ncm-default-form" id="con_tab_1">
+					<form name="formEdit" action="{:__URL('SHOP_MAIN/member/person')}" method="post" id="formEdit" enctype="multipart/form-data">
+						<table cellpadding="10" width="600px">
+							<tr>
+								<td width="35%" align="right">{:lang('member_current_avatar')}</td>
+								<td width="65%" align="left">
+									{if condition="$member_img neq '' and $member_img neq '0'"}
+									<img src="{:__IMG($member_img)}" onClick="setTabCatGoods('tab',2,3)"/>
+									{else /}
+									<img src="__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png"/>
+									{/if}
+									<span></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="35%" align="right"><span style="color:red;">*</span>&nbsp;&nbsp;{:lang('member_nickname')}</td>
+								<td width="65%" align="left">
+									<input type="text" name="user_name" value="{$member_info.user_info.nick_name}" size="25" class="inputBg" style="ime-mode:disabled" />
+									<span id="username_message" style="color:#E31939; display:none; width：30px;">{:lang('member_nicknames_cannot_empty')}</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="35%" align="right"><span style="color:red;">*</span>&nbsp;&nbsp;{:lang('member_real_name')}</td>
+								<td width="65%" align="left">
+									<input type="text" name="real_name" value="{$member_info.user_info.real_name}" size="25" class="inputBg" style="ime-mode:disabled" />
+									<span id="realname_message" style="color:#E31939; display:none;">{:lang('member_name_cannot_empty')}</span>
+								</td>
+							</tr>
+							<tr>
+								<td align="right">{:lang('member_date_of_birth')}</td>
+								<td width="65%" align="left">
+									<input type="date" name="birthday" value="{$member_info.user_info.birthday}" size="25" class="inputBg" style="ime-mode:disabled" />
+									<span id="birthday_message" style="color:#E31939"></span>
+								</td>
+							</tr>
+							<tr>
+								<td align="right">{:lang('member_gender')}</td>
+								<td align="left">
+									<input type="radio" name="sex" value="0" id="baomi" checked="checked" />
+									<label>{:lang('member_secrecy')} </label>
+									
+									<input type="radio" name="sex" value="1" id="nan" />
+									<label>{:lang('member_man')}</label>
+									
+									<input type="radio" name="sex" value="2" id="nv" />
+									<label>{:lang('member_woman')} </label>
+								</td>
+							</tr>
+							<tr>
+								<td width="35%" align="right">{:lang('member_location_name')}</td>
+								<td width="65%" align="left">
+									<input type="text" name="location" value="{$member_info.user_info.location}" size="25" class="inputBg" style="ime-mode:disabled" />
+									<span id="location_message" style="color:#E31939"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="35%" align="right">QQ</td>
+								<td width="65%" align="left">
+									<input type="number" name="user_qq" value="{$member_info.user_info.user_qq}" size="25" class="inputBg" style="ime-mode:disabled" />
+									<span id="qq_message" style="color:#E31939"></span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" align="center">
+									<label class="submit-border">
+										<input name="act" type="hidden" value="act_edit_profile" />
+										<input name="submit" type="submit" class="main-btn common-btn" value="{:lang('member_confirm_change')}{:lang('member_essential_information')}"  id="btn_submit"/>
+									</label>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" align="center" id="xinxi" style="display:none;color:red;"></td>
+							</tr>
+						</table>
+					</form>
+				</div>
+				<div class="ncm-default-form" id="con_tab_2" style="display:none; color:red">
+					<form name="formEdit2" action="{:__URL('SHOP_MAIN/member/person')}" method="post" enctype="multipart/form-data" onsubmit="return isOk();">
+						<table cellpadding="10">
+							<tr>
+								<td width="35%" align="right">{:lang('member_avatar_preview')}</td>
+								<td class="user-avatar">
+									<div class="hint">
+										<span>{:lang('member_improve_personal_information')}。</span>
+										<br />
+										<span>{:lang('member_best_default_size')}。</span>
+									</div>
+	 							</td>
+							</tr>
+							<tr>
+								<td colspan="2" align="center">
+									<div class="img" id="preview">
+										{if condition="$member_img neq '' and $member_img neq '0'"}
+										<img src="{:__IMG($member_img)}" width="120px" height="120px"/>
+										{else /}
+										<img width="120px" height="120px" src="__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png" />
+										{/if}
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td width="35%" align="right">{:lang('member_change_avatar')}</td>
+								<td>
+									<div class="ncm-upload-btn">
+										<a href="javascript:void(0);">
+											<span><input type="file" name="user_headimg" class="file" onchange="preview(this)"></span>
+										</a>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" align="center">
+									<label class="submit-border">
+										<input name="act" type="hidden" value="act_edit_img" />
+										<input name="submit2" type="submit" class="common-btn main-btn" value="{:lang('member_confirm_change')}" />
+									</label>
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</article>
+</div>
+{/block}
+
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script type="text/javascript">
+var is_ok = false;
+//是否可以上传图片
+function isOk(){
+	return is_ok;
+}
+
+/**
+ * 验证文件是否可以上传
+ * 2017年7月11日 09:14:10 王永杰
+ * @param file JS DOM文件对象
+ */
+function validationFile(file) {
+	//var fileTypeArr = ['video/mp4','application/msword','application/x-msdownload', "text/plain"];
+	var fileTypeArr = ['image/jpeg','image/gif', 'image/jpg', 'image/png']
+	if(null == file){
+		return false;
+	}
+	if(!file.type){
+		$.msg("{:lang('member_file_type_not_valid')}");
+		return false;
+	}
+	var flag = true;
+	for(var i=0;i<fileTypeArr.length;i++){
+		if(file.type == fileTypeArr[i]){
+			flag = false;
+			break;
+		}
+	}
+	
+	if(flag){
+		$.msg("{:lang('member_file_type_not_valid')}");
+		return false;
+	}
+	
+	if(file.size > 5000000){
+		$.msg("{:lang('member_file_size')}");
+		return false;
+	}
+		
+	return true;
+}
+//预览个人头像
+function preview(file){
+	var prevDiv = document.getElementById('preview');
+	if(validationFile(file.files[0])){
+		if (file.files && file.files[0]){
+			var reader = new FileReader();
+			reader.onload = function(evt){
+				prevDiv.innerHTML = '<img src="' + evt.target.result + '" width="120xp" height="120px"/>';
+			}
+			reader.readAsDataURL(file.files[0]);
+		}else{
+			prevDiv.innerHTML = '<div class="img" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src=\'' + file.value + '\'"></div>';
+		}
+		is_ok = true;
+	}else{
+		is_ok = false;
+	}
+}
+function setTabCatGoods(name,cursel,n){
+	for(i=1;i<=n;i++){
+		var menu=document.getElementById(name+i);
+		var con=document.getElementById("con_"+name+"_"+i);
+		if(con!=null){
+			con.style.display=i==cursel?"block":"none";
+		}
+		if(menu!=null){
+			menu.className=i==cursel?"active":"";
+		}
+	}
+}
+$(document).ready(function(){
+	
+	//对表单进行优化,昵称，用户名，手机号,不能为空
+	function verify(){
+		if($("input[name=user_name]").val().length == 0){
+			$("#username_message").show();
+			return false;
+		}else{
+			$("#username_message").hide();
+		}
+		if($("input[name=real_name]").val().length == 0){
+			$("#realname_message").show();
+			return false;
+		}else{
+			$("#realname_message").hide();
+		}
+		return true;
+	}
+	//提交订单
+	$("#btn_submit").click(function(){
+		if(!verify()){
+			return false;
+		}
+		$("#formEdit").submit();
+	});
+
+	var sex = "{$member_info.user_info.sex}";
+	if(sex == 1){
+		$("[checked]").removeAttr("checked");
+		$("#nan").attr("checked","checked");
+	}else{
+		$("[checked]").removeAttr("checked");
+		$("#nv").attr("checked","checked");
+	}
+});
+</script>
+{/block}

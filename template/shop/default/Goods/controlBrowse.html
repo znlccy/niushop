@@ -1,0 +1,24 @@
+<!--
+	创建人：王永杰
+	创建时间：2017年2月7日 12:15:07
+	功能描述： 浏览过的商品 
+-->
+<!-- 您浏览过 -->
+<div class="aside-con">
+	<h2 class="aside-tit">{:lang('goods_browsed')}</h2>
+	<ul class="aside-list">
+		<li>
+			<div class="p-img">
+				<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods_info['goods_id'])}" target="_blank" title="{$goods_info.goods_name}">
+					<img src="{:__IMG($goods['pic_cover_mid'])}" />
+				</a>
+			</div>
+			<div class="p-name">
+				<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods_info['goods_id'])}" target="_blank" title="{$goods_info.goods_name}">{$goods_info.goods_name}</a>
+			</div>
+			<div class="p-price">
+				<span class="sale-price color">￥{$goods_info.promotion_price}</span>
+			</div>
+		</li>
+	</ul>
+</div>

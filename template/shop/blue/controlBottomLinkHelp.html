@@ -1,0 +1,79 @@
+<!--
+	创建时间：2017年2月7日 12:11:41
+	功能描述： 底部，联系我们、电话 
+-->
+<div class="footer">
+	<div class="dsc-service">
+		<div class="w w1200 relative">
+			<ul class="service-list">
+				<li>
+					<div class="service-tit service-zheng">
+						<img src="__TEMP__/{$style}/public/images/icon-zheng.png">
+					</div>
+					<div class="service-txt">{:lang('certified_guarantee')}</div>
+				</li>
+				<li>
+					<div class="service-tit service-qi">
+						<img src="__TEMP__/{$style}/public/images/icon-qi.png"></i>
+					</div>
+					<div class="service-txt">{:lang('seven_days')}</div>
+				</li>
+				<li>
+					<div class="service-tit service-hao">
+						<img src="__TEMP__/{$style}/public/images/icon-grin.png">
+					</div>
+					<div class="service-txt">{:lang('rave_reviews')}</div>
+				</li>
+				<li>
+					<div class="service-tit service-shan">
+						<img src="__TEMP__/{$style}/public/images/icon-light.png"></i>
+					</div>
+					<div class="service-txt">{:lang('lightning_consignment')}</div>
+				</li>
+				<li class="last">
+					<div class="service-tit service-quan">
+						<img src="__TEMP__/{$style}/public/images/icon-tronphy.png">
+					</div>
+					<div class="service-txt">{:lang('authoritative_honor')}</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="dsc-help">
+		<div class="w w1200">
+			<div class="help-list">
+				{foreach name="platform_help_class" item="class_vo"}
+				<div class="help-item">
+					<h3>{$class_vo.class_name}</h3>
+					<ul>
+						{foreach name="platform_help_document" item="document_vo"} {if
+						condition="$class_vo['class_id'] eq $document_vo['class_id']"}
+						<li><a href="{:__URL('SHOP_MAIN/helpcenter/index','id='.$document_vo['id'])}"
+							title="{$document_vo.title}" target="_blank">{$document_vo.title}</a></li> {/if}
+						{/foreach}
+					</ul>
+				</div>
+				{/foreach}
+			</div>
+			<div class="help-cover">
+				<div class="help-ctn">
+					<div class="help-ctn-mt">
+						<span>{:lang('hotline')}</span> <strong>{$web_info['web_phone']}</strong>
+					</div>
+					<div class="help-ctn-mb">
+
+						<a id="IM" im_type="dsc" href="{$custom_service['value']['service_addr']}"
+							target="_blank" class="btn-ctn" title="{:lang('contact_customer_service')}"><img
+							src="__TEMP__/{$style}/public/images/icon-csu.png"
+							style="vertical-align: middle;">&nbsp;&nbsp;{:lang('consulting_customer_service')}</a>
+					</div>
+				</div>
+				<div class="help-scan">
+					<div class="code">
+						<img src="{:__IMG($web_info['web_qrcode'])}">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

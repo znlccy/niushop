@@ -1,0 +1,91 @@
+{extend name="wap/default/base" /} {block name="resources"}
+<link rel="stylesheet" type="text/css"
+	href="__TEMP__/{$style}/public/css/control_type.css">
+<link rel="stylesheet" type="text/css"
+	href="__TEMP__/{$style}/public/css/goods_list.css">
+<link rel="stylesheet" type="text/css"
+	href="__TEMP__/{$style}/public/css/group_buy.css">
+	<style>
+.slick{
+	margin-top:44px;
+}
+.controltype{margin:0;}
+.exchange{
+	width:100%;height:30px;line-height:30px;border-left:2px solid #B26170;margin-top:5px;
+}
+.more_exchange{
+	width:23%;height:30px;line-height:30px;float:right;
+}
+.more_exchange span{
+	font-size:14px;color:#B1B1B1;
+}
+.more_exchange img{
+	    margin-left: 5px;
+    width: 6px;
+    vertical-align: middle;
+}
+.slick img{
+	width:100%;
+}
+</style>
+{/block} {block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1)"><i
+		class="icon-back"></i></a>
+	<div class="head-title">{:lang("integral_center")}{include file="wap/default/controGroup" /}</div>
+</section>
+{/block} {block name="main"}
+
+{if condition="$discount_adv['is_use'] eq 1"}
+    {if condition="$discount_adv['adv_list'][0]['adv_image'] neq ''"}
+<div class="slick">
+	<!-- 广告位 -->
+	<a href="{$discount_adv['adv_list'][0]['adv_url']}">
+		<img src="{:__IMG($discount_adv['adv_list'][0]['adv_image'])}" >
+		<!-- style="height:{$discount_adv.ap_height}px;" -->
+	</a>
+</div>
+
+    {/if}
+{/if}
+{if condition="$discount_adv['is_use'] eq 1"}
+<div class="exchange">
+	&nbsp;&nbsp;<span>{:lang("goods_hot_exchange")}</span>
+	<a href="{:__URL('APP_MAIN/goods/integralcenterlist')}">
+	<div class="more_exchange">
+		<span >{:lang("more_exchange")}</span><img src="__TEMP__/{$style}/public/images/goods_right.png" >
+	</div>
+	</a>
+</div>
+{else/}
+<div class="exchange" style="margin-top:48px;">
+	&nbsp;&nbsp;<span>{:lang("goods_hot_exchange")}</span>
+	<a href="{:__URL('APP_MAIN/goods/integralcenterlist')}">
+	<div class="more_exchange">
+		<span >{:lang("more_exchange")}</span><img src="__TEMP__/{$style}/public/images/goods_right.png" >
+	</div>
+	</a>
+</div>
+{/if}
+<section class="members_goodspic">
+	<ul>
+		{foreach name="hotGoods.data"  item="good" key="k"}
+		<li class="gooditem">
+			<div class="img">
+				<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$good['goods_id'])}"><img
+					class="lazy" src="{:__IMG($good['pic_cover_mid'])}"></a>
+			</div>
+			<div class="info">
+				<p class="goods-title">
+					<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$good['goods_id'])}">{$good.goods_name}</a>
+				</p>
+				<p class="goods-price">
+					<em>{:lang("goods_integral")}:{$good.point_exchange}</em>
+				</p>
+				<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$good['goods_id'])}"></a>
+			</div>
+		</li>
+		{/foreach}
+	</ul>
+</section>
+{/block} {block name="bottom"} {/block}

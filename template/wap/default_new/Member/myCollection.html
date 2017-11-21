@@ -1,0 +1,141 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+    <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/goodsCollection.css">
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="backoutapp" href="{:__URL('APP_MAIN/member/index?shop_id='.$shop_id)}"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('my_collection')}</div>
+</section>
+{/block}
+
+{block name="main"}
+<div class="cf-container" data-reactid="2">
+	<div class="cf-edge" data-reactid="3"></div>
+	<ul class="cf-content" data-reactid="4">
+		<li class="cf-tab-item select" data-type="0"><a href="javascript:;">全部</a></li>
+		<li class="cf-tab-item" data-type="1"><a href="javascript:;">本周</a></li>
+		<li class="cf-tab-item" data-type="2"><a href="javascript:;">本月</a></li>
+		<li class="cf-tab-item" data-type="3"><a href="javascript:;">本年</a></li>
+	</ul>
+</div>
+<section class="collection_goods_list">
+	
+</section>
+<input type="hidden" id="page_count"><!-- 总页数 -->
+<input type="hidden" id="page"><!-- 当前页数 -->
+<input type="hidden" id="type" value="0">
+
+<script>
+$(function(){
+	loadingInfo(1,0);
+})
+$(".cf-content li").click(function(){
+	$(".cf-content li").removeClass("select");
+	$(this).addClass("select");
+	var type = $(this).attr("data-type");
+	loadingInfo(1,type);
+})
+var APPMAIN = "APP_MAIN";
+var is_load = false;//防止重复加载
+function loadingInfo(page,type){
+	$("#page").val(page);//设置当前页
+	$("#type").val(type);//保存当前状态
+	if(is_load){
+		return false;
+	}
+	is_load = true;
+	$.ajax({
+		type : "post",
+		url : __URL(APPMAIN + "/member/myCollection"),
+		data : {"page" : page, "type" : type},
+		beforeSend:function(){
+			showLoadMaskLayer();
+		},
+		success : function(data){
+			hiddenLoadMaskLayer();
+			$("#page_count").val(data['page_count']);//总页数
+			if(page == 1){
+				var html="";
+			}else if(page > 1){
+				var html = $('.collection_goods_list').html();
+			}
+			if(data['data'].length > 0){
+				for (var i = 0; i < data['data'].length; i++) {
+					var item = data['data'][i];
+					if(item['goods_id'] != "" && item['goods_id'] != null){
+						html += '<div class="goods_info fav_id_'+item['fav_id']+'">';
+						html +=	'<div class="collection_time">'+item['fav_time']+'</div>';
+						html +=	'<div class="goods_img" onclick="location.href=\''+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'\'">';
+						html += '<img src="'+__IMG(item.pic_cover_mid)+'" alt="" class="pic"  onerror="this.src=\'__TEMP__/{$style}/public/images/goods_img_empty.png\'">';
+						html += '</div>';
+						html += '<div class="data_info">';
+						html += '<p class="goods_name" onclick="location.href=\''+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'\'">'+item['goods_name']+'</p>';
+						html += '<div class="price_share">';
+						html += '<span class="price">￥'+item['promotion_price']+'</span>';
+						html += '<span class="cancel_collection" onclick="javascript:cancelFavorites('+item['fav_id']+',\'goods\',this);">取消收藏</span>';
+						html += '</div>';
+						html += '</div>';
+						html += '</div>';
+					}
+				}
+			}
+			$(".collection_goods_list").html(html);
+			var goods_info_width = parseInt($(".goods_info").width());
+			var	goods_img_width = parseInt($('.goods_img').width());
+			var data_info_width = goods_info_width - goods_img_width -15;
+			$(".data_info,.price_share").width(data_info_width);
+			FavoritesGoodsIsEmpty();
+			is_load = false;
+		}
+	})
+}
+
+function cancelFavorites(fav_id, fav_type, obj) {
+	$.ajax({
+		url : __URL(APPMAIN + "/member/cancelFavorites"),
+		type : "post",
+		data : {
+			"fav_id" : fav_id,
+			"fav_type" : fav_type
+		},
+		success : function(data) {
+			$(".fav_id_"+fav_id).fadeOut();
+			showBox("{:lang('member_abolish_successful')}");
+			FavoritesGoodsIsEmpty();
+		}
+	});
+}
+// 判断收藏的商品是否为空
+function FavoritesGoodsIsEmpty(){
+	var favoritesGoodsNum = $('.goods_info').not(":hidden").length;
+	if(favoritesGoodsNum == 0){
+		var html = '<div class="collection_goods_empty">';
+		html += '您还没有收藏记录';
+		html += '</div>';
+		$(".collection_goods_list").html(html);
+	}
+}
+//滑动到底部加载
+$(window).scroll(function(){
+	var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+	var content_box_height = parseFloat($(".collection_goods_list").height());
+	if(totalheight - content_box_height >= 80){
+		if(!is_load){
+			var page = parseInt($("#page").val()) + 1;//页数
+			var total_page_count = $("#page_count").val(); // 总页数
+			var type = $('#type').val();
+			if(page > total_page_count){
+				return false;
+			}else{
+				loadingInfo(page,type);
+			}
+		}
+	}
+})
+</script>
+{/block}
+
+{block name="bottom"}
+{/block}
+

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Niushop开源商城</title>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<script src="__STATIC__/js/jquery-1.8.1.min.js"></script>
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<link rel="stylesheet" type="text/css" href="__STATIC__/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/common.css">
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/seller_center.css">
+{include file="adminblue/controlCommonVariable" }
+<script>
+function goodsAddCallBack(){
+	var goodsid = "{$goodsid}";
+	var dialog_flag = "{$flag}";
+	var box_id = "{$box_id}";
+	var dis = $("#next_Page").attr("disabled");
+	if (dis == "disabled") {
+		return;
+	}
+	var quick_id = "";// 所选择的商品分类
+	var goods_category_name = "";
+	var selectSpan = $(".hasSelectedCategoryDiv span").last();
+	var spanList = $(".hasSelectedCategoryDiv span");
+	var count = spanList.length;
+	for (var i = 1; i < count; i++) {
+		var span = $(spanList[i]);
+		var html = span.html();
+		goods_category_name += html;
+		quick_id += span.attr("cid") + ",";// 记录用户所选择的商品类目Id，用与在快速选择商品类目中显示
+	}
+	var goods_category_id = selectSpan.attr("cid");
+	var goods_attr_id = selectSpan.attr("data-attr-id");//属性关联id
+	quick_id = quick_id.substr(0, quick_id.length - 1);
+	
+	goods_category_name = goods_category_name.replace(/\s/g, "");
+	
+	// 判断当前所选择的商品分类与Cookie中的进行查询，是否存在，不存在则添加，
+	var flag = true;// 标识，是否允许添加到Cookie中（防止出现重复数据）true:允许；flase：不允许
+	if (goods_category_quick.length > 0) {
+		for (var k = 0; k < goods_category_quick.length; k++) {
+			if (quick_id == goods_category_quick[k]["quick_id"]) {
+				flag = false;
+				break;
+			} else {
+				flag = true;
+			}
+		}
+	}
+	// 允许添加到到Cookie中
+	if (flag) {
+		var json = {
+			quick_name : $.trim(goods_category_name),
+			quick_id : quick_id,
+		};
+		goods_category_quick.push(json);
+		// alert("Cookie中没有，开始添加");
+	} else {
+		// alert("Cookie中已有，不进行重复添加操作");
+	}
+	$.ajax({
+		url : "{:__URL('ADMIN_MAIN/goods/selectcategetdata')}",
+		type : "post",
+		asysc : false,
+		data : {
+			"goods_category_id" : goods_category_id,
+			"goods_category_name" : goods_category_name,
+			"goods_category_quick" : JSON.stringify(goods_category_quick),
+			"goods_attr_id" : goods_attr_id
+		},
+		success : function(res) {
+		}
+	});
+	var win = art.dialog.open.origin;
+	win.location = "javascript:addGoodsCallBack(" + goods_category_id + ",'" + goods_category_name + "'," + goods_attr_id + ","+goodsid+",'"+dialog_flag+"','"+ box_id +"')";
+	art.dialog.close();
+}
+</script>
+</head>
+<body>
+{include file="admin/urlModel"}
+<script type="text/javascript" src="ADMIN_JS/goods/release_good_frist.js"></script>
+<input type="hidden" value="{$category_select_ids}" id="category_select_ids"/>
+<input type="hidden" value="{$category_select_names}" id="category_select_names"/>
+<input type="hidden" value="{$category_extend_id}" id="category_extend_id"/>
+<div class="product-category">
+	<div id="selectDiv" class="selectCat">
+		<div class="sort_selector">
+			<div class="sort_title">
+				<span>您常用的商品分类：</span>
+				<div class="text" id="commSelect">
+					<div style="padding-left: 10px;">请选择</div>
+					<div class="select_list" id="commListArea"></div>
+				</div>
+				<i class="icon-angle-down"></i>
+			</div>
+		</div>
+		<div id="categoryDivContainer" class="categoryContainer">
+			<div id="selectCategoryDiv1" class="selectCategoryDiv" style="height:auto;">
+				<div class="category-search">
+					<i class="icon-search-tabao"></i>
+					<input type="text" name="search_category" placeholder="输入名称" />
+				</div>
+				<div class="categorySet">
+					{foreach name="cateGoryList" item="category"}
+					<div class="categoryItem " id="{$category.category_id}" data-attr-id="{$category.attr_id}" onclick="ClickHasSubCategory(this)">
+						<span style="width: 170px;">{$category.category_name}</span>
+						{if condition="$category.is_parent eq 1"}
+						<span>&gt;</span>
+						{/if}
+					</div>
+					{/foreach}
+				</div>
+			</div>
+		</div>
+		<div class="cate-path">
+			<div class="hasSelectedCategoryDiv">
+				<span class="hasSelectedCategoryDivText">您当前选择的是：</span>
+			</div>
+		</div>
+	</div>
+	<div class="div-btn">
+		<a class="btn btn-info disabled" href="javascript:goodsAddCallBack();" id="next_Page">已选好类目，进入下一步</a>
+	</div>
+</div>
+</body>
+</html>

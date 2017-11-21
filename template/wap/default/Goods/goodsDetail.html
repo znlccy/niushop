@@ -1,0 +1,48 @@
+{extend name="wap/default/base" /}
+
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/mall.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/pre_foot.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/goods_detail.css">
+<script src="__TEMP__/{$style}/public/js/goods_product.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jscommon.js" charset="gb2312"></script>
+<script src="__TEMP__/{$style}/public/js/jquery.lazyload.js" type="text/javascript"></script>
+{/block}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)"><i class="icon-back"></i></a>
+	<div class="head-title">{$shopname}</div>
+</section>
+{/block}
+
+{block name="main"}
+	{include file="wap/default/Goods/controlDetail" /}
+	{include file='wap/default/share'/}
+{/block}
+
+{block name="bottom"}
+<div class="js-bottom-opts bottom-fix">
+	<div class="responsive-wrapper">
+		<a href="{:__URL('APP_MAIN')}" class="new-btn buy-cart">
+			<img src="__TEMP__/{$style}/public/images/go_home.png" style="height:20px;margin-top: 4px;"/>
+			<span class="desc">{:lang("home_page")}</span>
+		</a>
+		<a href="{$list['value']['service_addr']}" class="new-btn buy-cart" target="_blank">
+			<img src="__TEMP__/{$style}/public/images/kefux.png" style="width:20px;height:20px;margin-top: 4px;"/>
+			<span class="desc">{:lang('united_states_customer_service')}</span>
+		</a>
+		<a id="global-cart" href="{:__URL('APP_MAIN/goods/cart?shop_id='.$shop_id)}" class="new-btn buy-cart {if condition="$carcount>0"}buy-cart-msg{/if}">
+			<i class="iconfont icon-shopping-cart"></i>
+			<span class="desc">{:lang('goods_cart')}</span>
+		</a>
+		<div class="big-btn-2-1">
+			<a href="javascript:;" class="big-btn orange-btn" id="addCart">{:lang('goods_add_cart')}</a>
+			<a href="javascript:;" class="big-btn red-btn" id="buyBtn1">{:lang('goods_buy_now')}</a>
+		</div>
+	</div>
+</div>
+<div class="btn_wrap btn_wrap_static btn_wrap_nocart no-server js-shelves">
+	<div class="product-status">{:lang('goods_laid_off')}</div>
+</div>
+{/block}

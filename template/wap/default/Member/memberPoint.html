@@ -1,0 +1,47 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+    <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_balance.css">
+	<script type="text/javascript">window.onerror=function(){return true;}</script>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+		<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)"><i class="icon-back"></i></a>
+		<div class="head-title">{:lang('member_my_points')}</div>
+	</section>
+{/block}
+
+{block name="main"}
+    
+    <div id="main" class="detail-main">
+		<div class="my-account">
+			<div class="account-box">
+				<span class="account-title">{:lang('member_my_points')}({:lang('points_for_money')}！1{:lang('goods_integral')}=0.02{:lang('element')})</span>
+				<p class="balace">{$member_point}</p>
+			</div>
+		</div>
+	    <table>
+	  			{volist name="list" id="vo"}
+	  				<tr>
+		  				{if condition="$vo['sign'] eq 0"}
+		  					<td><img src="__TEMP__/{$style}/public/images/memberPoint_02.png" alt="" /></td>
+		  				{else /}
+		  					<td><img src="__TEMP__/{$style}/public/images/memberPoint_01.png" alt="" /></td>
+		  				{/if}
+		  				
+		  				<td>
+		  					<p><span class="money">{$vo['text']}</span><span class="date">{$vo['number']}</span></p>
+		  					<p><span>{$vo['create_time'] | getTimeStampTurnTime}</span></p>
+		  				</td>
+		  			</tr>
+	  			{/volist}
+	  	</table>
+   </div>
+  <script type="text/javascript">
+ 	 $(function(){
+ 		bottomActive('#bottom_member');
+  	})
+  		
+  </script>
+{/block}
+{block name="buttom"}
+{/block}

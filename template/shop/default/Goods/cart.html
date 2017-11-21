@@ -1,0 +1,201 @@
+{extend name="shop/default/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/ns_shop_common.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/flow.css">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/shopping_flow.js"></script>
+{/block}
+{block name="main"}
+{if condition="count($cart_list) != 0"}
+<div class="block_jm js-cart-info">
+	<div class="cart-step">
+		<ul>
+			<li class="cart1"><i></i>{:lang('goods_cart')}</li>
+			<li class="cart2"><i></i>{:lang('goods_confirm_order')}</li>
+			<li class="cart3"><i></i>{:lang('goods_payment')}</li>
+			<li class="cart4"><i></i>{:lang('goods_successful_payment')}</li>
+		</ul>
+	</div>
+	<div class="flowBox_jm">
+		<div class="title_jm">
+			<table cellpadding="0" cellspacing="0" width="100%" border="0">
+				<tbody>
+					<tr>
+						<td width="8%" align="center"><input type="checkbox" autocomplete="off" id="chkAll" name="chkAll" checked="true" onclick="return chkAll_onclick()" style="height:28px;vertical-align:middle;">{:lang('goods_select_all')}</td>
+						<td width="37%" align="center">{:lang('goods_product')}</td>
+						<td width="15%" align="center">{:lang('goods_number')}</td>
+						<td width="15%" align="center">{:lang('goods_shop_price')}</td>
+						<td width="15%" align="center">{:lang('goods_subtotal')}</td>
+						<td width="10%" align="center">{:lang('goods_operation')}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<form id="formCart" name="formCart" method="post" action="">
+			{foreach name="cart_list" item="cart_info" key="k"}
+			<table align="center" cellpadding="0" cellspacing="0" style="height:auto;width:100%;">
+				<tbody>
+					<tr>
+						<td style="width:100%;border-bottom:1px dashed #eee;">
+							<table cellpadding="5" cellspacing="1" border="0" width="100%">
+								<tbody>
+									<tr>
+										<td align="center" width="5%">
+											<input type="checkbox" checked="checked" autocomplete="off" name="sel_cartgoods[]" value="{$cart_info.cart_id}" id="sel_cartgoods_{$cart_info.cart_id}" onclick="select_cart_goods()" data-shop-id="<?php $a= explode(",",$i); echo $a[0];?>">
+										</td>
+										<td align="center" width="40%">
+											<div class="thumb_name">
+												<dl>
+													<dt> 
+														<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$cart_info['goods_id'])}" target="_blank">
+														<img src="{:__IMG($cart_info['picture_info']['pic_cover_small'])}" border="0" title="{$cart_info.goods_name}"></a>
+													</dt>
+													<dd>
+														<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$cart_info['goods_id'])}" target="_blank" class="f6">{$cart_info.goods_name}</a>
+														<br>
+														<font class="attrname">{$cart_info.sku_name}</font>
+													</dd>
+												</dl>
+											</div>
+										</td>
+										<td align="center" width="15%">
+											<div class="jm_cartnum">
+												<span class="jmminu" onclick="minus_num({$cart_info.cart_id},{$cart_info.max_buy},{$cart_info.stock}, {$cart_info.min_buy});">-</span>
+												<input type="text" id="goods_number_{$cart_info.cart_id}" value="{$cart_info.num}" data-default-num="{$cart_info.num}" class="jminputBg" onkeydown="if(event.keyCode == 13) event.returnValue = false" onblur="change_price({$cart_info.cart_id},{$cart_info.max_buy},{$cart_info.goods_id},this,{$cart_info.stock}, {$cart_info.min_buy})" data-goods-id="{$cart_info.goods_id}">
+												<span class="jmadd" onclick="javascript:add_num({$cart_info.cart_id},{$cart_info.max_buy},{$cart_info.goods_id},this,{$cart_info.stock})" data-goods-id="{$cart_info.goods_id}">+</span>
+											</div>
+										</td>
+										<td align="center" width="15%">
+											<font class="cart_jmprice" id="goods_price_{$cart_info.cart_id}">
+											￥{$cart_info.price}
+											{if condition="$cart_info.point_exchange_type==1 "}
+												{if condition=" $cart_info.point_exchange>0"}
+												+{$cart_info.point_exchange}{:lang('goods_integral')}
+												{/if}
+<!-- 												<br/>{:lang('goods_integral')}商品 -->
+											{/if}
+											</font>
+										</td>
+										<td align="center" width="15%"><font class="cart_jmprice" id="subtotal_{$cart_info.cart_id}" data-total="{$cart_info.price*$cart_info.num}" data-integral="{if condition='$cart_info.point_exchange_type==1'}{$cart_info.point_exchange*$cart_info.num}{else/}0{/if}"  data-price="{$cart_info.price}">￥{$cart_info.price*$cart_info.num}</font></td>
+										<td align="center" width="10%">
+											<a href="javascript:deleteShoppingCartById({$cart_info.cart_id},true)" class="f6">{:lang('goods_delete')}</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			{/foreach} 
+			<!-- <table width="100%" align="center" border="0" cellpadding="5" cellspacing="0" bgcolor="#ffffff" style="border-top:1px dashed #eee; margin-bottom:10px;">
+				<tbody>
+					<tr>
+						<td bgcolor="#ffffff" align="right" style="padding:10px 15px 0 0;">
+							<a class="choose_gift" href="javascript:void(0);" onclick="choose_gift(0)"><b class="gift_68"></b>选择赠品</a>
+							<span id="zk_0">根据优惠活动<a href="http://www.0838g.com/activity.php"><font color="red">[自营商品]热卖手机满10000减2000</font></a>，您可以享受折扣 ￥2000.00</span></td>
+					</tr>
+				</tbody>
+			</table> -->
+			<input type="hidden" name="shop_id" id="shop_id">
+			<input type="hidden" name="cart_id" id="cart_id">
+		</form>
+		<table width="100%" align="center" border="0" cellpadding="5" cellspacing="6" style="border-top:1px solid #eee;">
+			<tbody>
+				<tr>
+					<td width="150">
+						<a href="{:__URL('SHOP_MAIN')}" class="continue_buy">{:lang('goods_continue_shopping')}</a>
+					</td>
+					<td align="right" width="80">
+						<a href="javascript:;" class="jmclear js-clear-cart">{:lang('goods_empty_cart')}</a>
+					</td>
+					<td align="right" id="cart_money_info"> {:lang('goods_total_payable')}： <span>￥0.00</span></td>
+					<td align="right" width="150">
+						<a href="javascript:selcart_submit();" class="jmcheckout js-settlement" style="color:#ffffff">{:lang('goods_settle_accounts')}</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="blank15"></div>
+<!-- 	<div class="flowBox_jm">
+		<div class="title_jm">
+			<ul id="HotBoxTit">
+				<li class="curr">购买的还买了</li>
+				<li class="">今日最受欢迎</li>
+			</ul>
+		</div>
+		<div class="flowHot" id="hotBox">
+			<ul class="curr">
+				<li>
+					<p class="pic"><a href="" target="_blank"><img src=""></a></p>
+					<p class="name"><a href="" target="_blank">小学生，待查</a></p>
+					<p><font class="price">￥9999.00</font></p>
+					<a class="j_AddCart" href="javascript:addToCart(353)"></a>
+				</li>
+			</ul>
+			<ul class="">
+				<li>
+					<p class="pic"><a href="" target="_blank"><img src=""></a></p>
+					<p class="name"><a href="" target="_blank">秋季条纹商务</a></p>
+					<p><font class="price">￥29.00</font></p>
+					<a class="j_AddCart" href="javascript:addToCart(344)"></a>
+				</li>
+			</ul>
+		</div>
+	</div> -->
+</div>
+{else/}
+<div class="w990" id="content">
+	<div class="content">
+		<div class="cart-empty">
+			<div class="message">
+				<ul>
+					<li class="txt">{:lang('goods_empty_and_look')}~</li>
+					<li><a href="{:__URL('SHOP_MAIN')}" class="btn-link" title="{:lang('goods_go_shopping')}">{:lang('goods_go_shopping')}&gt;</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+{/if}
+<!-- <div class="tell-me-form" style="display: none; left: 701.5px; top: 269px;" id="tell-me-table">
+	<div class="pop-header"><span>到货通知</span>
+		<a href="javascript:closeDiv1()" title="{:lang('goods_add_cart')}" class="tell-me-close"></a>
+	</div>
+	<div class="tell-me-content">
+		<table cellpadding="0" cellspacing="0" width="100%" border="0">
+			<tbody>
+				<tr>
+					<td colspan="2" align="left">
+						<div class="blank10"></div>
+						<div class="notice-note">
+							<p class="main-color" id="rgoods_name"></p>
+							当商品进行补货时，我们将以短信、邮件的形式通知您，最多发送一次，不会对您造成干扰。
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td width="30%" align="right">
+						<font class="main-color">*</font>{:lang('goods_number')}：</td>
+					<td align="left">
+						<input type="text" value="1" id="book-number" class="inputBg">
+						<div class="tell-me-notice">
+							<i class="notice-icon"></i><span class="notice-text num-notice"></span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center" style="padding:20px 0 30px;">
+					<input type="button" value="马上提交" onclick="tell_me1(155)" class="sure-btn">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div> -->
+{/block}
+{block name="javascript"}
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/user.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/order_pickpoint.js"></script>
+<script src="__TEMP__/{$style}/public/js/cart.js"></script>
+{/block}

@@ -1,0 +1,94 @@
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/goods_detail.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/detail.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/showbox.css">
+<script src="__TEMP__/{$style}/public/js/showBox.js"></script>
+<style>
+.custom-tag-list .joinz-index{z-index: 7;}
+.s-buy{z-index: 501;}
+input{appearance:none;-moz-appearance:none;-webkit-appearance:none;outline: none;-moz-outline: none;-webkit-outline: none;}
+.number{border-radius: 0;-webkit-border-radius: 0;}
+</style>
+<div class="success-tip-line" id="success_tip_line" style="display: none;">{:lang('successfully_joined_shopping_cart')}！</div>
+<span id="addcart_way" style="display: none;"><i></i></span>
+<section class="s-buy" id="s_buy">
+	<div class="popup" id="popup" style="-webkit-border-radius:3px;-moz-border-radius:3px;-o-border-radius:3px;border-radius:3px;display: none"></div>
+	<ul class="s-buy-ul">
+		<li class="s-buy-pro">
+			<span class="pro-img">
+				<!-- 商品SKU图片 -->
+				{notempty name="$goods_detail['sku_picture_list']"}
+				
+					{foreach name="$goods_detail.sku_picture_list" item ="img" }
+					
+						{foreach name="$img['album_picture_list']" item="p" key = "k"}
+							<input type="hidden" id="spec_picture_id{$p['pic_id']}" value="{:__IMG($p['pic_cover_micro'])}" />
+						{/foreach}
+
+					{/foreach}
+
+				{/notempty}
+				<input type="hidden" id="default_img" value="{$goods_detail['img_list'][0]['pic_id']}" />
+				<img src="{:__IMG($goods_detail['img_list'][0]['pic_cover_micro'])}" class="js-thumbnail" />
+			</span>
+			<div class="pro-info">
+				<p class="name" id="itemName">{$goods_detail.goods_name}</p>
+				<p class="pro-price" id="price">￥
+				{if condition="$goods_detail.promotion_price < $goods_detail.member_price"}{$goods_detail.promotion_price}{else/}{$goods_detail.member_price}{/if}
+				{if condition="$goods_detail.point_exchange_type==1 && $goods_detail.point_exchange>0"}
+				<span style="font-size:16px;display: inline-block;vertical-align: middle;">+{$goods_detail.point_exchange}{:lang('goods_integral')}</span>
+				{/if}
+				</p>
+			</div>
+			<i class="icon-close" id="icon_close"></i>
+		</li>
+	</ul>
+	<hr class="with-margin-l" />
+	<ul class="s-buy-ul specification" id="specification">
+	
+		{foreach name="goods_detail['spec_list']" item="pro_prop" key="k"}
+		<li class="s-buy-li" >
+			<div class="left">{$pro_prop.spec_name}：</div>
+			<div class="right" name="specvals">
+			{foreach name="pro_prop['value']" item="pro_propvalue" key="key"}
+				<button class="select" name="Span{$k}" id="{$pro_prop.spec_id}:{$pro_propvalue.spec_value_id}" onclick="change(this);" data-picture-id="{$pro_propvalue.picture}">
+				{$pro_propvalue.spec_value_name}
+				</button>
+			{/foreach}
+			</div>
+		</li>
+		<hr class="with-margin-l" />
+		{/foreach}
+		{foreach name="goods_detail['sku_list']" item="pro_skus" key="k"}
+			<input type="hidden" id="goods_sku{$k}" value="{$pro_skus.attr_value_items}" stock="{$pro_skus.stock}" {if condition="$pro_skus.promote_price < $pro_skus.member_price" }price="{$pro_skus.promote_price}" {else/}price="{$pro_skus.member_price}"{/if} promotion_price="{$pro_skus.promote_price}" member_price="{$pro_skus.member_price}" skuid="{$pro_skus.sku_id}" skuname="{$pro_skus.sku_name}" class="sku-array">
+		{/foreach}
+		<input type="hidden" id="goods_sku_num" value="100">
+		<li class="s-buy-li">
+			<div class="left" style="float:left;">{:lang('member_quantity_purchased')}：</div>
+				<div class="right">
+				<span class="reduce quantity-minus-disabled">-</span>
+				<input class="number" name="quantity" autocomplete="off" value="1" min="1" max="{$goods_detail.stock}" id="num">
+				<span class="add">+</span>
+				<input id="hiddPDetailID" type="hidden" name="name" value="{$goods_detail.goods_id}">
+				<input id="hiddSkuId" type="hidden" name="name" value="">
+				<input id="hiddSkuName" type="hidden" name="name" value="">
+				<input id="hiddSkuprice" type="hidden" name="name" value="">
+			</div>
+			<span style="display: inline-block;margin-top:5px;color:#333;" id="Stock">{:lang('left')}{$goods_detail.stock}{:lang('goods_piece')}</span>
+			{if condition ="$goods_detail['max_buy'] neq '0' AND $goods_detail['max_buy'] neq -1"}
+				<span style="display: inline-block;margin-top:5px;color:#333;">{:lang('homebuying_restrictions')}{$goods_detail['max_buy']}{:lang('goods_piece')}</span>
+			{/if}
+		</li>
+	</ul>
+	<ul class="s-buy-ul">
+		<li class="s-buy-btn">
+			<a class="btn" id="submit_ok" tag="addCart">{:lang('goods_determine')}</a>
+			<input type="hidden" id="hidden_shop_name" value="{$goods_detail.shop_name}"/>
+			<input type="hidden" id="hidden_shop_id" value="{$goods_detail.shop_id}"/>
+		</li>
+	</ul>
+</section>
+<div class="motify" style="display: none;"><div class="motify-inner">{:lang('please_select_color')}</div></div>
+<input type="hidden" id="max_buy" value="{$goods_detail.max_buy}" />
+<input type="hidden" id="min_buy" value="{$goods_detail.min_buy}">
+<div class="mask joinz-index" id="mask" style="display: block;"></div>
+<script src="__TEMP__/{$style}/public/js/goods_product.js"></script>

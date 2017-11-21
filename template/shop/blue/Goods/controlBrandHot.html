@@ -1,0 +1,22 @@
+<!--销量排行榜-->
+<div class="aside-con">
+	<ul class="aside-list">
+		{foreach name="goods_sales_list" item="goodsinfo" key="k"}
+		<li>{if condition="$goodsinfo.stock==0"} <!--售罄显示-->
+			<div class="sell-out"></div> {/if}
+			<div class="p-img">
+				<a target="_blank" title="{$goodsinfo.goods_name}" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsinfo['goods_id'])}">
+					<img src="{:__IMG($goodsinfo.pic_cover_mid)}" />
+				</a>
+			</div>
+			<div class="p-name">
+				<a target="_blank" title="{$goodsinfo.goods_name}" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsinfo['goods_id'])}">{$goodsinfo.goods_name}</a>
+			</div>
+			<div class="p-price">
+				<span class="sale-price color">￥<span>{$goodsinfo.promotion_price}</span></span>
+				<span class="sale-num">{:lang('goods_sales_volume')}：{$goodsinfo.sales}</span>
+			</div>
+		</li>
+		{/foreach}
+	</ul>
+</div>

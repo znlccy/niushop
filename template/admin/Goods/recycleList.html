@@ -1,0 +1,629 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style type="text/css">
+.tr-title {
+	height: 30px;
+	background: #E3E3E3;
+	border:1px solid rgba(234, 233, 233, 0.51);
+}
+.a-pro-view-img {
+	float: left;
+}
+
+.thumbnail-img {
+	width: 60px;
+	margin-right: 10px;
+}
+
+.cell i {
+	display: block;
+}
+.remodal-bg.with-red-theme.remodal-is-opening,.remodal-bg.with-red-theme.remodal-is-opened {
+	filter: none;
+}
+	
+.remodal-overlay.with-red-theme {
+	background-color: #f44336;
+}
+
+.remodal.with-red-theme {
+	background: #fff;
+}
+
+input[type="radio"], input[type="checkbox"] {
+	margin: -1px 5px 0;
+	margin-left:0px;
+}
+.edit-group{
+	border-bottom: 1px solid #ebebeb;
+	margin-bottom:10px;
+}
+.edit-group label{	
+	font-weight:normal;
+}
+.edit-group-title{
+	height:15px;
+	line-height:15px;
+	width:140px;
+	margin-top:3px;
+	margin-bottom:3px;
+}
+.edit-group-button{
+	border-color: #3283fa;
+	border: 1px solid #bbb;
+	height: 26px;
+	line-height: 24px;
+	padding: 0 5px;
+}
+.group-button-bg{
+	background: #3283fa;
+	color: #fff;
+}
+.div-pro-view-name {
+	width: 75%;
+	min-height: 60px;
+}
+i.hot,i.recommend,i.new{font-size:12px;margin-right:10px;font-style:normal;color:#fff;background-color:#E84C3D;border-radius:2px;padding:1px 2px;}
+
+.icon-qrcode:before {
+    content: "\f029";
+}
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    text-decoration: inherit;
+    display: inline-block;
+    speak: none;
+}
+[class^="icon-"], [class*=" icon-"] {
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    -webkit-font-smoothing: antialiased;
+}
+.goodsCategory{
+	width: 216px;
+	height: 300px;
+	border:1px solid #CCCCCC;
+	position: absolute;
+	z-index: 100;
+	background: #fff;
+	left: 476px;
+	display: none;
+	overflow-y: auto;
+}
+.goodsCategory::-webkit-scrollbar{
+	width: 8px;
+} 
+.goodsCategory::-webkit-scrollbar-track{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    border-radius: 10px;
+    background-color: #f5f5f5;
+}
+.goodsCategory::-webkit-scrollbar-thumb{
+    /*width: 10px;*/
+    height: 20px;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #ddd;
+}
+.goodsCategory ul{
+	height: 280px;
+	margin-top: -2px;
+	margin-left: 0;
+}
+.goodsCategory ul li{
+	text-align: left;
+	padding:0 15px;
+	line-height: 30px;
+}
+.goodsCategory ul li i{
+	float: right;
+	line-height: 30px;
+}
+.goodsCategory ul li:hover{
+	cursor: pointer;
+}
+.goodsCategory ul li:hover,.goodsCategory ul li.selected{
+	background: #00C0FF;
+	color: #fff;
+}
+.two{
+	left: 694px;
+}
+.three{
+	left: 795px;
+	width: 198px;
+}
+.selectGoodsCategory{
+	width: 216px;
+	height: 45px;
+	border:1px solid #CCCCCC;
+	position: absolute;
+	z-index: 100;
+	left: 476px;
+	margin-top: 300px;
+	border-collapse: collapse;
+	background: #fff;
+	display: none;
+}
+.selectGoodsCategory a{
+	display: block;
+	height: 30px;
+	width: 100px;
+	text-align: center;
+	color: #fff;
+	line-height: 30px;
+	margin:8px;
+	background: #00C0FF;
+	text-decoration:none;
+}
+.RIGHT{
+	min-height: 800px;
+}
+
+</style>
+{/block}
+{block name="main"}
+<div class="js-mask-category" style="display:none;background: rgba(0,0,0,0);position:fixed;width:100%;height:100%;top:0;left:0;right:0;bottom:0;z-index:90;"></div>
+<table class="mytable">
+	<tr>
+		<th style="line-height:33px;">
+			商品分类：
+			<input type="text" placeholder="请选择商品分类" id="goodsCategoryOne" is_show="false">
+			<div class="goodsCategory one">
+				<ul>
+					{volist name="oneGoodsCategory" id="vo"}
+					<li class="js-category-one" category_id="{$vo.category_id}">{$vo.category_name}
+					{if condition="$vo.is_parent eq 1"}
+						<i class="fa fa-angle-right fa-lg"></i>
+					{/if}
+					</li>
+					{/volist}
+				</ul>
+			</div>
+			<div class="goodsCategory two" style="border-left:0;">
+				<ul id="goodsCategoryTwo">
+					
+				</ul>
+			</div>
+			<div class="goodsCategory three">
+				<ul id="goodsCategoryThree">
+					
+				</ul>
+			</div>
+			<div class="selectGoodsCategory">
+				<a href="javascript:;" id="confirmSelect" style="float:right;">确认选择</a>
+			</div>
+			<input type="hidden" id="category_id_1">
+			<input type="hidden" id="category_id_2">
+			<input type="hidden" id="category_id_3">
+			商品名称：<input id="goods_name" class="input-medium" type="text" value="{$search_info}" placeholder="要搜索的商品名称" >
+			
+			<input type="button" onclick="searchData()" value="搜索" />
+		</th>
+	</tr>
+</table>
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane active">
+		<table class="table table-striped table-main" border="0">
+			<colgroup>
+				<col width="3%">
+				<col width="25%">
+				<col width="12%">
+				<col width="9%">
+				<col width="8%">
+				<col width="7%">
+				<col width="7%">
+				<col width="15%">
+			</colgroup>
+			<tbody>
+				<tr class="table-title" style="background: white;z-index: 10;border: 1px solid #E3E3E3;">
+					<th></th>
+					<th style="padding-right: 166px;">商品名称</th>
+					<th style="">价格（元）</th>
+					<th style="padding-right: 35px;">总库存</th>
+					<th style="padding-right: 30px;">销量</th>
+					<th></th>
+					<th style="padding-right: 35px;">排序</th>
+					<th style="text-align: center;">操作</th>
+				</tr>
+				<tr class="trcss">
+					<td colspan="5">
+						<label style="display: inline-block;vertical-align: middle;">
+							<input onclick="CheckAll(this)" type="checkbox" id="chek_all">
+							<span style="display: inline-block; margin-left: 0px; margin-right: 10px;font-weight: 400;">全选</span>
+						</label>
+						<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+						<a class="btn btn-small fun-a" href="javascript:batchRegainDelete()">批量恢复</a> 
+						<input type='hidden'value='' id='goods_type_ids'/>
+					</td>
+				</tr>
+			</tbody>
+			<tbody id="productTbody" style="border: 0px;"></tbody>
+		</table>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+	//查询
+	function searchData(){
+		LoadingInfo(1);
+	}
+	
+	/**
+	 * 隐藏商品分组
+	 */
+	function hideEditGroup(){
+		$("#editGroup").popover("hide");
+	}
+	
+	function hideSetRecommend(){
+		$("#setRecommend").popover("hide");
+	}
+	
+	//查询用户列表
+	function LoadingInfo(page_index) {
+		var start_date = $("#startDate").val();
+		var end_date = $("#endDate").val();
+		var state = $("#state").val();
+		var goods_name =$("#goods_name").val();
+		var category_id_1 = $("#category_id_1").val();
+		var category_id_2 = $("#category_id_2").val();
+		var category_id_3 = $("#category_id_3").val();
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/goods/recyclelist')}",
+			data : {
+				"page_index" : page_index,
+				"page_size" : $("#showNumber").val(),
+				"start_date":start_date,
+				"end_date":end_date,
+				"state":state,
+				"goods_name":goods_name,
+				"category_id_1" : category_id_1,
+				"category_id_2" : category_id_2,
+				"category_id_3" : category_id_3
+				
+			},
+			success : function(data) {
+				//alert(JSON.stringify(data));
+				var html = '';
+				if (data["data"].length > 0) {
+					for (var i = 0; i < data["data"].length; i++) {
+						html += '<tr class="tr-title" style=" width: 1502px;"><td class="td-'+ data["data"][i]["goods_id"]+'"><label><input value="'
+							+ data["data"][i]["goods_id"]
+							+ '" tj="" name="sub" data-state="'+data["data"][i]["state"]+'" type="checkbox"></label></td>';
+						html += '<td colspan="7" style="width: 97%;"><div style="display: inline-block; width: 100%;" class="pro-code"><span>商家编码：'
+							+ data["data"][i]["code"] + '</span>';
+						/* if(data["data"][i]["state"] == 1){
+							html += '<span class="pro-code" style="color: #f35252; float: right;"> <i class="fa fa-long-arrow-up" style="margin-right: 4px;"></i>已上架';
+						}else{
+							html += '<span class="pro-code" style="color: #27A9E3; float: right;"> <i class="fa fa-long-arrow-up" style="margin-right: 4px;"></i>已下架';
+						} */
+						html += '<span class="pro-code" style="margin-left:10px;"><i class="fa fa-long-arrow-up" style="margin-right: 4px;"></i>创建时间：'+timeStampTurnTime(data["data"][i]["create_time"]);
+						html += '</span></div></td></tr>';
+						html += '<tr><td colspan="2" style="background: white;"><div><a class="a-pro-view-img" href="#" target="_blank"><img class="thumbnail-img"src="'+__IMG(data["data"][i]["pic_cover_micro"])+'">';
+						html += '<div class="div-pro-view-name"><span style="color: #13A5D5;" class="thumbnail-name title='+ data["data"][i]["goods_name"]+'"><a target="_blank" href="">'
+							+ data["data"][i]["goods_name"]
+							+ '</a></span>';
+						//html += '<div class="div-flag-style"><span class="" title=""><i class="icon-tablet"style="background: none; color: #555; font-size: 20px; margin-right: 0;"></i></span><span onmouseover="mouseover(this)" onmouseout="mouseout(this)"style="display: inline-block;"> <i class="icon-qrcode"style="background: none; color: #555; font-size: 20px; margin-right: 0;"></i></span>';
+						//html += '<div class="QRcode" style="display: none; position: absolute;"id="qrcode"><p><img src=""></p></div></div>';
+						html += '</div><div style="margin-top:10px;">';
+						html += data["data"][i]["is_hot"] == 1 ? '<i class="hot">热</i>' : '';
+						html += data["data"][i]["is_recommend"] == 1 ? '<i class="recommend">荐</i>' : '';
+						html += data["data"][i]["is_new"] == 1 ? '<i class="new">新</i>' : '';
+						html += '<span  class="div-flag-style" style="display: inline-block;"> <i class="icon-qrcode"style="background: none; color: #555; font-size: 20px; margin-right: 0;"></i></span>';
+						html += '<div class="QRcode" style="display: none; position: absolute;"id="qrcode"><p><img src="'+ __IMG(data["data"][i]["QRcode"])+'" style="width:110px;"></p></div>';
+					    html += '</div></div></td>';
+						html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable">原&nbsp;&nbsp;&nbsp;价：</span><span class="price-numble" style="color: #666;"id="moreChangePrice'+ data["data"][i]["goods_id"]+'"  >'
+							+ data["data"][i]["price"]
+							+ '</span></div>';
+						html += '<div><span class="price-lable" >销售价：</span><span class="price-numble"id="moreChangePrice'+ data["data"][i]["goods_id"]+'" style="color:red;">'
+							+ data["data"][i]["promotion_price"]
+							+ '</span>';
+						html += '</td>';
+						html += '<td style="background: white;"><div class="cell"><span class="pro-stock" style="color: #666;"id="moreChangeStock'+ data["data"][i]["goods_id"] + '">'
+							+ data["data"][i]["stock"]
+							+ '</span></div></td>';
+						html += '<td style="background: white;"><div class="cell"><span class="pro-stock" style="color: #666;"id="moreChangeStock'+ data["data"][i]["goods_id"]+'">'
+							+ data["data"][i]["real_sales"]
+							+ '</span></div></td>';
+// 						if(data["data"][i]["state"] == 1){
+// 							html += '<td style="background: white;">已上架</td>';
+// 						}else{
+// 							html += '<td style="background: white;">已下架</td>';
+// 						}
+						html += '<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+						html += '<td style="background: white;"><div class="cell"><span class="price-numble" onclick="oneChangeSort(this)">'
+							+ data["data"][i]["sort"]
+							+ '</span><input class="input-mini" pid="'
+							+ data["data"][i]["goods_id"]
+							+ '" style="display: none"value="'
+							+ data["data"][i]["sort"]
+							+ '" onblur="changeSort(this)" oldsort="'
+							+ data["data"][i]["sort"]
+							+ '" type="number"></div></td>';
+						html += '<td style="background: white;"><div class="cell"><div class="bs-docs-example tooltip-demo"style="text-align: center;">';
+						html += '<a href="javascript:;" data-placement="bottom" data-original-title="删除"><span class="edit" style="display: inline-block; width: 19%;" onclick="deleteGoods('
+							+ data["data"][i]["goods_id"]
+							+ ')"><i class="icon-edit" style="width: initial;"></i>删除</span></a>';
+						html += '<a href="javascript:void(0)" data-placement="bottom"onclick="regainGoodsDeleted('
+							+ data["data"][i]["goods_id"]
+							+ ')" data-original-title="恢复"><span class="del" style="display: inline-block; width: 19%;"><i class="icon-trash" style="width: initial;"></i>恢复</span></a></div></div></td></tr>';
+					}
+				} else {
+					html += '<tr align="center"><th colspan="8" style="text-align: center;font-weight: normal;color: #999;">暂无符合条件的数据记录</th></tr>';
+				}
+				$("#productTbody").html(html);
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+				code();
+			}
+		});
+	}
+	//二维码显示
+ 	function code(){
+		$(".div-flag-style").mouseover(function(){
+			$(this).siblings('.QRcode').show();
+		});
+		$(".div-flag-style").mouseout(function(){
+			$(this).siblings('.QRcode').hide();
+		});
+	} 
+	//全选
+	function CheckAll(event){
+		var checked = event.checked;
+		$("#productTbody input[type = 'checkbox']").prop("checked",checked);
+	}
+	
+//批量删除回收站数据
+	function batchDelete() {
+		var goods_ids= new Array();
+		$("#productTbody input[type='checkbox']:checked").each(function() {
+			if (!isNaN($(this).val())) {
+				goods_ids.push($(this).val());
+			}
+		});
+		if(goods_ids.length ==0){
+			$( "#dialog" ).dialog({
+				buttons: {
+					"确定,#e57373": function() {
+						$(this).dialog('close');
+					}
+				},
+				contentText:"请选择需要操作的记录",
+				title:"消息提醒",
+			});
+			return false;
+		}
+		deleteGoods(goods_ids);
+	}
+	//单个删除回收站数据
+	function deleteGoods(goods_ids){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定": function() {
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/goods/emptydeletegoods')}",
+						data : {
+							"goods_ids" : goods_ids.toString()
+						},
+						dataType : "json",
+						success : function(data) {
+							if(data["code"] > 0 ){
+								LoadingInfo(getCurrentIndex(goods_ids,'#productTbody','tr[class="tr-title"]'));
+								
+								$("#dialog").dialog({
+									buttons: {
+										"确定": function() {
+											$(this).dialog('close');
+										}
+									},
+									modal: true,
+									contentText:data["message"],
+									title:"消息提醒",
+									time:1
+								});
+								$("#chek_all").prop("checked", false);
+							}
+						}
+					});
+					$(this).dialog('close');
+				},
+				"取消,#e57373": function() {
+					$(this).dialog('close');
+				},
+			},
+			contentText:"确定要从回收站彻底删除吗？",
+		});
+	}
+	//批量恢复
+	function batchRegainDelete(){
+		var goods_ids= new Array();
+		$("#productTbody input[type='checkbox']:checked").each(function() {
+			if (!isNaN($(this).val())) {
+				goods_ids.push($(this).val());
+			}
+		});
+		if(goods_ids.length ==0){
+			$( "#dialog" ).dialog({
+				buttons: {
+					"确定,#e57373": function() {
+						$(this).dialog('close');
+					}
+				},
+				contentText:"请选择需要操作的记录",
+				title:"消息提醒",
+			});
+			return false;
+		}
+		regainGoodsDeleted(goods_ids);
+	}
+	//单个恢复已删除商品
+	function regainGoodsDeleted(goods_ids){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定": function() {
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/goods/regaingoodsdeleted')}",
+						data : {
+							"goods_ids" : goods_ids.toString()
+						},
+						dataType : "json",
+						success : function(data) {
+							if(data["code"] > 0 ){
+								LoadingInfo(getCurrentIndex(goods_ids,'#productTbody','tr[class="tr-title"]'));
+								
+								$("#dialog").dialog({
+									buttons: {
+										"确定": function() {
+											$(this).dialog('close');
+										}
+									},
+									modal: true,
+									contentText:data["message"],
+									title:"消息提醒",
+									time:1
+								});
+								$("#chek_all").prop("checked", false);
+							}
+						}
+					});
+					$(this).dialog('close');
+				},
+				"取消,#e57373": function() {
+					$(this).dialog('close');
+				},
+			},
+			contentText:"确定要恢复吗？",
+		});
+	}
+
+	$("#goodsCategoryOne").click(function(){
+		var isShow = $("#goodsCategoryOne").attr('is_show');
+		if(isShow == "false"){
+			$(".one").show();
+			$(".selectGoodsCategory").css("width",'216px');
+			$(".selectGoodsCategory").show();
+			$("#goodsCategoryOne").attr('is_show','true');
+			$(".js-mask-category").show();
+		}else{
+			$(".one").hide();
+			$(".two").hide();
+			$(".three").hide();
+			$(".selectGoodsCategory").css("width",'216px');
+			$(".selectGoodsCategory").hide();
+			$("#goodsCategoryOne").attr('is_show','false');
+		}
+	})
+	$(".js-mask-category").click(function(){
+		$(".one").hide();
+		$(".selectGoodsCategory").hide();
+		$(".two").hide();
+		$(".three").hide();
+		$("#goodsCategoryOne").attr('is_show', 'false');
+		$(this).hide();
+	})
+	$(".js-category-one").click(function(){
+		parentId = $(this).attr("category_id");
+		category_name = $(this).text();
+		$(".one ul li").not($(this)).removeClass("selected");
+		$(this).addClass("selected");
+		$("#goodsCategoryOne").val($.trim(category_name)+">");
+		$("#category_id_1").val(parentId);
+		$("#category_id_2").val('');
+		$("#category_id_3").val('');
+		$.ajax({
+			type : 'post',
+			url : "{:__URL('ADMIN_MAIN/goods/getcategorybyparentajax')}",
+			data : {"parentId":parentId},
+			success : function(data){		
+				if(data.length>0){
+					html = ''
+						for (var i = 0; i < data.length; i++) {
+							html += '<li class="js-category-two" category_id="'+data[i]['category_id']+'">'+data[i]['category_name'];
+							if(data[i]['is_parent'] == 1){
+								html += '<i class="fa fa-angle-right fa-lg"></i>';
+							}
+							html += '</li>';
+						}
+					$("#goodsCategoryTwo").html(html);
+					$(".two").show();
+					$(".selectGoodsCategory").css("width",'433px');
+				}else{
+					$(".one").hide();
+					$(".two").hide();
+					$(".js-mask-category").hide();
+					$(".selectGoodsCategory").hide();
+					$("#goodsCategoryOne").attr('is_show', 'false');
+				}
+				$(".three").hide();
+			}
+		});
+		return false;	
+	});
+	$(".js-category-two").live("click",function(event){
+		var parentId = $(this).attr("category_id");
+		var category_name = $(this).text();
+		$(".two ul li").not($(this)).removeClass("selected");
+		$(this).addClass("selected");
+		var goodsCategoryOne = $("#goodsCategoryOne").val();
+		$("#goodsCategoryOne").val(goodsCategoryOne+''+category_name+'>');
+		$("#category_id_2").val(parentId);
+		$("#category_id_3").val('');
+		$.ajax({
+			type : 'post',
+			url : "{:__URL('ADMIN_MAIN/goods/getcategorybyparentajax')}",
+			data : {"parentId":parentId},
+			success : function(data){		
+				if(data.length>0){
+					html = ''
+					for (var i = 0; i < data.length; i++) {
+						html += '<li onclick="goodsCategoryThree(this);" category_id="'+data[i]['category_id']+'">'+data[i]['category_name']+'<i class="fa fa-angle-right fa-lg"></i></li>';
+					}
+					$("#goodsCategoryThree").html(html);
+					$(".three").show();
+					$(".selectGoodsCategory").css("width",'517px');
+				}else{
+					$(".one").hide();
+					$(".two").hide();
+					$(".three").hide();
+					$(".selectGoodsCategory").hide();
+					$(".js-mask-category").hide();
+					$("#goodsCategoryOne").attr('is_show', 'false');
+				}
+			}
+		})	
+		event.stopPropagation();
+	});
+	function goodsCategoryThree(obj){
+		var parentId = $(obj).attr("category_id");
+		var category_name = $(obj).text();
+		$(".three ul li").not($(obj)).removeClass("selected");
+		$(obj).addClass("selected");
+		var goodsCategoryOne = $("#goodsCategoryOne").val();
+		$("#goodsCategoryOne").val(goodsCategoryOne+''+category_name);
+		$("#category_id_3").val(parentId);
+		$(".one").hide();
+		$(".two").hide();
+		$(".three").hide();
+		$(".selectGoodsCategory").hide();
+		$(".js-mask-category").hide();
+		//$(".selectGoodsCategory").css("width",'216px');
+		$("#goodsCategoryOne").attr('is_show','false');
+// 		$(".selectGoodsCategory").css("width",'216px');
+	}
+	$("#confirmSelect").click(function(){
+		$(".one").hide();
+		$(".two").hide();
+		$(".three").hide();
+		$(".selectGoodsCategory").hide();
+		$(".selectGoodsCategory").css("width",'216px');
+	})
+</script>
+{/block}

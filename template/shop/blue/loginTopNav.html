@@ -1,0 +1,180 @@
+<script>
+//验证用户名
+function verifyUsername(username){
+	
+	var is_true =0;
+	if(/.*[\u4e00-\u9fa5]+.*$/.test(username) ){
+		is_true = 1;
+		$("#mobileregistermodel-username").trigger("focus");
+		$('#mobileregistermodel-username').css("border","1px solid red");
+		$("#usernameyz").css("color","red").text("{:lang('username_cannot_includ_chinese_characters')}");
+		return is_true;
+	}
+	if(/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(username) ){
+		is_true = 1;
+		$("#mobileregistermodel-username").trigger("focus");
+		$('#mobileregistermodel-username').css("border","1px solid red");
+		$("#usernameyz").css("color","red").text("{:lang('user_name_canno_be_mailbox')}");
+		return is_true;
+	}
+	if(/^1(3|4|5|7|8)\d{9}$/.test(username) ){
+		is_true = 1;
+		$("#mobileregistermodel-username").trigger("focus");
+		$('#mobileregistermodel-username').css("border","1px solid red");
+		$("#usernameyz").css("color","red").text("{:lang('user_name_canno_be_phone')}");
+		return is_true;
+	}
+	var username_verify = "{$reg_config['name_keyword']}";
+	var usernme_verify_array = new Array();
+	if($.trim(username_verify) != "" && username_verify != undefined){
+		usernme_verify_array  = username_verify.split(",");
+	}
+	usernme_verify_array.push(",");
+	usernme_verify_array.push(" ");
+	$.each(usernme_verify_array,function(k,v){
+		//if($.trim(v) != ""){
+			if(username.indexOf(v) >= 0){
+				is_true = 1;
+				$("#mobileregistermodel-username").trigger("focus");
+				$('#mobileregistermodel-username').css("border","1px solid red");
+				$("#usernameyz").css("color","red").text("{:lang('username_cannot_includ')}'"+v+"'{:lang('such_characters')}");
+				return false;
+			}			
+		//}
+	});
+	return is_true;
+}
+//验证密码
+function verifyPassword(password){
+	var is_true = 0;
+	var min_length_str = "{$reg_config['pwd_len']}";
+	if($.trim(min_length_str) != "" ){
+		var min_length = parseInt(min_length_str);	
+	}else{
+		var min_length = 5;
+	}
+	if($.trim(password) == ""){
+		is_true = 1;
+		$("#password").trigger("focus");
+		$("#password").css("border","1px solid red");
+		$("#yzpassword").css("color","red").text("{:lang('password_cannot_empty')}");
+		return is_true;
+	}else{
+		$("#password").css("border","1px solid #ccc");
+		$("#yzpassword").css("color","red").text("");
+	}
+	if(min_length  > 0){
+		
+		if(password.length < min_length){
+			is_true = 1;
+			$("#password").trigger("focus");
+			$("#password").css("border","1px solid red");
+			$("#yzpassword").css("color","red").text("{:lang('minimum_password_length')}"+min_length);
+			return is_true;
+		}else{			
+			$("#password").css("border","1px solid #ccc");
+			$("#yzpassword").css("color","red").text("");
+		}
+		
+	}else{
+		
+	}
+	
+	//验证汉字
+	if(/.*[\u4e00-\u9fa5]+.*$/.test(password) ){
+		is_true = 1;
+		$("#password").trigger("focus");
+		$("#password").css("border","1px solid red");
+		$("#yzpassword").css("color","red").text("{:lang('password_cannot_includ_chinese_characters')}!");
+		return is_true;
+	}else{			
+		$("#password").css("border","1px solid #ccc");
+		$("#yzpassword").css("color","red").text("");
+	}
+	var regex_str = "{$reg_config['pwd_complexity']}";
+	if($.trim(regex_str) != "" && regex_str != undefined){
+		//验证是否包含数字
+		if(regex_str.indexOf("number") >= 0){
+			var number_test =  /[0-9]/;
+			if(!number_test.test(password)){
+				is_true = 1;
+				$("#password").trigger("focus");
+				$("#password").css("border","1px solid red");
+				$("#yzpassword").css("color","red").text("{:lang('password_must_contain_numbers')}!");
+				$('#mobileregistermodel-username').css("border","1px solid #ccc");
+				$("#usernameyz").css("color","red").text("");
+				return is_true;
+			}else{
+				$("#password").css("border","1px solid #ccc");
+				$("#yzpassword").css("color","red").text("");
+			}	
+		}
+		//验证是否包含小写字母
+		if(regex_str.indexOf("letter") >= 0){
+			var letter_test =  /[a-z]/;
+			if(!letter_test.test(password)){
+				is_true = 1;
+				$("#password").trigger("focus");
+				$("#password").css("border","1px solid red");
+				$("#yzpassword").css("color","red").text("{:lang('password_must_have_lowercase_letters')}!");
+				$('#mobileregistermodel-username').css("border","1px solid #ccc");
+				$("#usernameyz").css("color","red").text("");
+				return is_true;
+			}else{
+				$("#password").css("border","1px solid #ccc");
+				$("#yzpassword").css("color","red").text("");
+			}	
+		}
+		//验证是否包含大写字母
+		if(regex_str.indexOf("upper_case") >= 0){
+			var upper_case_test =  /[A-Z]/;
+			if(!upper_case_test.test(password)){
+				is_true = 1;
+				$("#password").trigger("focus");
+				$("#password").css("border","1px solid red");
+				$("#yzpassword").css("color","red").text("{:lang('password_must_have_uppercase_letters')}!");
+				$('#mobileregistermodel-username').css("border","1px solid #ccc");
+				$("#usernameyz").css("color","red").text("");
+				return is_true;
+			}else{
+				$("#password").css("border","1px solid #ccc");
+				$("#yzpassword").css("color","red").text("");
+			}	
+		}
+		//验证是否包含特殊字符
+		if(regex_str.indexOf("symbol") >= 0){
+			var symbol_test =  /[^A-Za-z0-9]/;
+			if(!symbol_test.test(password)){
+				is_true = 1;
+				$("#password").trigger("focus");
+				$("#password").css("border","1px solid red");
+				$("#yzpassword").css("color","red").text("{:lang('password_must_contain_symbols')}!");
+				$('#mobileregistermodel-username').css("border","1px solid #ccc");
+				$("#usernameyz").css("color","red").text("");
+				return is_true;
+			}else{
+				$("#password").css("border","1px solid #ccc");
+				$("#yzpassword").css("color","red").text("");
+			}	
+		}
+	}
+	return is_true;
+}
+
+</script>
+<div class="reg-type">
+	<p class="login-info">
+		{:lang('i_have_registered_now')}<a href="{:__URL('SHOP_MAIN/login/index')}" title="{:lang('log_in')}" class="color">&nbsp;{:lang('login')}</a>
+	</p>   
+	<ul class="clearfix">
+		{if condition = "strpos($reg_config['register_info'],'plain') !== false"}
+		<li {if condition = "$login_type eq 'plain'"}class="active" {/if}><a {if condition = "$login_type eq 'plain'"}href="javascript:void(0);"{else/}href="{:__URL('SHOP_MAIN/login/register')}"{/if}>{:lang('general_registration')}</a></li> 
+		{/if} 
+		{if condition = "strpos($reg_config['register_info'],'mobile') !== false"}
+		<li {if condition = "$login_type eq 'mobile'"}class="active" {/if}><a {if condition = "$login_type eq 'mobile'"}href="javascript:void(0);"{else/}href="{:__URL('SHOP_MAIN/login/mobile')}"{/if}>{:lang('mobile_registration')}</a></li> 
+		{/if} 
+		{if condition = "strpos($reg_config['register_info'],'email') !== false"}
+		<li {if condition = "$login_type eq 'email'"}class="active" {/if}><a {if condition = "$login_type eq 'email'"}href="javascript:void(0);"{else/}href="{:__URL('SHOP_MAIN/login/email')}"{/if}>{:lang('mailbox_registration')}</a></li> 
+		{/if}
+	</ul>
+</div>

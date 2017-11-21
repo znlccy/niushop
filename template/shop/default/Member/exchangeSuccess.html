@@ -1,0 +1,16 @@
+{extend name="shop/default/Member/base" /}
+<style type="text/css"> 
+</style>
+{block name="main"}
+<script>
+$(document).ready(function(){
+	window.location = __URL("SHOP_MAIN/member/balancelist");
+})
+</script>
+		<div style="width:100px;height:50px;line-height:50px;font-size:16px;border-bottom:2px solid red;">
+			{:lang('member_balance')}
+        </div>
+<input type="hidden" value="{$shop_id}" id="getshopid"/>
+<span style="font-size:24px; display:block; text-align:center; width:100%;color:red;margin-top:100px;">{:lang('member_successful_exchange')}</span>
+{/block}
+{/extend}

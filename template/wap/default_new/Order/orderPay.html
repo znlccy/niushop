@@ -1,0 +1,64 @@
+{extend name="wap/default_new/base" /} {block name="resources"}
+<meta content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/order.css">
+<style>
+.head-info {
+	height: 70px;
+	text-align: center;
+	margin-top: 45px;
+	border-bottom: 1px solid #F0F0F0;
+	background: #FFF;
+	padding-top: 10px;
+}
+</style>
+{/block} {block name="main"}
+<div class="head-info">
+	<div style="float: left; width: 150px;">
+		<img src="__TEMP__/{$style}/public/images/nk_shop.png"
+			style="width: 60px; height: 60px;" />
+	</div>
+	<div style="float: left; line-height: 28px;">
+		<p>￥{$order_detail.pay_money}</p>
+		<p>{$order_detail.shop_name}</p>
+	</div>
+</div>
+<div style="padding: 8px 15px; margin-top: 10px; background: #FFF;">
+	<div style="font-size: 16px; padding: 5px 0px">{:lang('member_payment_method')}</div>
+	<div style="padding: 5px 0px;">
+		<img src="__TEMP__/{$style}/public/images/weifu.png"
+			style="margin-right: 10px"><span
+			style="font-size: 14px; line-height: 28px">{:lang('wechat_payment')}</span><span
+			id="wchatpay" style="float: right"></span>
+	</div>
+	<div style="padding: 5px 0px">
+		<img src="__TEMP__/{$style}/public/images/zhifu.png"
+			style="margin-right: 10px"><span
+			style="font-size: 14px; line-height: 31px">{:lang('alipay')}</span><span
+			id="alipay" style="float: right"></span>
+	</div>
+	<input type="hidden" id="pay_type" value="0"> <input
+		type="hidden" id="out_trade_no" value="{$out_trade_no}">
+</div>
+<!-- <div style="height:45px"></div> -->
+<!--   需要微信支付，此处移至待付款订单，显示下面按钮 begin -->
+<section class="s-btn"
+	style="position: fixed; left: 0; right: 0; bottom: 0; height: 50px; padding: 0; z-index: 5;">
+	<button class="alipay" type="button" onclick="calculate()">{:lang('confirm_payment')}￥{$order_detail.pay_money}</button>
+</section>
+<script>
+	var __IMG__ = '__TEMP__/{$style}/public/images';
+	function calculate() {
+		var pay_type = $("#pay_type").val();
+		var out_trade_no = $("#out_trade_no").val();
+		if (pay_type == 0) {
+			//微信支付
+			window.location.href = __URL("APP_MAIN/pay/wchatpay?no=" + out_trade_no);
+		} else if (pay_type == 1) {
+			//支付宝支付
+			window.location.href = __URL("APP_MAIN/pay/alipay?no=" + out_trade_no);
+		}
+	}
+</script>
+<script type="text/javascript"
+	src="__TEMP__/{$style}/public/js/payment_order.js"></script>
+{/block} {block name="bottom"} {/block}

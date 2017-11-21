@@ -1,0 +1,46 @@
+@CHARSET "UTF-8";
+
+.team {
+	margin-top: 45px;
+}
+
+.team-item {
+	padding: 10px;
+	height: 70px;
+	border-bottom: 1px solid #E2E1E1;
+	position: relative;
+}
+
+.team-item img {
+	vertical-align: middle;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	margin-right: 10px;
+	margin-top: 10px;
+}
+
+.team-info {
+	position: absolute;
+	top: 20%;
+	display: inline-block;
+}
+
+.team-info strong {
+	font-weight: normal;
+	color: #333333;
+	font-size: 14px;
+}
+
+.team-info time {
+	color: #B0B0B0;
+	font-size: 12px;
+}
+.team-info .role_name{
+	font-size: 14px;
+	color: #EE4349;
+}
+.team-info .role_user{
+	font-size: 12px;
+	color: #B0B0B0;
+}

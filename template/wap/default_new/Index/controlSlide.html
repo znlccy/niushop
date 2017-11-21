@@ -1,0 +1,30 @@
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/slick.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<script src="__TEMP__/{$style}/public/js/slick.js"></script>
+<div class="index_slide">
+{if condition="$plat_adv_list['is_use'] eq 1"}
+	{if condition="$plat_adv_list['adv_list'][0]['adv_image'] neq ''"}
+	<div class="slick">
+		{foreach name="plat_adv_list['adv_list']" item="v"}
+		<div style="display:block;text-align:center;width:100%;height:{$plat_adv_list.ap_height}px;line-height:{$plat_adv_list.ap_height}px;">
+			<a href="{$v.adv_url}">
+				<img src="{:__IMG($v.adv_image)}" alt="{:lang('carousel_figure')}" style="height:100%;max-width:100%;display: inline-block !important;vertical-align: middle !important;">
+			</a>
+		</div>
+	{/foreach}
+	</div>
+	
+	{/if}
+{/if}
+<div class="shade"></div>
+</div>
+
+<script>
+$('.slick').slick({
+	slidesToShow: 1,
+	slidesToScroll: 1,
+	autoplay: true,
+	arrows:false,
+	autoplaySpeed: 2000,
+});
+</script>

@@ -1,0 +1,183 @@
+{extend name="shop/default/Login/base"}
+{block name="main"}
+<script>
+/*     $(function(){
+        // 刷新验证码
+        var verifyimg = $(".verifyimg").attr("src");
+        $(".reloadverify").click(function(){
+            if( verifyimg.indexOf('?')>0){
+                $(".verifyimg").attr("src", verifyimg+'&random='+Math.random());
+            }else{
+                $(".verifyimg").attr("src", verifyimg.replace(/\?.*$/,'')+'?'+Math.random());
+            }
+        });
+    }) */
+</script>
+<div class="header w990">
+	<div class="logo-info">
+		<a href="SHOP_MAIN/index/index.html" class="logo"><img alt="" src="__UPLOAD__/{$web_info['logo']}" /></a>
+			<span class="findpw">忘记密码</span>
+	</div>
+</div>
+
+<div class="w990"> 
+   
+    <div id="find-pw">
+    <div class="find-con">
+      <div id="sflex04" class="stepflex">
+        <dl class="first doing">
+          <dt class="s-num">1</dt>
+          <dd class="s-text"> 填写账户名 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="normal">
+          <dt class="s-num">2</dt>
+          <dd class="s-text"> 验证身份 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="normal">
+          <dt class="s-num">3</dt>
+          <dd class="s-text"> 设置新密码 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="last">
+          <dt class="s-num">&nbsp;</dt>
+          <dd class="s-text"> 完成 <s></s> <b></b> </dd>
+        </dl>
+      </div>
+      <div id="find-box" class="uc-box">
+        <div class="find-pwd-con"> 
+         
+          <!-- <form action="SHOP_MAIN/login/findpasswd2" method="post" id="fpForm" name="fpForm"> -->
+            <input type="hidden" name="action" value="check_username" />
+            <div id="error_container"></div>
+            <div class="item">
+              <label>账户名</label>
+              <input name="u_name" id="u_name" type="text" tabindex="1" placeholder="请输入您的用户名/邮箱/已验证的手机" class="text" />
+              <span id="usernameyz"></span>
+              <input type="hidden" value="存在" id="isset_username"/>
+            </div>
+            <div class="item">
+              <label>验证码</label>
+              <input type="text" id="captcha" name="captcha" tabindex="2" placeholder="请输入验证码" autocomplete="off" class="text text-te" />
+              <label class="img" style="margin-left: 5px"> <img class="verifyimg" src=" {:captcha_src()}" onclick="this.src='{:captcha_src()}'"  alt="captcha" style="vertical-align: middle; cursor: pointer; height: 35px;" /> </label>
+          	  <span id="vertify"></span>
+            </div>
+            <div class="item">
+              <label></label>
+              <input type="button" id="btn_submit" class="btn_next" value="下一步" />
+              <input type="hidden" name="act" value="check_username" />
+            </div>
+            <div class="item">
+              <h2 class="find_pw_tit"><span>如果您忘记了账户名，将无法找回您的账户信息，您还可以<a href="SHOP_MAIN/login/register.html" title="立即注册" style="color:red;">重新注册&gt;&gt;</a></span></h2>
+            </div>
+        <!--   </form> -->
+        <form id="findPass" name="findPass" action="SHOP_MAIN/login/findpasswdSecond" method="post">
+             <input type="hidden" name="user_name" value="" id="user_name"/>
+        </form>
+        
+        
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+/* 			$(document).ready(function(){
+				var container = $("#error_container");
+				$("#fpForm").validate({
+					rules: {
+						u_name: "required",
+						captcha: {
+							required: true,
+							maxlength: 4
+						}
+					},
+					messages: {
+						u_name: "请输入您的用户名/邮箱/已验证的手机",
+						captcha: {
+							required: "验证码不能为空",
+							max: "验证码格式不正确"
+						}
+					},
+					errorPlacement: function(error, element) {
+						error.appendTo(element.parent());
+					}
+				});
+				$("#btn_submit").click(function(){
+					$("#fpForm").submit();
+				});
+			}); */
+	$(document).ready(function(){
+			$("#u_name").change(function(){
+					var user_name = $(this).val();
+					$(this).css("border","1px solid #ccc");
+/* 					$("#usernameyz").css("color","black").text(""); */
+					$("#isset_username").attr("value","存在");
+					$.ajax({
+						type: "GET",
+						url: "SHOP_MAIN/Login/findPasswd",
+						data: {"username":user_name},
+						success: function(data){
+							//alert(JSON.stringify(data));
+							if(data){
+								//$("#usernameyz").removeClass("error");
+								$("#usernameyz").text("").hide();
+							}else{
+								//$("#u_name").css("border","1px solid red");
+								$("#usernameyz").addClass("error").text("用户名不存在").show();
+								$("#isset_username").attr("value","不存在");
+							}
+						} 
+					});
+				
+			});	
+			
+			$("#btn_submit").click(function(){
+				
+				var username = $("#u_name").val();
+				var isset_username = $("#isset_username").attr("value");
+				var vertification = $("#captcha").val();
+				var re =  /^(?!\d+$)[\da-zA-Z]*$/i;
+				$("#user_name").val(username);
+				if(username == ""){
+					$("#u_name").trigger("focus");
+					//$('#u_name').css("border","1px solid red");
+					$("#usernameyz").addClass("error").text("请输入用户名").show();
+					return false;
+				}
+				if(isset_username == "不存在"){
+					$("#u_name").trigger("focus");
+					//$('#u_name').css("border","1px solid red");
+					$("#usernameyz").addClass("error").text("用户名不存在");
+					return false;
+				}
+				if(vertification == ''){
+					$("#captcha").trigger("focus");
+					//$("#captcha").css("border","1px solid red");
+					$("#vertify").addClass("error").text("请输入验证码");
+					return false;
+				} 
+				$.ajax({
+		 			type:"post",
+		 		    url:"SHOP_MAIN/login/vertify",
+		 		    data:{'vertification':vertification},
+		 		    async : true,
+		 		    dataType:'json',
+		 		    success:function(data){
+		 		    	//alert(JSON.stringify(data)); 
+		 		    	if (data['code'] == 1) {
+		 		    		$("#findPass").submit();
+// 		 		    		location.href="SHOP_MAIN/login/findPasswd2.html";
+		 				}else {
+		 					$("#vertify").addClass("error").text("验证码错误");
+		 					$(".verifyimg").attr("src",'{:captcha_src()}');
+		 					return false;
+		 				}
+		 		    }
+		 		}); 
+			});
+				
+			});			
+	</script> 
+</div>
+   
+  
+  
+</div>
+{/block}

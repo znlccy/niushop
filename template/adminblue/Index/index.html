@@ -1,0 +1,330 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/dashboard.css">
+<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_index.css">
+<script src="ADMIN_JS/highcharts.js"></script>
+<script src="ADMIN_JS/exporting.js"></script>
+<script src="ADMIN_JS/index.js"></script>
+<script src="ADMIN_JS/jquery.timers.js"></script>
+<!-- ********************【脚本统一写在index.js中】******************** -->
+{/block}
+{block name="ns_notice"}
+<div class="ns-notice">
+	<nav>
+		<ul>
+			<li>网站名称：<span>{$title_name}</span></li>
+			<li>当前版本：<span>{$niu_version}</span></li>
+			<li>最后登录时间：<span>{$user_info['last_login_time'] | getTimeStampTurnTime}</span></li>
+			<li>最后登录IP：<span>{$user_info['last_login_ip']}</span></li>
+<!-- 			<li class="nav" style="display:none;"> -->
+<!-- 				<strong></strong> -->
+<!-- 				<a href="{:__URL('ADMIN_MAIN')}">{$title_name}</a> -->
+<!-- 				{if condition="$frist_menu.module_name != ''"} -->
+<!-- 				<i class="fa fa-angle-right"></i> -->
+<!-- 				<a href="{:__URL('ADMIN_MAIN/'.$frist_menu['url'])}">{$frist_menu.module_name}</a> -->
+<!-- 				{/if} -->
+<!-- 				{if condition="$secend_menu.module_name != ''"} -->
+<!-- 				<i class="fa fa-angle-right"></i> -->
+<!-- 					需要加跳转链接用这个：ADMIN_MAIN/{$secend_menu.url} -->
+<!-- 					<a href="javascript:;">{$secend_menu.module_name}</a> -->
+<!-- 				{/if} -->
+<!-- 			</li> -->
+		</ul>
+	</nav>
+</div>
+<div style="height:40px;"></div>
+{/block}
+{block name="warm_prompt"}{/block}
+{block name="thirdmenu"}{/block}
+{block name="right_tab_tip"}{/block}
+{block name="main"}
+<div class="statistical">
+	<ul>
+		<li>
+			<div class="left">
+				<img src="__STATIC__/blue/img/order_amount.png" />
+			</div>
+			<div class="right">
+				<strong class="js-order-amount">0.00</strong>
+				<p>今日订单总金额(元)</p>
+			</div>
+		</li>
+		<li>
+			<div class="left">
+				<img src="__STATIC__/blue/img/focus_number.png" />
+			</div>
+			<div class="right">
+				<strong class="js-weixin-fans-count">0</strong>
+				<p>关注人数(个)</p>
+			</div>
+		</li>
+		<li>
+			<div class="left">
+				<img src="__STATIC__/blue/img/goods_release.png" />
+			</div>
+			<div class="right">
+				<strong class="js-goods-release-count">0</strong>
+				<p>商品发布(个)</p>
+			</div>
+		</li>
+		<li>
+			<div class="left">
+				<img src="__STATIC__/blue/img/order_total.png" />
+			</div>
+			<div class="right">
+				<strong class="js-order-total">0</strong>
+				<p>订单总数(笔)</p>
+			</div>
+		</li>
+		<li>
+			<div class="left">
+				<img src="__STATIC__/blue/img/month_sales.png" />
+			</div>
+			<div class="right">
+				<strong class="js-month-sales">0</strong>
+				<p>本月销量(笔)</p>
+			</div>
+		</li>
+		<li>
+			<div class="left">
+				<img src="__STATIC__/blue/img/finish_count.png" />
+			</div>
+			<div class="right">
+				<strong class="js-order-finish-count">0</strong>
+				<p>已完成交易(笔)</p>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div class="goods-prompt">
+	<h3>
+		<i class="i-circular"></i>店铺及商品提示<span>您需要关注的店铺信息以及待处理事项</span>
+	</h3>
+	<div class="goods-state a-line">
+		<ul>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/goods/goodslist','state=1')}">
+					<strong class="goods_sale_count">0</strong>
+					<span>出售中</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/goods/goodslist','state=0')}">
+					<strong class="goods_audit_count">0</strong>
+					<span>仓库中</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/saleservice/consultlist?type=to_reply')}">
+					<strong class="goods_consult_count">0</strong>
+					<span>待回复咨询</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/member/usercommissionwithdrawlist')}">
+					<strong class="member_balance_withdraw">0</strong>
+					<span>会员提现审核</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/goods/goodslist','stock_warning=1')}">
+					<strong class="stock_early_warning">0</strong>
+					<span>库存预警</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<div class="merchants-help">
+	<h3>
+		<i class="i-circular"></i>商家帮助<span>您需要的商家帮助</span>
+	</h3>
+	<div class="merchants-use">
+		<ul>
+			<li><a href="{:__URL('ADMIN_MAIN/goods/goodslist')}"><img src="__STATIC__/blue/img/goods_management.png" /><span>商品管理</span></a></li>
+			<li><a href="{:__URL('ADMIN_MAIN/promotion/coupontypelist')}"><img src="__STATIC__/blue/img/promotions.png" /><span>促销方式</span></a></li>
+			<li><a href="{:__URL('ADMIN_MAIN/order/orderlist')}"><img src="__STATIC__/blue/img/order_after.png" /><span>订单及售后</span></a></li>
+		</ul>
+	</div>
+</div>
+
+<div class="goods-prompt">
+	<h3>
+		<i class="i-circular"></i>交易提示<span>您需要立即处理的交易订单</span>
+	</h3>
+	<div class="goods-state a-line order">
+		<ul>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/order/orderlist?status=0')}">
+					<strong class="daifukuan">0</strong>
+					<span>待付款</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/order/orderlist?status=1')}">
+					<strong class="daifahuo">0</strong>
+					<span>待发货</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/order/orderlist?status=2')}">
+					<strong class="yifahuo">0</strong>
+					<span>已发货</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/order/orderlist?status=3')}">
+					<strong class="yishouhuo">0</strong>
+					<span>已收货</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/order/orderlist?status=4')}">
+					<strong class="yiwancheng">0</strong>
+					<span>已完成</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/order/orderlist?status=5')}">
+					<strong class="yiguanbi">0</strong>
+					<span>已关闭</span>
+				</a>
+			</li>
+			<li>
+				<a href="{:__URL('ADMIN_MAIN/order/orderlist?status=-1')}">
+					<strong class="tuikuanzhong">0</strong>
+					<span>退款中</span>
+				</a>
+			</li>
+<!-- 			<li style="display: none;"> -->
+<!-- 				<a href="{:__URL('ADMIN_MAIN/order/orderlist?status=-2')}"> -->
+<!-- 					<strong class="yituikuan">0</strong> -->
+<!-- 					<span>已退款</span> -->
+<!-- 				</a> -->
+<!-- 			</li> -->
+		</ul>
+	</div>
+</div>
+
+<div class="sales">
+	<h3>
+		<i class="i-circular"></i>销售情况统计<span>按周期统计商家店铺的订单量和订单金额</span>
+	</h3>
+
+	<table>
+		<tr>
+			<td colspan="2" align="left" style="padding: 10px 0 0 20px;">昨日销量</td>
+		</tr>
+		<tr>
+			<td>
+				<strong class="yesterday_goods">0</strong>
+				<span>订单量(件)</span>
+			</td>
+			<td>
+				<strong class="yesterday_money">0</strong>
+				<span>订单金额(元)</span>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="left" style="padding: 15px 0 0 20px;">本月销量</td>
+		</tr>
+		<tr>
+			<td>
+				<strong class="month_goods">0</strong>
+				<span>订单量(件)</span>
+			</td>
+			<td>
+				<strong class="month_money">0</strong>
+				<span>订单金额(元)</span>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<div class="charts">
+	<h3>
+		<i class="i-circular"></i>订单总数统计<span><i></i>订单数量</span>
+	</h3>
+	<div id="orderCharts"></div>
+</div>
+
+<div class="sales-ranking">
+	<h3>
+		<i class="i-circular"></i>单品销售排名<span>按周期统计商家店铺的订单量和订单金额</span>
+	</h3>
+	<table>
+		<tr>
+			<td>排行</td>
+			<td style="text-align: left;">商品信息</td>
+			<td>销量</td>
+		</tr>
+		{foreach name="goods_list" item="goods_info"}
+		<tr>
+			<td>
+				{if condition="$key eq 0 "}
+				<span class="frist">
+				{elseif condition="$key eq 1"/}
+				<span class="second">
+				{elseif condition="$key eq 2"/}
+				<span class="third">
+				{else /}
+				<span>
+				{/if}{$key+1}</span>
+			</td>
+			<td title="{$goods_info.goods_name}" style="text-align: left;">
+				<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods_info['goods_id'])}" target="_blank"><?php echo strlen($goods_info["goods_name"])>20 ? mb_substr($goods_info["goods_name"],0,20,'utf-8')."...":$goods_info["goods_name"]; ?></a>
+			</td>
+			<td>
+				{if condition="$key eq 0 "}
+				<span class="frist">
+				{elseif condition="$key eq 1"/}
+				<span class="second">
+				{elseif condition="$key eq 2"/}
+				<span class="third">
+				{else /}<span>
+				{/if}{$goods_info.real_sales}</span>
+			</td>
+		</tr>
+		{/foreach}
+	</table>
+</div>
+<div class="charts">
+	<h3>
+		<i class="i-circular"></i>关注人数统计<span><i></i>关注人数</span>
+	</h3>
+	<div id="focusCharts"></div>
+</div>
+<div class="system-config">
+	<h3>
+		<i class="fa fa-cog"></i>系统信息
+	</h3>
+	<table>
+		<colgroup>
+			<col width="15%">
+			<col width="40%">
+			<col width="15%">
+			<col width="30%">
+		</colgroup>
+		<tr>
+			<td>服务器操作系统</td>
+			<td>{$system_config['os']}</td>
+			<td>服务器域名/IP</td>
+			<td>{$system_config['dns']}:{$system_config['port']}&nbsp;[{$system_config['ip']}]</td>
+		</tr>
+		<tr>
+			<td>服务器环境</td>
+			<td>{$system_config['server_software']}</td>
+			<td>PHP版本</td>
+			<td>{$system_config['php_version']}</td>
+		</tr>
+		<tr>
+			<td>文件上传限制</td>
+			<td>{$system_config['upload_max_filesize']}</td>
+			<td>GD版本</td>
+			<td>{$system_config['gd_version']}</td>
+		</tr>
+	</table>
+</div>
+{/block}

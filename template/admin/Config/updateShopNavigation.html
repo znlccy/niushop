@@ -1,0 +1,153 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<style type="text/css">
+input[type='radio']{float: left;margin-right: 5px;margin-top: 5px;}
+label{
+  font-weight: normal;
+}
+label.line-label{
+  display:inline-block;
+  margin-right:10px;
+  font-weight:normal;
+}
+</style>
+{/block}
+{block name="right_tab"}{/block}
+{block name="main"}
+<div class="set-style">
+  <dl>
+      <dt><span style="color:red;margin-right:10px;">*</span>导航名称</dt>
+      <dd><input  id="nav_title"  type="text"  value="{$data.nav_title}" name="title"/></dd>
+   </dl>
+   <dl>
+      <dt><span style="color:red;margin-left:15px;"></span>排序号</dt>
+      <dd><input  id="sort"  type="number"  value="{$data.sort}" name="" min="0"/></dd>
+   </dl>
+    <dl>
+      <dt><span style="color:red;margin-right:10px;">*</span>链接地址</dt>
+        <dt style="width: 100px;text-align: left;">
+            <label for="url_type1" style="margin-top: 5px;margin-left: 10px;">
+            <input type="radio" value="0" name="url_type" id="url_type1" {if condition="$data['nav_type'] eq 0"}checked{/if}/>商城模块</label>
+        </dt>
+        <dt style="text-align: left;">
+            <label for="url_type2" style="margin-top: 5px;">
+            <input type="radio" value="1" name="url_type" id="url_type2" {if condition="$data['nav_type'] eq 1"}checked{/if}/>自定义链接</label>
+        </dt>
+
+      <dd>
+        <select name="" id="shopNavModel" style="margin-left: 195px;margin-top: -10px;{if condition="$data['nav_type'] neq 0"}display: none;{/if}">
+          <option value="">请选择</option>
+          {notempty name="shopNavTemplate"}
+            {foreach name="shopNavTemplate" item="vo"}
+            <option value="{$vo.template_url}" {if condition="$data['nav_url'] eq $vo['template_url']"}selected{/if}>{$vo.template_name}</option>
+            {/foreach}
+          {/notempty}
+       </select>
+       <span style="margin-left: 195px;{if condition="$data['nav_type'] neq 1"}display: none;{/if}" id="nav_url">
+          <input  type="text"  value="{$data.nav_url}" name="nav_url" style="width:210px;margin-bottom: 5px;"/>
+          <span style="line-height: 28px;color: #999;">如：http://www.niushop.com.cn/</span>
+       </span>
+      </dd>
+   </dl>
+   <dl>
+        <dt><span style="color:red;margin-left:15px;"></span>所在位置</dt>
+        <dd>
+            <div id="position_type">
+                <label for="navigationtype1" class="line-label"><input type="radio" value="1" name="navigationtype" id="navigationtype1" {if condition="$data['type'] eq 1"}checked=""{/if}/>头部</label>
+                <label for="navigationtype2" class="line-label"><input type="radio" value="2" name="navigationtype" id="navigationtype2" {if condition="$data['type'] eq 2"}checked=""{/if}/>中部</label>
+                <label for="navigationtype3" class="line-label"><input type="radio" value="3" name="navigationtype" id="navigationtype3" {if condition="$data['type'] eq 3"}checked=""{/if} checked="" />底部</label>
+            </div>
+        </dd>
+   </dl>
+    <dl>
+        <dt><span style="color:red;margin-left:15px;"></span>是否新窗口打开</dt>
+        <dd>
+            <div id="blank_type">
+              <label for="is_blank1" class="line-label"><input type="radio" value="1" name="is_blank" id="is_blank1" {if condition="$data['is_blank'] eq 1"}checked=""{/if}/>是</label>
+              <label for="is_blank2" class="line-label"><input type="radio" value="0" name="is_blank" id="is_blank2" {if condition="$data['is_blank'] eq 0"}checked=""{/if} />否</label>
+            </div>
+        </dd>
+   </dl>
+   <dl>
+        <button class="edit_button" onclick="save()">保存</button>
+   </dl>
+   <input type="hidden" id="nav_id" value="{$data.nav_id}">
+</div>  
+{/block} {block name="script"}
+
+  <script type="text/javascript">
+  $(function(){
+	var  navigationtype={$data.type};
+	$('#navigationtype'+navigationtype).attr('checked','checked');
+  })
+     function save(){
+    	var nav_title=$("#nav_title").val();
+    	var nav_id=$("#nav_id").val();
+    	var sort=$("#sort").val();
+    	var type=$("input[name='navigationtype']:checked").val();
+
+    	if(nav_title == ''){
+	   		showTip("导航名称不能为空","success");
+	   		$("#nav_title").focus();
+		   	return false;	
+	   	}
+	   	if(sort=='')$("#sort").val(0);
+	   	
+	   	if(nav_url == ''){
+	   		showTip("链接地址不能为空","success");
+	   		$("#nav_url").focus();
+		   	return false;	
+	   	}
+	   	var url_type = $("input[name=url_type]:checked").val();
+      if(url_type == 0){
+          var nav_url=$("#shopNavModel").val();
+          var template_name = $("#shopNavModel option:selected").text();
+      }else if(url_type == 1){
+          var nav_url=$("input[name=nav_url]").val();
+          var template_name = '';
+      }
+      if(nav_url == ''){
+        showTip("链接地址不能为空","warning");
+        return false; 
+      }
+      var is_blank = $("input[name=is_blank]:checked").val();
+    	$.ajax({
+    		type:"post",
+    	    url:"{:__URL('ADMIN_MAIN/config/updateshopnavigation')}",
+    	    data:{
+    	    	'nav_id':nav_id,
+    	      'nav_title':nav_title,   
+    	      'sort':sort,
+    	      'nav_url':nav_url,
+    	      'type':type,
+            'nav_type' : url_type,
+            'is_blank' : is_blank,
+            'template_name' : template_name
+    	    },
+    	    async : true,
+    	    success:function(data){
+    	    	if (data["code"] > 0) {
+    				showMessage('success', data["message"]);
+    				location.href=__URL("ADMIN_MAIN/config/shopnavigationlist");
+    			}else{
+    				showMessage('error', data["message"]);
+    			} 
+    	    } 
+    	});
+     }
+
+     $("#url_type1").click(function(){
+      $("#shopNavModel").show();
+      $("#nav_url").hide();
+     })
+     $("#url_type2").click(function(){
+      $("input[name=nav_url]").val('');
+      $("#shopNavModel").hide();
+      $("#nav_url").show();
+     })
+  </script>
+{/block}

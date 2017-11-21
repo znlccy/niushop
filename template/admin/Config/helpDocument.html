@@ -1,0 +1,193 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.fun-a {
+	margin-top: 0px;
+	padding: 6px 15px 0 15px;
+}
+.style0list tbody td a{
+	margin-left: 8px;
+}
+.num{width:40px;text-align:center;}	
+.cell_total{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:250px;display: block;}
+.style0list table input {
+	margin-bottom: 0px;
+}
+
+.style0list table input.sort {
+	width: auto;
+	text-align: center;
+}
+
+.style0list tbody td {
+	line-height: 28px;
+}
+</style>
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/config/adddocument')}" ><i class="fa fa-plus-circle"></i>&nbsp;添加帮助内容</a></li>
+{/block}
+{block name="main"}
+<div class="operation">
+	<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+</div>
+<div class="mod-table">
+	<div class="con style0list">
+		<table>
+			<colgroup>
+				<col style="width: 1%">
+				<col style="width: 15%;">
+				<col style="width: 35%;">
+				<col style="width: 19%;">
+				<col style="width:auto">
+			</colgroup>
+			<thead>
+				<tr align="center">
+					<th><label><input value="" name="" id="ckall" type="checkbox" onClick="CheckAll()"></label></th>
+					<th class="x-tab"><div class="iconbg-arrow up">排序</div></th>
+					<th class="x-tab tal"><div class="iconbg-arrow up">标题</div></th>
+					<th class="x-tab tal"><div class="iconbg-arrow up">分类</div></th>
+					<th class="x-tab">操作</th>
+				</tr>
+			</thead>
+			<tbody id="linkList"></tbody>
+		</table>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	$("#linkList input[type='number']").live("keyup",function(){
+		if($(this).val().length>0){
+			var reg = /^[0-9]+$/;
+			if(!reg.test($(this).val())){
+				$(this).val(0);
+			}
+			if($(this).val().indexOf(".")>-1){
+				$(this).val(0);
+			}
+		}
+	});
+});
+//全选
+function CheckAll(){
+	if($("#linkList input[type = 'checkbox']").attr("checked")){
+		$("#linkList input[type = 'checkbox']").attr("checked",false);
+	}else{
+		$("#linkList input[type = 'checkbox']").attr("checked",true);
+	}
+}
+
+//分页数据
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/helpdocument')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><div class="cell"><label><input name="sub" type="checkbox" value="'+ data['data'][i]['id']+'"></label></div></td>';
+					html += '<td><input type="number" min="0" value="'+ data["data"][i]["sort"]+'" class="num" onchange="updateDocument('+data["data"][i]["id"]+','+i+','+data["data"][i]["class_id"]+')" id="sort'+i+'"></td>';
+					html += '<td class="tal"><input type="text" id="title'+i+'" value="' + data["data"][i]["title"]+ '"onchange="updateDocument('+data["data"][i]["id"]+','+i+','+data["data"][i]["class_id"]+')" /></td>';
+					if(data["data"][i]["class_name"]==null){
+						html += '<td class="tal"></td>';
+					}else{
+						html += '<td class="tal">'+data["data"][i]["class_name"]+'</td>';
+					}
+					html += '<td><a href="'+__URL('ADMIN_MAIN/config/updatedocument?id='+data['data'][i]['id'])+'" >修改</a>&nbsp;&nbsp;<a href="javascript:help_delete('+data['data'][i]['id']+')">删除</a>&nbsp;&nbsp;<a href="'+__URL('SHOP_MAIN/helpcenter/index?id='+ data['data'][i]['id']+'&class_id='+data["data"][i]["class_id"])+'" target="_blank">预览</a></td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="5">暂无帮助类型</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+/*
+*修改input值
+*/
+function updateDocument(id,index,class_id){
+	var title = $("#title"+index).val();
+	var sort = $("#sort"+index).val();
+	if(title.length == 0){
+		showTip("请输入内容","warning");
+		return;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/updatedocument')}",
+		data:{ 'id' : id, 'title':title,'sort':sort,"class_id":class_id},
+		success: function (data) {
+			var flag = "error";
+			if(data.code>0) flag = "success";
+			LoadingInfo(getCurrentIndex(id,'.table-class tbody'));
+			showTip(data['message'],flag);
+		}
+	});
+}
+/**
+ * 批量删除
+ */
+function batchDelete() {
+	var id= new Array();
+	$(".style0list tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			id.push($(this).val());
+		}
+	});
+	if(id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	help_delete(id);
+}
+/*
+*删除标题
+*/
+function help_delete(id){
+	$( "#dialog" ).dialog({
+        buttons: {
+            "确定": function() {
+                $(this).dialog('close');
+                $.ajax({
+        			type : "post",
+        			url: "{:__URL('ADMIN_MAIN/config/titledelete')}",
+        			data: { "id": id.toString()},
+        			success : function(data) {
+        				if(data["code"] > 0){
+							LoadingInfo(getCurrentIndex(id,'.table-class tbody'));
+							showTip(data["message"],"success");
+        				}else{
+							showTip(data["message"],'error');
+        				}
+        			}
+        		});
+            },
+            "取消,#e57373": function() {
+                $(this).dialog('close');
+            }
+        },
+        contentText:"你确定删除该内容吗？",
+        title:"消息提醒"
+    });
+}
+</script>
+{/block}

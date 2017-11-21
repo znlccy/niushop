@@ -1,0 +1,152 @@
+{extend name="admin/base" /} 
+{block name="resources"/}
+<style>
+.modal-infp-style{
+width:90%;
+	margin:10px auto;
+}
+.modal-infp-style table{
+	width:100%;
+}
+.modal-infp-style table tr td{
+	border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+</style>
+{/block}
+{block name="right_tab"} 
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/promotion/addgift')}"><i class="fa fa-plus-circle"></i>&nbsp;添加赠品</a></li>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<table class="mytable">
+			<tr>
+				<th width="10%"><input type="text" id = 'search_text' placeholder="请输入活动名称" /><input type="button" onclick="searchData()" value="搜索" /></th>
+			</tr>
+		</table>
+		<div class="con style0list">
+			<table>
+				<thead>
+					<tr align="center">
+						<th>活动名称</th>
+						<th>有效时间</th>
+						<th>活动状态</th>
+						<th>已赠送</th>
+						<th>已领取</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/giftlist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"search_text" : search_text
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td>' + data["data"][i]["gift_name"] + '</td>';;
+					html += '<td>' + timeStampTurnTime(data["data"][i]["start_time"]) + ' 至 ' + timeStampTurnTime(data["data"][i]["end_time"]) + '</td>';
+					html += '<td>'+ data['data'][i]['type_name'] +'</td>';
+					html += '<td> - </td>';
+					html += '<td> - </td>';
+					html += '<td><a href="'+__URL('ADMIN_MAIN/promotion/updategift?gift_id=' + data["data"][i]["gift_id"])+'">编辑</a>&nbsp;';
+					html += '<a href="javascript:void(0);"onclick="giftInfo('+data["data"][i]["gift_id"]+')">详情</a></td> '; 
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="9">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+
+function giftInfo(gift_id){
+	$("#giftInfo").modal("show");
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/promotion/getgiftinfo')}",
+		data : {
+			"gift_id" : gift_id
+		},
+		success : function(data) {
+			$("#gift_name").text(data["gift_name"]);
+			$("#time").text(timeStampTurnTime(data['start_time'])+' 至 '+timeStampTurnTime(data['end_time']));
+			$("#days").text(data["days"]+"天");
+			$("#max_num").text(data["max_num"]+"次/人");
+			var goods_list = '';
+			goods_list += '<tr>';
+			goods_list += '<td><img src="'+__IMG(data['gift_goods']['picture']['pic_cover_micro'])+'" /></td>';
+			goods_list += '<td>'+data['gift_goods']['goods_name']+'</td>';
+			goods_list += '</tr>';
+			$("#giftInfo table tr:gt(5)").remove();
+			$("#goods_list").after(goods_list);
+		}
+	})
+}
+</script>
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="giftInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">赠品详情</h4>
+            </div>
+            <div class="modal-body">
+            	<div class="modal-infp-style">
+            		<table>
+            			<tr>
+            				<td>活动名称</td>
+            				<td id="gift_name"></td>
+            			</tr>
+            			<tr>
+            				<td>有效期</td>
+            				<td id="time"></td>
+            			</tr>
+            			<tr>
+            				<td>领取有效期</td>
+            				<td id="days"></td>
+            			</tr>
+            			<tr>
+            				<td>领取限制</td>
+            				<td id="max_num"></td>
+            			</tr>
+            			<tr>
+            				<td colspan="2">赠品</td>
+            			</tr>
+            			<tr id="goods_list">
+            				<td></td>
+            				<td>商品名称</td>
+            			</tr>
+            		</table>
+            		
+            	</div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">关闭</button></div>
+        </div>
+    </div>
+</div>
+{/block}

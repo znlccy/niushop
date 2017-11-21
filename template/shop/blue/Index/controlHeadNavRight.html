@@ -1,0 +1,101 @@
+<!--滚动图右侧公告及其小菜单
+	2017年2月14日12:28:00
+-->
+<script type="text/javascript">
+$.ajax({
+	type:"post",
+	url:"{:__URL('SHOP_MAIN/components/getlogininfo')}",
+	success:function(data){
+		var login_info_html='';
+		if(data != null && data !=""){
+			if(data["user_info"]["nick_name"]!=null && data["user_info"]["nick_name"] != ""){
+				if(data["user_info"]["user_headimg"]==""){
+					login_info_html+='<div class="login_img"><img src="__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png" alt="{:lang('default_avatar')}" /></div>';
+				}else{
+					login_info_html+='<div class="login_img"><img src="'+__IMG(data["user_info"]["user_headimg"])+'" alt="{:lang('default_avatar')}" /></div>';
+				}
+				login_info_html+='<div class="login-message"><p class="message-title">Hi,{:lang('i_am')}<a href="{:__URL('SHOP_MAIN/member/index')}" class="member_name" title="'+data["user_info"]["nick_name"]+'">'+data["user_info"]["nick_name"]+'</a></p><p class="message-operation"><a href="javascript:logout();" class="logout" >{:lang('safe_exit')}</a></p></div>';
+			}
+		}else{
+			login_info_html += '<div class="login_img">';
+			login_info_html += '<img src="__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png" alt="{:lang('default_avatar')}" />';
+			login_info_html += '</div>';
+			login_info_html += '<div class="login-message">';
+			login_info_html += '<p class="message-title" data-temp="{$title}">Hi,{:lang('welcome_login')}</p>';
+			login_info_html += '<p class="message-operation">';
+			login_info_html += '<a href="javascript:;" class="login ajax-login">{:lang('login')}</a>';
+			login_info_html += '<a href="'+__URL('SHOP_MAIN/login/registerbox')+'" class="register">{:lang('register')}</a>';
+			login_info_html += '</p></div>';
+		}
+		$('.right-login-message').html(login_info_html);
+	}
+});
+</script>
+<div class="right-sidebar NS-TEMPLATE-NAV-CONTAINER">
+	<!-- 个人信息 -->
+	<div class="right-login-message">
+		<div style="text-align:center;">
+			<img src="__TEMP__/{$style}/public/images/load_login.gif"/>
+			<p style="margin-top:10px;">{:lang('in_load')}</p>
+		</div>
+	</div>
+	
+
+	<!-- 公告 -->
+	{if condition="count($notice) != 0 || count($article_list) != 0 "}
+	<div class="noticeAndArticle">
+		<ul>
+			{if condition="count($notice) != 0 && count($article_list) != 0 "}
+			<li style="width: 85px;border-right: 1px solid rgba(204,204,204,0.8);" class="acrive" type="notice">公告</li>
+			<li style="width: 86px" type="article">最新资讯</li>
+			{else/}
+				{notempty name="$notice"}
+					<li style="width: 178px;" class="acrive" type="notice">公告</li>
+				{/notempty}
+				{notempty name="article_list"}
+					<li style="width: 178px" class="acrive" type="article">最新资讯</li>
+				{/notempty}
+			{/if}
+		</ul>
+	</div>
+	{/if}
+	{notempty name="$notice"}
+		<div class="noticeAndArticleContent proclamation1" data-type="notice"> 
+			<ul class="mall-news">
+			{foreach name="notice" item ="v"}
+				<li><a href="{:__URL('SHOP_MAIN/notice/detail', 'id='.$v.id)}" title="{$v["notice_title"]}">{$v["notice_title"]}</a></li>
+			{/foreach}
+			</ul>
+		</div>		
+	{/notempty}
+	{notempty name="article_list" }
+		<div class="noticeAndArticleContent proclamation1" data-type="article" {if condition="count($notice) != 0 "}style="display: none;"{/if}> 
+			<ul class="mall-news">
+			{foreach name="article_list" item ="v"}
+				<li><a href="{:__URL('SHOP_MAIN/cms/articleclassinfo', 'article_id='.$v.article_id)}">{$v["title"]}</a></li>
+			{/foreach}
+			</ul>
+		</div>
+	{/notempty}
+
+	<!-- banner右侧资讯_end -->
+<!-- 	<p class="right_title" style="display:none;"><span>&nbsp;</span>管理</p> -->
+<!-- 	<div class="shortcut-menu" style="display:none;"> -->
+<!-- 		<a href="ADMIN_MAIN" title="{:lang('login')}商家管理中心" class="store-join-btn" target="_blank">{:lang('login')}管理中心</a> -->
+<!-- 	</div> -->
+</div>
+<script>
+	$(".noticeAndArticle ul li").mouseover(function(){
+		$(".noticeAndArticle ul li").removeClass("acrive");
+		$(this).addClass("acrive");
+		var type = $(this).attr('type');
+		if(type == "notice"){
+			$('[data-type="notice"]').show();
+			$('[data-type="article"]').hide();
+		}else if(type == "article"){
+			$('[data-type="article"]').show();
+			$('[data-type="notice"]').hide();
+
+		}
+	})
+</script>

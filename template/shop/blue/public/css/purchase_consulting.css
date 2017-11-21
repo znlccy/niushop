@@ -1,0 +1,211 @@
+#ncGoodsConsult h3 {
+    height: 50px;
+    line-height: 50px;
+    width: 100%;
+    font-size: 20px;
+    text-indent: 10px;
+    display: inline-block;
+    font-weight: normal;
+}
+.ncs-cosult-tips { width: 78%; height: 65px; float: left; margin: 10px 0 5px 10px; position: relative; z-index: 1;}
+.ncs-cosult-tips i { background: url(../images/ncs_public_img.png) no-repeat -80px 0; width: 147px; height: 65px; position: absolute; z-index: 1; top: 0; left: 0;}
+.ncs-cosult-tips p { line-height: 18px; color: #9B827D; width: 100%; height: 36px; position: absolute; z-index: 1; top: 28px; left: 64px;}
+.ncs-cosult-askbtn { float: right; padding: 10px;}
+.ncs-goods-info-content { padding-bottom: 23px; width: 100%;}
+.ncs-goods-title-nav { margin-top: 0;}
+.ncs-goods-title-nav ul { font-size: 0; *word-spacing:-1px/*IE6ã€7*/; background-color: #FFF; border: solid 1px; border-color: #0689e1 #E5E5E5 #E5E5E5;}
+.ncs-goods-title-nav ul li { vertical-align: top; letter-spacing: normal; word-spacing: normal; display: inline-block; *display: inline/*IE6,7*/; zoom: 1;}
+.ncs-goods-title-nav ul li a { text-decoration:none; color:#777; background-color: #FFF; display: block; padding: 15px 25px; font-family: "Microsoft Yahei"; font-size: 12px; line-height: 20px;}
+.ncs-goods-title-nav ul li.current a { color: #0689e1; font-size: 14px;}
+.ncs-cosult-tips { width: 78%; height: 65px; float: left; margin: 10px 0 5px 10px; position: relative; z-index: 1;}
+.ncs-cosult-tips i { background: url(../images/ncs_public_img.png) no-repeat -80px 0; width: 147px; height: 65px; position: absolute; z-index: 1; top: 0; left: 0;}
+.ncs-cosult-tips p { line-height: 18px; color: #9B827D; width: 100%; height: 36px; position: absolute; z-index: 1; top: 28px; left: 64px;}
+.ncs-cosult-askbtn { float: right; padding: 10px;margin-top: 20px;}
+.ncs-commend-main {
+    padding: 20px 0 0 0;
+    border: solid #E6E6E6;
+    border-width: 0 1px 1px;
+}
+.ncs-cosult-list {
+    padding: 6px;
+    border-bottom: dotted 1px #D6D6D6;
+}
+.ncs-cosult-list dl {
+    font-size: 0;
+    display: block;
+    margin-bottom: 4px;
+}
+.ncs-cosult-list dt {
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: right;
+    display: inline-block;
+    width: 10%;
+}
+.ncs-cosult-list dd {
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: left;
+    display: inline-block;
+    width: 90%;
+}
+.ncs-cosult-list dd time {
+    text-align: right;
+    display: inline-block;
+    color: #999;
+}
+.m-l-20 {
+    margin-left: 20px!important;
+}
+.ncs-cosult-list dl.asker {
+    color: #999;
+}
+.ncs-cosult-main {
+    padding: 20px 0 0 0;
+    border: solid #E6E6E6;
+    border-width: 0 1px 1px;
+}
+.ncs-norecord {
+    color: #999;
+    text-align: center;
+    height: 70px;
+    line-height: 70px;
+    padding: 15px 0;
+    background-color: #FFF;
+    border: none !important;
+}
+.ncs-cosult-list dl.ask-con p{word-break: break-all;}
+.ncs-cosult-list dl.reply { color: #0689e1;}
+.ncs-cosult-list dd p {
+    display: inline-block;
+    width: 80%;
+	white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.ncs-commend-main .more_Consultation {
+    padding: 10px 15px;
+}
+/* ====================== */
+.ncs-sidebar { width: 210px; position: relative; z-index: 1; float: left;}
+.ncs-sidebar .service { border: solid 1px #E1E1E1; margin-bottom: 15px;}
+.ncs-sidebar .service .displayed { height: 20px; padding: 9px; background-color: #FAFAFA; border-bottom: solid 1px #E1E1E1; font: 600 14px/20px "Microsoft Yahei"; color: #555;}
+.ncs-sidebar .service .sub { background: #FFF;}
+.ncs-sidebar .service .sub .default { padding: 9px;}
+.ncs-sidebar .service .sub .default h5 { line-height: 20px; font-weight: 600; display: inline-block;}
+.ncs-sidebar .service .sub .default span { color: #555; height: 20px;}
+.ncs-sidebar .service .sub .service-list { border-top: dotted 1px #E1E1E1; }
+.ncs-sidebar .service .sub dl { padding: 9px 9px 0 9px; overflow: hidden;}
+.ncs-sidebar .service .sub dt { line-height: 20px; font-weight: 600; color: #333; display: block;}
+.ncs-sidebar .service .sub dd { color: #555; margin-left: 16px; clear:both; padding: 4px 0;}
+.ncs-sidebar .service .sub dd span { line-height: 22px; margin: 0 6px 0 0;}
+.ncs-sidebar .service .sub dd img { vertical-align: middle;}
+.ncs-sidebar .service .sub dd p { line-height: 20px;}
+.ncs-sidebar-container{position: relative;}
+.ncs-sidebar-container .change{ position: absolute; top:10px; right: 10px; color: #666}
+.ncs-comment-goods { width: 180px; margin: 10px auto;}
+.ncs-comment-goods .goods-name { font: bold 12px/18px "Microsoft Yahei"; color: #AAA; width: 100%; height: 36px; overflow: hidden;}
+.ncs-comment-goods .goods-pic { width: 160px; height: 160px; margin: 5px auto;}
+.ncs-comment-goods .goods-pic a {line-height: 0; background-color: #FFF; text-align: center; vertical-align: middle; display: table-cell; *display: block; width: 160px; height: 160px; overflow: hidden;}
+.ncs-comment-goods .goods-pic img { max-width: 160px; max-height: 160px; margin-top:expression(160-this.height/2); *margin-top:expression(80-this.height/2)/*IE6,7*/;}
+.ncs-sidebar-container { margin-bottom: 10px;}
+.ncs-sidebar-container .title { background-color: #F7F7F7 ; height: 20px; padding: 5px 10px; border: solid #DDD; border-width: 1px 1px 0 1px;}
+.ncs-sidebar-container .title h4 { font: 600 14px/20px "Microsoft Yahei"; color: #666;}
+.ncs-sidebar-container .content { border: solid 1px #DDD; background:#FFF; }
+.ncs-goods-main { width: 980px; float: right;}
+/* 商品属性值 */
+.ncs-goods-sort { font-size: 0; *word-spacing:-1px/*IE6、7*/; background-color: #FFF; border-bottom: solid 1px #E6E6E6; padding: 9px; margin: 15px 0;}
+.ncs-goods-sort li { display: inline-block; *display: inline; *zoom: 1; width: 23%; height: 24px; padding: 0 0 0 2%; margin: 0; letter-spacing: normal; word-spacing: normal; text-overflow : ellipsis; white-space: nowrap; vertical-align: top; overflow: hidden; font-size: 12px; line-height: 24px;}
+.ncs-goods-title-bar { background-color: #FFF; border-style: solid; border-color: #0689e1 #E5E5E5 #E5E5E5; border-width: 1px 1px 1px 1px; }
+.ncs-goods-title-bar h4 { text-decoration:none; color:#777; display: block; padding: 15px 25px; font-family: "Microsoft Yahei"; font-size: 14px; line-height: 20px;}
+.ncs-goods-title-nav { margin-top: 0;}
+.ncs-goods-title-nav ul { font-size: 0; *word-spacing:-1px/*IE6、7*/; background-color: #FFF; border: solid 1px; border-color: #0689e1 #E5E5E5 #E5E5E5;}
+.ncs-goods-title-nav ul li { vertical-align: top; letter-spacing: normal; word-spacing: normal; display: inline-block; *display: inline/*IE6,7*/; zoom: 1;}
+.ncs-goods-title-nav ul li a { text-decoration:none; color:#777; background-color: #FFF; display: block; padding: 15px 25px; font-family: "Microsoft Yahei"; font-size: 12px; line-height: 20px;}
+.ncs-goods-title-nav ul li.current a { color: #0689e1; font-size: 14px;}
+.ncs-goods-info-content { padding-bottom: 23px;}
+.ncs-goods-info-content .top { padding: 9px; margin-bottom: 20px; border: solid #E6E6E6; border-width: 1px 1px 1px;}
+.ncs-promotion { margin-bottom: 20px;}
+.ncs-promotion .ncs-goods-info-content { padding: 0; border: solid #E6E6E6; border-width: 0 1px 1px;}
+.ncs-consult-form { display: block; padding: 10px 15px; border: solid #E6E6E6; border-width: 0 1px 1px;}
+.ncs-consult-form dl { font-size: 0; *word-spacing:-1px/*IE6、7*/; margin-bottom: 4px;}
+.ncs-consult-form dt, .ncs-consult-form dd { font-size: 12px; line-height: 20px; vertical-align: top; letter-spacing: normal; word-spacing: normal; display: inline-block; *display: inline/*IE7*/; *zoom: 1;}
+.ncs-consult-form dt { font-weight: 600; width: 65px;}
+.ncs-consult-form dd { position: relative; z-index: 1;}
+.ncs-consult-type-intro { margin-bottom: 4px;}
+.ncs-consult-form  label {font-size: 12px;vertical-align: top;display: flex;margin-right: 20px;float: left;}
+.ncs-consult-form  label .text { display: inline-block; vertical-align: middle; padding: 2px 4px;}
+.ncs-consult-form  label .radio { display: inline-block; vertical-align: middle; margin-right: 4px;}
+.ncs-consult-form  label img { display: inline-block; vertical-align: middle; margin: 0 4px ; cursor: pointer;}
+.ncs-consult-form  label span { color: #09C;}
+.ncs-consult-form .counter { line-height: 20px; color: #999; vertical-align: top; display: inline-block; margin-left: 10px; }
+.ncs-consult-form .counter em { font-weight: 700; margin: 0 2px;}
+.ncs-consult-form .counter em.warning { color: #F60; background-color: transparent; width: auto; padding: 0; border: none;}
+.ncs-consult-form .counter em.exceeded { color: #F00;}
+.ncs-consult-form .code { background-color: #FFFFFF; width: 124px; height: 48px; border: solid 1px #555; position: absolute; z-index: 9; top: -54px; left: -15px; display: none; box-shadow: 0 3px 3px 0 rgba(0,0,0,0.2);}
+.ncs-consult-form .code .arrow { background:url(../images/ncs_public_img.png) no-repeat -40px 0; display: block; width: 14px; height: 7px; position: absolute; left: 21px; bottom: -7px;}
+.ncs-consult-form .code img { width: 100px; height: 40px; position: absolute; z-index: 1; top: 4px; left: 4px;}
+.ncs-consult-form .code .close { display: block; width: 10px; height: 10px; padding: 1px; position: absolute; z-index: 1; top: 4px; right: 4px;}
+.ncs-consult-form .code .close:hover, 
+.ncs-consult-form .code .change:hover { background-color: #CCC; border-radius: 5px; -webkit-border-radius: 5px/*webkit*/;}
+.ncs-consult-form .code .close i { background: url(../images/ncs_public_img.png) no-repeat -40px -7px; display: block; width: 10px; height: 10px; opacity: 0.5;}
+.ncs-consult-form .code .change { display: block; width: 10px; height: 10px; padding: 1px; position: absolute; z-index: 1; bottom: 4px; right: 4px;}
+.ncs-consult-form .code .change i { background: url(../images/ncs_public_img.png) no-repeat -50px -7px; display: block; width: 10px; height: 10px; opacity: 0.5;}
+.ncs-consult-form .code .close:hover i , 
+.ncs-consult-form .code .change:hover i { opacity: 1;}
+input[type="text"].error, input[type="password"].error, textarea.error {
+    background-color: #FFF5EC;
+    color: #FF5B57;
+    border: dashed 1px #FF5B57;
+    outline: 0 none;
+}
+input[type="text"], input[type="password"], input.text, input.password {
+    font: 12px/1.5 "微软雅黑", "黑体","\5b8b\4f53",sans-serif;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    min-height: 20px;
+    padding: 5px;
+    border: solid 1px #E6E9EE;
+    outline: 0 none;
+}
+a:link, a:visited, a:active {
+    text-decoration: none;
+}
+a:hover:{
+	color: #fff;
+}
+.btn-warning {
+    background-color: #0689e1;
+    border-color: #0689e1;
+    color: #FFF;
+}
+.w60 {
+    width: 60px !important;
+}
+.w700 {
+    width: 700px !important;
+}
+textarea, .textarea {
+    font: 12px/18px "微软雅黑", "黑体";
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 54px;
+    padding: 4px;
+    border: solid 1px #CCD0D9;
+    outline: 0 none;
+}
+.ncs-goods_main{
+	width: 83%;
+}
+.wrapper{
+	overflow: hidden;
+}

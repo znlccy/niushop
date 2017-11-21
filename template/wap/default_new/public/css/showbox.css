@@ -1,0 +1,25 @@
+@CHARSET "UTF-8";
+
+.motify {
+	position: fixed;
+	top: 35%;
+	left: 50%;
+	width: 220px;
+	padding: 0;
+	margin: 0 0 0 -110px;
+	z-index: 9999;
+	background: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	font-size: 14px;
+	line-height: 1.5em;
+	border-radius: 6px;
+	-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	opacity: 0.9;
+}
+
+.motify .motify-inner {
+	padding: 10px;
+	text-align: center;
+	word-wrap: break-word;
+}

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>打印预览</title>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/common.css">
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/logistics.css">
+</head>
+<style type="text/css">
+*{font-size: 20px;margin: 0;padding: 0;}
+.handlerA{width: 200px;height: 25px;line-height: 25px;overflow: hidden;color: #fff;background: #aaa;border: 1px solid #aaa;text-align: center;}
+.handlerB{width: 200px;margin: 0 auto;height: 90px;border: 1px solid #ccc;background:#ccc;}
+.confirmPrintBtn{background: #0096ff;border: 1px solid #0096ff;color: #fff;padding: 4px 18px;font-weight: bold;font-size: 14px;vertical-align: middle;}
+.cancelPrintBtn{background: #999;border: 1px solid #999;color: white;padding: 4px 18px;font-weight: bold;font-size: 14px;vertical-align: middle;}
+.printSuccessBtn {background: #0096ff;border: 1px solid #0096ff;color: #fff;padding: 4px 18px;font-weight: bold;font-size: 14px;vertical-align: middle;}
+.printFailBtn{background: #0096ff;border: 1px solid #0096ff;color: #fff;padding: 4px 18px;font-weight: bold;font-size: 14px;vertical-align: middle;}
+.print-position {page-break-after:always;margin:auto;}
+</style>
+<style type="text/css" media="print">
+body{margin:0;padding:0;font-size:18px;}
+.order-print{position:relative;width:1200px;height:549px;margin:auto;}
+.order-print img{width:100%;}
+.print-position {margin:auto;}
+@page {margin:50px;}
+</style>
+<body>
+<div id="PrintContent" class="order-print">
+	{foreach name="order_print" item="orderdata"}
+		{foreach name="orderdata['express_id_list']" item="express_item" }
+			<div class="print-position" style="position: relative;width:{$express_item.width}px;height:{$express_item.height}px;">
+				<div>
+					<img id="TemplatePic" class="TemplatePic" alt="请上传图片" src="{:__IMG($express_item.image)}" style="width:{$express_item.width}px;height:{$express_item.height}px;" />
+				</div>
+				<div class="templet-label" style="width:{$express_item.width}px;height:{$express_item.height}px;">
+					<div class="col01" style="width:{$express_item.width}px;height:{$express_item.height}px;">
+					{foreach name="express_item['express_shipping_item']" item="data"}
+						{if condition="$data.field_name eq 'A1' && $data.is_print eq 1"}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$orderdata.order_no}</div>
+						{elseif condition="$data.field_name eq 'A2'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$ShopName}</div>
+						{elseif condition="$data.field_name eq 'A3'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$receive_address.shop_address}</div>
+						{elseif condition="$data.field_name eq 'A4'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$receive_address.seller_name}</div>
+						{elseif condition="$data.field_name eq 'A5'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$receive_address.seller_mobile}</div>
+						{elseif condition="$data.field_name eq 'A6'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$receive_address.seller_zipcode}</div>
+						{elseif condition="$data.field_name eq 'A7'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$orderdata.address}</div>
+						{elseif condition="$data.field_name eq 'A8'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$orderdata.receiver_name}</div>
+						{elseif condition="$data.field_name eq 'A9'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$orderdata.receiver_mobile}</div>
+						{elseif condition="$data.field_name eq 'A10'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$orderdata.receiver_zip}</div>
+						{elseif condition="$data.field_name eq 'A11'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px"></div>
+						{elseif condition="$data.field_name eq 'A12'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">0</div>
+						{elseif condition="$data.field_name eq 'A13'  && $data.is_print eq 1"/}
+							<div id="tip1" style="position: absolute;top:{$data.y}px;left:{$data.x}px">{$orderdata.seller_memo}</div>
+						{else /}
+						{/if}
+					{/foreach}
+					</div>
+				</div>
+			</div>
+		{/foreach}
+	{/foreach}
+</div>
+<div class="extraElement">
+	<input type="hidden" id="expressIDs" value="1677,1676,1675" />
+	<div id="popA" style="width: 202px; opacity: 0.8; filter: alpha(opacity=80);">
+		<div class="handlerA"><span>操作</span></div>
+		<div class="handlerB">
+			<table>
+				<tr style="height: 50px;">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td style="width: 50px;"></td>
+					<td>
+						<input type="button" class="confirmPrintBtn" value="打印" onclick="javascript:printIt();" id="print" />
+					</td>
+					<td>
+						<input type="button" class="cancelPrintBtn" onclick="javascript:printCancel();" value="取消" />
+					</td>
+					<td style="width: 50px;"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div id="popB" style="width: 202px; opacity: 0.9; filter: alpha(opacity=90); display: none;position:fixed;top:200px;left:42%;">
+		<div class="handlerA"><span style="color: Red;font-size: 14px;">反馈您的打印结果【非常重要】</span></div>
+		<div class="handlerB">
+			<table>
+				<tr style="height: 50px;">
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td style="width: 60px;"></td>
+					<td>
+						<input type="button" class="printSuccessBtn" value="打印成功" onclick="javascript:printSuccess();"/>
+					</td>
+					<td>
+						<input type="button" class="printFailBtn" value="打印失败" onclick="javascript:printFail();" />
+					</td>
+					<td style="width: 60px;"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="__STATIC__/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="ADMIN_JS/easydrag.js"></script>
+<script type="text/javascript">
+var expressArrayIDs = new Array();
+
+//弹出框保持居中操作
+$(function () {
+	showDiv($("#popA"));
+	$("#popA").easydrag();
+	showDiv($("#popB"));
+	$("#popB").easydrag();
+	function showDiv(obj) {
+		center(obj);
+		$(window).scroll(function () {
+			center(obj);
+		});
+		
+		$(window).resize(function () {
+			center(obj);
+		});
+	}
+	
+	function center(obj) {
+		var windowWidth = document.documentElement.clientWidth;
+		var windowHeight = document.documentElement.clientHeight;
+		var popupHeight = $(obj).height();
+		var popupWidth = $(obj).width();
+		$(obj).css({
+			"position": "absolute",
+			"top": (windowHeight - popupHeight) / 2 + $(document).scrollTop() - 150,
+			"left": (windowWidth - popupWidth) / 2
+		});
+	}
+});
+// 打印成功后【当用户确定打印成功后才会修改订单的打印状态】
+function printSuccess() {
+	var isOk = false;
+	// 打印完成后执行
+	$.ajax({
+		url: "{:__URL('ADMIN_MAIN/orderform/changeorderprintstate')}",
+		data: { "orderIDs": JSON.stringify(expressArrayIDs) }, // 必须是json格式传到后台才会被AppHelper.JsonDeserialize解析
+		async: false, // 让它同步执行
+		type: "post",
+		success: function (successdata) {
+			if (successdata == "ok") {
+				isOk = true;
+			}
+		}
+	});
+	
+	if (isOk = true) {
+		window.close();
+	}
+}
+
+// 打印失败
+function printFail() {
+	$("#popA").css("display", "block");
+	$("#popB").css("display", "none");
+}
+
+// 打印
+function printIt() {
+	// 打印 【IE 和 google默认打印浏览器打印后才往下执行，firefox 会另开一个线程。但是都无法判断是否已打印】
+	$("#popA").css("display", "none");
+	$(".TemplatePic").css("display", "none");
+	window.print();
+	setTimeout(function () {
+		$(".TemplatePic").css("display", "block");
+		$("#popB").css("display", "block");
+	}, 1000);
+}
+
+// 取消打印
+function printCancel() {
+	window.close();
+}
+</script>
+</body>
+</html>

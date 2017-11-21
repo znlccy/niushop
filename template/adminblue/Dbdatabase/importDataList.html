@@ -1,0 +1,161 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css"  href="__STATIC__/loading/msgbox.css" />
+<script type="text/javascript" src="__STATIC__/loading/msgbox.js"></script>
+<style type="text/css">
+
+.cell_total{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:250px;display: block;}
+.table-class table input {
+	margin-bottom: 0px;
+}
+
+.table-class table input.sort {
+	width: auto;
+	text-align: center;
+}
+
+.table-class tbody td {
+	line-height: 28px;
+}
+.ns-main {
+    overflow: visible;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<table class="table-class table">
+			<colgroup>
+				<col style="width: 20%;">
+				<col style="width: 20%;">
+				<col style="width: 30%;">
+				<col style="width: 30%;">
+			</colgroup>
+			<thead>
+				<tr align="center">
+					<th class="x-tab"><div class="iconbg-arrow up">文件名称</div></th>
+					<th class="x-tab"><div class="iconbg-arrow up">备份时间</div></th>
+					<th class="x-tab"><div class="iconbg-arrow up">文件大小</div></th>
+					<th class="x-tab">操作</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	getImportDatalist(1);
+});
+//分页数据
+function getImportDatalist(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/dbdatabase/importdatalist')}",
+		success : function(data) {
+			var html = '';
+			if (data.length > 0) {
+				for (var i = 0; i < data.length; i++) {
+					html += '<tr align="center">';
+					html += '<td>'+ data[i]["name"]+'</td>';
+					html += '<td>'+ timeStampTurnTime(data[i]["time"])+'</td>';
+					html += '<td>'+ data[i]["size"]+ '</td>';
+					html += '<td><a target="_blank"  href="javascript:isSureImport('+ data[i]["time"] +',null,null)">恢复</a><a href="javascript:isSureDelete('+ data[i]["time"] +')"">删除</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="4">暂无列表</th></tr>';
+			}
+			$(".table-class tbody").html(html);
+		}
+	});
+}
+/**
+ * 是否删除
+ */
+function isSureDelete(time){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				deleteDataBase(time);
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否删除此备份文件？删除后将无法找回!",
+	});
+}
+/**
+ * 删除备份文件
+ */
+function deleteDataBase(time){
+	ZENG.msgbox.show("正在删除文件", 6, 100000);
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/dbdatabase/deleteDataBase')}",
+		data : {"time":time},
+		dataType : "json",
+		success : function(data) {
+			if (data.status){
+				ZENG.msgbox.show(data.message, 4, 3000);
+				getImportDatalist(1);
+			} else {
+				ZENG.msgbox.show(data.message, 5);
+			}
+		}
+	})
+}
+/**
+ * 是否备份
+ */
+function isSureImport(time, part, start){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				importData(time, part, start);
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否恢复此备份文件？",
+	});
+}
+/**
+ * 备份恢复
+ */
+function importData(time, part, start){
+	ZENG.msgbox.show("正在读取文件", 6);
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/dbdatabase/importData')}",
+		data : {"time":time,"part":part,"start":start},
+		dataType : "json",
+		success : function(data) {
+			if (data.status) {
+				ZENG.msgbox.show(data.message, 6, 100000);
+				if (data.result.part) {
+					importData(time,data.result.part,data.result.start);
+					ZENG.msgbox.show("正在还原...", 6, 100000);
+					//ZENG.msgbox.show(data.message+"...", 6, 100000);
+				} else {
+					ZENG.msgbox.show(data.message, 4, 3000);
+				}
+			} else {
+				ZENG.msgbox.show(data.message, 4, 3000);
+			}
+		}
+	})
+}
+</script>
+{/block}

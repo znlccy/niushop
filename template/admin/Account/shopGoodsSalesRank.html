@@ -1,0 +1,102 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<style>
+.rank-box {
+	width: 450px;
+}
+.rank-nav {
+	font-size: 16px;
+	margin-left: 40px;
+	height: 25px;
+	line-height: 25px;
+	border-left: 2px solid #f38080;
+	padding-left: 10px;
+}
+
+.rank-ul {
+	list-style-type: none;
+}
+
+.rank-ul li {
+	padding: 10px;
+	margin-top: 15px;
+	background-color: #FFF;
+	border: 1px solid #e8e8e8;
+}
+
+.rank-ul li:hover {
+	background-color: #eee;
+}
+
+.rank-ul li table tr td {
+	height: 34px;
+	line-height: 34px;
+}
+
+.rank-ul li table tr td:nth-child(1) {
+	width: 40px;
+	text-align: center;
+}
+
+.rank-ul li table tr td:nth-child(2) {
+	width: 220px;
+	text-align: left;
+	padding-left: 20px;
+	font-size: 13px;
+	max-width: 220px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.rank-ul li table tr td:nth-child(4) {
+	color: rgba(255, 0, 0, 0.74);
+	font-size: 18px;
+}
+
+.rank-ul li table tr td:nth-child(3) {
+	width: 60px;
+}
+
+.rank-img {
+	height: 34px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="row">
+	<div class="rank-box">
+		<h2 class="rank-nav">商品销售排行榜</h2>
+		<ul class="rank-ul">
+			{foreach $goods_list as $k=>$goods_info}
+			<li onclick="load_url({$goods_info.goods_id});" title="{$goods_info.goods_name}">
+				<table>
+					<tr>
+						<td style="border-right: 1px solid #e8e8e8;">{$k + 1}</td>
+						<td>{$goods_info.goods_name}</td>
+						<td>
+							{if condition="$k eq 0"}
+							<img class="rank-img" src="ADMIN_IMG/firat_sale.png" />
+							{elseif condition="$k eq 1"/}
+							<img class="rank-img" src="ADMIN_IMG/second_sale.png" />
+							{elseif condition="$k eq 2"/}
+							<img class="rank-img" src="ADMIN_IMG/third_sale.png" />
+							{/if}
+						</td>
+						<td>{$goods_info.real_sales}</td>
+					</tr>
+				</table>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script>
+function load_url(goods_id){
+	window.location.href=__URL("ADMIN_MAIN/account/shopgoodsaccountlist?goods_id="+goods_id);
+}
+</script>
+{/block}

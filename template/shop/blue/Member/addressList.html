@@ -1,0 +1,90 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+<style type="text/css">
+.bought-table .order-bd .no-border-right {border-right: #E6E6E6 solid 1px;}
+.member-main .tabmenu .tab li.active a{color:#FFF;}
+</style>
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab pngFix">
+					<li class="first active">{:lang('member_receive_address_list')}</li>
+				</ul>
+			</div>
+			<div class="alert alert-success">
+				<h4>{:lang('member_operation_prompt')}：</h4>
+				<ul>
+					<li>{:lang('member_operation_addresses')}</li>
+				</ul>
+			</div>
+			<div class="tabmenu">
+				<input type="button" value="{:lang('member_new_delivery_address')}" onclick="location.href='{:__URL('SHOP_MAIN/member/addressinsert')}'" class="main-btn common-btn" />
+			</div>
+			{if condition="$total_count neq ''"}
+			<div>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="bought-table">
+					<thead>
+						<tr class="col-name">
+							<th width="15%" style="border-left: 1px solid #E6E6E6;">{:lang('member_consignee')}</th>
+							<th width="25%">{:lang('member_location')}</th>
+							<th width="25%">{:lang('member_detailed_address')}</th>
+							<th width="15%">{:lang('cell_phone_number')}</th>
+							<th width="18%" style="border-right: 1px solid #E6E6E6;">{:lang('goods_operation')}</th>
+						</tr>
+					</thead>
+					<tbody class="close-order" id="list_address">
+					{volist name="list['data']" id="new" key="k" }
+						<tr class="order-bd last">
+							<td align="center" class="baobei no-border-right order_goods_info"><div class="last">{$new.consigner}</div></td>
+							<td align="center" class="baobei no-border-right order_goods_info"><div class="last">{$new.address_info}</div></td>
+							<td align="center" class="baobei no-border-right order_goods_info"><div class="last">{$new.address}</div></td>
+							<td align="center" class="baobei no-border-right order_goods_info"><div class="last">{$new.mobile}</div></td>
+							<td align="center" class="baobei no-border-right order_goods_info">
+								<div class="last">
+									<a href="{:__URL('SHOP_MAIN/member/updatememberaddress','id='.$new['id'])}" class="main-btn main-btn-large">{:lang('member_modify')}</a> 
+									{if condition="$new.is_default neq 1"}
+									<a href="javascript:void(0);" onclick="address_delete({$new.id})" class="main-btn main-btn-large">{:lang('goods_delete')}</a>
+									{/if}
+								</div>
+							</td>
+						</tr>
+					{/volist}
+					</tbody>
+				</table>
+			</div>
+			{else/}
+			<div>
+				<div class="emptyFrame"><i class="user_address"></i><span>{:lang('member_empty_address_yet')}</span></div>
+			</div>
+			{/if}
+			<div class="blank10"></div>
+			{include file='shop/blue/controlCommonPage'/}
+		</div>
+	</div>
+</div>
+{/block}
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script type="text/javascript">
+function address_delete(id){
+	$.ajax({
+		url: "{:__URL('SHOP_MAIN/member/memberaddressdelete')}",
+		data: { "id": id },
+		type: "post",
+		success: function (res) {
+			if (res["code"] == 1) {
+				$.msg("{:lang('member_delete_successfully')}!");
+				window.location.href=window.location.href;
+			} else {
+				$.msg(res["outmessage"]);
+			}
+		}
+	})
+}
+</script>
+{/block}

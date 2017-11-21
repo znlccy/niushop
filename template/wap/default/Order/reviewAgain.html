@@ -1,0 +1,87 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/foundation.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/normalize.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/common-v4.4.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/person-v4.4.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/reviewCommodity.css">
+<script src="__TEMP__/{$style}/public/js/order.js" type="text/javascript"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/review.js"></script>
+<style>
+.remark-r-ul{content: '';clear: both;display: inline-block;width:100%;}
+.shop_count{height: 50px;line-height: 50px;}
+.c-btn{height:40px;line-height:40px;width:100px;background:red;float:right;text-align:center;color:#fff}
+.remark-right{content: '';display: inline-block;clear: both;}
+#btn_submit{background: red;border: 0;color: #fff;padding: 5px;font-size: 13px;border-radius: 3px;}
+.evaluate_right {float: left;width: 100%;height: 100%;}
+.evaluate_right .rate_content{border:0;background:#fff;}
+.evaluate_right_three {height:60px;width:60px;line-height:55px;background: #fff;top: 0px;}
+.evaluate_right_imgs{margin-top:12px;}
+.evaluate_right_four{margin-top:18px;}
+.evaluate_right_two {bottom: -18px;}
+.evaluate_right .input-file {width: 65px;height: 65px;}
+.order-detail-r{margin-bottom:20px;padding:10px 0;border-bottom:1px solid #ccc;}
+</style>
+{/block}
+{block name="main"}
+<div class="main myorder">
+	<section class="head">
+		<a class="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+		<div class="head-title">{:lang('goods_additional_evaluation')}</div>
+	</section>
+</div>
+<form id="evalform" method="post" action="{:__URL('APPMAIN/order/moditycommodity')}">
+<input type="hidden" name="form_submit" value="ok" />
+<div class="order-detail mt-45">
+	<section class="order-detail-remark">
+		<div class="remark-out clear">
+			{foreach $list as $vo}
+			<div class="evaluate remark-r order-detail-r" ogid="{$vo.order_goods_id}" oid="{$vo.order_id}">
+			
+				<ul class="remark-r-ul">
+					<li class="name" style="width:30%;float:left;height:85px;margin-right:5px;text-align:center;line-height:85px;border: 1px solid #e5e5e5;overflow: hidden;">
+						<img src="{:__IMG($vo['picture_info']['pic_cover_small'])}" style="max-height: 100%;max-width: 100%;" />
+					</li>
+					<ul class="remark-right" style="width:60%;">
+						<li style="width:100%;float:left;font-size: 13px;height:44px;overflow:hidden;">{$vo.goods_name}</li>
+						<li style="width:100%;float:left;color:#999999;">{:lang('standard')}：&nbsp;&nbsp;{$vo.sku_name}</li>
+					</ul>
+				</ul>
+			
+				<ul>
+				<div class="evaluate_right">
+					<div style="height: 30px;line-height: 30px;font-size: 13px;">{:lang('goods_additional_evaluation')}</div>
+					<div class="rate_content">
+						<textarea cols="60" rows="4" placeholder="{:lang('member_content_evaluated')}。" style="resize: none;border:0;outline: none;"></textarea>
+						<span class="evaluate_right_two"> 
+							<input type='file' class="input-file" name='file_upload' id="img_{$vo.order_goods_id}" onchange='UploadImage(this);' />
+						</span>
+						<span class="evaluate_right_three"><img src="__TEMP__/{$style}/public/images/photo.png" style="width:28px;"/><i></i></span>
+						<span class="evaluate_right_three" style="border: 0;width: 37px;">{:lang('instagram')}</span>
+						<span class="evaluate_right_imgs"></span>
+						<span class="evaluate_right_four">0/5</span>
+					</div>
+				</div>
+				</ul>
+			</div>
+			{/foreach}
+		</div>
+	</section>
+	<input type="hidden" id="order_id" value="{$order_id}">
+	<input type="hidden" id="order_no" value="{$order_no}">
+
+</div>
+<div style="background:#fff;margin-top:6px;height: 45px;line-height: 45px;padding: 0 10px 0 10px;">
+	<span style="float: right;">
+		<input id="btn_submit" type="button" class="submit" onclick="doSubmit(2)" value="{:lang('publication_evaluation')}"/>
+	</span>
+</div>
+</form>
+<input type="hidden" id="isSub" value="true">
+
+{/block}
+{block name="bottom"}{/block}
+{block name="javascript"}
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+{/block}

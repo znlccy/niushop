@@ -1,0 +1,64 @@
+<!--功能：左侧新品推荐、销售排行榜-->
+<!--创建人：李志伟-->
+<!--时间：2017年2月7日11:57:58-->
+<div class="aside">
+	<span class="slide-aside"></span>
+	<div class="aside-inner">
+		{if condition="[is_new_recommend] neq '0'"}
+		<!--新品推荐-->
+		<div class="aside-con">
+			<h2 class="aside-tit">{:lang('goods_new_arrivals')}</h2>
+			<ul class="aside-list">
+			{foreach name="goods_new_list" item="goodsinfo" key="k"}
+				<li>
+					{if condition="$goodsinfo.stock==0"}
+					<!--售罄显示-->
+<!-- 					<div class="sell-out"></div> -->
+					{/if}
+					<div class="p-img">
+						<a target="_blank" title="{$goodsinfo.goods_name}" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsinfo['goods_id'])}">
+							<img src="{:__IMG($goodsinfo['pic_cover_mid'])}" >
+						</a>
+					</div>
+					<div class="p-name">
+						<a target="_blank" title="{$goodsinfo.goods_name}" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsinfo['goods_id'])}">{$goodsinfo.goods_name}</a>
+					</div>
+					<div class="p-price">
+						<span class="sale-price color">￥{$goodsinfo.promotion_price}</span>
+						<span class="sale-num">{:lang('goods_sales_volume')}：{$goodsinfo.sales}</span>
+					</div>
+				</li>
+			{/foreach}
+			</ul>
+		</div>
+		{/if}
+		{if condition="[is_sale_ranking] neq 0" /}
+		<!--销量排行榜-->
+		<div class="aside-con">
+			<h2 class="aside-tit">{:lang('goods_sales_charts')}</h2>
+			<ul class="aside-list">
+			{foreach name="goods_sales_list" item="goodsinfo" key="k"}
+				<li>
+					{if condition="$goodsinfo.stock==0"}
+					<!--售罄显示-->
+<!-- 					<div class="sell-out"></div> -->
+					{/if}
+					<div class="p-img">
+						<a target="_blank" title="{$goodsinfo.goods_name}" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsinfo['goods_id'])}">
+							<img src="{:__IMG($goodsinfo['pic_cover_mid'])}" >
+						</a>
+					</div>
+					<div class="p-name">
+						<a target="_blank" title="{$goodsinfo.goods_name}" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsinfo['goods_id'])}">{$goodsinfo.goods_name}</a>
+					</div>
+					<div class="p-price">
+						<span class="sale-price color">￥{$goodsinfo.promotion_price}</span>
+						<span class="sale-num">{:lang('goods_sales_volume')}：{$goodsinfo.sales}</span>
+					</div>
+				</li>
+			{/foreach}
+			</ul>
+		</div>
+		{/if}
+	</div>
+</div>

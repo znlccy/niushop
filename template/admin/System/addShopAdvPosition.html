@@ -1,0 +1,403 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style  type="text/css">
+
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 200px;
+	height: 60px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	    margin: 0 0 10px;
+		border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 200px;
+	max-height: 60px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+.edit_button{
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:30px;
+	padding-right:30px;
+	background-color:#51A351;
+	color:#FFF;
+	margin:20px auto;
+	border:none;
+	display:block;
+}
+.error{
+	font-size: 12px;
+    line-height: 16px;
+    color: red;
+    margin-top: 10px;
+	display:none;
+}
+.set-style dl dd p{
+	margin-bottom:0;
+}
+
+/*独立*/
+.status-error{
+	display:inline-block;
+	padding-left:5px;
+	padding-right:5px;	
+	padding-bottom:3px;
+	padding-top:3px;
+	color:#FFF;
+	background-color:#de533c;
+}
+/*独立*/
+.status-success{
+	display:inline-block;
+	color:#FFF;
+	padding-left:5px;
+	padding-right:5px;	
+	padding-bottom:3px;
+	padding-top:3px;
+	background-color:#5be15b;
+}
+
+</style>
+
+ {/block}
+{block name="right_tab"}
+ 
+{/block}
+{block name="main"}
+
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>名称:</dt>
+		<dd>
+			<p><input name="UserCode" id="ap_name" type="text"> </p>
+			<p class="error">请输入广告位名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>广告位关键字:</dt>
+		<dd>
+			<p><input name="UserCode" id="ap_keyword" type="text" class="input-common" maxlength="60" onkeyup="value=value.replace(/[^a-zA-Z]/ig,'')" onpaste="return false"></p>
+			<p class="error">该关键字已被使用</p>
+			<p style="color: #999;">广告位关键字可用来调用广告位，关键字必须为英文字符，不得超过60个字符，关键字不可以相同</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>简介:</dt>
+		<dd>
+			<p><textarea id="editor"></textarea></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>类别:</dt>
+		<dd>
+			<p>
+				<select id="ap_class" name="account" class="form-control m-b">
+					<option value="0">图片</option>
+				</select>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用:</dt>
+		<dd>
+			<p>
+				<input id="is_use" type="checkbox"  class="checkbox">
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>所在位置类型:</dt>
+		<dd>
+			<p>
+				<label style="display: inline-block;font-weight:normal;">
+                   	<input type="radio" name="type" id="type1" value="1" checked> pc端 
+                </label>
+                <label style="display: inline-block;font-weight:normal;margin-left:70px;">
+                   	<input type="radio" name="type" id="type2" value="2"> 手机端 
+                </label>
+            </p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>展示方式:</dt>
+		<dd>
+			<p id="ap_display">
+				<label style="font-weight:normal;">
+                	<input type="radio" name="ap_display" id="ap_display0" value="0"> 可以发布多条并幻灯展示 
+                </label>
+                <label style="font-weight:normal;">
+                	<input type="radio" name="ap_display" id="ap_display1" value="1">  可以发布多条广告并随机展示 
+                </label>
+                <label style="font-weight:normal;">
+                	<input type="radio" name="ap_display" id="ap_display2" value="2"> 只允许发布并展示一条广告 
+                </label>
+            </p>
+            <p class="error">请选择展示方式</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>宽度:</dt>
+		<dd>
+			<p><input id="ap_width" type="number"> </p>
+			<p class="error">请输入广告位宽度</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>高度:</dt>
+		<dd>
+			<p><input id="ap_height" type="number"> </p>
+			<p class="error">请输入广告位高度</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>默认图片:</dt>
+		<dd>
+			<div class="class-logo"><p><img id="imgLogo" src="" ></p></div>
+			<div class="ncsc-upload-btn"> 
+			    <a href="javascript:void(0);"><span>
+			          <input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImg" nc_type="change_store_label" type="file" onchange="imgUpload(this);">
+			        </span><p><i class="icon-upload-alt"></i>上传图片</p>
+			    </a>
+			    <input type="hidden" id="Logo" value=""/> 
+			</div>
+			<p class="error">请上传一张图片作为默认图片</p>
+		</dd>
+		<p></p>
+	</dl>
+	<dl>
+		<dt>默认背景色:</dt>
+		<dd>
+			<div class="ncsc-upload-btn"> 
+			    <a href="javascript:void(0);">
+			          <input id="ap_background_color" type="color" style="width:60px;height:25px;"/>
+			    </a>  
+			</div>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="addShopAdvPositionAjax();">提交</button>
+</div>	
+
+{/block}
+{block name="script"}
+
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var data = { 'file_path' : UPLOADADV };
+	uploadFile(fileid,data,function(res){
+		if(res.code){
+			$("#imgLogo").attr("src",__IMG(res.data));
+			$("#Logo").val(res.data);
+			showTip(res.message,"success");
+		}else{
+			showTip(res.message,"error");
+		}
+	});
+}
+
+var ap_keyword_is_exists = false;
+$("#ap_keyword").change(function(){
+	var ap_keyword = $(this).val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/check_apkeyword')}",
+		data : {"ap_keyword" : ap_keyword},
+		success : function(data){
+			if(data == 0){
+				ap_keyword_is_exists = false;
+			}else if(data > 0){
+				ap_keyword_is_exists = true;
+			}
+		}
+	})
+})
+
+/**
+*添加广告位
+*/
+var isClick = false;
+function addShopAdvPositionAjax() {
+	var ap_name = $("#ap_name").val();
+	var ap_intro = $("#editor").val();
+	var ap_class = $("#ap_class").val();
+	if($("#is_use").prop("checked")){
+		var is_use = 1;
+	}else{
+		var is_use = 0;
+	}
+	var ap_display = $("input[type='radio'][name='ap_display']:checked").val();
+	var ap_width = $("#ap_width").val();
+	var ap_height = $("#ap_height").val();
+	var default_content = $("#Logo").val();
+	var ap_background_color = $("#ap_background_color").val();
+	var type = $("input[type='radio'][name='type']:checked").val();
+	var ap_keyword = $("#ap_keyword").val();
+	if(verify(ap_name,ap_display,ap_width,ap_height)){
+		if(isClick){
+			return false;
+		}
+		isClick = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/system/addshopadvposition')}",
+			data : {
+				'ap_name' : ap_name,
+				'ap_intro' : ap_intro,
+				'ap_class' : ap_class,
+				'is_use' : is_use,
+				'ap_display' : ap_display,
+				'ap_width' : ap_width,
+				'ap_height' : ap_height,
+				'default_content' : default_content,
+				'ap_background_color' : ap_background_color,
+				'type' : type,
+				'ap_keyword' : ap_keyword
+			},
+			async : true,
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', "添加成功","{:__URL('ADMIN_MAIN/system/shopadvpositionlist')}");
+				}else{
+					isClick = false;
+					showMessage('error', "添加失败");
+				}
+			}
+		});
+	}
+}
+function verify(ap_name,ap_display,ap_width,ap_height){
+	if(ap_name.length == 0){
+		$("#ap_name").parent().next(".error").show();
+		$("#ap_name").focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(ap_keyword_is_exists){
+		$("#ap_keyword").parent().next(".error").show();
+		$("#ap_keyword").focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(ap_display == undefined){
+		$("#ap_display").next(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(ap_width.length == 0){
+		$("#ap_width").parent().next(".error").show();
+		$("#ap_width").focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(ap_height.length == 0){
+		$("#ap_height").parent().next(".error").show();
+		$("#ap_height").focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if($("#Logo").val().length ==0){
+		$("#Logo").parent().next(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;;
+}
+</script>
+{/block}

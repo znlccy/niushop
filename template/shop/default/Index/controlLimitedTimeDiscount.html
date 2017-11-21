@@ -1,0 +1,124 @@
+<style>
+ .box-bd .tempWrap ul li{
+	float: left;
+    width: 242px;
+    height: 260px;
+ 	padding: 10px 0;
+ 	border-right:1px solid #eee;
+ 	margin-right:-2px;
+ }
+ .box-bd .tempWrap ul li:last-child{
+	border-right:0;
+ }
+.box-bd{
+	border:1px solid #eee;
+}
+
+.seckill-channel .box-bd .p-img .brand-time{
+	margin-left:3px;
+}
+.seckill-channel .box-bd .p-name a{
+	font-size:12px;
+}
+.p-price .shop-price{
+	font-size:15px;
+}
+</style>
+<!--
+	创建人：王永杰
+	创建时间：2017年2月7日 11:59:16
+	功能描述：限时折扣
+-->
+{if condition="count($discount_list) >0"}
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_style.css">
+<div class="floor"></div>
+<div class="channel-content" ectype="channel">
+	<div class="seckill-channel" id="h-seckill">
+		<div class="clearfix"  style="padding-top:10px;padding-bottom:10px;">
+			<!-- <i class="box-hd-icon"></i> -->
+			<span style="height:30px;line-height:30px;font-size:17px;display:inline-block;border-left:5px  solid red;padding-left:10px;">限时秒杀</span>
+			<div class="sk-more">
+				<a href="{:__URL('SHOP_MAIN/index/discount')}" target="_blank">{:lang('more_spike')}</a>
+			</div>
+		</div>
+		<div class="box-bd clearfix">
+			<div class="tempWrap" >
+				<ul>
+					{volist name="discount_list" id="vo"}
+					<li class="opacity_img clone" >
+						<div class="p-img" style="width:90%;padding:0 10px;">
+							<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$vo['goods_id'])}" target="_blank">
+								<img src="{:__IMG($vo['picture']['pic_cover_mid'])}" class="img-lazyload">
+								<div class="brand-time" >
+									<em class="time">
+										<span class="settime" starttime="{$vo.start_time | getTimeStampTurnTime}" endtime="{$vo.end_time | getTimeStampTurnTime}"></span>
+									</em>
+								</div>
+							</a>
+						</div>
+						<div class="p-name" style="padding:0 10px;width:90%;">
+							<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$vo['goods_id'])}" target="_blank" title="{$vo.goods_name}">{$vo.goods_name}</a>
+						</div>
+						<div class="p-over" style="padding:0 10px;width:90%;">
+<!-- 							<div class="p-info"> -->
+								<div class="p-price">
+									{if condition="$vo.promotion_price == ''"}
+									<span class="shop-price"><em>¥</em>{$vo.promotion_price}</span>
+									{else/}
+									<span class="shop-price"><em>¥</em>{$vo.promotion_price}</span>
+									{/if}
+									<span class="original-price"><em>¥</em>{$vo.price}</span>
+								</div>
+<!-- 							</div> -->
+<!-- 							<div class="p-btn"> -->
+<!-- 								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$vo['goods_id'])}" target="_blank">{:lang('snap_up')}</a> -->
+<!-- 							</div> -->
+						</div>
+					</li>
+					
+				{/volist}
+				
+				</ul>
+				<input type="hidden" id="ms_time" value="{$ms_time}"/>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(function() {
+	countDown();
+});
+
+function countDown(){
+	$(".settime").each(function(i) {
+		var self = $(this);
+		var end_date = this.getAttribute("endTime"); //结束时间字符串
+		if(end_date != undefined && end_date != ''){
+			var end_time = new Date(end_date.replace(/-/g,'/')).getTime();//月份是实际月份-1
+			var sys_second = (end_time-$("#ms_time").val())/1000;
+			if(sys_second>1){
+				sys_second -= 1;
+				var day = Math.floor((sys_second / 3600) / 24);
+				var hour = Math.floor((sys_second / 3600) % 24);
+				var minute = Math.floor((sys_second / 60) % 60);
+				var second = Math.floor(sys_second % 60);
+				self.html(day + "{:lang('days')}" + ( hour<10 ? "0" + hour : hour ) + "{:lang('hours')}" + (minute<10?"0"+minute:minute) + "{:lang('minutes')}" + (second<10?"0"+second:second) + "{:lang('second')}");
+			}
+			var timer = setInterval(function(){
+				if (sys_second > 1) {
+					sys_second -= 1;
+					var day = Math.floor((sys_second / 3600) / 24);
+					var hour = Math.floor((sys_second / 3600) % 24);
+					var minute = Math.floor((sys_second / 60) % 60);
+					var second = Math.floor(sys_second % 60);
+					self.html(day + "{:lang('days')}" + (hour<10?"0"+hour:hour) + "{:lang('hours')}" + (minute<10?"0"+minute:minute) + "{:lang('minutes')}" + (second<10?"0"+second:second) + "{:lang('second')}"); 
+				} else { 
+					self.html("{:lang('activity_over')}！");
+					clearInterval(timer);
+				}
+			}, 1000);
+		}
+	});
+}
+</script>
+{/if}

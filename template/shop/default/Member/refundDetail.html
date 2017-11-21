@@ -1,0 +1,283 @@
+{extend name="shop/default/Member/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+<style type="text/css">
+.find_con .stepflex_te dl{width:240px;}
+.alert ul {overflow: hidden;}
+
+.ncm-default-form h3 {
+    font-weight: 600;
+    line-height: 22px;
+    color: #555;
+    clear: both;
+    background-color: #F5F5F5;
+    padding: 5px 0 5px 12px;
+    border-bottom: solid 1px #E7E7E7;
+}
+.ncm-default-form dl dt, .ncm-default-form dl dd {
+    font-size: 12px;
+    line-height: 32px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: right;
+    display: inline-block;
+    width: 14%;
+    padding: 10px 1% 10px 0;
+    margin: 0;
+}
+.ncm-default-form dl dd {
+    text-align: left;
+    width: 85%;
+    padding: 10px 0 10px 0;
+}
+.ncm-default-form dl dt {
+    width: 19%;
+}
+.ncm-default-form dl dd {
+    width: 79%;
+}
+.ncm-default-form dl {
+    font-size: 0;
+    line-height: 20px;
+    clear: both;
+    padding: 0;
+    margin: 0;
+    border-bottom: dotted 1px #E6E6E6;
+    overflow: hidden;
+}
+.bottom{
+	text-align: center;
+    margin-top: 19px;
+}
+
+.text{
+	overflow: hidden;
+    text-align: center;
+}
+.text>ul>li{
+	clear: both;
+}
+</style>
+{/block}
+{block name="main"}
+
+<div class="user-right"> 
+	<div class="box">
+ 		<div class="tabmenu"><ul class="tab"><li class="active" id="tab1" >{:lang('member_refund_request')}</li></ul></div>
+ 		
+ 		<div class="title"><h3>{:lang('type_service')}：{:lang('member_refund')}</h3></div>
+	    <div class="find_pw3">
+	    	<div class="find_con">
+	    		<div id="sflex04" class="stepflex stepflex_te">
+		            <dl class="first doing">
+		              <dt class="s-num">1</dt>
+		              <dd class="s-text"> {:lang('member_buyers_apply_for_refund')}<s></s> <b></b> </dd>
+		            </dl>
+		            {if condition="$detail.refund_status egt 2 or ($detail.refund_status lt 0 and $detail.refund_status gt -3)"}
+		            	<dl class="normal doing">
+		            {else /}
+		            	<dl class="normal">
+		            {/if}
+		              <dt class="s-num">2</dt>
+		              <dd class="s-text"> {:lang('member_merchant_processing_refund_request')}<s></s> <b></b> </dd>
+		            </dl>
+		            
+		            {if condition="$detail.refund_status egt 5 or ($detail.refund_status lt 0 and $detail.refund_status gt -3)"}
+		            	<dl class="last doing">
+		            {else /}
+		            	<dl class="last">
+		            {/if}
+		              <dt class="s-num">&nbsp;</dt>
+		              <dd class="s-text"> {:lang('member_refund_completed')} <s></s> <b></b> </dd>
+		            </dl>
+		         </div>
+	    	</div>
+	    </div>
+	    
+	    <div class=" ncm-default-form">
+        <div id="warning"></div>
+         
+          {if condition="$detail.refund_status eq 0"}
+          
+            	{include file='shop/default/Member/controlRefundStatus0'/}
+            	
+          {elseif condition="$detail.refund_status eq -3" /}
+          
+          		{include file='shop/default/Member/controlRefundStatusNegative3'/}
+          		
+          {elseif condition="$detail.refund_status eq 1" /}
+          
+          		{include file='shop/default/Member/controlRefundStatus1'/}
+          		
+		  {elseif condition="$detail.refund_status eq 2" /}
+		  
+		  		{include file='shop/default/Member/controlRefundStatus2'/}
+		  			
+		  {elseif condition="$detail.refund_status eq 3" /}
+			<div class="none-goods">
+				<i class="icon-tip-circle"></i>
+				<div class="text">
+					<h4>{:lang('member_waiting_for_merchant')}</h4>
+					<p>{:lang('member_merchant_agreed_to_refund')}。</p>
+				</div>
+			</div>
+			<div class="bottom">
+            	<a href="javascript:history.go(-1);" class="main-btn main-btn-large">{:lang('member_return_list')}>></a>
+            </div>
+		  {elseif condition="$detail.refund_status eq 4" /}
+			<!--等待卖家同意退款 begin-->
+			
+			<div class="wait-seller-agree">
+				<i class="icon-tip-circle"></i>
+				<div class="text">
+					<h4>{:lang('member_successfully_applied_for_refund')}。</h4>
+				</div>
+			</div>
+			<div class="bottom">
+            	<a href="javascript:history.go(-1);" class="main-btn main-btn-large">{:lang('member_return_list')}>></a>
+            </div>
+			
+			<!--等待卖家同意退款 begin-->
+		  {elseif condition="$detail.refund_status eq 5" /}
+			<!--step03 begin-->
+			<div class="return-success">
+				<i class="icon-right-circle"></i>
+				<div class="text">
+					<h4>{:lang('member_refund_successful')}（{$detail.refund_time | getTimeStampTurnTime}）</h4>
+					<p class="time">{:lang('member_seller')}{:lang('refunded')}<strong style="color:#ff4000;">{$detail.refund_real_money}</strong>{:lang('element')}</p>
+					<p>
+						{if condition="$refund_balance>0"}
+						<span>（{:lang("member_refund_balance_auto")}<strong style="color:#ff4000;">{$refund_balance}</strong>{:lang('element')}）</span>
+						{/if}
+					</p>
+				</div>
+			</div>
+			<div class="bottom">
+            	<a href="javascript:history.go(-1);" class="main-btn main-btn-large">{:lang('member_return_list')}>></a>
+            </div>
+		   {elseif condition="$detail.refund_status eq -1" /}
+			<!--卖家拒绝 begin-->
+			<div class="disagree-return">
+				<i class="icon-tip-circle"></i>
+				<div class="text">
+					<h4>{:lang('member_seller_rejects')}</h4>
+					<div class="operate"></div>
+				</div>
+			</div>
+			<div class="bottom">
+            	<a href="javascript:history.go(-1);" class="main-btn main-btn-large">{:lang('member_return_list')}>></a>
+            </div>
+			{elseif condition="$detail.refund_status eq -2" /}
+			<div class="return-success">
+				<i class="icon-tip-circle"></i>
+				<div class="text">
+					<h4>{:lang('member_refund_closed')}</h4>
+				</div>
+			</div>
+			<div class="bottom">
+            	<a href="javascript:history.go(-1);" class="main-btn main-btn-large">{:lang('member_return_list')}>></a>
+            </div>
+			{/if}
+      </div>
+	</div>     
+</div>
+{/block}
+
+{block name="javascript"}
+<script type="text/javascript">
+var order_id = {$detail.order_id};
+var order_goods_id ={$detail.order_goods_id};
+$(function(){
+	
+	//如果退款原因是选择的其他就让用户自己写退款说明
+	$("#refund_reason").change(function(){
+		if($(this).val()=="{:lang('member_other')}")
+		{
+			$('#description_dl').show();
+		}else{
+			$('#description_dl').hide();
+		}
+	})
+})
+//添加退货信息物流
+   function ExpressSave(){
+        var LogisticsCompany=$("#LogisticsCompany").val();
+        var ExpressNo=$("#ExpressNo").val();
+        if(LogisticsCompany==""){
+            $("#LogisticsCompany").focus();
+            $.msg("{:lang('member_logistics_companies_cannot_empty')}");
+        }else if(ExpressNo==""){
+            $("#ExpressNo").focus();
+            $.msg("{:lang('member_waybill_number_cannot_empty')}");
+        }else{
+            $.ajax({
+                url: "{:__URL('SHOP_MAIN/order/ordergoodsrefundexpress')}",
+                type: "post",
+                data: { "order_id": order_id, "order_goods_id": order_goods_id, "refund_express_company": LogisticsCompany, "refund_shipping_no": ExpressNo},
+                dataType: "json",
+                success: function (response) {
+                	if(response.code>0){
+                		window.location.reload();
+                	}
+                }
+            });
+         }
+    }
+
+//保存退款信息
+function btnSave() {
+    var refund_require = $("#refund_require").val();
+    var refund_reason = $("#refund_reason").val();
+    var refund_money = $("#refund_money").val();
+    if($("#refund_money").val() == undefined){
+        var refund_money = 0;
+    }
+    var description = $("#description").val();//
+    var maxRefundMoney = parseFloat($("#maxRefundMoney").val());
+	if(refund_money == "" && refund_money !== 0){
+		$.msg("{:lang('member_please_enter_refund_amount')}");
+		$("#refund_money").select();
+		return false;
+	}
+    if(isNaN(refund_money)){
+    	$.msg("{:lang('member_amount_not_entered_legally')}");
+    	$("#refund_money").select();
+    	return false;
+    }
+    if(refund_money < 0 ){
+    	$.msg("{:lang('member_amount_should_not_negative')}");
+    	$("#refund_money").select();
+    	return false;
+    }
+    if (refund_money >maxRefundMoney) {
+    	$("#refund_money").select();
+    	$.msg("{:lang('member_beyond_refund_amount')}");
+    	return false;
+    }
+    if($('#refund_reason').val()=="{:lang('member_other')}"){
+    	refund_reason=description;
+    }
+    $.ajax({
+        url: "{:__URL('SHOP_MAIN/order/ordergoodsrefundaskfor')}",
+        type: "post",
+        data: {
+        	"order_id": order_id, 
+        	"order_goods_id": order_goods_id, 
+        	"refund_type": refund_require, 
+        	"refund_require_money":refund_money,
+        	"refund_reason": refund_reason
+        },
+        dataType:"json",
+        success: function (response) {
+         	if(response.code>0)
+         	{
+         		window.location.reload();
+         	}else{
+         		 $.msg(response.message);
+         	}
+        }
+    })
+}
+</script>
+{/block}

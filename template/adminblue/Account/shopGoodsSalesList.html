@@ -1,0 +1,89 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/highcharts.js"></script>
+<script src="ADMIN_JS/exporting.js"></script>
+<style  type="text/css">
+.alert li{font-size: 12px;}
+</style>
+{/block}
+{block name="main"}
+<div class="alert">
+	<ul>
+		<li>1、符合以下任何一种条件的订单即为有效订单：a）采用在线支付方式支付并且已付款；b）采用货到付款方式支付并且交易已完成</li>
+		<li>2、以下列表为从昨天开始最近30天有效订单中的所有商品数据</li>
+		<li>3、近30天下单商品数：从昨天开始最近30天有效订单的某商品总销量</li>
+		<li>4、近30天下单金额：从昨天开始最近30天有效订单的某商品总销售额</li>
+	</ul>
+</div>
+<table class="mytable">
+	<tr>
+		<th>
+			商品名称
+			<input type="text" id="goods_name" class="input-common" />
+			<input type="submit" class="btn-common" value="搜索" onclick="LoadingInfo(1);"/>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 30%;">
+		<col style="width: 20%;">
+		<col style="width: 20%;">
+		<col style="width: 20%;">
+		<col style="width: 5%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th>商品名称</th>
+			<th>价格</th>
+			<th>近30天下单商品数</th>
+			<th>近30天下单金额</th>
+		</tr>
+	</thead>
+	<colgroup>
+		<col style="width: 30%;">
+		<col style="width: 20%;">
+		<col style="width: 20%;">
+		<col style="width: 20%;">
+	</colgroup>
+	<tbody></tbody>
+</table>
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var goods_name = $("#goods_name").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/account/shopgoodssaleslist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"goods_name":goods_name
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					var goods_name = "";
+					if(data["data"][i]["goods_name"].length > 23){
+						goods_name = data["data"][i]["goods_name"].substring(0 ,24)+"..." ;
+					}else{
+						goods_name =  data["data"][i]["goods_name"];
+					}
+					html += '<tr align="center">';
+					html += '<td class="tal" title="' + data["data"][i]["goods_name"] + '">' + goods_name + '</td>';
+					html += '<td class="tal">' + data["data"][i]["price"] + '</td>';
+					html += '<td>' + data["data"][i]["sales_info"]["sales_num"] + '</td>';
+					html += '<td>' + data["data"][i]["sales_info"]["sales_money"] + '</td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="4">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,268 @@
+﻿/*dealer pact*/
+.dealer-pact .boxborder{background:#f9f9f9;}
+.dealer-pact .form-horizontal .control-label{width:60px;}
+.dealer-pact .form-horizontal .controls{margin-left:80px;}
+.dealer-pact .pactcontent{position:relative;padding:15px;margin-bottom:20px;border:1px solid #e9e9e9;background:#fdfdfd;
+		-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+				-o-border-radius:3px;
+					border-radius:3px;}
+.dealer-pact  .control-group-onof {margin-bottom:0; }
+
+/**----tlt 0509 ----**/
+.scaleadd-tip{position: static;text-align: left;}
+.box{padding:20px 10px;}
+.top-summary .last-money-summary{font-size:25px;}
+.search-bar{margin:10px 0;}
+.search-bar .form-inline{margin:0;}
+.pay-money{color:#066601;}
+
+/*dealer-purchase*/
+/*--search-bar--***/
+.purchase-list .search-bar.box{padding-top:15px;padding-left:0;padding-right:0;margin-top:0;}
+.purchase-list .search-bar{margin-bottom:20px;padding-bottom:0;}
+.purchase-list .search-bar form{margin:0;}
+.purchase-list .search-bar .left-form{float:left;padding-left:10px;}
+.purchase-list .search-bar .right-btn{overflow:hidden;}
+.purchase-list .search-bar .more a{display:block;margin:0 auto;border-top:1px solid rgba(0,0,0,.01); text-decoration:none;text-align:center;background:rgba(0,0,0,.05);font-size:12px;color:#555;}
+.purchase-list .search-bar .more a span { margin-right:5px;vertical-align:middle;}
+.purchase-list .search-bar .more a i{display:inline-block;width:9px;height:6px;background:url("../imagesv2/icon.png") no-repeat;vertical-align:middle;}
+.purchase-list .search-bar .more a i.arrow-up{background-position: -30px -313px;}
+.purchase-list .search-bar .more a i.arrow-down{background-position: -60px -313px;}
+.purchase-list .search-bar .more a i.arrowrotate{ 
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+		animation:sarotate .5s; 
+			-webkit-animation:sarotate .1s;
+				-moz-animation:sarotate .1s;
+					-o-animation:sarotate .1s;}
+@keyframes sarotate{
+	0%{
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+	}
+	100%{
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+	}
+	}
+@-webkit-keyframes sarotate{
+	0%{
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+	}
+	100%{
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+	}
+	}
+@-moz-keyframes sarotate{
+	0%{
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+	}
+	100%{
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+	}
+	}
+@-o-keyframes sarotate{
+	0%{
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+	}
+	100%{
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+	}
+	}
+.search-bar .more a i.arrowrotate0{ 
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+		animation:sarotate0 .5s; 
+			-webkit-animation:sarotate0 .1s;
+				-moz-animation:sarotate0 .1s;
+					-o-animation:sarotate0 .1s;}
+@keyframes sarotate0{
+	0%{
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+	}
+	100%{
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+	}
+	}
+@-webkit-keyframes sarotate{
+	0%{
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+	}
+	100%{
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+	}
+	}
+@-moz-keyframes sarotate{
+	0%{
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+	}
+	100%{
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+	}
+	}
+@-o-keyframes sarotate{
+	0%{
+		transform:rotate(180deg);
+			-webkit-transform:rotate(180deg);
+				-moz-transform:rotate(180deg);
+					-o-transform:rotate(180deg);	
+	}
+	100%{
+		transform:rotate(0deg);
+			-webkit-transform:rotate(0deg);
+				-moz-transform:rotate(0deg);
+					-o-transform:rotate(0deg);	
+	}
+	}
+.fun-div .a-hideprint{display:inline-block;height:23px;line-height:23px;padding-top:8px; vertical-align:middle;}
+
+.table-order-list td .netprice{display:block;}
+.table-order-list td .business-status .status{display:block;color:#066601;}
+.table-order-list td .view{display:block;}
+
+.table-order-header{margin-bottom:10px;}
+.table-order-list{margin:10px 0;border-right:0;border-bottom:0; table-layout:fixed;}
+.table-order-list input[type="checkbox"]{margin:0;}
+.table-order-list td:last-child{border-right:1px solid #ddd;}
+.table-order-list .no-rightborder td:last-child{border-right:none;}
+.table-order-list .sep-row td{padding:0;height:10px;border-left:0;border-right:0;}
+.title-tr{margin-top:10px;background:#f7f7f7;}
+.title-tr td{padding-top:5px;padding-bottom:5px;text-align:left;}
+.title-tr td input{vertical-align:middle;}
+.title-tr td span{vertical-align:middle;margin:0 30px 0 10px;color:#333;}
+.title-tr td .time { float:right;}
+.table-order-list .col-tr td:last-child{border-right:0;}
+.table-order-list .product-img{float:left;margin-right:10px;}
+.table-order-list .product-img img{width:50px;}
+.table-order-list .product-infor{overflow:hidden;}
+.table-order-list .product-infor .name{margin:0;}
+.table-order-list .product-infor .specification{margin-bottom:5px;color:#999;text-align:left;font-size:12px;}
+.table-order-list .product-infor .specification span{margin-right:5px;}
+
+/*dealer-purchase-detail*/
+.alert-close-business .control-label{width:165px;}
+.order-detail h4{margin-top:10px;font-size:14px;font-weight:700;}
+.order-detail-operate{margin:30px 0;padding:30px;}
+.order-detail-operate .tiptxt{color:#333;font-size:14px; font-weight:700;}
+.order-detail-operate .tiptxt .muted{font-weight:normal;}
+.order-detail-operate .btn{margin-right:5px;}
+
+.table.table-product-info{margin-bottom:0;}
+.table.table-product-info th{border-top:0;}
+.pro-info{margin:5px;overflow:hidden;}
+.pro-info-img{float:left;margin-right:15px;}
+.pro-info-img-a{display:block;border:1px solid #ddd;background:#fff;padding:1px;line-height:1px;}
+.pro-info-img-a img{width:55px;height:55px;border:1px solid #e9e9e9;}
+.pro-info-text{overflow:hidden;}
+.pro-info-text .name{display:block;width:100%;overflow:hidden;}
+.pro-info-text .info{display:block;margin:5px 0 0 0;}
+.amountpay{padding:5px 10px;margin-left:0;background:#f7f7f7;}
+.amountpay li{text-align:right;height:25px;line-height:25px;}
+.amountpay .reality-price{font-size:18px;font-weight:bold;color:#de533c;}
+/*view*/
+.order-info li:before,
+.order-info li:after{content:'.';height:0;display:block;clear:both;visibility:hidden;}
+.order-info ul{margin:0}
+.order-info-title{float:left;width:100px;}
+.order-info-c{overflow:hidden;padding:0;margin:0;}
+
+.order-list-remarks .control-label{width:100px;}
+.order-list-remarks .controls{margin-left:120px;}
+.order-list-remarks .remarks-textarea{width:300px;height:50px;}
+
+/*add-grade*/
+.form-search-bar{display:block;margin:5px 0 20px 0;}
+.form-search-bar select,
+.form-search-bar input{margin-bottom:0;}
+.add-dealer-grade .scaleadd-tip h4{display:inline-block;}
+.add-dealer-grade .form-horizontal h3{margin:0 0 10px 0;line-height:30px;font-size:14px;font-weight:bold;}
+.add-dealer-grade .form-horizontal .control-label{width:100px;}
+.add-dealer-grade .form-horizontal .controls{margin-left:120px;}
+.add-dealer-grade .form-horizontal .all-product-discount,
+.add-dealer-grade .form-horizontal .pro-type{display:none;}
+.add-dealer-grade .form-horizontal .all-product-discount.active,
+.add-dealer-grade .form-horizontal .pro-type.active{display:block;}
+.add-dealer-grade .form-horizontal .radio .btn{margin-top:-8px;}
+.add-dealer-grade .btn-submit{margin:20px;text-align:center;}
+
+/*dealerverify*/
+.form-horizontal.attribution .control-label{width:120px;}
+.form-horizontal.attribution .controls{margin-left:140px;}
+.regional-list{margin:5px 30px 0 0;}
+.regional-list li{margin-bottom:8px;padding-bottom:8px;border-bottom:dashed 1px #ccc;}
+.regional-list li .regional{display:inline-block;}
+.regional-list li .regional .province{margin-right:10px;}
+.regional-list li .regional-btn-box{float:right;}
+.regional-list li .add-btn-box{margin-top:5px;}
+.regional-list li .input-medium{width:111px;}
+
+.radio-content .radio-pane{display:none;}
+.radio-content .radio-pane.active{display:block;}
+
+.dealer-distribution .bigTitle .bar-search{float:right;clear: none;}
+.dealer-distribution .bigTitle .bar-search .form-search{margin:0;}
+.dealer-distribution .count-bar-list{background: #f7f7f7;}
+.dealer-distribution .count-bar-list .count-detail{margin:0;padding:20px 0;}
+.dealer-distribution .count-bar-list .count-detail:before,
+.dealer-distribution .count-bar-list .count-detail:after{content:".";height:0;display:block;clear:both;visibility:hidden;}
+.dealer-distribution .count-bar-list .count-detail li{float:left;width:20%;line-height:30px;}
+.dealer-distribution .count-bar-list .count-detail li .count-box{margin-left:25px;}
+.dealer-distribution .count-bar-list .count-detail li .count-box big{font-size:24px;}
+.dealer-distribution  .smallTitle{margin:20px 0 15px 10px;}
+
+.product-type-tip{ position:static;text-align:left;}
+.dealer-commission-alert{padding:10px 15px;}
+.form-horizontal .dealer-commission .control-label{width:85px;}
+.form-horizontal .dealer-commission .controls{margin-left:105px;}
+.form-horizontal .dealer-commission .input-mini{width:100px;}
+.dealer-commission h6{margin:0 0 10px 14px;line-height:30px;font-size:14px;font-weight:bold;}
+.dealer-commission .stock-info,
+.dealer-commission .no-stock-info{display:none;}
+
+/*dealer-grade*/
+.dealer-grade .tiphelp-info{margin-bottom:10px;}

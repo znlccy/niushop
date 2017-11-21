@@ -1,0 +1,23 @@
+﻿@charset "utf-8";
+/* CSS Document */
+/*version list*/
+.version-list-title{margin:20px;font-size:30px;text-align:center;}
+.version-list ul{margin:20px;}
+.version-list li{padding:10px 0;border-bottom:1px solid #f1f1f1;}
+.version-list li a{color:#333;}
+.version-list li:last-child{border-bottom:0;}
+.version-list li time{float:right;color:#999;}
+.version-list li .icon-arrow-right-t{float:right;margin-left:20px;font-size:30px;color:#333;}
+/*version detail*/
+.version-detail h2{margin:20px;text-align:center;font-size:30px;}
+
+/*guid help*/
+.guide-title{margin-top:40px;background:rgba(0,0,0,.4);}
+.guide-title h1{margin:0 auto;height:80px;line-height:80px;width:1220px;color:#fff;font-size:30px;}
+.guide-main{padding:20px;width:1180px;font-size:16px;}
+.guide-main figure{margin:30px 0 0 0;padding:0;}
+.guide-main figcaption{margin:15px 0 0 0;font-size:20px;}
+.guide-main figure p{margin-top:15px;}
+.guide-main figure h6{margin:40px 0 0 0;font-size:16px;font-weight:bold;}
+.guide-main .pic-number{display:block;margin:10px 0 10px 0;}
+

@@ -1,0 +1,107 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<link href="ADMIN_CSS/express/freight_template_list.css" rel="stylesheet" />
+{/block}
+{block name="main"}
+<div class="operation">
+	<button class="btn-common-delete btn-small" onclick="batchDelete()" style="margin:0 !important;">批量删除</button>
+	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/express/freighttemplateedit?co_id='.$co_id)}';">添加模板</button>
+</div>
+<table class="list">
+	<colgroup>
+		<col style="width: 10%;">
+		<col style="width: 20%;">
+		<col style="width: 20%;">
+		<col style="width: 20%;">
+		<col style="width: 20%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<tbody></tbody>
+</table>
+<div class="mask-layer"></div>
+<div class="mask-address-info"></div>
+<input type="hidden" id="hidden_co_id" value="{$co_id}" />
+<script>
+$(function(){
+	changeMaskPosition();
+});
+
+$(window).resize(function(){
+	changeMaskPosition();
+});
+
+function changeMaskPosition(){
+
+	var top = ($(window).height()-$('.mask-address-info').outerHeight())/2;
+	var left = ($(window).width()-$('.mask-address-info').outerWidth())/2;
+	$(".mask-address-info").css({ "top" : top, "left" : left });
+	$(".mask-address-info>header").css({ "top" : top, "left" : left });
+}
+
+function LoadingInfo(page_index){
+	$.ajax({
+		url: "{:__URL('ADMIN_MAIN/express/freighttemplatelist')}",
+		type: 'POST',
+		dataType: 'html',
+		data: { "page_index" : page_index, "page_size" : $("#showNumber").val(),"co_id" : $("#hidden_co_id").val() },
+		success: function(data) {
+			$('.list tbody').html(data);
+			initPageData($("#pagecount").val(),$("#data_length").val(),$("#totalcount").val());
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#pagecount").val(),{$pageshow}));
+		}
+	});
+}
+
+//批量删除
+function batchDelete(){
+	var shipping_fee_id = new Array();
+	$("tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			
+			shipping_fee_id.push($(this).val());
+		}
+	});
+	if(shipping_fee_id.length==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return;
+	}
+	freightTemplateDelete(shipping_fee_id);
+}
+
+function freightTemplateDelete(shipping_fee_id) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type:"post",
+					url : "{:__URL('ADMIN_MAIN/express/freighttemplatedelete')}",
+					data : { 'shipping_fee_id':shipping_fee_id.toString() },
+					dataType : "json",
+					success : function (res) {
+						if (res.code > 0) {
+							LoadingInfo(getCurrentIndex(shipping_fee_id,'.list tbody','tr[class="head"]'));
+							showTip(res.message,"success");
+						}else{
+							showTip(res.message,"error");
+						}
+					}
+				});
+			},
+			"取消,#e57373":function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"您确定要删除？",
+	});
+}
+</script>
+{/block}

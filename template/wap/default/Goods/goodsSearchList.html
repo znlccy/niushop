@@ -1,0 +1,50 @@
+{extend name="wap/default/base" /}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1);"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang("member_commodity")}"{$sear_name}"{:lang("search_results")}{include file="wap/default/controGroup" /}</div>
+</section>
+<style>
+	.head-title {
+	margin: 0 80px;
+	height: 44px;
+	line-height: 44px;
+	color: #333;
+	font-size: 16px;
+	text-align: center;
+	width: 100%;
+	margin: auto;
+}
+.custom-search{
+	padding: 0px;
+	background-color:#f7f7f7;
+}
+.custom-search form {
+	margin: 0;
+	position: relative;
+	background: none;
+	border-radius: 4px;
+	border: 0 none;
+	overflow: hidden;
+}
+.custom-search-button {
+	top: 6px;
+}
+.members_goodspic{
+	margin-top: 85px;
+}
+
+</style>
+<script type="text/javascript">
+$(function(){
+	$('.custom-search-input').val('{$search_title}');
+})
+</script>
+{/block}
+{block name="main"}
+	{include file='wap/default/goodsList' url="Goods/goodsSearchList" /}
+{/block}
+
+{block name="bottom"}
+{/block}

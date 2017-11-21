@@ -1,0 +1,132 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/shop_street.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/user.css">
+<style type="text/css">
+.user-right .box {
+    background-color: #fff;
+    width:98%;
+    float: none; 
+	margin:0 auto;
+	margin-top:44px;
+   margin-bottom:30px;
+	min-height: 650px;
+}
+.balance_list:nth-child(2n+1) {
+    margin-left: 0;
+	float:left;
+}
+.balance_list:nth-child(2n+2) {
+    margin-right: 0;
+	float:right;
+}
+.control_balance{
+	height:auto;
+}
+
+
+.balance_totle{width:100%;height:150px;}
+.balance_title{display:block;font-size:30px;text-align:center;color:red;margin-top:20px;border-bottom:1px solid #ccc;height:40px;}
+.totle_list_left{width:240px;height:70px;border:1px solid #ccc;padding:40px;margin-left:40px;margin-top:20px;float:left;}
+.totle_list_right{width:240px;height:70px;padding:40px;margin-right:40px;margin-top:20px;float:right;}
+/* .control_balance{height:400px;} */
+/*以下为平台显示样式*/
+.platform{position:absolute;width:150px;height:160px;border:1px solid #ccc;}
+.platform .shop_name{text-align:center;width:100%;height:50px;line-height:30px;overflow:hidden;}
+.platform .shop_balance{text-align:center;width:130px;height:50px;border-bottom:1px solid #ccc;line-height:50px; font-size:23px;margin:0 10px 0 10px;color:red;}
+.platform .shop_img{height:68px;}
+.platform .shop_img img{max-height:80px;max-width:120px; margin-left:15px; margin-top:10px;}
+/*.platform_list{position:absolute;width:150px;height:160px;background-color:rgba(0,0,0,0.5); display:none;border:1px solid #ccc;}
+ .platform_list .balance_back{width:90px;height:40px; background-color:#ff4f4f;position:relative;top:60px;left:30px; border:0;display:block; color:white;line-height: 40px;text-align: center;border-radius:5px;} */
+/*以下为店铺显示样式*/
+.balance_list{float:left;width:47%;height:160px;border:1px solid #ccc;margin-left:13px;margin-top:15px;}
+/* .balance_list:nth-child(6n+1){margin-left:0;} */
+.balance_list .shop_info{text-align:center;/* position:absolute;z-index:1; */}
+.balance_list .shop_img{height:68px;}
+.balance_list .shop_img img{max-height:80px;max-width:120px; margin-left:15px; margin-top:10px;}
+.balance_list .shop_name{text-align:center;/* width:150px; */;height:30px;line-height:30px;overflow:hidden;}
+.balance_list .shop_balance{text-align:center;/* width:130px; */height:50px;border-bottom:1px solid #ccc;line-height:50px; font-size:23px;margin:0 10px 0 10px; color:red;}
+/* .balance_list .shop_block{position:absolute; z-index:2; width:150px; height:160px; background-color:rgba(0,0,0,0.5); display:none;} */
+/* .balance_list .shop_block a{width:90px;height:40px; background-color:#ff4f4f;position:relative;top:60px;left:30px; border:0;display:block; color:white;line-height: 40px;text-align: center;border-radius:5px;} */
+</style>
+{/block}
+{block name="goodsHead"}
+    <section class="head">
+		<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)"><i class="icon-back"></i></a>
+		<div class="head-title">{:lang('member_my_balance')}</div>
+	</section>
+{/block}
+{block name="main"}
+
+<div class="user-right">
+   	<div class="box">
+   		  <div class="tabmenu">
+            <ul class="tab pngFix">
+              <li class="active"  > <a href="javascript:;">{:lang('platform_balance')}</a> </li>
+            </ul>
+          </div>
+          <div class="balance_totle">
+          {if condition="$market_isset eq true"}
+          	{foreach $balance.data as $balance_list}
+          	  {if condition="$balance_list.shop_id eq 0"}
+          	<div class="platform">
+          				<div class="shop_balance">
+	         	 	<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$balance_list['shop_id'])}" ><span>{$balance_list.balance}</span></a>
+	         	 		</div>
+	         	 		<div class="shop_img">
+					<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$balance_list['shop_id'])}" ><img  src="__TEMP__/{$style}/public/images/default_shop_avatar.png" /></a>
+	         	 		</div>         	 			
+         	 			<div class="shop_name">
+         	 		<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$balance_list['shop_id'])}" ><span title="{:lang('cow_cool_platform')}">{:lang('cow_cool_platform')}</span>	</a>
+         	 			</div>         	 			
+	        </div>	
+	        <!-- <div class="platform_list">
+	        	<span class="balance_back"><a href="APP_MAIN/member/balancewater?shop_id={$balance_list.shop_id}" style="color:#fff">余额明细</a></span> 
+	       	</div>    -->   
+           {/if}
+           	{/foreach}
+          {else /}
+          	{:lang('no_data')}
+          {/if}
+          </div>
+          <div class="tabmenu" style="margin-bottom:0px; margin-top:15px;">
+            <ul class="tab pngFix">
+              <li class="active"  > <a href="javascript:;">{:lang('store_balance')}</a> </li>
+            </ul>
+          </div>
+           <div class="balance_shop">
+         	<div class="control_balance">
+         	{if condition="$shop_isset eq true"}
+          		{foreach $balance.data as $balance_list}
+         		{if condition="$balance_list.shop_id neq 0"}	
+	         	<div class="balance_list">
+         	 		<div class="shop_info">
+         	 			<div class="shop_balance">
+         	 			<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$balance_list['shop_id'])}" >	<span>{$balance_list.balance}</span></a>
+         	 			</div>        	 			
+         	 			<div class="shop_img">
+         	 			{if condition="$balance_list.extra.shop_logo neq '' and $balance_list.extra.shop_logo neq '0'"}
+						<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$balance_list['shop_id'])}" ><img src="{:__IMG($balance_list.extra.shop_logo)}" /></a>
+					    {else /}
+						<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$balance_list['shop_id'])}" ><img  src="__TEMP__/{$style}/public/images/default_shop_avatar.png"  /></a>
+					    {/if}
+         	 			</div>
+         	 			<div class="shop_name">
+         	 			<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$balance_list['shop_id'])}" >	<span title="{$balance_list.extra.shop_name}">{$balance_list.extra.shop_name}</span>	</a>         	 				
+         	 			</div>		
+         	 		</div>
+         	 	<!-- 	<div class="shop_block">
+         	 			<span class="balance_back"><a href="APP_MAIN/member/balancewater?shop_id={$balance_list.shop_id}" >余额明细</a></span> 
+         	 		</div>	 -->  	         	 		
+	         	</div>	             	 		
+	         	{/if}
+	         	{/foreach}
+	         {else /}
+	         	{:lang('no_data')}
+	         {/if}
+         	</div>
+         </div>
+   	</div>
+</div>
+{/block}
+{block name="bottom"}{/block}

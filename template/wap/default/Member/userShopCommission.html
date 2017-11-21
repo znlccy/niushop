@@ -1,0 +1,96 @@
+{extend name="wap/default/base" /} 
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/foundation.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/common-v4.4.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/normalize.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/dis-v4.4.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/my_commission.css">
+{/block} 
+
+{block name="main"}
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1);"><i class="icon-back"></i></a>
+	<div class="head-title" style="position: relative;">{:lang('my_commission')} <a class="a-borkerage" href="{:__URL('APP_MAIN/distribution/useraccountrecordslist?shop_id='.$shop_id)}" style="position: absolute;right: 10px;">{:lang('detail')}</a></div>
+	
+</section>
+
+<div style="height: 44px;; background: #fff;"></div>
+<div class="bro-spare" style="overflow:hidden;background:linear-gradient(#FF583E, #FF7A3C ) ; margin-top: 0px;">
+	<div class="tip_head">
+		<p class="tip-txt"><i class="icon-money"></i>{:lang('available_commission_balance')}</p>
+		<span class="number-big">¥</span>
+	</div>
+	<div class="tip_bottom">
+		<p class="field-2 lf">{:lang('accumulative_commission')}<br/><big>￥</big></p>
+		<p class="field-2 lf">{:lang('amount_to_be_audited')}<br/><big>￥</big></p>
+		<p class="field-2 rg">{:lang('cash_in_cash')}<br/><big>￥</big></p>
+	</div>
+</div>
+
+
+<!--推广员--> 
+<div style="background:#fff;">
+<p class="xiajip"><span class="xiajispanleft"><i class=" module-icon extension"></i>{:lang('promoter')}</span><span class="xiajispanright"></span></p>
+<ul class="maneylist">
+	<li class="maneylist-li">
+		<a  class="a-personal" href="{:__URL('APP_MAIN/distribution/useraccountrecordsdetail?shop_id='.$shop_id.'&type_id=1')}">
+		 	 <span class="text">{:lang('distribution_commission')}</span> <span class="money-number">¥<i class="arrow"></i></span>
+		</a> 
+	</li>
+	<li class="maneylist-li">
+		<a  class="a-personal" href="{:__URL('APP_MAIN/distribution/useraccountrecordsdetail?shop_id='.$shop_id.'&type_id=2')}"> 
+		     <span class="text">{:lang('regional_commission')}</span> <span class="money-number">¥<i class="arrow"></i></span>
+		</a> 
+	</li>
+<!-- 	<li class="maneylist-li">
+	     <a  class="a-personal" href="">
+	         <span class="text">推广员团队分红</span> <span class="money-number">¥<i class="arrow"></i></span>
+	     </a> 
+	</li>
+ -->
+	<li class="maneylist-li">
+	    <a  class="a-personal" href="{:__URL('APP_MAIN/distribution/useraccountrecordsdetail?shop_id='.$shop_id.'&type_id=3')}">
+	        <span class="text">{:lang('channel_agency_bonus')}</span> <span class="money-number">¥<i class="arrow"></i></span>
+	    </a>
+	</li>
+</ul>
+</div>
+<div class="blank"></div>
+<!--股东--> 
+<div class="nav_two" style="background:#fff;">
+<p class="xiajip"><span class="xiajispanleft gd"><i class="shareholder"></i>{:lang('shareholder')}</span><span class="xiajispanright"></span></p>
+<ul class="maneylist" style="display:;">
+	<li class="maneylist-li">
+		<a  class="a-personal" href="{:__URL('APP_MAIN/distribution/useraccountrecordsdetail?shop_id='.$shop_id.'&type_id=4')}"> 
+			 <span class="text">{:lang('dividends_to_shareholders')}</span> <span class="money-number">¥<i class="arrow"></i></span>
+		</a>
+	</li>
+	<li class="maneylist-li">
+	    <a  class="a-personal" href="{:__URL('APP_MAIN/distribution/useraccountrecordsdetail?shop_id='.$shop_id.'&type_id=5')}"> 
+		     <span class="text">{:lang('global_bonus_pool')}</span> <span class="money-number">¥<i class="arrow"></i></span>
+	    </a> 
+	</li>
+<!-- 	<li class="maneylist-li">
+		<a  class="a-personal" href="">
+		   <span class="text">股东团队分红</span> <span class="money-number">¥<i class="arrow"></i></span>
+		</a> 
+	</li> -->
+</ul>
+</div>
+<div class="bro-extract-btn">
+	<a href="{:__URL('APP_MAIN/distribution/towithdraw?shop_id='.$shop_id)}" class="button [radius round] red">{:lang('apply_for_cash')}</a>
+</div>
+
+{/block}
+{block name="bottom"}{/block}
+{block name="javascript"}
+<script type="text/javascript">
+/* 	$(document).ready(function() {
+		$(".a-borkerage-detail").click(function() {
+			$(this).removeClass();
+			$(this).addClass('a-borkerage-detail_2');
+		})
+	}) */
+ </script> 
+             
+{/block}

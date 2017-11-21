@@ -1,0 +1,67 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" href="ADMIN_CSS/pc_template.css" >
+		<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_blue_common.css" />
+{/block}
+{block name="main"}
+
+<article class="pc-template">
+
+	{foreach name="$template_list" item="template" key="k"}
+	{if condition="$template.folder == $use_template"}
+	<div class="title">当前使用模板</div>
+	<div class="template-list js-curr-use">
+		<ul>
+			<li style="background-color: {$template.bgcolor}">
+				<h4>{$template.theme}</h4>
+				<p>{$template.introduce}</p>
+				<div class="template-thumbnail">
+					<img src="__TEMP__/shop/{$template['folder']}/{$template['preview']}" alt="缩略图">
+				</div>
+			</li>
+		</ul>
+	</div>
+	{/if}
+	{/foreach}
+	<div class="title">可使用模板</div>
+	<div class="template-list">
+		<ul>
+			{foreach name="$template_list" item="template" key="k"}
+			<li style="background-color: {$template.bgcolor}" {if condition="$k>0 &&($k+1)%5==0"}style="margin-right:0;"{/if} data-bgcolor="{$template.bgcolor}">
+				<div class="mask-layer">
+					<button class="btn-common btn-big" data-folder="{$template.folder}">使用该模板</button>
+				</div>
+				<h4>{$template.theme}</h4>
+				<p>{$template.introduce}</p>
+				<div class="template-thumbnail">
+					<img src="__TEMP__/shop/{$template['folder']}/{$template['preview']}" alt="缩略图">
+				</div>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+</article>
+<script>
+$(function(){
+	$(".btn-common").click(function(){
+		var $self = $(this).parent().parent();
+		$.ajax({
+			type : "post",
+			url :  "{:__URL('ADMIN_MAIN/Config/updateTemplateUse')}",
+			data : { 'type' : "shop", 'folder' : $(this).attr("data-folder") },
+			success : function(res){
+				if(res.code>0){
+					var use_li = $(".js-curr-use ul li");
+					use_li.css("background-color",$self.attr("data-bgcolor"));
+					use_li.children("h4").text($self.children("h4").text());
+					use_li.find("img").attr("src",$self.find("img").attr("src"));
+					showTip("操作成功","success");
+				}else{
+					showTip("操作失败","error");
+				}
+			}
+		});
+	});
+});
+</script>
+{/block}

@@ -1,0 +1,141 @@
+{extend name="wap/default/base" /} 
+{block name="resources"}
+<link rel="stylesheet" type="text/css"
+	href="__TEMP__/{$style}/public/css/member_address.css">
+<style>
+.head_right{
+	position: absolute;
+    top: 0;
+    width: 80px;
+    height: 44px;
+    line-height: 44px;
+    color: #333;
+    text-align: center;
+	right:0;
+}
+.head_right img{
+	display:inline-block;
+	height:20px;
+	width:20px;
+	margin-top:12px;
+}
+</style>
+{/block} {block name="goodsHead"}
+<section class="head">
+	<a class="head_back" onclick="window.history.go(-1)"
+		href="javascript:void(0)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('extended_two_dimensional_code')}</div>
+	
+</section>
+{/block} {block name="main"}
+<image class="shop-qrcode"src="{:__URL('APP_MAIN/login/showuserqrcode?uid='.$source_uid)}" style="display:block;width:100%;margin-top:45px;">
+{include file='wap/default/share'/}
+{/block}
+{block name="bottom"}{/block} 
+ {block name="javascript"}
+<script type="text/javascript">
+wx.config({
+    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: $("#appId").val(), // 必填，公众号的唯一标识
+    timestamp: $("#jsTimesTamp").val(), // 必填，生成签名的时间戳
+    nonceStr:  $("#jsNonceStr").val(), // 必填，生成签名的随机串
+    signature: $("#jsSignature").val(),// 必填，签名，见附录1
+    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+wx.ready(function () {
+    var title = "{$share_contents['share_title']}";
+    var share_contents = "{$share_contents['share_contents']}"+'\r\n';
+    var share_nick_name = "{$share_contents['share_nick_name']}"+'\r\n';
+    var desc2 = share_contents+ share_nick_name + "{:lang('heat_collection')}：★★★★★";
+    var url = "{$share_contents['share_url']}";
+    var img_url = "{$share_contents['share_img']}";
+        wx.onMenuShareAppMessage({
+            title: title,
+            desc: desc2,
+            link: url,
+            imgUrl: img_url,
+            trigger: function (res) {
+//                alert('用户点击发送给朋友');
+            },
+            success: function (res) {
+//                alert('已分享');
+           
+            },
+            cancel: function (res) {
+                //alert('已取消');
+            },
+            fail: function (res) {
+                //alert(JSON.stringify(res));
+            }
+        });
+
+    // 2.2 监听“分享到朋友圈”按钮点击、自定义分享内容及分享结果接口
+        wx.onMenuShareTimeline({
+            title: title,
+            link: url,
+            imgUrl: img_url,
+            trigger: function (res) {
+              // alert('用户点击分享到朋友圈');
+            },
+            success: function (res) {
+                //alert('已分享');
+            
+            },
+            cancel: function (res) {
+                //alert('已取消');
+            },
+            fail: function (res) {
+           //     alert(JSON.stringify(res));
+            }
+        });
+
+    // 2.3 监听“分享到QQ”按钮点击、自定义分享内容及分享结果接口
+        wx.onMenuShareQQ({
+            title: title,
+            desc: desc2,
+            link: url,
+            imgUrl: img_url,
+            trigger: function (res) {
+                //alert('用户点击分享到QQ');
+            },
+            complete: function (res) {
+                //alert(JSON.stringify(res));
+            },
+            success: function (res) {
+                //alert('已分享');
+            	
+            },
+            cancel: function (res) {
+                //alert('已取消');
+            },
+            fail: function (res) {
+                //alert(JSON.stringify(res));
+            }
+        });
+
+    // 2.4 监听“分享到微博”按钮点击、自定义分享内容及分享结果接口
+        wx.onMenuShareWeibo({
+            title: title,
+            desc: desc2,
+            link: url,
+            imgUrl: img_url,
+            trigger: function (res) {
+                //alert('用户点击分享到微博');
+            },
+            complete: function (res) {
+                //alert(JSON.stringify(res));
+            },
+            success: function (res) {
+                //alert('已分享');
+            
+            },
+            cancel: function (res) {
+                //alert('已取消');
+            },
+            fail: function (res) {
+                //alert(JSON.stringify(res));
+            }
+        });
+});
+</script>
+{/block}

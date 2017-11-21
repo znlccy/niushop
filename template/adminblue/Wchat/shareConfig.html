@@ -1,0 +1,215 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<script src="__STATIC__/js/common.js" type="text/javascript"></script>
+<script src="__STATIC__/bootstrap/js/bootstrap.js"></script>
+<script src="__STATIC__/bootstrap/js/bootstrapCommon.js"></script>
+<script src="__STATIC__/js/check_browser.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/set.css">
+<style>
+.main{margin-left: 5px;overflow: hidden;}
+#btnBut{width:750px;margin:10px auto;}
+.share .card, .share .product, .share .store{margin:0 10px 10px;}
+.share .product{margin:0 10px 10px 0;}
+</style>
+{/block}
+{block name="main"}
+<script>
+$(document).ready(function () {
+	$("#codeCancel").hide();
+	$("#storeCancel").hide();
+	$("#proCancel").hide();
+	$("#storeCancel").hide();
+	$("#codeCancel").click(function () {
+		$(".card .text").show();
+		$(".card input").hide();
+		$("#codeEdit").show();
+		$("#codeCancel").hide();
+		buthide();
+	});
+	$("#proCancel").click(function () {
+		$(".product .text").show();
+		$(".product input").hide();
+		$("#proEdit").show();
+		$("#proCancel").hide();
+		buthide();
+	});
+	$("#storeCancel").click(function () {
+		$(".store .text").show();
+		$(".store input").hide();
+		$("#storeEdit").show();
+		$("#storeCancel").hide();
+		buthide();
+	});
+	
+	function buthide() {
+		if ($("#proCancel").is(":hidden") && $("#storeCancel").is(":hidden")) {
+			$(".button").hide();
+		}
+	}
+
+	$("#codeEdit").click(function () {
+		$(".card .text").hide();
+		$(".card input").show();
+		$("#codeEdit").hide();
+		$("#codeCancel").show();
+		$(".button").show();
+	});
+	
+	$("#proEdit").click(function () {
+		$(".product .text").hide();
+		$(".product input").show();
+		$("#proEdit").hide();
+		$("#proCancel").show();
+		$(".button").show();
+	});
+	
+	$("#storeEdit").click(function () {
+		$(".store .text").hide();
+		$(".store input").show();
+		$("#storeEdit").hide();
+		$("#storeCancel").show();
+		$(".button").show();
+	});
+})
+</script>
+<!-- <div id="DialogLayer"></div> -->
+<div class="main share">
+	<div class="mb10 mlr15">
+		<div class="tiphelp-info"><strong>提示：</strong>设置分享内容，设置方法如下：<br>
+		点击下方的“编辑”按钮，在出现的对话框中填写您想要的内容，如果想要取消，点击“取消”按钮，如果需要保存点击保存即可。
+		</div>
+	</div>
+	<div class="card">
+		<h3 class="title">
+			<span>推广二维码</span>
+			<a href="javascript:void(0)" class="edit" id="codeEdit" style="display: block;">编辑</a>
+			<a href="javascript:void(0)" class="edit" id="codeCancel" style="display: none;">取消</a>
+		</h3>
+		<h4 class="pro-title"><span>分享二维码</span></h4>
+		<dl>
+			<dt><span class="img">个人头像</span></dt>
+			<dd>
+				<p class="price" style="margin:5px 0;">
+					<span class="text" id="qrcode_one" style="display: inline;">{$config['qrcode_param_1']}</span>
+					<input class="input-common w60" type="text" value=" {$config['qrcode_param_1']}" placeholder="请输入分享标题" style="display: none;" id="Qrcode_param_1">
+				</p>
+				<p class="advertisiment">
+					<span class="text" id="qrcode_two" style="display: block;">{$config['qrcode_param_2']}</span>
+					<input class="input-medium input-common" type="text" value="{$config['qrcode_param_2']}" style="display: none;" id="Qrcode_param_2">
+				</p>
+				<p class="hot"><span>收藏热度：</span><span class="star">★★★★★</span></p>
+			</dd>
+		</dl>
+	</div>
+	<div class="product">
+		<h3 class="title">
+			<span>商品设置</span>
+			<a href="javascript:void(0)" class="edit" id="proEdit" style="display: block;">编辑</a>
+			<a href="javascript:void(0)" class="edit" id="proCancel" style="display: none;">取消</a>
+		</h3>
+		<h4 class="pro-title"><span>商品分享</span></h4>
+		<dl>
+			<dt><span class="img">商品图片</span></dt>
+			<dd style="padding-left:10px;">
+				<p class="price">
+					<span class="text" id="pricespan" style="display: inline;">{$config['goods_param_1']}</span>
+					<input class="w60 input-common" type="text" value="{$config['goods_param_1']}" placeholder="价格标题" style="display: none;" id="PriceDesc">
+					<span class="number"><!-- ￥0.00 --></span>
+				</p>
+				<p class="advertisiment">
+					<span class="text" id="descspan" style="display: block;">{$config['goods_param_2']}</span>
+					<input class="input-medium input-common" type="text" value="{$config['goods_param_2']}" style="display: none;" id="ProductDesc">
+				</p>
+				<p class="hot"><span>收藏热度：</span><span class="star">★★★★★</span></p>
+			</dd>
+		</dl>
+	</div>
+	<div class="store">
+		<h3 class="title">
+			<span>店铺设置</span>
+			<a href="javascript:void(0)" class="edit" id="storeEdit" style="display: block;">编辑</a>
+			<a href="javascript:void(0)" class="edit" id="storeCancel" style="display: none;">取消</a>
+		</h3>
+		<h4 class="store-title">
+			<span class="text pre" id="opendescspan" style="display: inline-block;">{$config['shop_param_1']}</span>
+			<input type="text" class="input-medium input-common" value="{$config['shop_param_1']}" placeholder="请输入欢迎语" style="display: none;">
+			<span class="storeName" id="shopName">**店</span>
+		</h4>
+		<dl>
+			<dt><span class="img">店铺Logo</span></dt>
+			<dd>
+				<p class="price">
+					<span class="text advertisiment" id="openremarkspan1" style="display: block;">{$config['shop_param_2']}</span>
+					<input id="txtOpenRemark" class="input-medium input-common" type="text" value="{$config['shop_param_2']}" placeholder="请输入内容" style="display: none;">
+				</p>
+				<p class="more">
+					<span class="text" id="openremarkspan2" style="display: block;">{$config['shop_param_3']}</span>
+					<input class="input-medium input-common" type="text" value="{$config['shop_param_3']}" style="display: none;">
+				</p>
+				<p class="hot"><span>收藏热度：</span><span class="star">★★★★★</span></p>
+			</dd>
+		</dl>
+	</div>
+</div>
+
+<p class="button" style="display: none;" id="btnBut">
+	<button class="btn-common btn-big" id="btnSave" type="button">保存</button>
+</p>
+<script>
+$(function () {
+	$("#btnSave").click(function () {
+		$("#btnSave").attr("disabled", true);
+		var PriceDesc = $("#PriceDesc").val();
+		var ProductDesc = $("#ProductDesc").val();
+		var OpenDesc = $(".store-title input").val();
+		var OpenRemark1 = $("#txtOpenRemark").val();
+		var OpenRemark2 = $(".more input").val();
+		var Qrcode_param_1=$("#Qrcode_param_1").val();
+		var Qrcode_param_2=$("#Qrcode_param_2").val();
+		$.ajax({
+			type: "post",
+			url: "{:__URL('ADMIN_MAIN/wchat/shareconfig')}",
+			data: { "goods_param_1":PriceDesc, "goods_param_2":ProductDesc,"shop_param_1":OpenDesc,"shop_param_2":OpenRemark1,"shop_param_3":OpenRemark2,"qrcode_param_1":Qrcode_param_1,"qrcode_param_2":Qrcode_param_2 },
+			async: false,
+			success: function (data) {
+				$("#PriceDesc").val(PriceDesc);
+				$("#ProductDesc").val(ProductDesc);
+				$(".store-title input").val(OpenDesc);
+				$("#txtOpenRemark").val(OpenRemark1);
+				$(".more input").val(OpenRemark2);
+				$("#Qrcode_param_1").val(Qrcode_param_1);
+				$("#Qrcode_param_2").val(Qrcode_param_2);
+				$("#pricespan").text(PriceDesc);
+				$("#descspan").text(ProductDesc);
+				$("#opendescspan").text(OpenDesc);
+				$("#openremarkspan1").text(OpenRemark1);
+				$("#openremarkspan2").text(OpenRemark2);
+				$("#qrcode_one").text(Qrcode_param_1);
+				$("#qrcode_two").text(Qrcode_param_2);
+				$(".card .text").show();
+				$(".card input").hide();
+				$("#codeEdit").show();
+				$("#codeCancel").hide();
+				$(".product .text").show();
+				$(".product input").hide();
+				$("#proEdit").show();
+				$("#proCancel").hide();
+				$(".store .text").show();
+				$(".store input").hide();
+				$("#storeEdit").show();
+				$("#storeCancel").hide();
+				$("#btnSave").attr("disabled", false);
+				if ($("#proCancel").is(":hidden") && $("#storeCancel").is(":hidden")) {
+					$(".button").hide();
+				}
+				if(data['code']){
+					showMessage('success', data['message'], '#');
+				}else{
+					showMessage('error', data['message']);
+				}
+			}
+		});
+	});
+});
+</script>
+{/block}

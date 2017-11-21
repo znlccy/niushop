@@ -1,0 +1,99 @@
+{extend name="admin/base" /} {block name="resources"/}
+<style>.style0list tbody td{border:0;vertical-align: middle;}</style>
+{/block} {block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/config/addshopad')}"><i class="fa fa-plus-circle"></i>&nbsp;添加广告</a></li>
+{/block} {block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="style0list">
+			<table>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 30%;">
+					<col style="width: 20%;">
+					<col style="width: 10%;">
+					<col style="width: 11%;">
+				</colgroup>
+				<thead>
+					<tr align="center">
+						<th><label><input type="checkbox"  onclick="CheckAll(this)"></label></th>
+						<th>轮播图片</th>
+						<th>链接地址</th>
+						<th>类型</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 30%;">
+					<col style="width: 20%;">
+					<col style="width: 10%;">
+					<col style="width: 11%;">
+				</colgroup>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}{block name="script"}
+<script type="text/javascript">
+$(function(){
+	LoadingInfo(1);
+})
+//查询用户列表
+	function LoadingInfo(pageIndex) {
+		var search_text = $("#search_text").val();
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/config/shopadlist')}",
+			data : {
+				"pageIndex" : pageIndex, "search_text" : search_text
+			},
+			success : function(data) {
+				var html = '';
+				if (data['data'].length > 0) {
+					for (var i = 0; i < data['data'].length; i++) {
+						html += '<tr align="center">';
+						html += '<td><div class="cell"><label><input name="sub" type="checkbox" value="'+ data['data'][i]['id']+'" ></label></div></td>';
+						html += '<td><img src="'+ __IMG(data['data'][i]['ad_image'])+'" style="height:50px;"/></td>';
+						html += '<td>' + data['data'][i]["link_url"] + '</td>';
+						if(data['data'][i]["type"] == 0){
+							html += '<td>pc端</td>';
+						}else{
+							html += '<td>手机端</td>';
+						}
+						html += '<td><a href="'+__URL('ADMIN_MAIN/config/updateshopad?id=' + data['data'][i]["id"])+'">编辑</a> ';
+						html += '<a href="javascript:;" onclick="delShopAd('+ data['data'][i]["id"] +')">删除</a></td> ';
+						html += '</tr>';
+					}
+				} else {
+					html += '<tr align="center"><th colspan="4">暂无符合条件的数据记录</th></tr>';
+				}
+				$(".style0list tbody").html(html);
+			}
+		});
+	}	
+	//全选
+	function CheckAll(event){
+		var checked = event.checked;
+		$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+	}
+	function delShopAd(id){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/config/delshopad')}",
+			data : {
+				'id' : id
+			},
+			async : true,
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', "店铺广告删除成功","{:__URL('ADMIN_MAIN/config/shopadlist')}");
+				}else{
+					showMessage('error', "店铺广告删除失败");
+				}
+			}
+		});
+	}
+</script>
+{/block}

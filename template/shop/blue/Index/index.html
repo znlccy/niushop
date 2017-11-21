@@ -1,0 +1,118 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_default.css">
+<style>
+body{
+	background: #F5F5F5;
+}
+.category-layer .list .categorys {
+    background: #eeeeee;
+}
+
+.category-layer .list .categorys .item-left {
+    width: 100%;
+}
+.category-layer .list .categorys .subitems {
+    width: 100%;
+}
+.category-layer .list .categorys .subitems dl {
+    width: 95%;
+}
+.category-layer-bg {
+    background: rgba(6, 137, 225, 0.42);
+}
+.category-layer .list .cat .cat-name a {
+    color: #fff;
+}
+.category-layer .list .categorys {
+    background: rgba(238, 238, 238, 0.91);
+}
+.category-layer .list .cat:hover {
+    background: rgba(238, 238, 238, 0.91);
+}
+.proclamation1 .mall-news{
+	height:auto;
+}
+.proclamation1 .mall-news a{
+	border-bottom: 1px solid #ccc;
+}
+.proclamation1 .mall-news a:last-child{
+	border-bottom:none;
+}
+.category-layer .list .cat i.right-arrow{
+	color: #ffffff;
+}
+</style>
+{/block}
+
+{block name="headAd"}
+{include file='shop/blue/Index/controlHeadAd' ap_id='1051'/}
+{/block}
+
+{block name="headGoodType"}
+{include file='shop/blue/controlHeadGoodType'/}
+<!-- 滚动图片广告位 -->
+<div class="template-one">
+	<div class="banner">
+		{include file='shop/blue/Index/controlHeadNav' ap_id='1053'/}  <!--滚动图-->
+		{include file='shop/blue/Index/controlHeadNavRight' /}  <!--滚动图右侧公告-->
+	</div>
+</div>
+{/block}
+
+{block name="main"}
+	
+<div class="floor"></div>
+
+	<!-- 广告位 -->
+	{include file='shop/blue/Index/controlIndexAdv' ap_id='1054'/}
+	
+	
+	<!--限时折扣-->
+	{include file='shop/blue/Index/controlLimitedTimeDiscount'/}
+	<!--限时折扣-->
+	
+	<!-- 推荐广告位开始 -->
+	{include file='shop/blue/Index/controlCommendBlock' /}
+	<!-- 推荐广告位结束-->
+	
+	<!--推荐商品楼层分类 start-->
+	{include file='shop/blue/Index/controlRecFloor' /}
+	<!--推荐商品楼层分类 end -->
+
+	<!-- #tpl_region_end -->
+
+	<!-- 左侧楼层定位 _start-->
+	<div class="elevator" style="visibility: hidden;">
+		<div class="elevator-floor" style="transform: scale(1.2); opacity: 0;"></div>
+	</div>
+	<!--友情链接-->
+	{include file='shop/blue/Index/controlFriendshipLink' /}
+{/block}
+{block name="javascript"}
+<!-- 添加js文件 -->
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/layer.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.countdown.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/bubbleup.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_index.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.lazyload.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/tabs.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.hiSlider.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/index_tab.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/tabs.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.fly.min.js"></script>
+<script type="text/javascript">
+$().ready(function() {
+	$.cartbox.count = "0";
+	// 缓载图片
+	$("img").lazyload({
+		skip_invisible : false,
+		effect : 'fadeIn',
+		failure_limit : 20,
+		threshold : 200
+	});
+});
+</script>
+{/block}

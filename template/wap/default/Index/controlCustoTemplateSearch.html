@@ -1,0 +1,20 @@
+<script src="__TEMP__/{$style}/public/js/public_assembly.js"></script>
+<style>
+/* .custom-search {width: 90%;margin-left: 20px;} */
+/* .custom-search .custom-search-input{width:97%;} */
+</style>
+<div style="width: 100%;background-color: {$custom_template_v.style_data.bg_color};padding: 10px 0px;">
+	<div class="editing">
+		<div class="control-group">
+			<div class="custom-search" >
+				<input type="text" class="custom-search-input" placeholder="{$custom_template_v.style_data.placeholder}" style="background-color:{$custom_template_v.style_data.input_bg_color};border:none;border-radius:0;padding-right:10%;font-size:{$custom_template_v.style_data.font_size}px;color:{$custom_template_v.style_data.text_color};">
+				<button type="button" class="custom-search-button">搜索</button>
+				<input type="hidden" value="{$shop_id}" id="hidden_shop_id"/>
+			</div>
+			<div class="component-border"></div>
+		</div>
+		<div class="sort">
+			<i class="sort-handler"></i>
+		</div>
+	</div>
+</div>

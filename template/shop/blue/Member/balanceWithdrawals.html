@@ -1,0 +1,388 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<style type="text/css">
+td{padding:10px;border: 1px Black; width:46px;}
+table{background-color:#eeeeee;border:0;width:100%;}
+.integral_title{display:block;font-size:18px;text-align:center;padding:20px;}
+.user-right .tabmenu .tab li {border-bottom: 2px #ff6600 solid;} 
+.Withdrawals{
+	width:10%;float:left;padding:5px 10px;
+}
+.Withdrawals-right{
+	width:85%;float:left;padding:5px 10px;
+}
+.commision-total{
+	line-height:30px;
+}
+.extract{
+	width: 100%;
+	overflow: hidden;
+	margin:10px 0;
+}
+.commision-right{
+	width: 28%;
+	line-height: 25px;
+	float: left;
+	text-align: left;
+	border: 2px solid #ddd;
+	padding: 5px;
+	margin:10px;
+	margin-left:0px; 
+}
+.commision-right.active{
+	border:2px dashed #0689e1;
+}
+.commision-right-btn{
+	line-height: 25px;
+	float: left;
+	text-align: left;
+	padding: 5px;
+}
+.tip-text{
+	float: right;
+	color: #DD997F;
+}  
+.btn-style{
+	width: 7%;
+	line-height: 30px;
+	text-align: center;
+	background: red;
+	margin-left:100px;
+	margin-top: 12px;
+	margin-bottom: 12px;
+}
+.horn-text{
+	width: 50%;
+	margin-left: 100px;
+	color: #DD997F;
+}
+.modal-content{
+	width: 472px;
+	left: 254px;
+}
+.commision-right-money{
+	line-height: 25px;
+	float: left;
+	text-align: left;
+	border: 1px solid #e5e5e5;
+	padding: 5px;
+}
+.show-box{
+	height: 25px;
+	padding-left: 5px;
+	border: 1px solid #ddd;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab pngFix">
+					<li class="first active">{:lang('member_balance_withdrawal')}</li>
+				</ul>
+			</div>
+			<div data-alert class="alert-box alert" id="errerMsg" style="display: none;"><a href="#" class="close">&times;</a></div>
+				<div class="extract">
+					<div class="commision-total">
+						<div style="float:left;width:10%;text-align:right;padding:5px 10px;font-size: 14px;">{:lang('member_cash_available')}：</div>
+						<div style="width: 80%;float:left;font-size:18px;color:#0689e1;padding:5px 0;" id="Amount">¥{$account}</div>
+					</div>
+				</div>
+				<div class="extract">
+					<div class="commision-total" style="width:10%;text-align:right;float:left;padding:5px 10px;font-size: 14px;">{:lang('member_cash_account')}：</div>
+					<div style="width: 80%;float:left;">
+						{foreach name="account_list" item="vo" key='k'}
+						<div class="commision-right">
+							<div style="width:20%;float:right;text-align: center;margin-top: -8px;margin-right: -8px;">
+								<a href="javascript:;" onclick="updatebankinfo({$vo.id},{$shop_id});" title="{:lang('edit')}"><img src="__TEMP__/{$style}/public/images/edit-cash.png" style="margin-right: 10px;" /></a>
+								<a href="JavaScript:;" onclick="deletecash({$vo.id});"><img src="__TEMP__/{$style}/public/images/delete-cash.png" /></a>
+							</div>
+							<div style="margin-top: 10px;">
+								<span>{:lang('member_full_name')}：{$vo.realname}</span><br/>
+								<span>{:lang('member_sub_branch_information')}：{$vo.branch_bank_name}</span><br/>
+								<span>{:lang('member_bank_account')}：{$vo.account_number}</span>
+							</div>
+							<input type="hidden" value="{$vo.id}" class="bank_account_id"/>
+						</div>  
+						{/foreach}
+						{if !empty($account_list)}
+						<div class="commision-right-btn" style="border: 0;width:100%;"><input type="button" value="{:lang('member_click_add')}"  onclick="add_banck();" style="width: 65px;height: 30px;background: #e5e5e5;cursor: pointer;border:0;"/></div>
+						{else/}
+						<div class="commision-right-btn" style="border: 0;margin-top:0;"><input type="button" value="{:lang('member_click_add')}"  onclick="add_banck();" style="width: 65px;height: 30px;background: #e5e5e5;cursor: pointer;border:0;"/></div>
+						{/if}
+					</div>
+				</div>
+				<div class="extract">
+					<div class="commision-total" style="width:10%;text-align:right;float:left;padding:5px 10px;font-size: 14px;">{:lang('member_cash_withdrawal')}：</div>
+					<div class="commision-right-money" style="border:0;padding:5px 0px;">
+						<input type="text" id="money" placeholder="{:lang('member_enter_amount')}" style="height: 28px;padding-left: 5px;border: 1px solid #e5e5e5;"/>
+					<div style="display:inline-block;vertical-align: middle;">
+						{if condition="$cash neq '' && $poundage neq ''"}
+						<div class="tip-text">{:lang('member_minimum_withdrawal')}<span id="MinaAmountCash">{$cash}</span>{:lang('element')} ，{:lang('member_must_serve')}<span id="IntTimes">{$poundage}</span>{:lang('member_integral_multiple')}</div>
+						{else/}
+						<div class="tip-text">{:lang('member_minimum_withdrawal')}<span id="MinaAmountCash">0</span>{:lang('element')} ，{:lang('member_must_serve')}<span id="IntTimes">1</span>{:lang('member_integral_multiple')}</div>
+						{/if}
+					</div>
+					</div>
+				</div>
+				
+				<input type="hidden" id="bank_id" />
+				<div class="common-btn" onclick="btnSave()" style="margin:10px 120px;">{:lang('member_apply_immediately')}</div>
+				{if condition="$withdraw_message neq ''"}
+				<div class="horn-text"> 注:{$withdraw_message}</div>
+				{/if}
+				<!-- 添加银行账户弹出 -->
+				<div class="modal fade hide" id="add_banck" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">{:lang('member_add_account')}</h4>
+							</div>
+							<div class="modal-body">
+								<div class="modal-infp-style">
+									<table>
+										<tr>
+											<td style="width:20%">{:lang('member_full_name')}：</td>
+											<td colspan='3'>
+												<input type="text" placeholder="{:lang('member_enter_your_real_name')}" id="realname" class="show-box"/>
+											</td>
+										</tr>
+										<tr>
+											<td>{:lang('cell_phone_number')}：</td>
+											<td colspan='3'><input type="text" placeholder="{:lang('member_enter_your_phone_number')}" id="mobile" class="show-box"></td>
+										</tr>
+										<tr>
+											<td>{:lang('member_account_type')}:</td>
+											<td colspan='3'>
+												<select id="bank_type" class="inputBg">
+													<option value="{:lang('member_bank_card')}" >{:lang('member_bank_card')} </option>
+													<option value="{:lang('member_alipay')}" style="display:none;">{:lang('member_alipay')}</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td>{:lang('member_sub_branch_information')}:</td>
+											<td colspan='3'><input type="text" placeholder="{:lang('member_input_sub_branch_information')}" id="branch_bank_name" class="show-box"/></td>
+										</tr>
+										<tr>
+											<td>{:lang('member_bank_account')}:</td>
+											<td colspan='3'><input type="text" placeholder="{:lang('member_input_bank_account')}" id="account_number" class="show-box" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"/></td>
+										</tr>
+									</table>
+									<input type="hidden" value="{$shop_id}" id="shop_id"/>
+									<input type="hidden" id="accountid" />
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-info" onclick="save()" id="butSubmit" data-dismiss="modal" aria-hidden="true" style="display:inline-block;">{:lang('add')}</button>
+								<button type="button" class="btn btn-default close">{:lang('goods_close')}</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 添加银行账户弹出结束 -->
+			<input type="hidden" value="{$shop_id}" id="id"/>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script type="text/javascript">
+$(function(){
+	 $('.commision-right').eq(0).click();
+	$("li[data-href^='SHOP_MAIN/member/balancewithdrawlist']").addClass('current');
+	$(".js-bread-crumb").attr("href",'{:__URL('SHOP_MAIN/member/balancewithdrawlist')}');
+	$(".js-bread-crumb").text("{:lang('member_cash_register')}");
+	$(".js-bread-crumb").parent().append('<span class="crumbs-arrow">&gt;</span><a href="{:__URL('SHOP_MAIN/member/balancewithdrawals')}">{:lang('member_balance_withdrawal')}</a>');
+});
+
+function add_banck(){
+	 $("#add_banck").show();
+	 $("#myModalLabel").text("{:lang('member_add_account')}");
+	 $("#butSubmit").text("{:lang('add')}");
+}
+
+$(".close").click(function(){
+	$("#add_banck").hide();
+});
+
+$(".commision-right").click(function(){
+	$(".commision-right").removeClass('active');
+	$(this).addClass('active');
+	var bank_id = $(this).find(".bank_account_id").val();
+	var bank_id = $("#bank_id").val($(this).find(".bank_account_id").val());
+})
+
+//删除银行账号信息
+function deletecash(id){
+	$.ajax({
+		url: "{:__URL('SHOP_MAIN/member/delaccount')}",
+		data: { "id": id },
+		type: "post",
+		success: function (res) {
+			$.msg(res.message);
+			 if (res.code == 1) {
+				window.location.reload();
+			}
+		}
+	})
+}
+
+//修改银行账号原始数据弹出
+function updatebankinfo(id,shop_id){
+	$.ajax({
+		url: "{:__URL('SHOP_MAIN/member/getbankinfo')}",
+		data: { "id": id ,"shop_id" : shop_id},
+		type: "post",
+		success: function (data) {
+			var id = $("#accountid").val(data['id']);
+			var realname = $("#realname").val(data['realname']);
+			var mobile = $("#mobile").val(data['mobile']);
+			var bank_type = $("#bank_type").val(data['bank_type']);
+			var account_number = $("#account_number").val(data['account_number']);
+			var branch_bank_name = $("#branch_bank_name").val(data['branch_bank_name']);
+			$("#add_banck").show();
+			$("#myModalLabel").text("{:lang('member_balance_recharge')}");
+			$("#butSubmit").text("{:lang('member_preservation')}");
+		}
+	})
+}
+
+//添加银行账户保存
+function save(){
+	var id = $("#accountid").val();
+	var shop_id = $("#shop_id").val();
+	var realname = $("#realname").val();
+	var mobile = $("#mobile").val();
+	var bank_type = $("#bank_type").val();
+	var account_number = $("#account_number").val();
+	var branch_bank_name = $("#branch_bank_name").val();
+	if(realname==''){
+		$.msg("{:lang('member_name_cannot_empty')}");
+		$("#realname").focus();
+		return false;
+	}
+	if(!(/^1[3|4|5|7|8][0-9]{9}$/.test(mobile))){
+		$.msg("{:lang('member_phone_not_correct')}");
+		$("#mobile").focus();
+		return false;
+	}
+	if(branch_bank_name==''){
+		$.msg("{:lang('member_branch_cannot_empty')}");
+		$("#branch_bank_name").focus();
+		return false;
+	}
+	if(account_number==''){
+		$.msg("{:lang('member_bank_cannot_empty')}");
+		$("#account_number").focus();
+		return false;
+	}
+	var reg = /^\d{16,19}$/;
+	if(!(reg.test(account_number))){
+		$.msg("{:lang('member_bank_account_incorrectly')}");
+		$("#account_number").focus();
+		return false;
+	}
+	if(id !=''){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('SHOP_MAIN/member/updatebanckaccount')}",
+			dataType : "json",
+			data : {
+				"realname":realname,
+				"mobile":mobile,
+				"bank_type":bank_type,
+				"account_number":account_number,
+				"id" : id,
+				"branch_bank_name":branch_bank_name
+			},
+			success : function(data) {
+				if(data['code']>0){
+					window.location.href = __URL("SHOP_MAIN/member/balancewithdrawals?shop_id="+shop_id);
+				}
+			}
+		});
+	}else{
+		$.ajax({
+			type : "post",
+			url : "{:__URL('SHOP_MAIN/member/addaccount')}",
+			dataType : "json",
+			data : {
+				"realname":realname,
+				"mobile":mobile,
+				"bank_type":bank_type,
+				"account_number":account_number,
+				"branch_bank_name":branch_bank_name
+			},
+			success : function(data) {
+				if(data['code']>0){
+					window.location.href = __URL("SHOP_MAIN/member/balancewithdrawals?shop_id="+shop_id);
+				}
+			}
+		});
+	}
+}
+
+function btnSave(){
+	var shop_id = $("#id").val();
+	var bank_id = $("#bank_id").val();
+	var cash = $.trim($("#money").val());
+	var MaxCashAmount = $.trim($("#Amount").text());
+	var MinaAmountCash = $.trim($("#MinaAmountCash").text());
+	var IntTimes = $.trim($("#IntTimes").html());
+	MaxCashAmount = MaxCashAmount.substr(1);
+	if(bank_id == null || bank_id == ""){
+		$.msg("{:lang('member_add_current_account')}");
+		return;
+	}
+	var reg = /^\d+((.{0,1})\d{0,2})$/;
+	if (reg.test(cash)) {
+		cash = Number(cash);
+		MaxCashAmount = Number(MaxCashAmount);
+		MinaAmountCash = Number(MinaAmountCash);
+		if (cash > 0) {
+			if (cash <= MaxCashAmount) {
+				if (cash >= MinaAmountCash) {
+					if (cash % parseInt(IntTimes) == 0) {
+						$.ajax({
+							type:"post",
+							url: "{:__URL('SHOP_MAIN/member/balancewithdrawals')}",
+							data: { "bank_id": bank_id, "cash": cash},
+							success: function (res) {
+								if (res['code'] >0) {
+									$.msg("{:lang('member_submitted_for_review')}...");
+									window.location.href = __URL("SHOP_MAIN/member/balancewithdrawlist");
+								} else {
+									$.msg(res['message']);
+								}
+							}
+						});
+					} else {
+						$.msg("{:lang('member_withdrawals_must_be')}" + IntTimes + "{:lang('member_integral_multiple')}");
+						return false;
+					}
+				} else {
+					$.msg("{:lang('member_withdrawals_must_greater')}" + MinaAmountCash);
+					return false;
+				}
+			} else {
+				$.msg("{:lang('member_maximum_amount')}" + MaxCashAmount);
+				return false;
+			}
+		} else {
+			$.msg("{:lang('member_not_present')}");
+			return false;
+		}
+	} else {
+		$.msg("{:lang('member_amount_not_legal')}");
+		return false;
+	}
+}
+</script>
+{/block}

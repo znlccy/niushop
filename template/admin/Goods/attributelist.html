@@ -1,0 +1,185 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+
+.style0list tbody td {
+    padding: 10px 0px;
+}
+.specwidth{
+	text-align:center;
+	font-size: 12px;
+    color: #999;
+}
+.text{
+	color: #fb6b5b;
+}
+.style0list tbody td{
+    vertical-align: middle;
+}
+.specname{
+	text-align:left;
+	font-size: 12px;
+    color: #999;
+}
+.headtitle{
+	height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #e5e5e5;
+}
+</style>
+ {/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="javascript:;" onclick="addAttributeService()"><i class="fa fa-plus-circle"></i>&nbsp;添加商品类型</a></li>
+{/block}
+{block name="main"}
+
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="con style0list">
+			<table>
+				<colgroup>
+					<col style="width: 3%;">
+					<col style="width: 10%;">
+					<col style="width: 30%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+					<col style="width:20%;">
+				</colgroup>
+				<thead>
+					<tr class="headtitle">
+						<td></td>
+						<td class="specname">类型名称</td>
+						<td class="specwidth" style="text-align:left;">属性标签</td>
+						<td class="specwidth">排序</td>
+						<td class="specwidth">启用</td>
+						<td class="specwidth">操作</td>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width: 3%;">
+					<col style="width: 10%;">
+					<col style="width: 30%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+					<col style="width:20%;">
+				</colgroup>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+function setAttributeField(id, name, e){
+	
+	if(name == 'is_use'){
+		var value = $(e).attr("is_use");
+	}else{
+		var value = $(e).val();
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/goods/setattributefield')}",
+		data:{ 'id' : id, 'name' : name, 'value' : value },
+		success: function (data) {
+			if(data['code'] > 0){
+				if(name == 'is_use'){
+					if(value == 1)
+					{
+						$("#isuse_"+id).html('<i class="fa fa-check text-success text-active"></i>');
+						$("#isuse_"+id).attr("is_use", '0');
+					}else{
+						$("#isuse_"+id).html('<i class="fa fa-times text-danger text"></i>');
+						$("#isuse_"+id).attr("is_use", '1');
+					}
+				}
+				showMessage('success', data["message"]);
+			}else{
+				showMessage('error', data["message"]);
+			}
+			
+		}
+	});
+}
+
+/* 跳转到添加品牌 */
+function addAttributeService() {
+	location.href = __URL("ADMIN_MAIN/goods/addattributeservice");
+}
+
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/attributelist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val()
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td style="width:3%;"></td>';
+					html += '<td style="width:20%;text-align: left;">' + data['data'][i]['attr_name'] + '</td>';
+					html += '<td style="width:30%;text-align: left;">' + data["data"][i]["value_str"] + '</td>';
+					html += '<td style="width:10%;"><input type="text" style="width:50px;" id="sort" value="' + data["data"][i]["sort"] + '" onchange="setAttributeField('+data["data"][i]["attr_id"]+', \'sort\', this);"/></td>';
+					if(data["data"][i]["is_use"]){
+						html += '<td style="width:10%;"><a href="javascript:;" class="is_use" id="isuse_'+data["data"][i]["attr_id"]+'" is_use="0" onclick="setAttributeField('+data["data"][i]["attr_id"]+', \'is_use\', this)"><i class="fa fa-check text-success text-active"></i></a></td>';
+					}else{
+						html += '<td style="width:10%;"><a href="javascript:;" class="is_use" id="isuse_'+data["data"][i]["attr_id"]+'" is_use="1" onclick="setAttributeField('+data["data"][i]["attr_id"]+', \'is_use\', this)"><i class="fa fa-times text-danger text"></i></a></td>';
+					}
+					html += '<td style="width:20%;"><a href="'+__URL('ADMIN_MAIN/goods/updategoodsattribute?attr_id=' + data["data"][i]["attr_id"])+'">修改</a>  <a href="javascript:delAttr(' + data["data"][i]["attr_id"] + ')">删除</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="9">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+	
+/* 删除类型 */
+function delAttr(attr_id) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/deleteattr')}",
+					data : { 'attr_id' : attr_id },
+					dataType : "json",
+					success : function(data) {
+						if (data['code'] > 0) {
+ 							showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/goods/attributelist')}");
+ 							
+						}else if(data['code'] == 0){
+ 							showMessage('error', data["message"]);
+						}else if(data['code'] == -1){
+							showMessage('error', '当前规格已经使用过，不能删除！');
+						}
+					}
+				});
+			},"取消,#e57373" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+}
+</script>
+{/block}

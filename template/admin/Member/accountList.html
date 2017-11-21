@@ -1,0 +1,331 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/bootstrap/css/bootstraps.css"></script>
+<style>
+.mytable {border: 0;}
+.style0list tbody td {vertical-align: middle;}
+.style0list  tbody tr {border-bottom: 1px dashed  #E3E3E3;}
+a{
+	cursor:pointer;
+}
+.head-portrait{
+	width: 50px;
+    height: 50px;
+	float: left;
+    padding-right:10px;
+}
+.modal-infp-style{
+width:90%;
+	margin:10px auto;
+}
+.modal-infp-style table{
+	width:100%;
+}
+.modal-infp-style table tr td{
+	border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+#balance {
+	margin-bottom:0;
+}
+#point {
+	margin-bottom:0;
+}
+#remark_point{
+	margin-bottom:0;
+}
+#remark_balance{
+	margin-bottom:0;
+}
+.mytable select {
+    width: 206px;
+}
+#form_type{
+	height:32px;
+	color:#999;
+}
+</style>
+{/block}
+
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<table class="mytable">
+			<tr>
+				<th width="10%">
+					<input type="text" id='startDate' placeholder="请选择开始日期" class="input-medium" onclick="WdatePicker()"/>
+					<input type="text" id='endDate' placeholder="请选择结束日期" class="input-medium" onclick="WdatePicker()" />
+					<select name="form_type" id="form_type">
+						<option value="">请选择类别</option>
+						<option value="1">商城订单</option>
+						<option value="2">订单退还</option>
+						<option value="3">兑换</option>
+						<option value="4">充值</option>
+						<option value="5">签到</option>
+						<option value="6">分享</option>
+						<option value="7">注册</option>
+						<option value="8">提现</option>
+						<option value="9">提现退还</option>
+					</select>
+					
+					<input type="text" id='search_text' placeholder="请输入会员昵称" />
+					
+					<input type="button" onclick="searchData()" value="搜索" />
+				</th>
+			</tr>
+		</table>
+		<div class="style0list">
+			<table>
+				<thead>
+					<tr align="center">
+						<th class="tal">会员昵称</th>
+						<th class="tal">类别</th>
+						<th class="tal">金额</th>
+						<th class="tal">描述</th>
+						<th>时间</th>
+					</tr>
+				</thead>
+				<tbody>
+<!-- 					{foreach name="list['data']" item="v"} -->
+<!-- 					<tr> -->
+<!-- 						<th><input type="checkbox"/></th> -->
+<!-- 						<th>积分兑换</th> -->
+<!-- 						<th>-5</th> -->
+<!-- 						<th>积分兑换余额</th> -->
+<!-- 						<th>2016-9-10</th> -->
+<!-- 					</tr> -->
+<!-- 					{foreach} -->
+				</tbody>
+				
+			</table>
+		</div>
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+	function LoadingInfo(page_index) {
+		var search_text = $("#search_text").val();
+		var start_date = $("#startDate").val();
+		var form_type = $("#form_type").val();
+		var end_date = $("#endDate").val();
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/accountlist')}",
+			async : true,
+			data : {
+				"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text":search_text, "form_type":form_type, "start_date":start_date, "end_date":end_date
+			},
+			success : function(data) {
+// 				alert(JSON.stringify(data));
+				var html = '';
+				if (data["data"].length > 0) {
+					for (var i = 0; i < data["data"].length; i++) {
+						html += '<tr align="center">';
+						if(data["data"][i]["nick_name"]==null){
+							html += '<td class="tal">--</td>';
+						}else{
+							html += '<td class="tal">'+ data["data"][i]["nick_name"] +'</td>';
+						}
+						html += '<td class="tal">'+data["data"][i]["type_name"]+'</td>';
+						html += '<td class="tal">'+ data["data"][i]["number"] +'</td>';	
+						html += '<td class="tal">'+ data["data"][i]["text"] +'</td>';
+						html += '<td align="center">'+ timeStampTurnTime(data["data"][i]["create_time"]) +'</td>';
+						
+						html += '</tr>';
+					}
+				} else {
+					html += '<tr align="center"><th colspan="9">暂无符合条件的数据记录</th></tr>';
+				}
+				$(".style0list tbody").html(html);
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+		});
+	}
+	//全选
+	function CheckAll(event){
+		var checked = event.checked;
+		$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+	}
+
+	function searchData(){
+		LoadingInfo(1);
+	}
+	//锁定会员
+	function lockuser(uid)
+	{
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/memberlock')}",
+			async : true,
+			data : {
+				"id" : uid
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/member/memberlist')}");
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}
+	//解锁会员
+	function unlockuser(uid)
+	{
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/memberunlock')}",
+			async : true,
+			data : {
+				"id" : uid
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/member/memberlist')}");
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}
+	//添加会员弹出
+	function add_user(){
+		$("#add_user").modal("show");
+	}
+	
+	//积分充值
+	function recharge_point(uid,point){
+		$("#recharge_point").modal("show");
+		$("#point_id").val(uid);
+		$("#current_point").text(point);
+	}
+	//余额充值
+	function recharge_balance(uid,balance){
+		$("#recharge_balance").modal("show");
+		$("#balance_id").val(uid);
+		$("#current_balance").text(balance);
+	}
+	//充值
+	function addAccount(type){
+		if(type == 1){
+			var id = $("#point_id").val();
+			var num = $("#point").val();
+			if(num == ''){
+				showMessage('error', '充值积分不能为空');
+				return false;
+			}
+			var text = $("#remark_point").val();
+		}else{
+			var id = $("#balance_id").val();
+			var num = $("#balance").val();
+			if(num == ''){
+				showMessage('error', '充值余额不能为空');
+				return false;
+			}
+			var text = $("#remark_balance").val();
+		}
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/addmemberaccount')}",
+			async : true,
+			data : {
+				"id" : id,
+				"type" : type,
+				"num" : num,
+				"text" : text
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/member/memberlist')}");
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}
+	//检测输入的会员昵称是否已经存在
+	$("#username").change(function(){
+		var username = $(this).val();
+		$(this).css("border","1px solid #ccc");
+		$("#usernameyz").css("color","black").text("");
+		$("#isset_username").attr("value","不存在");
+		$.ajax({
+			type: "GET",
+			url: "{:__URL('ADMIN_MAIN/member/check_username')}",
+			data: {"username":username},
+			success: function(data){
+				if(data){
+					$("#username").css("border","1px solid red");
+					$("#usernameyz").css("color","red").text("用户名已存在");
+					$("#isset_username").attr("value","存在");
+				}
+			} 
+		});
+	})
+	
+	//添加会员
+	function addUser(){
+		var username = $("#username").val();
+		var password = $("#password").val();
+		var level_name = $("input[name='level']:checked").val();
+		var tel = $("#telephone").val();
+		var email = $("#member_email").val();
+// 		alert(email);
+// 		return;
+// 		var reg = new RegExp(/^(?![^a-zA-Z]+$)(?!\D+$)/);
+		if (password == null || password.length < 6) {
+			showTip('密码必须不小于6位！','warning');
+			return false;
+	    }
+// 		 if (!(reg.test(password))){
+// 			 showTip('密码必须是数字和字母组合！','warning');
+// 			 return false;
+// 		 }
+		if(tel == '' && email == ''){
+			showTip('手机或邮箱必须有一个不能为空！','warning');
+			return false;
+		}
+		if((tel != '') && !(/^1(3|4|5|7|8)\d{9}$/.test(tel))){ 
+			showTip('手机号码输入不正确！','warning');
+	        return false; 
+	    } 
+		var re = /(^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$)|(^$)/;
+		if((email != '') && !(re.test(email))){
+			showTip('邮箱格式不正确！','warning');
+	        return false; 
+		}
+		//alert();
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/addmember')}",
+			data : {
+				'username' : username,
+				'password' : password,
+				'level_name' : level_name,
+				'tel' : tel,
+				'email' : email,
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showTip('添加成功','success');
+					window.location.href="{:__URL('ADMIN_MAIN/member/memberlist')}";
+				} else {
+					showTip('添加失败','error');
+					flag = false;
+				}
+			}
+		});
+			       
+	}
+	
+	
+	
+	
+	
+</script>
+{/block}

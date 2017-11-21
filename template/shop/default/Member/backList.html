@@ -1,0 +1,140 @@
+{extend name="shop/default/Member/base" /}
+{block name="main"}
+<style type="text/css">
+.user-right>.box>.tabmenu>.tab>.active {
+	font-size: 16px;
+	border-bottom: 2px #ff6600 solid;
+}
+
+.back-table-tr th {
+	border: 1px solid #EEE;
+}
+</style>
+<div class="user-right">
+	<div class="box">
+		<div class="tabmenu">
+			<ul class="tab pngFix">
+				<li class="active" id="active_list">{:lang('list_of_refund_return_repair_order')}</li>
+			</ul>
+		</div>
+		{if condition="count($orderList) neq 0"}
+		<table width="100%" border="0" cellspacing="0" cellpadding="0"
+			class="bought-table">
+			<thead>
+				<tr class="col-name">
+					<th width="25%" style="border-left: 1px solid #E6E6E6;">{:lang('baby')}</th>
+					<th width="20%">{:lang('member_attribute')}</th>
+					<th width="10%">{:lang('member_unit_price')}</th>
+					<th width="10%">{:lang('goods_number')}</th>
+					<th width="15%">{:lang('member_customer_service')}</th>
+					<th width="10%">{:lang('member_refund_amount')}</th>
+					<th width="10%">{:lang('member_refund_status')}</th>
+				</tr>
+			</thead>
+			<tbody class="close-order">
+			{volist name="orderList" id="order"}
+				<tr class="order-hd">
+					<td colspan="8">
+						<span class="no"> {:lang('member_order_number')}：<span class="order-num">{$order.order_no}</span></span>
+						<span class="deal-time">&nbsp;&nbsp;{:lang('member_closing_time')}：<span>{$order.create_time | getTimeStampTurnTime}</span></span>
+						<span class="deal-time">&nbsp;&nbsp;{$order.shop_name}</span>
+					</td>
+				</tr>
+				{volist name="order['order_item_list']" id="order_item" key="k"}
+				<tr class="order-hd">
+					<td align="center" class="baobei no-border-right order_goods_info">
+						<div class="goods_desc last">
+							<a class="pic" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$order_item['goods_id'])}" title="{:lang('member_see')}{$order_item.goods_name}{:lang('member_commodity_details')}" target="_blank">
+								<img src="{:__IMG($order_item['picture']['pic_cover_micro'])}" alt="" width="50" height="50">
+							</a>
+							<div class="goods_name">{$order_item.goods_name}</div>
+						</div>
+					</td>
+					<td align="center" class="baobei no-border-right order_goods_attr">
+						<div class="goods_desc goods_desc_t last" style="line-height: 50px;">{$order_item.sku_name}</div>
+					</td>
+					<td align="center" class="baobei no-border-right order_goods_info" style="padding: 0px;">
+						<div class="goods_desc price  last" style="padding-left: 0px; line-height: 50px;">￥{$order_item.price}</div>
+					</td>
+					<td align="center" class="baobei no-border-right order_goods_info" style="padding: 0px;">
+						<div class="goods_desc  last" style="padding-left: 0px; line-height: 50px;">{$order_item.num}</div>
+					</td>
+					<td align="center" class="after-service baobei no-border-right order_goods_info" valign="middle">
+						<div class="goods_desc last">
+							<!-- <a href="" >留言/投诉</a> -->
+							{if condition="$order.is_refund eq 1 AND
+							$order_item.refund_status eq 0"}
+							<div>
+								<a href="{:__URL('SHOP_MAIN/member/refunddetail','order_goods_id='.$order_item['order_goods_id'])}" style="text-decoration: underline; color: #E31939;">{:lang('list_of_refund_return')}</a>
+							</div>
+							{elseif condition="$order.is_refund eq 1"}
+							<div>
+								<a href="{:__URL('SHOP_MAIN/member/refunddetail','order_goods_id='.$order_item['order_goods_id'])}" style="border: 1px solid #03A9F4; padding: 3px 8px; color: #03A9F4; line-height: 35px;">{:lang('member_view_refund')}</a>
+							</div>
+							<div>
+								<a href="javascript:;" class="cancle" style="border: 1px solid #E31939; padding: 3px 8px; color: #E31939; line-height: 45px;" onclick="if(confirm('{:lang('member_sure_cancel')}?'))cancleDetail({$order.order_id},{$order_item.order_goods_id})">{:lang('member_cancellation_refund')}</a>
+							</div>
+							{/if}
+						</div>
+					</td>
+					<td align="center" class="amount no-border-right">
+						<p class="post-type">
+							<strong>￥{$order_item.refund_require_money}</strong>
+						</p>
+					</td>
+					{if condition="$k eq 1"}
+					<td rowspan="{$order.order_item_list|count}" align="center" class="trade-status no-border-right">
+						<div>{$order.status_name}</div>
+						<a href="{:__URL('SHOP_MAIN/member/orderdetail','orderid='.$order['order_id'])}" class="main-color">{:lang('member_order_details')}</a>
+					</td>
+					{/if}
+				</tr>
+				{/volist}
+			{/volist}
+			</tbody>
+		</table>
+			{else/}
+				<table width="100%" border="0" cellspacing="0" cellpadding="0"
+				class="bought-table">
+				<thead>
+						<tr class="col-name">
+								<th width="25%" style="border-left: 1px solid #E6E6E6;">{:lang('baby')}</th>
+								<th width="20%">{:lang('member_attribute')}</th>
+								<th width="10%">{:lang('member_unit_price')}</th>
+								<th width="10%">{:lang('goods_number')}</th>
+								<th width="15%">{:lang('member_customer_service')}</th>
+								<th width="10%">{:lang('member_refund_amount')}</th>
+								<th width="10%">{:lang('member_refund_status')}</th>
+						</tr>
+					
+				</thead>
+			</table>
+			<div class="myorder-none" style="padding:100px; text-align: center;">
+				<i class="icon-none"></i><span class="none_01">{:lang('member_no_order_yet')}</span>
+				<span class="none_02">{:lang('member_go_and_see')}</span>
+				<span class="none_03"><a href="{:__URL('SHOP_MAIN/goods/goodslist')}" style="color: #E31939;">{:lang('member_look_around')}</a></span>
+			</div>
+			{/if}
+		
+		{include file='shop/default/controlCommonPage'/}
+	</div>
+</div>
+{/block}
+{block name="javascript"}
+<script type="text/javascript">
+function cancleDetail(order_id,order_goods_id){
+	$.ajax({
+		url: "{:__URL('SHOP_MAIN/member/cancleorder')}",
+		type: "post",
+		data:{ "order_id" : order_id, "order_goods_id" : order_goods_id },
+		dataType:"json",
+		success: function(res){
+			if(res['code']>0){
+				$.msg("{:lang('member_cancellation_refund_successful')}");
+				location.href=__URL("SHOP_MAIN/member/backlist");
+			}
+		}
+	})
+ }
+</script>
+{/block}

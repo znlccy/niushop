@@ -1,0 +1,71 @@
+{extend name="wap/default_new/base" /} 
+{block name="resources"}
+<link rel="stylesheet" type="text/css"
+	href="__TEMP__/{$style}/public/css/member_address.css">
+<style>
+.head_right{
+	position: absolute;
+    top: 0;
+    width: 80px;
+    height: 44px;
+    line-height: 44px;
+    color: #333;
+    text-align: center;
+	right:0;
+}
+.head_right img{
+	display:inline-block;
+	height:20px;
+	width:20px;
+	margin-top:12px;
+}
+</style>
+{/block} {block name="goodsHead"}
+<section class="head">
+	<a  id="backoutapp" class="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('extended_two_dimensional_code')}</div>
+	<a class="head_right"  style="right:0;" href="{:__URL('APP_MAIN/member/updateuserqrcodetemplate?shop_id='.$shop_id)}">
+		<img src="__TEMP__/{$style}/public/images/change.png"/>
+		{:lang('replace')}
+		</a>
+</section>
+{/block} {block name="main"}
+{if condition="$is_weixin == -1"}
+<div class="is_weiin"> <img src="__TEMP__/{$style}/public/images/is_weixin.png"/><p>{:lang('current_browser_is_not_wechat_browser')}</p></div>
+{elseif condition="$is_weixin == 0"/}
+<div class="is_weiin"> <img src="__TEMP__/{$style}/public/images/is_weixin.png"/><p>{:lang('public_number_is_not_set_at_this_time')}</p></div>
+{else /}
+<image class="shop-qrcode"src="{:__URL('APP_MAIN/Member/showUserQrcode?shop_id='.$shop_id)}" style="display:block;width:100%;margin-top:45px;">
+{/if}  
+{include file='wap/default_new/share'/}
+{/block}
+{block name="bottom"}{/block} 
+ {block name="javascript"}
+<script type="text/javascript">
+$(function(){
+	//$(".shop-qrcode").height($(window).height()-45);
+	$.ajax({
+		type:"post",
+		data : {"shop_id" : "{$shop_id}" , "flag" : "qrcode_my"},
+		url : "{:__URL('APP_MAIN/member/getShareContents')}",
+		success : function(data){
+			//alert(JSON.stringify(data));
+			//document.write(data.share_img);
+			$("#share_title").val(data['share_title']);
+			$("#share_desc").val(data['share_contents']);
+			$("#share_url").val(data['share_url']);
+			$("#share_img_url").val(data['share_img']);
+			{include file='wap/default_new/shareContents'/}
+
+		}
+	});
+})
+//app端返回值
+$("#backoutapp").click(function(){
+    var json ={
+    		"center" : "1",
+        }
+    window.webkit.messageHandlers.center.postMessage(json);
+})
+</script>
+{/block}

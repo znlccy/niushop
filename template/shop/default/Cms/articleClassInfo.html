@@ -1,0 +1,27 @@
+{extend name="shop/default/Cms/base" /}
+{block name="resources"}
+{/block}
+{block name="main"}
+<div class="content w990 clearfix">
+	{include file='shop/default/Cms/controlLeftMenu'/}
+	<!-- 右半部分内容 -->
+	<div class="fr" id="question">
+		<div class="right-inner">
+			<h3 class="help-tit">{$info['title']}</h3>
+			<time class="create_time">发布时间：{$info.create_time|date="Y-m-d H:i:s",###} &nbsp;&nbsp;&nbsp;&nbsp;作者：{$info.author}</time>
+			<div class="help-detail">
+				<p style="color: #666666;">{$info['content']}</p>
+			</div>
+			<div class="location_other_article">
+				{notempty name="prev_info"}
+				<a href="{:__URL('SHOP_MAIN/cms/articleclassinfo', 'article_id='.$prev_info.article_id)}" class="prev">上一篇：{$prev_info.title}</a>
+				{/notempty}
+				{notempty name="next_info"}
+				<a href="{:__URL('SHOP_MAIN/cms/articleclassinfo', 'article_id='.$next_info.article_id)}" class="next">下一篇：{$next_info.title}</a>
+				{/notempty}
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="javascript"}{/block}

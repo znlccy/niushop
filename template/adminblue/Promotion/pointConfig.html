@@ -1,0 +1,99 @@
+{extend name="adminblue/base" /}
+{block name="main"}
+<div class="mod-table">
+	<div class="table-div">
+		<table>
+			<tbody>
+				<tr>
+					<td colspan="2" class="back-f5f5f5">
+						<div class="table-title-font">
+							<span>基本设置</span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">所得积分等同于余额,1积分=</td>
+					<td>
+						<div>
+							<input id="integrat_money" class="input-mini input-common" type="number" min="0.01" step="0.01" value="{$pointconfiginfo.convert_rate}">元的余额
+							<span class="help-inline ml15" style="display: none;">请输入积分比</span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td  align="right">是否启用积分兑换余额:</td>
+					<td>
+						<div class="controls">
+							 <label class="radio inline"><input type="radio" name="fare" value="1" checked="checked" id="manebaoyouResultYes">启用</label> 
+							<label class="radio inline"><input type="radio" name="fare" value="0" checked="checked" id="manebaoyouResultNo">禁用</label>
+							<input type="hidden" id="is_open" value='{$pointconfiginfo.is_open}'>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">积分说明:</td>
+					<td>
+						<div><textarea id="integrat_description" class="input-common" >{$pointconfiginfo.desc}</textarea></div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<p class="mt60" style="text-align:center;">
+		<button class="btn-common btn-big" onclick="SavepointConfig();">保存</button>
+	</p>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+var validation = true;//验证余额输入
+$("#integrat_money").live("keyup",function(){
+	var reg = /^\d+(.{0,1})(\d{0,2})$/;
+	if(!reg.test($(this).val())){
+		showTip("请输入大于0的数字，并且保留两位小数","warning");
+		validation = false;
+	}else{
+		validation = true;
+	}
+})
+
+function SavepointConfig(){
+	var convert_rate= $("#integrat_money").val();
+	var is_open = $("input[type='radio'][name='fare']:checked").val();
+	var desc = $("#integrat_description").val();
+	if(!(convert_rate>0)){
+		showTip("请输入大于0的数字，并且保留两位小数","warning");
+		return false;
+	}
+	if(validation){
+		$.ajax({
+			type:"post",
+			url : "{:__URL('ADMIN_MAIN/promotion/pointconfig')}",
+			data : {
+				"convert_rate" : convert_rate,
+				"is_open" : is_open,
+				"desc" : desc
+			},
+			success : function(data){
+				if(data['code'] > 0){
+					showMessage('success', data["message"]);
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}else{
+		showTip("请输入大于0的数字，并且保留两位小数","warning");
+	}
+}
+
+window.onload=function(){
+	var is_open = $("#is_open").val();
+	if(parseInt(is_open) == 0){
+		$("#manebaoyouResultNo").prop("checked","checked");
+	}else{
+		$("#manebaoyouResultYes").prop("checked","checked");
+	}
+};
+</script>
+{/block}

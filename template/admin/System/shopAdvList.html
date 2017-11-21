@@ -1,0 +1,221 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style  type="text/css">
+.modal-div{
+	width:90%;
+	margin:auto;
+}
+.modal-dl{
+	overflow:hidden;
+}
+.modal-dl dt{
+	line-height:33px;
+	float:left;
+	font-weight:normal;
+}
+.modal-dl dd{
+	float:left;
+}
+.modal-dl dd span{
+	display:block;
+	color:#de533c;
+}
+.btn.off{
+	background-color:#e26f6f;
+	color:#FFF;
+}
+.btn.sure{
+	color:#FFF;
+	background-color:#62c462;
+}
+.silde_sort {
+	width: auto;
+	text-align: center;
+}
+
+/*独立*/
+.status-error{
+	display:inline-block;
+	padding-left:5px;
+	padding-right:5px;	
+	padding-bottom:3px;
+	padding-top:3px;
+	color:#FFF;
+	background-color:#de533c;
+}
+/*独立*/
+.status-success{
+	display:inline-block;
+	color:#FFF;
+	padding-left:5px;
+	padding-right:5px;	
+	padding-bottom:3px;
+	padding-top:3px;
+	background-color:#5be15b;
+}
+.style0list input{margin-bottom:0px;}
+.style0list tbody td{
+	vertical-align:inherit;
+}
+.adv_url{
+	width: 200px;
+	height: 30px!important;
+	overflow : hidden;
+  	text-overflow: ellipsis;
+  	display: -webkit-box;
+  	-webkit-line-clamp: 2;
+  	-webkit-box-orient: vertical;
+}
+</style>
+
+ {/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/system/addshopadv','ap_id='.$ap_id)}"><i class="fa fa-plus-circle"></i>&nbsp;添加广告</a></li>
+{/block}
+{block name="main"}
+
+	
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="con style0list">
+			<table>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+				</colgroup>
+				<thead>
+					<tr>
+						<th><label style="margin-left: 5px;"> <input type="checkbox"  onclick="CheckAll(this)"></label></th>
+						<th class="tal">名称</th>
+						<th class="tal">所属广告位</th>
+						<th class="tal">链接地址</th>
+						<th>排序</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+					<col style="width: 19%;">
+				</colgroup>
+				<tbody id="list">
+					
+				</tbody>
+			</table>
+		</div>
+		<input type="hidden" id="ap_id" value="{$ap_id}">
+	</div>
+</div>
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+$(function(){
+	LoadingInfo(1);
+})
+
+function CheckAll(event){
+	if($(event).is(":checked")){
+		$("input[name='sub']").prop("checked",true);
+	}else{
+		$("input[name='sub']").prop("checked",false);
+	}
+}
+
+//查询广告列表
+	function LoadingInfo(page_index) {
+		var ap_id = $("#ap_id").val();
+		var search_text = '';
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/system/shopadvlist')}",
+			async : true,
+			data : {
+				"page_index" : page_index,
+				"page_size" : $("#showNumber").val(),
+				"search_text" : search_text, 
+				"ap_id" : ap_id
+			},
+			success : function(data) {
+				var html = '';
+				if (data['data'].length > 0) {
+					for (var i = 0; i < data['data'].length; i++) {
+						html += '<tr>';
+						html += '<td><label style="margin-left:10px;"> <input type="checkbox" name="sub" value="'+ data['data'][i]['adv_id']+'"></label></td>';
+						html += '<td class="tal">'+ data['data'][i]['adv_title']+'</td>';
+						html += '<td class="tal">' + data['data'][i]["ap_info"]['ap_name'] + '</td>';
+						html += '<td class="tal adv_url" title="' + data['data'][i]["adv_url"] + '">' + data['data'][i]["adv_url"] + '</td>';
+						html += '<td class="center"><input type="text" class="silde_sort" fieldid="'+ data['data'][i]['adv_id']+'"  value="'+ data['data'][i]["slide_sort"] + '" onchange="updateAdvSort(this)" size="1" ></td>';
+						html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/updateshopadv?adv_id=' + data['data'][i]["adv_id"])+'">编辑</a> ';
+						html += '<a href="javascript:;" onclick="delShopAdv(' + data['data'][i]["adv_id"] + ')">删除</a></td> ';
+						html += '</tr>';
+					}
+				} else {
+					html += '<tr><th colspan="6">暂无符合条件的数据记录</th></tr>';
+				}
+				$("#list").html(html);
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+		});
+	}
+	//广告列表排序
+	function updateAdvSort(my){
+		 var over = $(my);
+		 var fieldid = over.attr('fieldid');
+		 var fieldvalue = over.val();
+		 $.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/System/modifyAdvSort')}",
+			data:{'fieldid':fieldid,'fieldvalue':fieldvalue},
+			async:true,
+			success: function (data) {
+				window.location.reload();
+			}
+		 });
+		
+	}
+	function delShopAdv(adv_id){
+		$( "#dialog" ).dialog({
+	        buttons: {
+	            "确定": function() {
+	                $(this).dialog('close');
+	                $.ajax({
+	        			type : "post",
+	        			url : "{:__URL('ADMIN_MAIN/system/delshopadv')}",
+	        			async : true,
+	        			data : {
+	        				"adv_id" : adv_id
+	        			},
+	        			success : function(data) {
+	        				if(data["code"] > 0 ){
+	        					showMessage('success', data["message"],__URL('ADMIN_MAIN/system/shopadvlist?ap_id={$ap_id}'));
+	        				}else{
+	        					showMessage('error', data["message"]);
+	        				}
+	        			}
+	        		})
+	            },
+	            "取消,#e57373": function() {
+	                $(this).dialog('close');
+	            }
+	        },
+	        contentText:"你确定删除吗？",
+	        title:"消息提醒"
+	    });
+	}
+	$("#search_text").keypress(function(e){
+		if(e.keyCode == 13){
+			LoadingInfo(1);
+		}
+	});
+</script>
+{/block}

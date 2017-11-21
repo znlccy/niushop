@@ -1,0 +1,85 @@
+Niushop商城系统 - 团队十年电商经验汇集巨献!
+
+
+1、非授权用户严禁去除Niushop相关的版权信息。
+
+2、请尊重Niushop开发人员劳动成果，严禁使用本系统转卖、销售或二次开发后转卖、销售等商业行为！
+
+3、请关注Niushop官方网址了解产品最新咨询、功能升级、BUG修复。
+
+Niushop官方网址: http://www.niushop.com.cn
+
+
+Niushop安装环境：
+
+1、PHP5.4版本以上，支持PHP7.0
+
+2、支持rewrite伪静态规则
+
+3、支持php扩展：php_curl,php_gd2,(如果配置邮箱需要添加php_openssl,php_sockets)
+
+4、设置upload权限，因为系统上传相片生成二维码等需要上传的这个文件夹，需要设置这个文件夹以及子项文件夹777权限
+
+5、 安装完成以后删除install.php
+
++---------------------------------------------------------------------------------------+
++  推荐使用宝塔Linux面板搭建环境，2分钟装好面板，一键管理服务器，可实现一键部署Niushop  						+
++  查看：https://www.bt.cn/download/linux.html?niushop                                  	+
++---------------------------------------------------------------------------------------+
+
+Niushop安装步骤：
+
+1、将源码解压到服务器空间
+
+2、访问你的网址进行安装， 正常会跳转到 http://域名/install.php
+
+3、按照系统提示进行安装 
+
+4、进入后台  后台地址：http://域名/index.php?s=/admin
+
+5、进入前台  前台地址：http://域名/index.php
+
+6、系统伪静态配置：
+
+1. 配置伪静态环境 apache,iis,nginx配置环境不同
+
+2. 系统修改伪静态配置:
+     ./application/config.php下面修改配置：
+	 define("REWRITE_MODEL", true); 配置伪静态设置为true  默认false
+	 
+	 
+伪静态环境配置：
+    
+	[ Apache ]
+	1. httpd.conf配置文件中加载了mod_rewrite.so模块
+	2. AllowOverride None 将None改为 All
+	
+	
+	[ IIS ]
+	如果你的服务器环境支持ISAPI_Rewrite的话，可以配置httpd.ini文件，添加下面的内容：
+	RewriteRule (.*)$ /index\.php\?s=$1 [I]
+	在IIS的高版本下面可以配置web.Config，在中间添加rewrite节点：
+	<rewrite>
+	<rules>
+	<rule name="OrgPage" stopProcessing="true">
+	<match url="^(.*)$" />
+	<conditions logicalGrouping="MatchAll">
+	<add input="{HTTP_HOST}" pattern="^(.*)$" />
+	<add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+	<add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+	</conditions>
+	<action type="Rewrite" url="index.php/{R:1}" />
+	</rule>
+	</rules>
+	</rewrite>
+	
+	[nginx]
+	在Nginx低版本中，是不支持PATHINFO的，但是可以通过在Nginx.conf中配置转发规则实现：
+	location / {
+            if (!-e $request_filename) {
+                rewrite  ^(.*)$  /index.php?s=$1  last;  
+                break;
+            }
+        }
+
+	

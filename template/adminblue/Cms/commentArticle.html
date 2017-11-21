@@ -1,0 +1,180 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.table-class tbody td a{margin-left: 8px;}
+.form-horizontal .control-label{width: 70px;}
+</style>
+{/block}
+{block name="main"}
+<div class="operation">
+	<button class="btn btn-small" onclick="batchDelete()">批量删除</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 1%">
+		<col style="width: 10%">
+		<col style="width: 40%;">
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<col style="width: 19%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th><input type="checkbox" onClick="CheckAll(this)"></th>
+			<th>姓名</th>
+			<th>评论内容</th>
+			<th>点赞数量</th>
+			<th>评论时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+<div id="addEditArticleClass" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3>评论详情</h3>
+	</div>
+	<div class="modal-body">
+		<div class="form-horizontal">
+			<div class='table-div'>
+				<table>
+					<tr>
+						<td colspan='2'><span>信息</span></td>
+					</tr>
+					<tr>
+						<td><label class="control-label">评论内容</label></td>
+						<td><span id="text"></span></td>
+					</tr>
+					<tr>
+						<td><label class="control-label">点赞数量</label></td>
+						<td><span id="up"></span></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+	</div>
+</div>
+<input type="hidden" name="comment_id" id="comment_id" />
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	//弹框添加关闭
+	$('[aria-hidden="true"]').click(function(){
+		$(this).parents('div[role="dialog"]').hide();
+	})
+})
+//分页数据
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/cms/commentarticle')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text },
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><input name="sub" type="checkbox" value="'+ data['data'][i]['article_id']+'"></td>';
+					html += '<td>' + data["data"][i]["member_name"]+ '</td>';
+					html += '<td>' + data["data"][i]["text"]+ '</td>';
+					html += '<td>' + data["data"][i]["up"]+ '</td>';
+					html += '<td>' + data["data"][i]["comment_time"]+ '</td>';
+					html += '<td><a href="javascript:comment_detaile('+data['data'][i]['comment_id']+');">详情</a><a onclick="comment_delete('+data['data'][i]['comment_id']+')">删除</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="9">暂无评论</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//弹框显示
+function comment_detaile(comment_id){
+	$('#comment_id').val(comment_id);
+	if(comment_id>0){
+		$.ajax({
+			type:'post',
+			url:"{:__URL('ADMIN_MAIN/cms/comment_detaile')}",
+			data:{'comment_id':comment_id},
+			success:function(data){
+				$('#text').text(data['text']);
+				$('#up').text(data['up']);
+				$("#addEditArticleClass").modal("show");
+			}
+		});
+	}else{
+		$('#text').text('');
+		$('#up').text('0');
+		$("#addEditArticleClass").modal("show");
+	}
+}
+
+function batchDelete() {
+	var comment_id= new Array();
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			comment_id.push($(this).val());
+		}
+	});
+	if(comment_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	comment_delete(comment_id);
+}
+//删除评论
+function comment_delete(comment_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/cms/comment_delete')}",
+					data : {
+						"comment_id" : comment_id.toString()
+					},
+					dataType : "json",
+					success : function(data) {
+						if (data["code"] > 0) {
+							showMessage('success', data["message"]);
+							LoadingInfo(getCurrentIndex(class_id,'.table-class tbody'));
+						}else{
+							showMessage('error', data["message"]);
+						}
+					}
+				})
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"是否删除评论？",
+	});
+}
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+</script>
+{/block}

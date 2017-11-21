@@ -1,0 +1,238 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.style0list th {
+    background: #fff;
+    color: #999;
+    padding: 11px;
+    height: 19px;
+    line-height: 19px;
+    font-weight: 400;
+    border-bottom: 1px solid #E3E3E3;
+    font-size: 12px;
+}
+.style0list tbody td {
+    padding: 10px 0px;
+	
+	 font-size: 12px;
+}
+.specwidth{
+	text-align:center;
+	font-size: 12px;
+    color: #999;
+}
+.text{
+	color: #fb6b5b;
+}
+.style0list tbody td{
+    vertical-align: middle;
+}
+.specname{
+	text-align:left;
+	font-size: 12px;
+    color: #999;
+}
+.headtitle{
+	height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #e5e5e5;
+}
+</style>
+ {/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="javascript:;" onclick="addGoodsSpec()"><i class="fa fa-plus-circle"></i>&nbsp;添加规格</a></li>
+{/block}
+{block name="main"}
+<div class="operation">
+	<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+</div>
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="con style0list">
+			<table>
+				<colgroup>
+					<col style="width: 3%;">
+					<col style="width: 20%;">
+					<col style="width: 30%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+					<col style="width: 20%;">
+				</colgroup>
+				<thead>
+					<tr class="headtitle">
+						<td><label style="margin-left: 7px;"> <input type="checkbox"  onclick="CheckAll(this)"></label></td>
+						<td class="specname">规格名称</td>
+						<td class="specwidth" style="text-align:left;">规格属性</td>
+						<td class="specwidth">排序</td>
+						<td class="specwidth">启用</td>
+						<td class="specwidth">是否参与筛选</td>
+						<td class="specwidth">操作</td>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width: 3%;">
+					<col style="width: 20%;">
+					<col style="width: 30%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+					<col style="width:20%;">
+				</colgroup>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+
+function setGoodsSpecField(id, name, e){
+	if(name == 'is_visible'){
+		var value = $(e).attr("is_visible");
+	}else if(name == 'is_screen'){
+		var value = $(e).attr("is_screen");
+	}else if(name == 'sort'){
+		var value = $(e).val();
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/goods/setgoodsspecfield')}",
+		data:{ 'id' : id, 'name' : name, 'value' : value },
+		success: function (data) {
+			if(data['code'] > 0){
+				if(name == 'is_visible'){
+					if(value == 1){
+						$("#isvisible_"+id).html('<i class="fa fa-check text-success text-active"></i>');
+						$("#isvisible_"+id).attr("is_visible", '0');
+					}else{
+						$("#isvisible_"+id).html('<i class="fa fa-times text-danger text"></i>');
+						$("#isvisible_"+id).attr("is_visible", '1');
+					}
+				}
+				if(name == 'is_screen'){
+					if(value == 1){
+						$("#isscreen_"+id).html('<i class="fa fa-check text-success text-active"></i>');
+						$("#isscreen_"+id).attr("is_screen", '0');
+					}else{
+						$("#isscreen_"+id).html('<i class="fa fa-times text-danger text"></i>');
+						$("#isscreen_"+id).attr("is_screen", '1');
+					}
+				}
+				LoadingInfo(getCurrentIndex(1,'.style0list tbody'));
+				showMessage('success', data["message"]);
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	}); 
+}
+
+/* 跳转到添加品牌 */
+function addGoodsSpec() {
+	location.href = __URL("ADMIN_MAIN/goods/addgoodsspec");
+}
+
+//批量删除
+function batchDelete(){
+	var spec_ids = new Array();
+	$(".style0list tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			spec_ids.push($(this).val());
+		}
+	});
+	if(spec_ids.length==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	delSpec(spec_ids);
+}
+
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/goodsspeclist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val()
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td style="width:3%;"><div class="cell"><label ><input name="sub" type="checkbox" value="'+ data["data"][i]["spec_id"] +'" ></label></div></td>';
+					html += '<td style="width:20%;text-align: left;">' + data['data'][i]['spec_name'] + '</td>';
+					html += '<td style="max-width:150px;overflow:hidden;text-overflow: ellipsis;white-space: nowrap;text-align: left;">' + data["data"][i]["spec_value_name_list"] + '</td>';
+					html += '<td style="width:10%;"><input style="width:50px;" type="text" id="sort" value="' + data["data"][i]["sort"] + '" onchange="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'sort\', this);"/></td>';
+					if(data["data"][i]["is_visible"]){
+						html += '<td style="width:10%;"><a href="javascript:;" class="is_visible" id="isvisible_'+data["data"][i]["spec_id"]+'" is_visible="0" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_visible\' , this)"><i class="fa fa-check text-success text-active"></i></a></td>';
+					}else{
+						html += '<td style="width:10%;"><a href="javascript:;" class="is_visible" id="isvisible_'+data["data"][i]["spec_id"]+'" is_visible="1" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_visible\', this)"><i class="fa fa-times text-danger text"></i></a></td>';
+					}
+					if(data["data"][i]["is_screen"]){
+						html += '<td style="width:10%;"><a href="javascript:;" class="is_visible" id="isscreen_'+data["data"][i]["spec_id"]+'" is_screen="0" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_screen\' , this)"><i class="fa fa-check text-success text-active"></i></a></td>';
+					}else{
+						html += '<td style="width:10%;"><a href="javascript:;" class="is_visible" id="isscreen_'+data["data"][i]["spec_id"]+'" is_screen="1" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_screen\', this)"><i class="fa fa-times text-danger text"></i></a></td>';
+					}
+					html += '<td style="width:20%;"><a href="'+__URL('ADMIN_MAIN/goods/updategoodsspec?spec_id=' + data["data"][i]["spec_id"])+'">修改</a>  <a href="javascript:delSpec(' + data["data"][i]["spec_id"] + ')">删除</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="9">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+/* 删除属性 */
+function delSpec(spec_id) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/deletegoodsspec')}",
+					data : { 'spec_id' : spec_id.toString() },
+					dataType : "json",
+					success : function(data) {
+						if (data['code'] > 0) {
+ 							LoadingInfo(getCurrentIndex(1,'.style0list tbody'));
+ 							showMessage('success', data["message"]);
+						}else if(data['code'] == 0){
+ 							showMessage('error', data["message"]);
+						}else if(data['code'] == -1){
+							showMessage('error', '当前规格正在使用中，不能删除！');
+						}
+					}
+				});
+			},"取消,#e57373" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+}
+</script>
+{/block}

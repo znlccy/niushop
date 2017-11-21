@@ -1,0 +1,239 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.fun-a {
+	margin-top: 0px;
+	padding: 6px 15px 0 15px;
+}
+.style0list tbody td a{
+	margin-left: 8px;
+}
+.num{width:40px;text-align:center;}	
+.cell_total{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:250px;display: block;}
+.style0list table input {
+	margin-bottom: 0px;
+}
+
+.style0list table input.sort {
+	width: auto;
+	text-align: center;
+}
+
+.style0list tbody td {
+	line-height: 28px;
+}
+</style>
+{/block}
+{block name="right_tab"}
+
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<table class="mytable">
+			<tr>
+				<th width="2%" style="text-align: left;">
+					<a class="btn btn-small fun-a" href="javascript:batchDelete()">备份</a>
+				</th>
+			</tr>
+		</table>
+
+	<div class="con style0list">
+		<table>
+			 <colgroup>
+				<col style="width: 1%">
+				<col style="width: 25%;">
+				<col style="width: 15%;">
+				<col style="width: 15%;">
+				<col style="width: 24%;">
+				<col style="width: 20%;">
+			</colgroup>
+			<thead>
+				<tr align="center">
+					<th><label><input id="ckall" type="checkbox" onClick="CheckAll(this)"></label></th>
+					<th class="x-tab"><div class="iconbg-arrow up">表名</div></th>
+					<th class="x-tab"><div class="iconbg-arrow up">数据量</div></th>
+					<th class="x-tab"><div class="iconbg-arrow up">数据大小</div></th>
+					<th class="x-tab"><div class="iconbg-arrow up">发布时间</div></th>
+					<th class="x-tab">操作</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+	</div>
+</div>
+
+<!-- 备份数据窗口（Modal） -->
+<div class="modal fade" id="progress_bar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
+            </div>
+            <div class="modal-body">在这里添加一些文本</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+{/block}
+{block name="script"}
+{include file="admin/pageCommon" /}
+<script type="text/javascript">
+//分页数据
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/databaselist')}",
+		async : true,
+		success : function(data) {
+			//alert(JSON.stringify(data));
+			var html = '';
+			if (data.length > 0) {
+				for (var i = 0; i < data.length; i++) {
+					html += '<tr align="center">';
+					html += '<td><div class="cell"><label><input name="sub" type="checkbox" value="'+ data[i]["name"]+'" ></label></div></td>';
+					html += '<td>'+ data[i]["name"]+'</td>';	
+					html += '<td>'+ data[i]["rows"]+'</td>';
+					html += '<td>'+ data[i]["data_length_info"]+ '</td>';
+					html += '<td>'+ timeStampTurnTime(data[i]["create_time"])+ '</td>';
+					html += '<td><a target="_blank" href="">优化表</a><a href="">修复表</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="9">暂无列表</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			//initPageData(data["page_count"],data['data'].length,data['total_count']);
+			//$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			load();
+		}
+	});
+}	
+
+		function batchDelete() {
+			var _tables = new Array();
+			$(".style0list tbody input[type='checkbox']:checked").each(function(i) {
+					_tables[i]=$(this).val();
+			});
+			if(_tables.length ==0){
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#e57373": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:"请选择需要操作的记录",
+					title:"消息提醒",
+				});
+				return false;
+			}
+			ajax_ids(_tables);
+		}
+		var flag = false;
+		
+		// 备份表
+		function ajax_ids(_tables){
+			$( "#dialog" ).dialog({
+				buttons: {
+					"确定": function() {
+						$(this).dialog('close');
+						if(!flag){
+							flag = true;
+							$.ajax({
+								type : "post",
+								url : "{:__URL('ADMIN_MAIN/config/exportdatabase')}",
+								data : {
+									"tables" : _tables
+								},
+								dataType : "json",
+								success : function(data) {
+									//alert(JSON.stringify(data));
+									if(data.status ==1 && data.message=="初始化成功"){
+										backup(data.tab);
+										return;
+									} 
+									flag = false;
+								}
+							})
+						}
+					},
+					"取消,#e57373": function() {
+						$(this).dialog('close');
+					}
+				},
+			contentText:"是否备份？",
+			});
+		} 
+		//备份数据库
+		function backup(tab,status) {
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/config/exportdatabase')}",
+					data : {
+						"id" : tab.id,
+						"start" : tab.start
+					},
+					dataType : "json",
+					success : function(data) {
+						if (data.status) {
+							//alert('备分数据库,请不要关闭窗口');
+							if (!$.isPlainObject(data.tab)) {
+								//dialog.get('progress').content(data.info);
+								//alert(JSON.stringify(data.info));
+								return;
+							}else{
+								//alert('正在处理 '+data.tab.table+' ...');
+								//dialog.get('progress').content('正在处理 '+data.tab.table+' ...');
+							}
+							//alert(JSON.stringify(data));
+							//alert(data.tab);
+							//alert(tab.id);
+							backup(data.tab, tab.id != data.tab.id);
+						} else {
+							
+							
+							alert('备份完成');
+						}
+					}
+				})
+
+
+		}
+
+
+
+/*修改排序*/
+function load(){
+	$('.num').change(function(){
+		var fieldid = $(this).attr('fieldid');
+		var sort = $(this).val();
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/cms/modifyarticlefield')}",
+			data:{'fieldid':fieldid,'sort':sort},
+			async:true,
+			success: function (data) {
+				if(data['code'] <= 0){
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	});
+}
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+}
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

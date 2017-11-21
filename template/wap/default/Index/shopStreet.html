@@ -1,0 +1,197 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/goods_list.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/shopStreet.css">
+
+<!-- 添加样式文件 -->
+<style type="text/css">
+.vertical-bar{
+	border-left: 1px solid #efefef;
+	height: 64px;
+	vertical-align: middle;
+	display: inline-block;
+	margin-top: 5px;
+	float: left;
+}
+</style>
+{/block}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)">
+<!-- 	<i class="icon-back"></i> -->
+	</a>
+	<div class="head-title">
+		<div class="custom-search" >
+			<form action="" method="get">
+				<input type="text" class="custom-search-input" style="position:relative;" placeholder="请输入店铺名称" value='{$shop_name}' id="shop">
+				<button type="button" class="custom-search-button" onclick="search()">搜索</button>
+			</form>
+		</div>
+	</div>
+</section>
+{/block}
+{block name="main" }
+<div class="order_div">
+	<!-- 全部 -->
+	{if condition="$shop_group_name eq '' "}
+		{if condition="$order_type eq ''"}
+			<span class="select" id="shop_group"><a href="javascript:;">全部 </a>
+		{else/}
+			<span id="shop_group">全部
+		{/if}
+	{else/}
+		<span id="shop_group">{$shop_group_name}
+	{/if}
+		</span>
+
+	<!-- 销量 -->
+	{if condition="$order_type eq 1"}
+		<span class="select" >
+	{else /}
+		<span>
+	{/if}
+		{if condition="$order_type eq 1 && $sort eq 'desc'"}
+			<a href="APP_MAIN/index/shopstreet?shop_group_id={$shop_group_id}&shop_name={$shop_name}&order_type=1&sort=asc&shop_group_name={$shop_group_name}">销量<i class='desc_selected'></i></a>
+			{else /}
+			<a href="APP_MAIN/index/shopstreet?shop_group_id={$shop_group_id}&shop_name={$shop_name}&order_type=1&sort=desc&shop_group_name={$shop_group_name}">销量
+				{if condition="$order_type neq 1"}
+					<i class="desc"></i>
+				{else /}
+					<i class="asc_selected"></i>
+				{/if}
+			</a>
+		{/if}
+		</span>
+
+	<!-- 信誉 -->
+	{if condition="$order_type eq 2"}
+		<span class="select" >
+	{else /}
+		<span>
+	{/if}
+
+	{if condition="$order_type eq 2 && $sort eq 'desc'"}
+		<a href="APP_MAIN/index/shopstreet?shop_group_id={$shop_group_id}&shop_name={$shop_name}&order_type=2&sort=asc&shop_group_name={$shop_group_name}">信誉<i class='desc_selected'></i></a>
+		{else /}
+		<a href="APP_MAIN/index/shopstreet?shop_group_id={$shop_group_id}&shop_name={$shop_name}&order_type=2&sort=desc&shop_group_name={$shop_group_name}">信誉
+			{if condition="$order_type neq 2"}
+				<i class="desc"></i>
+			{else /}
+				<i class="asc_selected"></i>
+			{/if}
+		</a>
+	{/if}
+	</span>
+		
+	<!-- 筛选 -->
+	<span><a href="javascript:;"><i class="screening"></i>筛选</a></span>
+</div>
+<!-- 店铺列表 -->
+<div class="main">
+	{if condition="$total_count eq 0"}
+	<div class="nothing-data" align="center">
+		<img src="__TEMP__/{$style}/public/images/wap_nodata.png"/>
+		<div>没有找到您想要的商品…</div>
+	</div>
+	{else /}
+	<ul class="shop-list">
+		 {foreach name="shop_list" item="vo"}
+		<li>
+			<a href="APP_MAIN/shop/index?shop_id={$vo.shop_id}"  title="{$vo.shop_name}">
+				
+					<div class="store-name">
+						<h1>{$vo.shop_name}</h1>
+						{if condition="$vo.shop_type == 1"}
+						<span class="flag-stores">直营店</span>
+						{else/}
+<!-- 						<span class="flag-brand">普通店</span> -->
+						{/if}
+						<span class="flag-security">保</span>
+						<img  src="__TEMP__/{$style}/public/images/right_arrow.png" class="right-arrow" />
+					</div>
+				<div class="store-item">
+					{if condition="$vo.shop_logo eq '' or $vo.shop_logo eq null "}
+					<img alt="" src="__TEMP__/{$style}/public/images/default_shop_logo.png" class="store-logo">
+					{else /}
+					<img alt="" src="__UPLOAD__/{$vo.shop_logo}"  class="store-logo">
+					{/if}
+					<div class="store-right">
+						<div class="store-detail">
+							<div class="left">
+								<div class="scope-business">经营范围：<strong>{$vo.grou_name}</strong></div>
+								<div class="good-rate">好评率：<strong>90%</strong></div>
+								<div class="credibility">信誉：
+								<?php for($i = 0;$i<5;$i++){
+							if( $vo["shop_credit"] <= $i){?>
+										<img style="vertical-align: middle;width:15px;" src="__TEMP__/{$style}/public/images/credibility_starts_none.png" alt='{$vo["shop_credit"]}' />
+								<?php	}else{?>
+									<img style="vertical-align: middle;width:15px;" src="__TEMP__/{$style}/public/images/credibility_starts.png" alt='{$vo["shop_credit"]}' />
+								<?php }
+						} ?>
+								</div>
+							</div>
+							<i class="vertical-bar"></i>
+							<div class="right" style="margin-top:12px;">
+								<address>太原</address>
+								<span>成交：<strong>3000</strong></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</a>
+		</li>
+		{/foreach}
+	</ul>
+	{/if}
+</div>
+<!-- 导航 -->
+<!-- 全部分类 -->
+<div class="total_content" style="display:none;">
+	<div class="total_left">
+		<ul>
+			{if condition="$shop_group_id eq '' "}
+			<li><a target="_self" href="APP_MAIN/index/shopstreet" class="selected"><span>全部</span></a></li>
+			{else /}
+			<li><a target="_self" href="APP_MAIN/index/shopstreet" ><span>全部</span></a></li>
+			{/if}
+
+			{foreach $shop_group_list as $vo}
+				{if condition="$vo.shop_group_id eq $shop_group_id"}
+				<li>
+					<a  class="selected" target="_self" href="APP_MAIN/index/shopstreet?shop_group_id={$vo.shop_group_id}" title="{$vo.group_name}" class="selected">
+						<span>{$vo.group_name}</span>
+					</a>
+				</li>
+				{else /}
+				<li>
+					<a target="_self" href="APP_MAIN/index/shopstreet?shop_group_id={$vo.shop_group_id}&shop_group_name={$vo.group_name}" title="{$vo.group_name}">
+						<span>{$vo.group_name}</span>
+					</a>
+				</li>
+				{/if}
+			{/foreach}
+		</ul>
+	</div>
+</div>
+{/block}
+{block name="javascript"}
+<script type="text/javascript">
+$("#shop_group ").click(function(){
+	if($(".total_content").is(":hidden")){
+		$(".total_content").show();
+	}else{
+		$(".total_content").hide();
+	}
+});
+function search(){
+	var shop_name_1=$('#shop').val();
+	location.href="APP_MAIN/index/shopStreet?shop_name="+shop_name_1;
+}
+
+$(function(){
+	buttomActive('#buttom_stroe');
+});
+</script>
+{/block}

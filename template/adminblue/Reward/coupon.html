@@ -1,0 +1,58 @@
+{extend name="adminblue/base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>进店领用优惠劵:</dt>
+		<dd>
+			<p>
+				<select id="into_store_coupon" class="select-common">
+					<option value="0">选择优惠劵</option>
+					{volist name="coupon" id="vo"}
+					<option value="{$vo.coupon_type_id}" {if condition="$vo['coupon_type_id'] eq $res['into_store_coupon']"}selected="selected"{/if}>{$vo.coupon_name}</option>
+					{/volist}
+				</select>	
+			</p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>分享领用优惠劵:</dt>
+		<dd>
+			<p>
+				<select id="share_coupon" class="select-common">
+					<option value="0">选择优惠劵</option>
+					{volist name="coupon" id="vo"}
+					<option value="{$vo.coupon_type_id}" {if condition="$vo['coupon_type_id'] eq $res['share_coupon']"}selected="selected"{/if}>{$vo.coupon_name}</option>
+					{/volist}
+				</select>	
+			</p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setRewardRuleAjax();">提交</button></dd>
+	</dl>
+</div>
+<script>
+function setRewardRuleAjax(){
+	var into_store_coupon = $("#into_store_coupon").val();
+	var share_coupon = $("#share_coupon").val();
+	$.ajax({
+		type : 'post',
+		url :"{:__URL('ADMIN_MAIN/reward/coupon')}",
+		data : {
+			"into_store_coupon" : into_store_coupon,
+			"share_coupon" : share_coupon
+		},
+		success : function(data){
+			if(data['code'] >0){
+				showMessage("success", "设置成功！", "{:__URL('ADMIN_MAIN/reward/coupon')}");
+			}else{
+				showMessage("error", "设置失败");
+			}
+		}
+	})
+}
+</script>
+{/block}

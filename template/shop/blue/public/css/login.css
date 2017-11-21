@@ -1,0 +1,74 @@
+@charset "utf-8";
+.login-header {
+	width: 990px;
+	min-width: 990px;
+	height: 90px;
+	padding: 0px;
+}
+.logo-info {
+	width: 920px;
+	margin: 0 auto;
+	position: relative;
+	z-index: 5;
+}
+.logo-info a.logo {
+	float: left;
+}
+.logo-info span.findpw {
+	border-left: 1px #eee solid;
+	width: auto;
+	height: 44px;
+	line-height: 44px;
+	font-size: 28px;
+	margin: 18px 0px 0px 15px;
+	float: left;
+	padding: 0px 15px;
+	color: #333;
+}
+.login-content {
+	position: relative;
+	height: 535px;
+	z-index: 1;
+}
+.login-content .login-form {
+	position: absolute;
+	z-index: 1;
+	width: 346px;
+	background: #fff;
+	overflow: visible;
+	top: 30px;
+	right: 0;
+}
+.login-content .login-form .login-con {
+	width: 286px;
+	padding: 20px 30px;
+}
+.login-banner {
+	height: 535px;
+}
+.login-banner .login-img {
+	display: block;
+	width: 100%;
+	height: 535px;
+}
+.login-footer .footer-info {
+	background: #fff;
+	color: #666;
+	padding: 0px;
+}
+.login-footer .footer-info .info-text {
+	width: 990px;
+}
+.login-footer .footer-info .info-text .nav-bottom a {
+	color: #666;
+}
+.login-footer .footer-info .info-text p a {
+	color: #666;
+}
+.login-footer .footer-related {
+	background: #fff none repeat scroll 0 0;
+	padding: 0 0 0;
+}
+.login-wrap .login-btn .btn-img {
+	background: #e03135;
+}

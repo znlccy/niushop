@@ -1,0 +1,86 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>物流公司名称:</dt>
+		<dd>
+			<p>
+				<input id="company_name" type="text" class="input-common">
+			</p>
+			<p class="error">请输入物流公司名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>物流公司编号:</dt>
+		<dd>
+			<p><input id="express_no" type="text" class='input-common'></p>
+			<p class="error">请输入物流公司编号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>联系电话:</dt>
+		<dd>
+			<p><input id="phone" type="text" class="input-common"></p>
+			<p class="error">联系电话格式不正确</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>物流公司logo:</dt>
+		<dd>
+			<div class="class-logo">
+				<p><img id="imglogo"></p>
+			</div>
+			<div class="upload-btn">
+				<span>
+					<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
+					<input type="hidden" id="logo" />
+				</span>
+				<p><i class="fa fa-cloud-upload"></i>上传图片</p>
+			</div>
+			<p class="hint">
+				<span style="color: orange;">建议使用宽100像素-高100像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序:</dt>
+		<dd>
+			<p><input id="orders" type="number" class="input-common"></p>
+			<p class="error">请输入排列序号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用物流:</dt>
+		<dd><input id="is_enabled" type="checkbox" class="checkbox" checked="checked" /></dd>
+	</dl>
+	
+	<dl>
+		<dt>是否设置为默认:</dt>
+		<dd><input id="is_default" type="checkbox" class="checkbox"/></dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="addExpressCompanyAjax();">提交</button></dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script src="ADMIN_JS/express/add_express_company.js"></script>
+<script>
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var data = { 'file_path' : UPLOADCOMMON };
+	uploadFile(fileid,data,function(res){
+		if(res.code){
+			$("#imglogo").attr("src",__IMG(res.data));
+			$("#logo").val(res.data);
+			showTip(res.message,"success");
+		}else{
+			showTip(res.message,"error");
+		}
+	});
+}
+</script>
+{/block}

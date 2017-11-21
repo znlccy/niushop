@@ -1,0 +1,46 @@
+{extend name="wap/default/base" /} 
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_address.css">
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('member_add_delivery_address')}</div>
+</section>
+{/block}
+{block name="main"}
+<input type="hidden" id="ref_url" value="{$pre_url}">
+<input type="hidden" value="{$flag}" id="hidden_flag" />
+<form class="form-info">
+	<div class="div-item">
+		<span>{:lang('member_full_name')}</span> <input type="text" placeholder="{:lang('recipient_name')}" id="Name" />
+	</div>
+	<div class="div-item">
+		<span>{:lang('member_phone')}</span> <input type="text" placeholder="{:lang('cell_phone_number')}" id="Moblie" />
+	</div>
+	<div class="div-item">
+		<span>{:lang('goods_province')}</span> <select id="seleAreaNext" onchange="GetProvince();getSelCity();">
+			<option value="-1">{:lang('member_select_province')}</option>
+		</select>
+	</div>
+	<div class="div-item">
+		<span>{:lang('city')}</span> <select id="seleAreaThird" onchange="getSelCity();">
+			<option value="-1">{:lang('member_select_city')}</option>
+		</select>
+	</div>
+	<div class="div-item">
+		<span>{:lang('county')}</span> <select id="seleAreaFouth">
+			<option value="-1">{:lang('goods_select_district_or_county')}</option>
+		</select>
+	</div>
+	<div class="div-item">
+		<span>{:lang('member_detailed_address')}</span> <input type="text" placeholder="{:lang('member_detailed_address')}"
+			id="AddressInfo" />
+	</div>
+</form>
+<button onclick="saveAddress()" class="btn-save">{:lang('member_preservation')}</button>
+{/block}
+{block name="bottom"}{/block} 
+{block name="javascript"}
+<script src="__TEMP__/{$style}/public/js/address.js"></script>
+{/block}

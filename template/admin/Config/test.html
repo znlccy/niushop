@@ -1,0 +1,427 @@
+{extend name="admin/base" /}
+{block name="right_tab"} 
+<li><a class="nscs-table-handle_green" onclick="addProvince()" href="javascript:;"><i class="fa fa-plus-circle"></i>&nbsp;添加一级地区</a></li>
+{/block}
+{block name="main"}
+<style>
+.style0list table input {
+	color: #666;
+	width: 206px;
+	margin-bottom: 0px;
+	border: 1px solid #ccc;
+}
+.style0list table input.sort {
+	width: auto;
+	text-align: center;
+}
+.style0list tbody td {
+	line-height: 28px;
+}
+.modal{
+	width: 360px;
+	margin-left: -100px;
+}
+</style>
+<input type="hidden" id="pid" value="0" />
+<div class="style0list">
+	<table>
+		<colgroup>
+			<col style="width: 1%;">
+			<col style="width: 5%;">
+			<col style="width: 30%;">
+			<col style="width: 30%;">
+			<col style="width: 10%;">
+		</colgroup>
+		<thead>
+			<tr class="row-selected">
+				<th></th>
+				<th>排序</th>
+				<th style="text-align: left;">名称</th>
+				<th>添加子地区</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+		{foreach name="list" item="v1"}
+		<tr class="pid_0" style="height: 30px;">
+			<td>
+				{if condition="$v1['city_list'] neq array()"}
+				<a href="javascript:;" onclick="province_tab_switch({$v1['province_id']})" class="tab_jia_{$v1['province_id']}" style="display: block;"><i class="fa fa-plus-circle"></i></a>
+				<a href="javascript:;" onclick="province_tab_switch({$v1['province_id']})" class="tab_jian_{$v1['province_id']}" style="display: none;"><i class="fa fa-minus-circle"></i></a>
+				{/if}
+			</td>
+			<td style="text-align: center;"><input type="text" class="sort"
+					fieldid="{$v1['province_id']}" fieldname="sort" value="{$v1['sort']}"  onkeyup="this.value=this.value.replace(/\D/g,'')" size="1" onchange="updateRegionAjax(1,1,this);"></td>
+				<td class="province_{$v1['province_id']}"><input type="text" fieldid="{$v1['province_id']}"
+					 value="{$v1['province_name']}"  onchange="updateRegionAjax(1,2,this);"></td>
+				<td style="text-align: center;"><a href="javascript:;" onclick="addCity({$v1['province_id']},this)"><i class="fa fa-plus-square-o fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;添加子地区</a></td>
+				<td style="text-align: center;"><a
+					href="javascript:;" onclick="updateProvince({$v1['province_id']},this);">修改</a>
+					<a href="javascript:;"
+					onclick="delRegion({$v1['province_id']},1)">删除</a></td>
+			</tr>
+			{foreach name="v1['city_list']" item="v2"}
+			<tr class="city_pid_{$v1['province_id']}"
+				style="height: 30px; display: none;">
+				<td>{if condition="$v2['district_list'] neq array()"}<a
+					href="javascript:void(0)" onclick="city_tab_switch({$v2['city_id']})"
+					class="tab_jian_{$v2['city_id']}"
+					style="display: none;"><i class="fa fa-minus-circle"></i></a><a
+					href="javascript:void(0)" onclick="city_tab_switch({$v2['city_id']})"
+					class="tab_jia_{$v2['city_id']}"
+					style="display: block;"><i class="fa fa-plus-circle"></i></a> {/if}
+				</td>
+				<td style="text-align: center;"><input type="text" class="sort" size="1" fieldid="{$v2['city_id']}" fieldname="sort" value="{$v2['sort']}" onkeyup="this.value=this.value.replace(/\D/g,'')"  onchange="updateRegionAjax(2,1,this);"></td>
+				<td class="city_{$v2['city_id']}"><span style="color: #ccc;">|——</span> <input type="text"
+					fieldid="{$v2['city_id']}" fieldname="city_name"
+					value="{$v2['city_name']}"  onchange="updateRegionAjax(2,2,this);"></td>
+				<!--<th>控制器名</th>
+									<th>方法名</th>
+									<th>url</th>-->
+				<!--<td>{$v2['is_menu'] ? '是' : '否'}</td>
+						<td>{$v2['is_menu'] ? '是' : '否'}</td>-->
+				<td style="text-align: center;"><a href="javascript:;" onclick="addDistrict({$v2['city_id']},this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-plus-square-o fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;添加子地区</a></td>
+				<td style="text-align: center;"><a
+					href="javascript:;" onclick="updateCity({$v2['city_id']},{$v1['province_id']},this);"  zipcode="{$v2['zipcode']}">修改</a>
+					<a href="javascript:void(0);"
+					onclick="delRegion({$v2['city_id']},2)">删除</a></td>
+			</tr>
+			{foreach name="v2['district_list']" item="v3"}
+			<tr class="district_pid_{$v2['city_id']}"
+				style="height: 30px; display: none;">
+				<td><label></td>
+				<td style="text-align: center;"><input type="text" class="sort"
+					fieldid="{$v3['district_id']}" fieldname="sort" value="{$v3['sort']}"
+					size="1" onchange="updateRegionAjax(3,1,this);"></td>
+				<td class="district_{$v3['district_id']}"><span style="color: #ccc;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|——</span>
+					<input type="text" fieldid="{$v3['district_id']}"
+					fieldname="module_name" value="{$v3['district_name']}"  onchange="updateRegionAjax(3,2,this);"></td>
+				<!--<th>控制器名</th>
+									<th>方法名</th>
+									<th>url</th>-->
+				<!--<td>{$v3['is_menu'] ? '是' : '否'}</td>
+						<td>{$v3['is_menu'] ? '是' : '否'}</td>-->
+				<td style="text-align: center;"></td>
+				<td style="text-align: center;"><a
+					href="javascript:;" onclick="updateDistrict({$v3['district_id']},{$v2['city_id']},this);">修改</a>
+					<a href="javascript:void(0);"
+					onclick="delRegion({$v3['district_id']},3)">删除</a></td>
+			</tr>
+		 {/foreach} {/foreach} {/foreach}
+		</tbody>
+	</table>
+</div>
+<input type="hidden" id="type">
+<input type="hidden" id="event">
+<div class="modal fade hide" id="evaluate" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">添加子地区</h4>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr id="superiorRegionTr">
+							<td id="myModaltype">上级地区：</td>
+							<td><input type="text" id="superiorRegion" disabled="" superiorRegionId=""></td>
+						</tr>
+						<tr>
+							<td>地区名称：</td>
+							<td><input type="text" id="regionName"></td>
+						</tr>
+						<tr id="zipcode">
+							<td>邮政编码：</td>
+							<td><input type="text" id="zipcodeVal" maxlength="6" onkeyup="this.value=this.value.replace(/\D/g,'')"></td>
+						</tr>
+						<tr>
+							<td>排序：</td>
+							<td><input type="text" id="regionSort" onkeyup="this.value=this.value.replace(/\D/g,'')"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="hidden" id="evaluate_id" value="">
+				<button type="button" class="btn btn-success" data-dismiss="modal"
+					onclick="addOrUpdateAjax()">保存</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	function province_tab_switch(module_id){
+		if($(".city_pid_"+module_id).css('display') != 'none'){
+			//闭合
+			$(".tab_jian_"+module_id).hide();
+			$(".tab_jia_"+module_id).show();
+			$(".city_pid_"+module_id).hide(300);
+			$(".district_pid_"+module_id).hide(300);
+		}else{
+			//展开时
+			$(".tab_jian_"+module_id).show();
+			$(".tab_jia_"+module_id).hide();
+			$(".city_pid_"+module_id).show(500);
+		}
+	}
+	function city_tab_switch(module_id){
+		if($(".district_pid_"+module_id).css('display') != 'none'){
+			//闭合
+			$(".tab_jian_"+module_id).hide();
+			$(".tab_jia_"+module_id).show();
+			$(".district_pid_"+module_id).hide(300);
+
+		}else{
+			//展开时
+			$(".tab_jian_"+module_id).show();
+			$(".tab_jia_"+module_id).hide();
+			$(".district_pid_"+module_id).show(500);
+		}
+	}
+	function delRegion(regionId,type){
+		if(type == 1 || type == 2){
+			reminderInfo = "确认删除所选地区？删除选择地区，其所有下属地区也将会同步删除且不可恢复。";
+		}
+		if(type == 3){
+			reminderInfo = "确认删除所选地区？";
+		}
+		$( "#dialog" ).dialog({				
+            buttons: {
+                "确定": function() {
+                    $(this).dialog('close');
+                    $.ajax({
+        				type:"post",
+        				url:"{:__URL('ADMIN_MAIN/config/deleteregion')}",
+        				data:{
+        					'regionId':regionId,
+        					'type' : type
+        				},
+        				async:true,
+        				dataType: 'json',
+        				success:function (data) {
+        					if(data['code'] > 0){
+        						showMessage("success", "删除成功", "{:__URL('ADMIN_MAIN/config/areamanagement')}");
+        					}else{
+        						$("#dialog").dialog({
+        							 buttons: {
+        					                "确定,#e57373": function() {
+        					                    $(this).dialog('close');
+        					                }
+        					            },
+        					            contentText:data['message']
+        						})
+        					}
+        				}
+        			});
+                },
+                "取消,#e57373": function() {
+                    $(this).dialog('close');
+                }
+            },
+            contentText : reminderInfo,
+        });
+		/* if(confirm("确定删除？")){
+			
+		} */
+	}
+    var appCode = GetUrlAppCode();
+    var menuCode = GetUrlMenuCode();
+    if (appCode != 'PLATFORM' && appCode != "" && appCode != null) {
+        $("#type").css("display", "none");
+        $("#Operate ul").css("display", "none");
+        $(".separationLine").css("display", "none");
+    }
+    //添加省级区域
+    function addProvince(){
+    	$("#myModalLabel").text("添加一级地区");
+    	$("#superiorRegionTr").hide();
+    	$("#type").val(6);
+    	$("#zipcode").hide();
+    	$("#evaluate").modal('show');
+    }
+    //添加市级区域
+    function addCity(province_id,event){
+    	$("#myModalLabel").text("添加子地区");
+    	$("#superiorRegionTr").show();
+    	var superiorRegion = $(event).parent().prev("td").children("input").val();
+    	var superiorRegionId = $(event).parent().prev("td").children("input").attr("fieldid");
+    	//alert(superiorRegionId);
+    	$("#zipcode").show();
+    	$("#type").val(1);
+    	$("#superiorRegion").val(superiorRegion);
+    	$("#superiorRegion").attr("superiorRegionId",superiorRegionId);
+    	$("#evaluate").modal('show');
+    }
+    //添加县级区域
+    function addDistrict(city_id,event){
+		$("#myModalLabel").text("添加子地区");
+    	$("#superiorRegionTr").show();
+    	var superiorRegion = $(event).parent().prev("td").children("input").val();
+    	var superiorRegionId = $(event).parent().prev("td").children("input").attr("fieldid");
+    	$("#zipcode").hide();
+    	$("#type").val(2);
+    	$("#superiorRegion").attr("superiorRegionId",superiorRegionId);
+    	$("#superiorRegion").val(superiorRegion);
+    	$("#evaluate").modal('show'); 
+    }
+    //修改省级区域
+    function updateProvince(province_id,event){
+    	$("#event").val(province_id);
+    	$("#myModalLabel").text("地区编辑");
+    	$("#superiorRegionTr").hide();
+    	$("#type").val(3);
+    	$("#zipcode").hide();
+    	//获取所修改地区的值
+    	var province_name = $(".province_"+province_id).children("input").val();
+    	var sort = $(".province_"+province_id).prev("td").children("input").val();
+    	$("#regionName").val(province_name);
+    	$("#regionSort").val(sort);
+    	$("#evaluate").modal('show');
+    }
+    //修改市级区域
+    function updateCity(city_id,pid,event){
+    	$("#event").val(city_id);
+    	$("#myModalLabel").text("地区编辑");
+    	$("#superiorRegionTr").show();
+    	$("#type").val(4);
+    	$("#zipcode").show();
+    	
+    	//获取所修改地区的值
+    	var superiorRegion = $(".province_"+pid).children("input").val();
+    	var city_name = $(".city_"+city_id).children("input").val();
+    	var sort = $(".city_"+city_id).prev("td").children("input").val();
+    	var zipcode = $(event).attr("zipcode");
+    	$("#superiorRegion").val(superiorRegion);
+    	$("#superiorRegion").attr("superiorRegionId", pid);
+    	$("#regionName").val(city_name);
+    	$("#regionSort").val(sort);
+    	$("#zipcodeVal").val(zipcode);
+    	$("#evaluate").modal('show');
+    }
+    //修改县级区域
+    function updateDistrict(district_id,pid,event){
+    	$("#event").val(district_id);
+    	$("#myModalLabel").text("地区编辑");
+    	$("#superiorRegionTr").show();
+    	$("#type").val(5);
+    	$("#zipcode").hide();
+    	$("#evaluate").modal('show');
+
+    	//获取所修改地区的值
+    	var superiorRegion = $(".city_"+pid).children("input").val();
+    	var district_name = $(".district_"+district_id).children("input").val();
+    	var sort = $(".district_"+district_id).prev("td").children("input").val();
+    	$("#superiorRegion").val(superiorRegion);
+    	$("#superiorRegion").attr("superiorRegionId", pid);
+    	$("#regionName").val(district_name);
+    	$("#regionSort").val(sort);
+    	$("#evaluate").modal('show');
+    }
+    //添加子级区域
+    function addOrUpdateAjax(){
+    	var type = $("#type").val();
+    	var superiorRegionId = $("#superiorRegion").attr("superiorRegionId");
+    	var regionName = $("#regionName").val();
+    	var regionSort = $("#regionSort").val();
+    	var zipcode = $("#zipcodeVal").val();
+    	if(type ==1){
+    		var ajaxUrl ="{:__URL('ADMIN_MAIN/config/addcityajax')}";
+    	}
+    	if(type ==2){
+    		var ajaxUrl ="{:__URL('ADMIN_MAIN/config/adddistrictajax')}";
+    	}
+    	if(type ==3){
+    		var ajaxUrl ="{:__URL('ADMIN_MAIN/config/updateprovinceajax')}";
+    	}
+    	if(type ==4){
+    		var ajaxUrl ="{:__URL('ADMIN_MAIN/config/updatecityajax')}";
+    	}
+    	if(type ==5){
+    		var ajaxUrl ="{:__URL('ADMIN_MAIN/config/updatedistrictajax')}";
+    	}
+    	if(type == 6){
+    		var ajaxUrl ="{:__URL('ADMIN_MAIN/config/addprovinceajax')}";
+    	}
+    	var eventId = $("#event").val();
+    	$.ajax({
+			type : "post",
+			url : ajaxUrl,
+			data : {
+				"eventId" : eventId,
+				"superiorRegionId" : superiorRegionId,
+				"regionName" : regionName,
+				"regionSort" : regionSort,
+				"zipcode" : zipcode
+			},
+			success : function(data){
+				if(data['code']>0){
+					if(type == 1){
+						var addInfo = "";
+						addInfo += '<tr class="city_pid_'+superiorRegionId+'" style="height: 30px; display: none;">';
+						addInfo += '<td></td>';
+						addInfo += '<td style="text-align: center;"><input type="text" class="sort" fieldid="'+data['code']+'" fieldname="sort" value="'+regionSort+'" size="1" onchange="updateRegionAjax(2,1,this);"></td>';
+						addInfo += '<td class="city_'+data['code']+'"><span style="color: #ccc;">|——</span> <input type="text" fieldid="'+data['code']+'" fieldname="city_name" value="'+regionName+'"   onchange="updateRegionAjax(2,2,this);"></td>';
+						addInfo += '<td style="text-align: center;"><a href="javascript:;" onclick="addDistrict('+data['code']+',this)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-plus-square-o fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;添加子地区</a></td>';
+						addInfo += '<td style="text-align: center;"><a href="javascript:;" onclick="updateCity('+data['code']+','+superiorRegionId+',this);"  zipcode="'+zipcode+'">修改</a>';
+						addInfo += '<a href="javascript:void(0);"onclick="delRegion('+data['code']+',2)">删除</a></td></tr>';
+
+						$(".city_pid_"+superiorRegionId+":last").after(addInfo);
+						$(".city_pid_"+superiorRegionId).show();
+					}
+
+					if(type == 2){
+						var addInfo = "";
+						addInfo += '<tr class="district_pid_'+superiorRegionId+'" style="height: 30px; display: none;">';
+						addInfo += '<td></td>';
+						addInfo += '<td style="text-align: center;"><input type="text" class="sort" fieldid="'+data['code']+'" fieldname="sort" value="'+regionSort+'" size="1"   onchange="updateRegionAjax(3,1,this);"></td>';
+						addInfo += '<td class="district_'+data['code']+'"><span style="color: #ccc;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|——</span> <input type="text" fieldid="'+data['code']+'" fieldname="district_name" value="'+regionName+'"   onchange="updateRegionAjax(3,2,this);"></td>';
+						addInfo += '<td style="text-align: center;"></td>';
+						addInfo += '<td style="text-align: center;"><a href="javascript:;" onclick="updateDistrict('+data['code']+','+superiorRegionId+',this);">修改</a> ';
+						addInfo += ' <a href="javascript:void(0);"onclick="delRegion('+data['code']+',3)">删除</a></td></tr>';
+
+						$(".district_pid_"+superiorRegionId+":last").after(addInfo);
+						$(".district_pid_"+superiorRegionId).show();
+					}
+				}else{
+					showMessage("error",data['message']);
+				}
+			}
+		})
+    }
+
+    function updateRegionAjax(regionType,upType,event){
+    	if(upType == 1){
+    		var regionSort = $(event).val();
+    	}else{
+    		var regionSort ='';
+    	}
+    	if(upType == 2){
+    		var regionName = $(event).val();
+    	}else{
+    		var regionName = ''
+    	}	
+    	var regionId = $(event).attr("fieldid");	
+    	
+    	$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/config/updateregionajax')}",
+			data : {
+				"regionType" : regionType,
+				"upType" : upType,
+				"regionSort" : regionSort,
+				"regionName" : regionName,
+				"regionId" : regionId
+			},
+			success : function(data){
+
+			}
+		})		
+    	
+    }
+
+    </script>
+{/block}

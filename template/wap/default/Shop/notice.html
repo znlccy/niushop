@@ -1,0 +1,38 @@
+<script type="text/javascript"> 
+function ScrollImgLeft(){ 
+	var speed=30; 
+	var scroll_begin = document.getElementById("scroll_begin"); 
+	var scroll_end = document.getElementById("scroll_end"); 
+	var scroll_div = document.getElementById("scroll_div"); 
+	scroll_end.innerHTML=scroll_begin.innerHTML; 
+    function Marquee(){ 
+		if(scroll_end.offsetWidth-scroll_div.scrollLeft<=0) 
+		scroll_div.scrollLeft-=scroll_begin.offsetWidth; 
+		else 
+		scroll_div.scrollLeft++; 
+    } 
+	var MyMar=setInterval(Marquee,speed); 
+	scroll_div.onmouseover=function() {clearInterval(MyMar);} 
+	scroll_div.onmouseout=function() {MyMar=setInterval(Marquee,speed);} 
+} 
+</script>
+<div style="height:40px;line-height:40px;border-top:1px solid #E8E8E8;border-bottom:1px solid #E8E8E8;">
+        <div style="width:10%;float:left;margin-left:5%;">
+              <img src="__TEMP__/{$style}/public/images/horn.png" style="margin-top:10px;width:20px;height:20px;"/>
+        </div>              
+		<div class="custom-notice"  style="float:left;width:85%;height:40px;overflow:hidden;line-height:40px;font-size:10px;font-family:'宋体';background:#FFF;color:#E82E2E;">
+		    <div class="custom-notice-inner" style="width:90%;height:40px;margin:0 auto;white-space: nowrap;overflow:hidden;" id="scroll_div" class="scroll_div">
+		        <div class="custom-notice-scroll" id="scroll_begin" style="display:inline;">
+		            <span class="js-scroll-notice" style="position: relative;">
+		        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		         [text]{$shop_info['shop_name']}!!
+		        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        
+		         [text] {$shop_info['shop_name']}!!              
+                    </span>
+		        </div>
+		        <div id="scroll_end" style="display:inline;"></div> 
+		    </div>
+		     <script type="text/javascript">ScrollImgLeft();</script> 
+		</div>
+</div> 
+

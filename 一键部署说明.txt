@@ -1,0 +1,23 @@
++=========================================================+
+
+ 推荐使用宝塔Linux面板搭建环境，实现一键部署Niushop
+
++=========================================================+
+
+宝塔Linux面板安装脚本：
+
+yum install -y wget && wget -O install.sh http://download.bt.cn/install/install.sh && sh install.sh
+
+2分钟装好面板，一键管理服务器。
+
+
+一键部署Niushop源码位置：
+
+进入面板 > 软件管理 > 宝塔一键部署源码 > Niushop > 一键部署
+
+部署完成，网站和数据库同时创建完毕。
+
+
+面板安装详情:
+
+https://www.bt.cn/bbs/thread-1186-1-1.html?niushop

@@ -1,0 +1,172 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.mlr15{
+	margin:0;
+}
+.num{
+	width: 40px;
+}
+.style0list tbody td {
+	line-height: 28px;
+}
+.notice_title{
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space:nowrap;
+	width: 300px;
+	display: inline-block;
+}
+</style>
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/config/addHomeNotice')}" ><i class="fa fa-plus-circle"></i>&nbsp;添加首页公告</a></li>
+{/block}
+{block name="main"}
+<!-- <div class="mb10 mlr15">
+       <div class="tiphelp-info"><strong>提示：</strong><br>
+           <span style="color:red;vertical-align: middle;">*</span>&nbsp;&nbsp;此用户通知显示在pc端前台会员中心首页的用户中心公告
+       </div>
+</div> -->
+<div class="operation">
+	<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+</div>
+<div class="mod-table">
+	<div class="con style0list">
+		<table class="table-class">
+			<colgroup>
+				<col style="width: 1%">
+				<col style="width: 8%;">
+				<col style="width: 25%;">
+				<col style="width: 10%;">
+				<col style="width: 15%">
+			</colgroup>
+			<thead>
+				<tr align="center">
+					<th><input type="checkbox" onClick="CheckAll(this)" id="chek_all"></th>
+					<th>排序</th>
+					<th>公告标题</th>
+					<th>创建时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<colgroup>
+				<col style="width: 1%">
+				<col style="width: 8%;">
+				<col style="width: 25%;">
+				<col style="width: 10%;">
+				<col style="width: 15%">
+			</colgroup>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+<script>
+$(function(){
+	LoadingInfo(1);
+})
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/userNotice')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><input name="sub" type="checkbox" value="'+ data['data'][i]['id']+'"></td>';
+					html += '<td><input type="number" min="0" value="'+ data["data"][i]["sort"]+'" class="num" style="margin-bottom:0;" data-id="'+ data['data'][i]['id']+'"></td>';
+					html += '<td class="notice_title">'+data["data"][i]["notice_title"]+'</td>';
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"])+ '</td>';
+				    html += '<td><a href="'+__URL('ADMIN_MAIN/config/updateHomeNotice?id='+ data['data'][i]['id'])+'">修改 </a><a style="cursor: pointer;" onclick="deleteNotice('+data['data'][i]['id']+')">删除</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="8">暂无公告信息</td></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			load();
+		}
+	});
+}
+//删除公告
+function deleteNotice(id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/config/deleteNotice')}",
+					data : { "id" : id.toString() },
+					success : function(data) {
+						if (data["code"] > 0) {
+							LoadingInfo(getCurrentIndex(id,'.table-class tbody'));
+							$('#chek_all').prop('checked',false);
+							showMessage('success', data["message"]);
+						}else{
+							showMessage('error', data["message"]);
+						}
+					}
+				})
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否删该条公告？",
+	});
+}
+//批量删除公告
+function batchDelete() {
+	var ids= new Array();
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			ids.push($(this).val());
+		}
+	});
+	if(ids.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteNotice(ids);
+}
+
+/*修改排序*/
+function load(){
+	$('.num').change(function(){
+		var id = $(this).attr('data-id');
+		var sort = $(this).val();
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/config/modifyNoticeSort')}",
+			data:{'id':id,'sort':sort},
+			success: function (data) {
+				if(data['code'] > 0){
+					/* showMessage('success', data["message"]); */
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		}); 
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+</script>
+{/block}

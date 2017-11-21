@@ -1,0 +1,130 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_balance.css">
+<style type="text/css">
+.ns-table td {
+	width: 100%;
+}
+
+.ns-lf {
+	float: left;
+}
+
+.ns-rg {
+	color: red;
+	font-size: 14px;
+	float: right;
+}
+
+.ns-rg-time {
+	font-size: 14px;
+	float: right
+}
+.account-option{
+	 width:100%;
+	 height:48px;
+}
+.account-option-left{
+	    float: left;
+    margin-top: 21px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    border-top: 1px solid #f86126;
+    border-bottom: 1px solid #f86126;
+    border-right: 1px solid #f86126;
+    color: #fff;
+    width: 50%;
+}
+.account-option-right{
+    float: right;
+    border-left: 1px solid #f86126;
+    border-top: 1px solid #f86126;
+    border-bottom: 1px solid #f86126;
+    border-left: none;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    color: #fff;
+    width: 49.5%;
+    margin-top: 21px;
+}
+.my-account .account-box .bottom{
+	border: 1px solid #f56430;
+    padding: 7px 18px;
+    margin-top: 10px;
+    border-radius: 6%;
+    background: #ff8458;
+    color: #f7f7f7;
+}
+/* .account-option ul li{
+	float:right;
+	text-align: center;
+	line-height: 40px;
+	font-size: 16px;
+	color: #fff;
+	width:50%;
+} */
+</style>
+<script type="text/javascript">
+window.onerror = function() {
+	return true;
+}
+</script>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="head_back" href="{:__URL('APP_MAIN/member/index')}"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('member_my_balance')} </div>
+</section>
+{/block}
+{block name="main"}
+<div id="main" class="detail-main">
+	<div class="my-account">
+		<!-- <a href="APP_MAIN/member/recharge" class="recharge">充值</a> -->
+		<div class="account-box">
+			<p class="balace">{$sum}</p>
+			<p style="font-size: 14px;color: #ffc9b6;padding-bottom: 15px;">{:lang('member_balance')}</p>
+			<a href="{:__URL('APP_MAIN/member/recharge')}" class="account-title bottom">{:lang('recharge')}</a>
+		<!-- {if condition="$is_use eq 1"}
+			<a href="APP_MAIN/member/toWithdraw?shop_id={$shopid}" class="account-title bottom">余额提现</a>
+		{/if} -->
+			<div class="account-option">
+			<ul>
+				<a href="{:__URL('APP_MAIN/member/balancewithdraw')}"><li class="account-option-left">{:lang('member_cash_register')}</li></a>
+				<a href="{:__URL('APP_MAIN/member/towithdraw?shop_id='.$shopid)}"><li class="account-option-right">{:lang('member_balance_withdrawal')}</li></a>
+			</ul>
+		</div>
+		</div>
+	</div>
+	{if condition="count($balances) neq 0 "}
+	<table class="ns-table">
+		{volist name="balances.data" id="vo"}
+		<tr align="center">
+			<td style="padding-bottom: 0.2rem; font-size: 16px;"><span
+				class="ns-lf" style="color: #444;">{$vo['type_name']}</span> <span
+				class="ns-rg">{$vo['number']}</span></td>
+			<td style="padding-top: 0.2rem; font-size: 14px; color: #888;">
+				<span class="ns-lf">{$vo['text']}</span> <span class="ns-rg-time">{$vo['create_time'] | getTimeStampTurnTime}</span>
+			</td>
+		</tr>
+		{/volist}
+	</table>
+	{else/}
+	<div>
+		<div class="emptyFrame">
+			<i class="user_money"></i><span>{:lang('you_don_not_have_a_balance_record_yet')}！</span>
+		</div>
+	</div>
+	{/if}
+</div>
+<script type="text/javascript">
+$("#head_back").click(function (){
+    var json ={
+            "center" : "2"
+        }
+    window.webkit.messageHandlers.center.postMessage(json);
+})
+</script>
+{/block}
+{block name="bottom"}{/block}

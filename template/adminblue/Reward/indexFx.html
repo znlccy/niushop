@@ -1,0 +1,119 @@
+{extend name="adminblue/base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>签到送积分</dt>
+		<dd style="width: 75px;">
+			<p><input id="sign_point" type="text" value="{$res.sign_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" style="width: 40px;padding-left: 10px;" class="input-common"></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+		<dt style="width: 150px;">分享送积分</dt>
+		<dd style="width: 75px;">
+			<input id="share_point" type="text" value="{$res.share_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" style="width:40px;padding-left: 10px;" class="input-common">
+		</dd>
+	</dl>
+	<dl>
+		<dt>会员注册送积分</dt>
+		<dd style="width: 75px;">
+			<input type="text" id="reg_member_self_point" value="{$res.reg_member_self_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">会员注册上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_member_one_point" value="{$res.reg_member_one_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">会员注册上上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_member_two_point" value="{$res.reg_member_two_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">会员注册上上上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_member_three_point" value="{$res.reg_member_three_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+	</dl>
+	<dl>
+		<dt>成为推广员送积分</dt>
+		<dd style="width: 75px;">
+			<input type="text" id="reg_promoter_self_point" value="{$res.reg_promoter_self_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">成为推广员上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_promoter_one_point" value="{$res.reg_promoter_one_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">成为推广员上上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_promoter_two_point" value="{$res.reg_promoter_two_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">成为推广员上上上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_promoter_three_point" value="{$res.reg_promoter_three_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+	</dl>
+	<dl>
+		<dt>成为股东送积分</dt>
+		<dd style="width: 75px;">
+			<input type="text" id="reg_partner_self_point" value="{$res.reg_partner_self_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">成为股东上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_partner_one_point" value="{$res.reg_partner_one_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">成为股东上上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_partner_two_point" value="{$res.reg_partner_two_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+		<dt style="width: 150px;">成为股东上上上级得积分</dt>
+		<dd style="width: 55px;">
+			<input type="text" id="reg_partner_three_point" value="{$res.reg_partner_three_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"  style="width: 45px;" class="input-common">
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setRewardRuleAjax();">提交</button></dd>
+	</dl>
+</div>
+<script>
+function setRewardRuleAjax(){
+	var sign_point = $("#sign_point").val();
+	var share_point = $("#share_point").val();
+	var reg_member_self_point = $("#reg_member_self_point").val();
+	var reg_member_one_point = $("#reg_member_one_point").val();
+	var reg_member_two_point = $("#reg_member_two_point").val();
+	var reg_member_three_point = $("#reg_member_three_point").val();
+	var reg_promoter_self_point = $("#reg_promoter_self_point").val();
+	var reg_promoter_one_point = $("#reg_promoter_one_point").val();
+	var reg_promoter_two_point = $("#reg_promoter_two_point").val();
+	var reg_promoter_three_point = $("#reg_promoter_three_point").val();
+	var reg_partner_self_point = $("#reg_partner_self_point").val();
+	var reg_partner_one_point = $("#reg_partner_one_point").val();
+	var reg_partner_two_point = $("#reg_partner_two_point").val();
+	var reg_partner_three_point = $("#reg_partner_three_point").val();
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/reward/indexfx2')}",
+		data : {
+			"sign_point" : sign_point,
+			"share_point" : share_point,
+			"reg_member_self_point" : reg_member_self_point,
+			"reg_member_one_point" : reg_member_one_point,
+			"reg_member_two_point" : reg_member_two_point,
+			"reg_member_three_point" : reg_member_three_point,
+			"reg_promoter_self_point" : reg_promoter_self_point,
+			"reg_promoter_one_point" : reg_promoter_one_point,
+			"reg_promoter_two_point" : reg_promoter_two_point,
+			"reg_promoter_three_point" : reg_promoter_three_point,
+			"reg_partner_self_point" : reg_partner_self_point,
+			"reg_partner_one_point" : reg_partner_one_point,
+			"reg_partner_two_point" : reg_partner_two_point,
+			"reg_partner_three_point" : reg_partner_three_point
+		},
+		success : function(data){
+			if(data['code'] >0){
+				showMessage("success", "设置成功！", "{:__URL('ADMIN_MAIN/reward/index')}");
+			}else{
+				showMessage("error", "设置失败");
+			}
+		}
+	})
+}
+</script>
+{/block}

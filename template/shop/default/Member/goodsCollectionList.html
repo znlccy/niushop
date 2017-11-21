@@ -1,0 +1,81 @@
+{extend name="shop/default/Member/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+<!-- <script src="__TEMP__/{$style}/public/js/ns_collections.js" type="text/javascript"></script> -->
+<style>
+.user-right .box .pic-model dl dd{
+	width:50%;float:left;text-align: center;
+}
+</style>
+{/block}
+{block name="main"}
+  <div class="user-right"> 
+	<div class="box">
+		<div class="tabmenu">
+			<ul class="tab">
+				<li class="first active"><a>{:lang('member_my_collection')}</a><span style="font-size:12px;margin-left:15px;display: none;">({:lang('concerned_following_items_to_receive_latest_developments')})</span></li>
+			</ul>
+		</div>
+		<div class="mar_top">
+			<table class="ncm-default-table">
+				<tbody>
+					<tr>
+						<td colspan="2" class="pic-model">
+							<ul class="js-collection-list">
+							{if condition="$page_count eq 0"}
+								<div class="emptyFrame clearfix" style="cursor: pointer;"> <i class="user_bg"></i><span>{:lang('member_collect_favorite_goods')}！</span> </div>
+							{else/}
+							
+								{foreach name="goods_collection_list" item="goods" key="k"}
+									{notempty name="$goods['goods_id']"}
+										<li class="favorite-pic-list">
+											<div class="favorite-goods-thumb">
+												<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank" title="{$goods.goods_name}"><img src="{:__IMG($goods['pic_cover_mid'])}" alt="{$goods.goods_name}" width="200" height="200"></a>
+											</div>
+											<div class="favorite-goods-info">
+												<dl>
+													<dt>
+														<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank" title="{$goods.goods_name}">{$goods.goods_name}</a>
+													</dt>
+													<dd class="price">¥{$goods.promotion_price}</dd>
+													<dd class="hover_tan"  onclick="javascript:cancelCollection({$goods.fav_id},'goods',this);">
+														<i class="guanzhu1 js-guanzhu0"></i>
+														<a href="javascript:;" class="ncm-btn-mini">{:lang('member_cancel')}</a>
+													</dd>
+												</dl>
+											</div>
+										</li>
+									{/notempty}
+								{/foreach}
+								
+							{/if}
+							</ul>
+						</td> 
+					</tr>
+				</tbody>
+			</table>
+			{include file='shop/default/controlCommonPage'/}
+		</div>
+	</div>
+<div class="box"></div>
+</div>
+{/block}
+{block name="javascript"}
+<script>
+//取消收藏 is_reload: true 刷新
+function cancelCollection(fav_id, fav_type, obj) {
+	$.ajax({
+		url : __URL(SHOPMAIN + "/components/cancelcollgoodsorshop"),
+		type : "post",
+		data : {
+			"fav_id" : fav_id,
+			"fav_type" : fav_type
+		},
+		success : function(data) {
+			$.msg("{:lang('member_abolish_successful')}");
+			$(obj).parent().parent().parent("li").remove();
+		}
+	});
+}
+</script>
+{/block}

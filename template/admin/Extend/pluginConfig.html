@@ -1,0 +1,169 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style type="text/css">
+.set-style {
+	width: 100%;
+}
+.set-style dl {
+	width: 100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt {
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight: normal;
+}
+.set-style dl dd {
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"], .set-style dl dd input[type="password"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height: 24px;
+	line-height: 24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin: 0;
+}
+.set-style dl dd textarea {
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height: 60px;
+	padding: 4px;
+	border: solid 1px #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin: 0;
+}
+
+.hint {
+	font-size: 12px;
+	line-height: 16px;
+	color: #BBB;
+	margin-top: 10px;
+}
+
+.set-style dl dd p img {
+	border: medium none;
+	vertical-align: middle;
+}
+
+.class-logo {
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+
+.class-logo p {
+	width: 200px;
+	height: 60px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	margin: 0 0 10px;
+	border: dashed 1px #E6E6E6;
+}
+
+.class-logo p img {
+	max-width: 200px;
+	max-height: 60px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this .height/ 2);
+	*margin-top: expression(30-this .height/ 2);
+}
+
+.edit_button {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 30px;
+	padding-right: 30px;
+	background-color: #51A351;
+	color: #FFF;
+	margin: 20px auto;
+	border: none;
+	display: block;
+}
+
+.error {
+	font-size: 12px;
+	line-height: 16px;
+	color: red;
+	margin-top: 10px;
+	display: none;
+}
+
+.set-style dl dd p {
+	margin-bottom: 0;
+}
+.required{color:red;margin-right:10px;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+<form action="{__URL('ADMIN_MAIN/extend/savePluginConfig')}" class="form-horizontal" method="post">
+	{foreach name="data['config']" item="form" key="key"}
+		{switch name="form.type"}
+			{case value="text"}
+				<dl>
+					<dt>{$form.title}:</dt>
+					<dd>
+						<p><input type="text" name="config[{$key}]" value="{$form.value}"></p>
+						<p class="hint">{$form.tip}</p>
+					</dd>
+				</dl>
+			{/case}
+			{case value="password"}
+				<dl>
+					<dt>{$form.title}:</dt>
+					<dd>
+						<p><input type="password" name="config[{$key}]" value="{$form.value}"></p>
+						<p class="hint">{$form.tip}</p>
+					</dd>
+				</dl>
+			{/case}
+		{/switch}
+	{/foreach}
+	<dl>
+		<input type="hidden" name="addons_id" value="{$addons_id}">
+		<input type="hidden" name="plugin_id" value="{$plugin_id}">
+		<button type="submit" class="edit_button">确定</button>
+	</dl>
+</form>
+</div>
+<script>
+</script>
+{/block}

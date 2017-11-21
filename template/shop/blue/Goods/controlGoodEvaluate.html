@@ -1,0 +1,184 @@
+<!--
+	功能：商品详情页评价
+	创建人：李志伟
+	创建时间：2017年2月23日9:49:12
+-->
+<style>
+.goods-comment dl{
+	margin-bottom: 20px;
+	min-height: 10px;
+}
+</style>
+<div id="goods_evaluate" class="goods-detail-con goods-detail-tabs" name="goods_evaluate">
+	<div class="evaluate">
+		<h3 class="color">{:lang('goods_commodity_evaluation')}</h3>
+		<div class="comment-mod">
+			<!-- 总评分 -->
+			<div class="comment-grade">
+				<div class="rate-score">
+					<h4>{:lang('goods_matche_description')}</h4>
+					<strong>{$goods_info['match_point']}</strong>
+					<p>
+						<span class="score-value-no"><em style="width:{$goods_info['match_ratio']}%;"></em></span>
+					</p>
+				</div>
+				<div class="rate-graph">
+					<div class="graph-scroller">
+						<span style="width: {$goods_info['match_ratio']}%;"><em>{$goods_info['match_point']}<i>▼</i></em></span>
+					</div>
+					<ul class="graph-desc">
+						<li>{:lang('goods_very_dissatisfied')}</li>
+						<li>{:lang('goods_dissatisfied')}</li>
+						<li>{:lang('goods_commonly')}</li>
+						<li>{:lang('goods_satisfied')}</li>
+						<li>{:lang('goods_very_satisfied')}</li>
+					</ul>
+				</div>
+			</div>
+			
+			<!-- 评论选择项 -->
+			<div class="comment-type">
+				<ul class="tab-nav">
+					<li class="current" data-type="0"><i class="icon cur"></i>  {:lang('whole')}<em>({$evaluates_count['evaluate_count']})</em></li>
+					<li data-type="4"><i class="icon"></i> {:lang('goods_picture')} <em>（{$evaluates_count['imgs_count']}）</em></li>
+					<li data-type="1"><i class="icon"></i> {:lang('goods_praise')}<em>（{$evaluates_count['praise_count']}）</em></li>
+					<li data-type="2"><i class="icon"></i> {:lang('goods_comments')} <em>（{$evaluates_count['center_count']}）</em></li>
+					<li data-type="3"><i class="icon"></i> {:lang('goods_bad')}<em>（{$evaluates_count['bad_count']}）</em></li>
+				</ul>
+			</div>
+			
+			<!-- 有评论的的展示形式 _star -->
+			<div id="comment_content">
+				<div class="comment-con tablelist"></div>
+			</div>
+			{include file='shop/blue/controlCommonPageAjax'/}
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(".comment-type li").click(function() {
+	var type = $(this).data("type");
+	var target = $(this);
+	$(".comment-type").find("li").removeClass("current");
+	$(".comment-type").find("i").removeClass("cur");
+	$(target).addClass("current");
+	$(target).children().addClass("cur");
+	GetDataList(1)
+})
+
+function loadFunction(){
+	$('.goods-comment-imgs>img').click(function(){
+		var even=$(this);
+		var viewer=even.parent().next('.photo-viewer');
+		if(!even.is('.cur')){
+			even.parent().children('img').removeClass('cur');
+			even.addClass('cur');
+			even.parent().next('.photo-viewer').html('<img src="'+$(this).attr('src')+'"/>').show('fast');	
+		}else{
+			even.removeClass('cur');
+			even.parent().next('.photo-viewer').hide("slow").html('');
+		}
+	})
+}
+
+/**
+* 分页显示
+* @param {Object} pageindex
+*/
+function GetDataList(pageindex){
+	var page_size=$('#pagesize').val();
+	var shop_name=$('#shop_name').val();
+	var pageindex=pageindex==0?$('#pageindex').val():pageindex;
+	var commentsType=$(".comment-type li.current").attr('data-type');
+	var goods_id=$('#hidden_goodsid').val();  //标签在info页面
+	$.ajax({
+		type:"post",
+		url:"{:__URL('SHOP_MAIN/goods/getgoodscomments')}",
+		data:{ 'page_index' : pageindex, 'page_size' : page_size, 'goods_id' : goods_id, 'comments_type' : commentsType },
+		dataType:'json',
+		beforeSend:function(){
+			$.loading.start();
+		},
+		success:function(data){
+			var listhtml='';
+			if(data['data'].length==0){
+				$('#comment_content .tablelist').html('<div class="tip-box" style="position:static;"><i class="tip-icon"></i><div class="tip-text">{:lang('no_comment_yet')}</div></div>');
+				$('#pagination').hide();
+				return false;
+			}
+			for(var i=0;i<data['data'].length;i++){
+				var dataitem=data['data'][i];
+				var member_name=dataitem['member_name'];
+				member_name=dataitem['is_anonymous']==1?member_name.replace(member_name.substring(1,member_name.length),'***')+'({:lang('anonymous')})':member_name;
+				listhtml+='<div class="goods-comment">'
+					+'<div class="user-info">'
+					+'<div class="face">';
+					if(dataitem["user_img"] != "" && dataitem['user_img'] != undefined && dataitem['user_img'] != 0){
+						listhtml+='<img src="'+__IMG(dataitem['user_img'])+'">';
+					}else{
+						listhtml+='<img src="__TEMP__/{$style}/public/images/default_user_portrait_0.png">';
+					}
+					listhtml+='</div>'
+					+'<div class="name-box">'
+					+'<em>'+member_name+'</em>'
+					+'</div>'
+					+'</div>'
+					+'<dl>'
+					+'<dd class="goods-comment-con">'
+					+'<span class="text">'+dataitem['content']+'</span>'
+					+'</dd>';
+				if(dataitem['image']!=''){
+					var imgs_arr=dataitem['image'].split(',');
+					listhtml+='<dd class="goods-comment-imgs">'
+					for(var key in imgs_arr){
+						listhtml+='<img src="'+__IMG(imgs_arr[key])+'" alt="" />';
+					}
+					listhtml+='</dd>';
+					listhtml+='<dd class="photo-viewer"></dd>'
+				}	
+				listhtml+='<dd><div class="date"><span>'+timeStampTurnTime(dataitem['addtime'])+'</span> <span></span></div></dd></dl>';
+				if(dataitem['explain_first']!=''){
+					listhtml+='<div class="comment_zhuijia">{:lang('goods_shopkeeper_replies')}：</div>'
+					+'<dl>'
+					+'<dd class="goods-comment-con">'
+					+'<span class="text">'+dataitem['explain_first']+'</span>'
+					+'</dd></dl>';
+				}
+				if(dataitem['again_content']!=''){
+					listhtml+='<div class="comment_zhuijia">{:lang('goods_additional_evaluation')}：</div>'
+					+'<dl>'
+					+'<dd class="goods-comment-con">'
+					+'<span class="text">'+dataitem['again_content']+'</span>'
+					+'</dd>';
+					if(dataitem['again_image']!=''){
+						var imgs_arr=dataitem['again_image'].split(',');
+						listhtml+='<dd class="goods-comment-imgs">'
+						for(var key in imgs_arr){
+							listhtml+='<img src="'+__IMG(imgs_arr[key])+'" alt="" />';
+						}
+						listhtml+='</dd>';
+					}
+					listhtml+='<dd class="photo-viewer"></dd>'
+					listhtml+='<dd><div class="date"><span>'+timeStampTurnTime(dataitem['again_addtime'])+'</span> <span></span></div></dd></dl>';
+					if(dataitem['again_explain']!=''){
+						listhtml+='<div class="comment_zhuijia">{:lang('goods_shopkeeper_replies')}：</div>'
+						+'<dl>'
+						+'<dd class="goods-comment-con">'
+						+'<span class="text">'+dataitem['again_explain']+'</span>'
+						+'</dd></dl>';
+					}
+				}
+				listhtml+='</div>';
+			}
+			$('#comment_content .tablelist').html(listhtml);
+			$('#totalcount').text(data['total_count']);//总条数
+			$('#pagecount').text(data['page_count']);//总页数
+			$('#pageindex').val(pageindex);	//当前页数
+			page_display(data['page_count'],pageindex);
+			$('#pagination').show();
+			loadFunction();
+		}
+	});
+}
+</script>

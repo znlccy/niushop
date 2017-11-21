@@ -1,0 +1,593 @@
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/scroll.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/detail.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<script src="__TEMP__/{$style}/public/js/scroll.js" type="text/javascript"></script>
+<script src="__TEMP__/{$style}/public/js/countdown.js" type="text/javascript"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/touchslider.js"></script>
+<style>
+.address-select{width: 30%;float: left;border: 1px solid #e5e5e5;height: 20px;line-height: 20px;margin: 5px 15px;margin-left: 0;}
+.give-the-thumbs-up{position: absolute;top: 0px;right: 10px;text-align: center;font-size: 12px;margin-top: 13px;}
+.give-the-thumbs-up i{font-size: 21px;}
+input{appearance:none;-moz-appearance:none;-webkit-appearance:none;outline: none;-moz-outline: none;-webkit-outline: none;}
+.number{border-radius: 0;-webkit-border-radius: 0;}
+.favorites{width: 35px;height: 35px;text-align: center;line-height: 35px;background: rgba(0,0,0,0.6);border-radius: 50%;position: absolute;z-index: 20;right: 10px;top: 10px;}
+.favorites i{color: #ccc;font-size: 16px;margin-top: 10px;opacity: 0.6;}
+.comment_img{width: 80px;height: 80px;margin:0 5px 5px 0;display: inline-block;float: left;line-height: 80px;text-align: center;}
+.comment_img img{max-width: 100%;max-height: 100%;vertical-align: middle;height: auto;}
+/* 幻灯片 */
+#img-slider{display:none;}
+#img-slider ul li{text-align:center;}
+#img-slider li a{display:block;width:100%;height:100%;}
+#img-slider li img{max-width:100%;max-height:100%;vertical-align: middle;}
+#img-slider .img-count{position: fixed;top:5%;left:0;right:0;width:100%;text-align:center;color:#9E9E9E;}
+.jiantou{
+	float: right;
+	width: 15px;
+	height: 15px;
+	background:url("__TEMP__/{$style}/public/images/assistant_right.png") no-repeat center;
+    background-size: auto 15px;	
+	margin-top: 3px;
+}
+.user_info .name-box{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+</style>
+<!-- 商品详情 -->
+<div class="h50" style="height:45px;"></div>
+<section id="banner">
+	<div class="shop_slider shop_slider_auto" data-tag="module-slider" data-height="320px">
+		<div class="inner" data-tag="slider-warp" >
+			<ul class="pic_list" data-tag="slider-list">
+			{foreach name = "goods_detail['img_list']" item = 'img_list' key='key' }
+				<li style="width: 320px;">
+					<div>
+						<img alt="{:lang('goods_picture')}" class="pp_init_img" src="{:__IMG($img_list['pic_cover_big'])}" />
+					</div>
+				</li>
+			{/foreach}
+			</ul>
+			<!-- 收藏商品 -->
+			{if condition="$is_member_fav_goods == 0"}
+			<div class="favorites" onclick="collectionGoods({$goods_detail.goods_id},'goods','{$goods_detail.goods_name}',this);" data-log-id="{$is_member_fav_goods}">
+				<i class="fa fa-heart-o" aria-hidden="true"></i>
+			</div>
+			{else/}
+			<div class="favorites" onclick="collectionGoods({$goods_detail.goods_id},'goods','{$goods_detail.goods_name}',this);" data-log-id="{$is_member_fav_goods}">
+				<i class="fa fa-heart" aria-hidden="true"></i>
+			</div>
+			{/if}
+			
+		</div>
+		<div class="bar_wrap">
+			<ul class="bar" data-tag="slider-page">
+				<li class="cur"></li>
+				<li></li>
+				<li></li>
+			</ul>
+		</div>
+	</div>
+</section>
+{if condition = "$goods_detail['promotion_info'] neq ''"}
+<div class="goods-header js-goods-header goods-activity clearfix">
+	<input type="hidden" id="end_time"  value="{$goods_detail['promotion_detail']['end_time'] | getTimeStampTurnTime}"/>
+	<div class="goods-price">
+		<div class="current-price activity-price">
+			<span>￥</span><i class="js-goods-price price">{$goods_detail.promotion_price}</i>
+			<span class="price-title js-price-title ">{:lang('goods_discount')}</span>
+		</div>
+		{if condition="$goods_detail.market_price>0"}
+		<em class="original-price">{$goods_detail.market_price}</em>
+		{/if}
+		<div class="font-size-12 overview-countdown js-activity-tips started " data-status="started">
+			<div class="countdown-title">{:lang('distance_ends')}</div>
+			<div class="js-discount-time countdown" data-countdown="3542691">
+			<span class="c-red js-day">00</span> {:lang('days')}
+			<span class="c-red js-hour">00</span> {:lang('hours')}
+			<span class="c-red js-min">00</span> {:lang('minutes')}
+			<span class="c-red js-sec">00</span> {:lang('second')}</div>
+		</div>
+	</div>
+</div>
+{/if}
+<div class="buy_area">
+	<div class="fn_wrap" style="position: relative;">
+		<h1 class="title" id="itemName" style="width: 80%;">{$goods_detail.goods_name}</h1>
+		<p class="goods-introduction">{$goods_detail.introduction}</p>
+		<span style="position: absolute;display: block;height: 39px;background: #d5d5d5;width: 1px;top: 14px;right: 47px;"></span>
+		{if condition="$click_detail['status'] eq 1"}
+		<span class="give-the-thumbs-up">
+			<i class="fa fa-thumbs-up" style="color: #FF8855;"></i><br/>{:lang('give_thumbs_up')}
+		</span>
+		{else/}
+		<span onclick="clickPoint()" class="give-the-thumbs-up">
+			<i class="fa fa-thumbs-up"></i><br/>{:lang('give_thumbs_up')}
+		</span>
+		{/if}
+	</div>
+	
+	<div class="price_wrap">
+		<span class="tit" id="priceTitle"></span> 
+		<span class="price" price="{$goods_detail.promotion_price}">
+			<span style="font-size:14px;display: inline-block;vertical-align: middle;">￥</span>
+			{if condition="$goods_detail.promotion_price < $goods_detail.member_price"}{$goods_detail.promotion_price}{else/}{$goods_detail.member_price}{/if}
+			{if condition="$goods_detail.point_exchange_type==1 && $goods_detail.point_exchange>0"}
+			<span style="font-size:16px;display: inline-block;vertical-align: middle;">+{$goods_detail.point_exchange}{:lang('goods_integral')}</span>
+			{/if}
+		</span>
+		<span class="flag" id="priceDis" style="display: none"></span>
+	</div>
+	
+	{if condition="$goods_detail.max_buy>0"}
+	<hr class="with-margin-l" />
+	<hr class="divider-line" />
+	<div class="price_postage">
+		<span class="price_postage_tit">
+		<i style="color: #fff;font-size: 12px;padding: 3px;background: #f44;border-radius: 2px;">{:lang('goods_quantity_purchased')}</i>&nbsp;{$goods_detail.max_buy}{:lang('goods_individual')}</span>
+	</div>
+	{/if}
+	<hr class="with-margin-l" />
+	<div class="stock-detail" >
+		<span style="display:inline-block;width:50%;">销量:{$goods_detail['sales']}笔</span>
+		<span class="js-shipping-fee-name"></span><!-- 运费 -->
+	</div>
+</div>
+<hr class="with-margin-l" />
+<hr class="divider-line" />
+{if condition = "$goods_detail['mansong_name'] neq ''"}
+<div class="price_postage">
+	<span class="price_postage_tit js-reduced-send single"><i style="color: #fff;font-size: 12px;padding: 3px;background: #f44;border-radius: 2px;">{:lang('member_full')}{:lang('member_reduce')}</i>&nbsp;{$goods_detail['mansong_name']}</span>
+</div>
+<hr class="with-margin-l" />
+{/if}
+
+{if condition = "$goods_detail['baoyou_name'] neq ''"}
+<div class="price_postage">
+	<span class="price_postage_tit single"><i style="color: #fff;font-size: 12px;padding: 3px;background: #f44;border-radius: 2px;">{:lang('goods_free_shipping')}</i>&nbsp;{$goods_detail['baoyou_name']}</span>
+</div>
+<hr class="with-margin-l" />
+{/if}
+
+<!-- 领取优惠劵 -->
+{notempty name="$goods_coupon_list"}
+<div class="price_postage" id="receive_coupons">
+	<span class="price_postage_tit single"><img src="__TEMP__/{$style}/public/images/receive-coupon.png" style="width: 80px;height: 15px;margin-right: 8px;margin-top: -2px;">领取优惠劵<i class="jiantou"></i></span>
+</div>
+{/notempty}
+
+{if condition = "$goods_detail['baoyou_name'] neq '' || $goods_detail['mansong_name'] neq ''"}
+<hr class="divider-line" />
+{/if}
+
+{if condition = "$goods_detail['give_point'] neq 0"}
+<div class="price_postage">
+	<span class="price_postage_tit"><i class="fa fa-database" style="color: #F44;margin-right: 5px;"></i>{:lang('goods_gift_points')}<span style="color:#F44;padding:0;">{$goods_detail['give_point']}</span>{:lang('minutes')}</span>
+</div>
+<hr class="with-margin-l" />
+{/if}
+<div class="mod_tab_wrap">
+	<div class="mod_tab" id="detailTab">
+		<span onclick="showProperty(this,1)" class="cur">{:lang('goods_commodity_details')}</span>
+		<span onclick="showProperty(this,2)" >{:lang('goods_commodity_attribute')}</span>
+		<span onclick="showProperty(this,3)">{:lang('goods_commodity_evaluation')}({$evaluates_count['evaluate_count']})</span>
+	</div>
+</div>
+	
+<!-- 商品详情 -->
+<div class="detail_info_wrap" id="p-detail">
+	<div class="detail_list" id="content">{$goods_detail.description}</div>
+</div>
+<!-- 商品属性 -->
+<div class="detail_info_wrap p-attribute" id="p-attribute" style="display:none;" >
+	{if condition = "count($goods_detail['goods_attribute_list']) gt 0"}
+		<ul class="attribute-ul">
+			{foreach $goods_detail["goods_attribute_list"] as $vo}
+				{notempty name="$vo['attr_value_name']"}
+				<li>
+					<em>{$vo.attr_value}：</em>
+					<span id="goods_attr_" title="{$vo.attr_value_name}" class="goods-attr-value">{$vo.attr_value_name}</span>
+				</li>
+				{/notempty}
+			{/foreach}
+		</ul>
+	{/if}
+</div>
+
+<!-- 商品评论 -->
+<div class="comment-type" id="productproperty" style="display:none;">
+	<ul class="tab-nav">
+		<li class="productproperty-list current" data-type="0" >{:lang('whole')}<em>({$evaluates_count['evaluate_count']})</em></li>
+		<li class="productproperty-list" data-type="4"  >{:lang('goods_picture')} <em>({$evaluates_count['imgs_count']})</em></li>
+		<li class="productproperty-list" data-type="1" >{:lang('goods_praise')} <em>({$evaluates_count['praise_count']})</em></li>
+		<li class="productproperty-list" data-type="2" >{:lang('goods_comments')} <em>({$evaluates_count['center_count']})</em></li>
+		<li class="productproperty-list" data-type="3" > {:lang('goods_bad')} <em>({$evaluates_count['bad_count']})</em></li>
+	</ul>
+	<!-- 评论展示 -->
+	<div id="comment_content">
+		<div class="comment-con"></div>
+	</div>
+</div>
+	
+{include file="wap/default_new/controlCopyRight"}
+<!-- 弹出框 -->
+<div class="success-tip-line" id="success_tip_line" style="display: none;">{:lang('successfully_joined_shopping_cart')}！</div>
+<div class="mask" id="mask" style="display: none;"></div>
+<span id="addcart_way" style="display: none;"><i></i></span>
+<section class="s-buy" id="s_buy">
+	<div class="popup"  id="popup" style="-webkit-border-radius:3px;-moz-border-radius:3px;-o-border-radius:3px;border-radius:3px;display: none"></div>
+	<ul class="s-buy-ul">
+		<li class="s-buy-pro">
+			<span class="pro-img">
+			
+				<!-- 商品SKU图片 -->
+				{notempty name="$goods_detail['sku_picture_list']"}
+				
+					{foreach name="$goods_detail.sku_picture_list" item ="img" }
+					
+						{foreach name="$img['album_picture_list']" item="p" key = "k"}
+							<input type="hidden" id="spec_picture_id{$p['pic_id']}" value="{:__IMG($p['pic_cover_small'])}" />
+						{/foreach}
+						
+					{/foreach}
+				
+				{/notempty}
+				
+				<input type="hidden" id="default_img" value="{$goods_detail['img_list'][0]['pic_id']}" />
+				<img src="{:__IMG($goods_detail['img_list'][0]['pic_cover_small'])}" class="js-thumbnail">
+				
+			</span>
+			<div class="pro-info">
+				<p class="name" >{$goods_detail.goods_name}</p>
+				<p class="pro-price" id="price">
+					￥{if condition="$goods_detail.promotion_price < $goods_detail.member_price"}{$goods_detail.promotion_price}{else/}{$goods_detail.member_price}{/if}
+					{if condition="$goods_detail.point_exchange_type==1 && $goods_detail.point_exchange>0"}
+					<span style="font-size:16px;display: inline-block;vertical-align: middle;">+{$goods_detail.point_exchange}{:lang('goods_integral')}</span>
+					{/if}
+				</p>
+			</div>
+			<i class="icon-close" id="icon_close"></i>
+		</li>
+	</ul>
+	<hr class="with-margin-l" />
+	<ul class="s-buy-ul specification" id="specification" style="z-index: 9000;">
+		{foreach name="goods_detail['spec_list']" item="spec" key="k"}
+		<li class="s-buy-li" >
+			<div class="left">{$spec.spec_name}：</div>
+			<div class="right" name="specvals" >
+			{foreach name="spec['value']" item="spec_value"}
+				{if condition="$spec_value['spec_id'] eq $spec['spec_id']"}
+					<button class="select" name="Span{$k}" id="{$spec_value.spec_id}:{$spec_value.spec_value_id}" onclick="change(this);" data-picture-id="{$spec_value.picture}">
+					{$spec_value.spec_value_name}
+					</button>
+				{/if}
+			{/foreach}
+			</div>
+		</li>
+		<hr class="with-margin-l" />
+		{/foreach}
+		{foreach name="goods_detail['sku_list']" item="pro_skus" key="k"}
+		<input type="hidden" id="goods_sku{$k}" value="{$pro_skus.attr_value_items}" stock="{$pro_skus.stock}" {if condition="$pro_skus.promote_price < $pro_skus.member_price" }price="{$pro_skus.promote_price}" {else/}price="{$pro_skus.member_price}"{/if} promotion_price="{$pro_skus.promote_price}" member_price="{$pro_skus.member_price}" skuid="{$pro_skus.sku_id}" skuname="{$pro_skus.sku_name}" class="sku-array">
+		{/foreach}
+		<input type="hidden" id="goods_sku_num" value="100">
+		<li class="s-buy-li">
+			<div class="left" style="float:left;">{:lang('member_quantity_purchased')}：</div>
+			<div class="right">
+				<span class="reduce quantity-minus-disabled">-</span>
+				<input class="number" name="quantity" autocomplete="off" value="{if condition='$goods_detail.min_buy !=0'}{$goods_detail.min_buy}{else/}1{/if}" min="{if condition='$goods_detail.min_buy !=0'}{$goods_detail.min_buy}{else/}1{/if}" max="{$goods_detail.stock}" id="num" />
+				<span class="add">+</span>
+			</div>
+			{if condition="$goods_detail.is_stock_visible == 1"}
+			<span style="display: inline-block;margin-top:5px;color:#333;" id="Stock">{:lang('left')}{$goods_detail.stock}{:lang('goods_piece')}</span>
+			{/if}
+			{if condition ="$goods_detail['max_buy'] neq '0' AND $goods_detail['max_buy'] neq -1"}
+			<span style="display: inline-block;margin-top:5px;color:#333;">{:lang('homebuying_restrictions')}{$goods_detail['max_buy']}{:lang('goods_piece')}</span>
+			{/if}
+		</li>
+	</ul>
+	<ul class="s-buy-ul">
+		<li class="s-buy-btn">
+			<a class="btn" id="submit_ok" tag="buyBtn1">{:lang('goods_determine')}</a>
+			<input id="hiddPDetailID" type="hidden" value="{$goods_detail.goods_id}"/>
+			<input id="hiddSkuId" type="hidden" />
+			<input id="hiddSkuName" type="hidden" />
+			<input id="hiddSkuprice" type="hidden" />
+			<input id="hiddStock" type="hidden" value="{$goods_detail.stock}"/>
+			<input type="hidden" id="hidden_shop_name" value="{$goods_detail.shop_name}"/>
+			<input type="hidden" id="hidden_shop_id" value="{$goods_detail.shop_id}"/>
+			<input type="hidden" id="is_sale" value="{$goods_detail.state}" />
+			<input type="hidden" id="goods_id" value="{$goods_detail.goods_id}" />
+			<input type="hidden" id="code" value="{$goods_detail.code}" />
+			<input type="hidden" id="max_buy" value="{$goods_detail.max_buy}" />
+			<input type="hidden" id="min_buy" value="{$goods_detail.min_buy}" />
+			<input type="hidden" id="hidden_current_num" value="{$num}" />
+			<input type="hidden" id="hidden_uid" value="{$uid}">
+			<input type="hidden" id="ms_time" value="{$ms_time}"/>
+		</li>
+	</ul>
+</section>
+<div id="img-slider">
+	<ul></ul>
+	<div class="img-count">
+		<b class="curr">1</b>/<b class="sum"></b>
+	</div>
+</div>
+
+<!-- 领取优惠劵弹出框 -->
+<div class="bottom_popup">
+	<div class="bottom_popup_title">
+		领取优惠劵
+	</div>
+	<ul class="coupon_list">
+		{notempty name="$goods_coupon_list"}
+			{volist name="goods_coupon_list" id="vo"}
+			<li>
+				<div class="js-coupon" data-max-fetch="{$vo.max_fetch}" data-receive-quantity="{$vo.receive_quantity}" data-coupon-id="{$vo.coupon_type_id}">
+					<img src="__TEMP__/{$style}/public/images/coupon_member.png" style="width:97%;height: 90px;"/>
+					<div class="coupon-price" style="">￥{$vo.money}</div>
+					<div class="coupon-lose">
+						<span>{$vo.start_time|date="Y-m-d",###}</span>至<span>{$vo.end_time|date="Y-m-d",###}</span>
+					</div>
+				</div>
+			</li>
+			{/volist}
+		{/notempty}
+	</ul>
+	<div class="bottom_popup_button" id="complete"> 
+		<span>完成</span>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+	
+	countDown();//计时器
+	
+	//分享
+	$.ajax({
+		type:"post",
+		data : {"shop_id" : "{$shop_id}" , "flag" : "goods" , "goods_id" : "{$goods_id}"},
+		url : "{:__URL('APP_MAIN/goods/getShareContents')}",
+		success : function(data){
+			{include file='wap/default_new/shareContents'/}
+		}
+	});
+
+	//定位查询运费
+	$.ajax({
+		type : "post",
+		data :{"goods_id" : "{$goods_id}"},
+		url : "{:__URL('APP_MAIN/Goods/getShippingFeeNameByLocation')}",
+		success : function(data){
+			if(data != ""){
+				if(typeof data == "string"){
+					$(".js-shipping-fee-name").text("运费：" + data);
+				}else if(typeof data == "object"){
+					$(".js-shipping-fee-name").text("运费：" + data[0].express_fee);
+				}
+			}
+		}
+	});
+});
+
+//商品评价
+$(".comment-type li").click(function() {
+	var type = $(this).data("type");
+	var target = $(this);
+	$(".comment-type").find("li").removeClass("current");
+	$(".comment-type").find("i").removeClass("cur");
+	$(target).addClass("current");
+	$(target).children().addClass("cur");
+	GetDataList();
+})
+
+//点赞
+var flag = false;
+function clickPoint(){
+	var uid = $("#hidden_uid").val();
+	if (uid != null && uid != "") {
+		if(flag) return;
+		flag = true;
+		$.ajax({
+			type:"post",
+			data : {"goods_id" : "{$goods_id}"},
+			url : "{:__URL('APP_MAIN/Goods/getClickPoint')}",
+			success : function(data){
+				if(data['code']>0) {
+					$(".fa-thumbs-up").css("color","#FF8855");
+				}else{
+					showBox(data["message"]);
+				};
+				flag = false;
+			}
+		});
+	}else{
+		location.href = "{:__URL('APP_MAIN/Login')}";
+	}
+}
+
+function showProperty(sobj,type){
+	$("#detailTab span").removeClass("cur");
+	$(sobj).addClass("cur");
+	if(type==1){
+		$("#productproperty").hide();
+		$("#p-detail").show(); 
+		$("#p-attribute").hide();
+	}else if(type == 2){
+		$("#productproperty").hide();
+		$("#p-detail").hide();
+		$("#p-attribute").show();
+	}else{
+		$("#productproperty").show();
+		$("#p-detail").hide(); 
+		$("#p-attribute").hide();
+		GetDataList();
+	}
+}
+
+/**
+* 分页显示
+* @param {Object} pageindex
+*/
+function GetDataList(){
+	var commentsType=$(".comment-type li.current").attr('data-type');
+	$.ajax({
+		type:"post",
+		url:"{:__URL('APP_MAIN/Goods/getGoodsComments')}",
+		data:{'comments_type' : commentsType, "goods_id" : $("#goods_id").val() },
+		dataType:'json',
+		success:function(data){
+			var listhtml='';
+			if(data['data'].length==0){
+				$('.comment-con').html('<div class="tip-box"><i class="tip-icon"></i><div class="tip-text">{:lang("no_comment_yet")}</div></div>');
+				$('#pagination').hide();
+				return false;
+			}
+			for(var i=0;i<data['data'].length;i++){
+				var dataitem=data['data'][i];
+				var member_name=dataitem['member_name'];
+				member_name=dataitem['is_anonymous']==1?member_name.replace(member_name.substring(1,member_name.length),'***')+'({:lang("anonymous")})':member_name;
+				listhtml+=' <div class="tablelist" style="border-bottom: 1px solid #e5e5e5;margin-bottom: 10px;">'
+					+'<div class="user_info" style="margin-right:10px;">'
+					+'<div class="face">';
+					if(dataitem["user_img"] != "" && dataitem['user_img'] != undefined && dataitem['user_img'] != 0){
+						listhtml+='<img src="'+__IMG(dataitem['user_img'])+'" style="width:35px;border-radius: 50%;">';
+					}else{
+						listhtml+='<img src="__TEMP__/{$style}/public/images/default_user_portrait_0.png" style="width:35px;border-radius: 50%;"/>';
+					}
+					listhtml+='</div>'
+					+'<div class="name-box">'+member_name+'</div>'
+					+'</div>'
+					+'<dl>'
+					+'<dd>'+dataitem['content']+'</dd>'
+				if(dataitem['image']!=''){
+					var imgs_arr=dataitem['image'].split(',');
+					listhtml+='<dd style="margin:5px 0;overflow:hidden;">'
+					for(var key in imgs_arr){
+						listhtml += '<div class="comment_img">';
+						listhtml+='<img src="'+__IMG(imgs_arr[key])+'" data-index="' + key + '" style="max-width:100%" onclick="showImgSlider(this);"/>';
+						listhtml+='</div>';
+					}
+					listhtml+='</dd>';
+					listhtml+='<dd class="photo-viewer"></dd>'
+				}	
+				listhtml+='<div class="date"><span>'+timeStampTurnTime(dataitem['addtime'])+'</span> <span></span></div>';
+				listhtml+='</dl>';
+				if(dataitem['again_content']!=''){
+					
+					listhtml+='<div style="margin-left:-1px;float:right;margin-top: 9px;width:75%;">{:lang("goods_additional_evaluation")}：</div>'
+					+'<dl>'
+					+'<div style="width: 26%;margin-right: 10px;height:auto;float: left;"></div>'
+					+'<dd>'+dataitem['again_content']+'</dd>'
+					if(dataitem['again_image']!=''){
+						var imgs_arr=dataitem['again_image'].split(',');
+						listhtml+='<dd>'
+						for(var key in imgs_arr){
+							listhtml += '<div class="comment_img">';
+								listhtml+='<img src="'+__IMG(imgs_arr[key])+'" data-index="' + key + '" style="max-width:100%" onclick="showImgSlider(this);" />';
+							listhtml+='</div>';
+						}
+						listhtml+='</dd>';
+					}
+					listhtml+='<div class="date" style="clear:both;"><span>'+timeStampTurnTime(dataitem['again_addtime'])+'</span> <span></span></div>';
+					listhtml+='</dl>';
+				}
+				listhtml+='</div>';
+			}
+			$(".comment-con").html(listhtml);
+		}
+	});
+}
+
+var img_slider = null;
+//点击显示评论大图
+function showImgSlider(event){
+	var parent = $(event).parent().parent();
+	var html = '';
+	var curr = parseInt($(event).attr("data-index"));
+	parent.children(".comment_img").each(function(i){
+		html += '<li style="width: ' + $(window).outerWidth() + 'px; height: ' + $(window).outerHeight() + 'px; display: table-cell; padding: 0; margin: 0; float: left;">';
+			html += '<a href="javascript:;" style="display: -webkit-box;-webkit-box-align: center;-webkit-box-pack: center;">';
+				html += '<img src="' + $(this).children("img").attr("src") + '">';
+			html += '</a>';
+		html += '</li>';
+	});
+	$("#img-slider ul").html(html);
+	var num = parent.children(".comment_img").size();
+	$('#img-slider .img-count .sum').text(num);
+	$('#img-slider .img-count .curr').text(curr+1);
+	if(img_slider == null){
+		img_slider = new TouchSlider({id:'img-slider','auto':'-1',fx:'ease-out',direction:'left',speed:600,timeout:5000,'before':function(index){
+			$('#img-slider .img-count .curr').text($("#img-slider li:eq(" + index + ")").index()+1);
+		}});
+	}else{
+		img_slider.length = num;//对象已存在，修改图片数量即可
+		$("#img-slider ul").css("width",($(window).outerWidth()*num) + "px");
+	}
+	$("#img-slider").show().removeAttr("data-flag");
+	img_slider.specified(curr);
+}
+
+//关闭遮罩层，并给予标识
+$("#img-slider").click(function(){
+	$(this).hide().attr("data-flag",1);
+});
+
+/*
+ * 收藏商品 
+ */
+var is_click = false;
+function collectionGoods(fav_id, fav_type, log_msg,obj) {
+	var uid = $("#hidden_uid").val();
+	if (uid != null && uid != "") {
+		var logid = $(obj).attr("data-log-id");
+		if(is_click){
+			return false;
+		}
+		is_click = true;
+		//未收藏添加收藏
+		if (logid == 0) {
+			$.ajax({
+				url : "{:__URL('APP_MAIN/Member/FavoritesGoodsorshop')}",
+				type : "post",
+				async : false,
+				data : {
+					"fav_id" : fav_id,
+					"fav_type" : fav_type,
+					"log_msg" : log_msg
+				},
+				success : function(data) {
+					if (data.code > 0) {
+						$(obj).find("i").attr("class","fa fa-heart");
+						$(obj).attr("data-log-id",1);
+						showBox("收藏成功");
+					}
+					is_click = false;
+				}
+			});
+		} else {
+			//已收藏取消收藏
+			$.ajax({
+				url : "{:__URL('APP_MAIN/Member/cancelFavorites')}",
+				type : "post",
+				async : false,
+				data : {
+					"fav_id" : fav_id,
+					"fav_type" : fav_type
+				},
+				success : function(data) {
+					if (data.code > 0) {
+						$(obj).find("i").attr("class","fa fa-heart-o");
+						$(obj).attr("data-log-id",0);
+						showBox("取消收藏成功");
+					}
+					is_click = false;
+				}
+			});
+		}
+	} else {
+		location.href = "{:__URL('APP_MAIN/Login')}";
+	}
+}
+</script>

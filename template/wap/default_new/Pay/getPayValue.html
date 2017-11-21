@@ -1,0 +1,136 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+<!-- <link rel="stylesheet" href="__TEMP__/{$style}/public/css/order.css"> -->
+<!-- <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_index.css"> -->
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/pay/get_pay_value.css"/>
+{/block}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="{$unpaid_goback}"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('order_payments')}</div>
+</section>
+{/block}
+
+{block name="main"}
+<div class="head-info">
+	<div class="head-pay">{:lang('towards')}{$shopname}{:lang('pay')}</div>
+	<div class="head-pay-value">￥{$pay_value.pay_money}</div>
+</div>
+
+<div class="pay-type-item">
+	<div class="pay-item-list" id="pay-type">{:lang('member_payment_method')}
+	{if condition="$pay_config['wchat_pay_config']['is_use']==1"} 
+		<span id="pay-text" style="float: right;margin-right: 20px;">{:lang('wechat_payment')}</span>
+		<input type="hidden" id="pay_config" value="1">
+	{elseif condition="$pay_config['ali_pay_config']['is_use']==1"}
+		<span id="pay-text" style="float: right;margin-right: 20px;">{:lang('alipay')}</span>
+		<input type="hidden" id="pay_config" value="1">
+	{else}
+		<span style="float: right;margin-right: 20px;"></span>
+		<input type="hidden" id="pay_config" value="0">
+	{/if}
+		<span style="float:right" class="jiantou"></span>
+	</div>
+	<div class="codes">
+		{if condition="$pay_config['ali_pay_config']['is_use'] eq 1 && $pay_config['wchat_pay_config']['is_use'] eq 1"}
+			<div class="wchat-weixin">
+					<img src="__TEMP__/{$style}/public/images/weifu.png" class="wchat-photo">
+					<span class="wchat-title">{:lang('wechat_payment')}</span>
+				<span id="wchatpay"><img src="__TEMP__/{$style}/public/images/segou.png"></span> 
+			</div>
+			<div class="ali-pay">
+				<img src="__TEMP__/{$style}/public/images/zhifu.png" class="ali-photo">
+				<span class="ali-item">{:lang('alipay')}</span>
+				<span id="alipay"><img src="__TEMP__/{$style}/public/images/hgou.png"></span>
+			</div>		
+		{elseif condition="$pay_config['wchat_pay_config']['is_use']==1"}
+			<div class="wchat-weixin">
+					<img src="__TEMP__/{$style}/public/images/weifu.png" class="wchat-photo">
+					<span class="wchat-title">{:lang('wechat_payment')}</span>
+				<span id="wchatpay"><img src="__TEMP__/{$style}/public/images/segou.png"></span> 
+			</div>
+		{elseif condition="$pay_config['ali_pay_config']['is_use']==1"} 
+			<div class="ali-pay">
+				<img src="__TEMP__/{$style}/public/images/zhifu.png" class="ali-photo">
+				<span class="ali-item">{:lang('alipay')}</span>
+				<span id="alipay"><img src="__TEMP__/{$style}/public/images/segou.png"></span>
+			</div>
+		{/if}
+
+		{if condition="$pay_config['ali_pay_config']['is_use'] eq 0 && $pay_config['wchat_pay_config']['is_use'] eq 0"}
+			<div class="not-pay-type">	
+				商家未配置支付方式
+			</div>
+		{/if} 
+
+		{if condition="$pay_config['wchat_pay_config']['is_use']==1"} 
+		<input type="hidden" id="pay_type" value="0"> 
+		{elseif condition="$pay_config['ali_pay_config']['is_use']==1"}
+		<input type="hidden" id="pay_type" value="1"> 
+		{else}
+		<input type="hidden" id="pay_type" value="-1">
+		{/if}
+		<input type="hidden" id="out_trade_no" value="{$pay_value.out_trade_no}">
+	</div>
+	<div style="padding: 10px 0px;">{:lang('payer')}<span style="float:right;">{$member_info["user_info"]['nick_name']}</span></div>
+</div>
+
+{include file="wap/default_new/controlCopyRight"}
+
+<section class="s-btn" style="position: fixed; left: 0; right: 0; bottom: 0; height: 50px; padding: 0; z-index: 5;">
+	<button class="alipay" type="button" onclick="calculate()">{:lang('confirm_payment')}￥{$pay_value.pay_money}</button>
+</section>
+<script>
+var __IMG__ = '__TEMP__/{$style}/public/images';
+function calculate() {
+	var pay_type = $("#pay_type").val();
+	var out_trade_no = $("#out_trade_no").val();
+	if (pay_type == 0) {
+		//微信支付
+		window.location.href = __URL("APP_MAIN/pay/wchatpay?no=" + out_trade_no);
+	} else if (pay_type == 1) {
+		//支付宝支付
+		window.location.href = __URL("APP_MAIN/pay/alipay?no=" + out_trade_no);
+	}else if(pay_type == -1){
+		showBox("{:lang('choose_payment_method')}");
+	}
+}
+$(".alipay").click(function(){
+	window.webkit.messageHandlers.calculate.postMessage(null);
+})
+$("#pay-type").click(function(){
+	var pay_config = $("#pay_config").val();
+	if(pay_config == 1){
+		$(".shade").show();
+		$(".popup").show();
+	}else{
+		showBox("{:lang('the_merchant_does_not_configure_payment_methods')}");
+	}
+})
+
+$(".ali-pay").click(function() {
+	$(".shade").hide();
+	$(".popup").hide();
+	$("#pay_type").val(1);
+	$("#alipay").html("<img src='" + __IMG__ + "/segou.png'>");
+	$("#wchatpay").html("<img src='" + __IMG__ + "/hgou.png'>");
+	$("#pay-text").html("{:lang('alipay')}");
+})
+
+$(".wchat-weixin").click(function() {
+	$(".shade").hide();
+	$(".popup").hide();
+	$("#pay_type").val(0);
+	$("#alipay").html("<img src='" + __IMG__ + "/hgou.png'>");
+	$("#wchatpay").html("<img src='" + __IMG__ + "/segou.png'>");
+	$("#pay-text").html("{:lang('wechat_payment')}");
+})
+
+$("#close").click(function(){
+	$(".shade").hide();
+	$(".popup").hide();
+})
+</script>
+{/block}
+{block name="bottom"} {/block}

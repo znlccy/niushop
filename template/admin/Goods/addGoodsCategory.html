@@ -1,0 +1,188 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.error{padding:5px 0 0;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>商品分类名称:</dt>
+		<dd>
+			<p><input name="UserCode" id="category_name" type="text" placeholder="请输入商品分类" /></p>
+			<p class="error">商品分类不能为空，且长度不能超过30个字</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>商品分类简称:</dt>
+		<dd>
+			<p><input name="UserCode" id="short_name" type="text" placeholder="请输入商品分类简称" /> </p>
+			<p class="error">商品分类简称不能为空，且长度不能超过20个字</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>上级分类:</dt>
+		<dd>
+			<select name="search_type" id="pid">
+				<option value="0">顶级分类</option>
+				{foreach name="category_list" item="v1"}
+				<option value="{$v1['category_id']}">{$v1['category_name']}</option>
+				{foreach name="v1['child_list']" item="v2"}
+				<option value="{$v2['category_id']}">&nbsp;&nbsp;&nbsp;&nbsp;{$v2['category_name']}</option>
+				{/foreach} {/foreach}
+			</select>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商品类型:</dt>
+		<dd>
+			<select name="attr" id="attr_id">
+				<option value="">选择类型</option>
+				{volist name="goodsAttributeList" id="vo"}
+				<option value="{$vo.attr_id}">{$vo.attr_name}</option>
+				{/volist}
+			</select>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否可见:</dt>
+		<dd>
+			<input id="is_visible" type="checkbox" class="checkbox" checked="checked" />
+			<span class="help-inline" id="is_menuPrompt" style="display: none;"></span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>关键字:</dt>
+		<dd>
+			<p><input id="keywords" type="text" placeholder="请输入关键字" /></p>
+			<p class="error">关键字不能为空， </p>
+			<p class="hint">用于网站搜索引擎的优化，关键字之间请用英文逗号分隔</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序:</dt>
+		<dd>
+			<p><input name="UserCode" id="sort" type="text" placeholder="请输入序号" /></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>图片:</dt>
+		<dd>
+			<div class="class-logo"><p><img id="imglogo" src="" ></p></div>
+			<div class="ncsc-upload-btn"> 
+				<a href="javascript:void(0);">
+					<span>
+						<input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this,'logo')">
+						<input type="hidden"id="logo"value=""/>
+					</span>
+					<p><i class="icon-upload-alt"></i>上传图片</p>
+				</a> 
+			</div>
+			<p class="hint"><br><span style="color:orange;">建议使用宽100像素*高50像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述:</dt>
+		<dd>
+			<p><textarea id="description" placeholder="请输入描述"></textarea></p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="addGoodsCategoryAjax();">提交</button>
+</div>
+
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+	/**
+	 *图片上传
+	 */
+	function imgUpload(event) {
+		var fileid = $(event).attr("id");
+		var str = $(event).next().attr("id");
+		var data = { 'file_path' : UPLOADGOODSCATEGORY };
+		uploadFile(fileid,data,function(res){
+			if(res.code){
+				$("#img"+str).attr("src",__IMG(res.data));
+				$("#"+str).val(res.data);
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		});
+	}
+	/**
+	*模块输入信息验证
+	*/
+	function verify( category_name,short_name, keywords, sort, description){
+		if(category_name == '' || category_name.length>30){
+			$("#category_name").focus().parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		
+		if(short_name == '' || short_name.length>20){
+			$("#short_name").focus().parent().next().show();
+			return false;
+		}
+		else{
+			$(".error").hide();
+		}
+/* 		if(keywords == ''){
+			$("#keywords").focus().parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		} */
+		return true;
+	}
+	/**
+	*添加分类
+	*/
+	function addGoodsCategoryAjax() {
+		var category_name = $("#category_name").val();
+		var short_name = $("#short_name").val();
+		var pid = $("#pid").val();
+		var keywords = $("#keywords").val();
+		var sort = $("#sort").val();
+		var description = $("#description").val();
+		var category_pic = $("#logo").val();
+		if($("#is_visible").prop("checked")){
+			var is_visible = 1;
+		}else{
+			var is_visible = 0;
+		}
+		var attr_id = $("#attr_id").val();
+		if(attr_id.length>0){
+			var attr_name = $("#attr_id").find("option:selected").text();
+		}else{
+			var attr_name = '';
+		}
+		if(verify(category_name,short_name, keywords, sort, description)){
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/goods/addgoodscategory')}",
+				data : {
+					'category_name' : category_name,
+					'pid' : pid,
+					'keywords' : keywords,
+					'sort' : sort,
+					'description' : description,
+					'is_visible' : is_visible,
+					"category_pic" : category_pic,
+					"short_name" : short_name,
+					"attr_id" : attr_id,
+					"attr_name" : attr_name
+				},
+				success : function(data) {
+					if (data["code"] > 0) {
+						showMessage('success', "商品分类添加成功","{:__URL('ADMIN_MAIN/goods/goodscategorylist')}");
+					}else{
+						showMessage('error',"商品分类添加失败");
+					}
+				}
+			});
+		}
+	}
+</script>
+{/block}

@@ -1,0 +1,96 @@
+{extend name="adminblue/base" /}
+{block name="resources"}{/block}
+{block name="alert_info"}
+{if condition="$type == 'wechat'"}
+配置路径写法： 由于数字证书要求安全性比较高，所以针对独立服务器建议写绝对路径，也就是文件在服务器中的路径地址。针对虚拟主机服务器，由于只有虚拟主机的目录，只能讲数字证书放在系统内部，所以使用相对路径的写法，也就是相对系统根目录的路径。
+{else/}
+支付宝配置
+{/if}
+{/block}
+{block name="main"}
+<div class="set-style">
+	{if condition="$type == 'alipay'"}
+	<dl>
+		<dt>是否启用：</dt>
+		<dd>
+			<p><input id="is_use" type="checkbox" class="checkbox" {if condition="!$alipay_is_use"}disabled="disabled"{/if} 
+			{if condition="$original_road_refund_setting_info.is_use"}checked="checked"{/if}
+			/></p>
+			<span style="color: #FF9800;">您需要在支付配置中开启支付宝支付才可以进行后续操作</span>
+		</dd>
+	</dl>
+	{else/}
+	<dl>
+		<dt>apiclient_cert(绝对路径):</dt>
+		<dd>
+			<input id="apiclient_cert" type="text" class="input-common w500" placeholder="请填写绝对路径"
+			{if condition="$original_road_refund_setting_info.apiclient_cert"} value="{$original_road_refund_setting_info.apiclient_cert}"{/if}>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>apiclient_key.pem(绝对路径):</dt>
+		<dd>
+			<input id="apiclient_key" type="text" class="input-common w500" placeholder="请填写绝对路径"
+			{if condition="$original_road_refund_setting_info.apiclient_key"} value="{$original_road_refund_setting_info.apiclient_key}"{/if}>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用：</dt>
+		<dd>
+			<p><input id="is_use" type="checkbox" class="checkbox" {if condition="!$wechat_is_use"}disabled="disabled"{/if} 
+			{if condition="$original_road_refund_setting_info.is_use"}checked="checked"{/if}/></p>
+			<span style="color: #FF9800;">您需要在支付配置中开启微信支付才可以进行后续操作</span>
+		</dd>
+	</dl>
+	{/if}
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="save();">提交</button></dd>
+	</dl>
+</div>
+<script>
+var type = "{$type}";
+function save(){
+
+	if(validation()){
+		var originalRoadRefund = new Object();
+		originalRoadRefund.is_use = $("#is_use").is(":checked") ? 1 : 0;
+		
+		if(type == "wechat"){
+			originalRoadRefund.apiclient_cert = $.trim($("#apiclient_cert").val());
+			originalRoadRefund.apiclient_key = $.trim($("#apiclient_key").val());
+		}
+		
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/config/setOriginalRoadRefundSetting')}",
+			data : { type : "{$type}", value : JSON.stringify(originalRoadRefund) },
+			success : function(res){
+				
+				if(res>0) showTip("操作成功","success");
+				else showTip("操作失败","error");
+			}
+		});
+	}
+	
+}
+
+function validation(){
+	if(type == "wechat"){
+		if($("#apiclient_cert").val().length>300){
+			showTip("apiclient_cert绝对路径超出字数限制","warning");
+			$("#apiclient_cert").focus();
+			return false;
+		}
+		
+		if($("#apiclient_key").val().length>300){
+			showTip("apiclient_key绝对路径超出字数限制","warning");
+			$("#apiclient_key").focus();
+			return false;
+		}
+	}
+	return true;
+}
+</script>
+{/block}

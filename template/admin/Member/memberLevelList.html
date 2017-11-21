@@ -1,0 +1,131 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.mytable {border: 0;}
+.style0list tbody td {vertical-align: middle;}
+.style0list  tbody tr {border-bottom: 1px dashed  #E3E3E3;}
+a{
+	cursor:pointer;
+}
+</style>
+{/block}
+{block name="right_tab"} 
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/member/addmemberlevel')}"><i class="fa fa-plus-circle"></i>&nbsp;添加等级</a></li>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="style0list">
+			<table>
+				<thead>
+					<tr align="center">
+						<th><label style="margin-left: 5px;"><input type="checkbox" onclick="CheckAll(this)"></label></th>
+						<th class="tal">等级名称</th>
+						<th class="tal">升级条件</th>
+						<th>折扣率（%）</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+	function LoadingInfo(page_index) {
+		var search_text = $("#search_text").val();
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/memberlevellist')}",
+			async : true,
+			data : {
+				"page_index" : page_index, "page_size" :  $("#showNumber").val()
+			},
+			success : function(data) {
+				var html = '';
+				if (data["data"].length > 0) {
+					for (var i = 0; i < data["data"].length; i++) {
+						html += '<tr align="center">';
+						html += '<td><div class="cell"><label ><input name="sub" type="checkbox" value="'+ data["data"][i]["level_id"]+'" ></label></div></td>';
+						//<input type="text"  value="'+ data["data"][i]["level_name"]+'" level_id="'+ data['data'][i]['level_id']+'"  class="level_name">
+						html += '<td class="tal">'+ data["data"][i]["level_name"]+'</td>';	
+						if(data['data'][i]['upgrade']==1){
+							html += '<td class="tal">累计积分满' + data['data'][i]['min_integral'] +'分</td>';
+						}else if(data['data'][i]['upgrade']==2){
+							html += '<td class="tal">消费额度满' + data['data'][i]['quota'] +'元</td>';
+						}else if(data['data'][i]['upgrade']==3 && data['data'][i]['relation']==1){
+							html += '<td class="tal">累计积分满' + data['data'][i]['min_integral'] +'分&nbsp;或&nbsp;消费额度满' + data['data'][i]['quota'] +'元</td>';
+						}else if(data['data'][i]['upgrade']==3 && data['data'][i]['relation']==2){
+							html += '<td class="tal">累计积分满' + data['data'][i]['min_integral'] +'分&nbsp;且&nbsp;消费额度满' + data['data'][i]['quota'] +'元</td>';
+						}else if(data['data'][i]['upgrade']==0){
+							html += '<td class="tal">无条件</td>';
+						}
+						html += '<td>' + data['data'][i]['goods_discount'] * 100 + '</td>';
+						if(data['data'][i]['is_default'] == 1){
+							html += '<td> <a href="'+__URL('ADMIN_MAIN/member/updatememberlevel?level_id='+ data['data'][i]['level_id'])+'">修改</a></td>';
+						}else{
+							html += '<td><a href="'+__URL('ADMIN_MAIN/member/updatememberlevel?level_id='+ data['data'][i]['level_id'])+'">修改</a>&nbsp;&nbsp;&nbsp;<a href="javascript:deleteMember('+data['data'][i]['level_id']+');">删除</a></td>';
+						}
+						html += '</tr>';
+					}
+				} else {
+					html += '<tr align="center"><th colspan="5">暂无符合条件的数据记录</th></tr>';
+				}
+				$(".style0list tbody").html(html);
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+				//load();
+			}
+		});
+	}
+	//全选
+	function CheckAll(event){
+		var checked = event.checked;
+		$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+	}
+	
+	function deleteMember(level_id){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/member/deleteMemberLevel')}",
+			data : {
+				'level_id' : level_id
+			},
+			async : true,
+			success : function(data) {
+				if (data['code'] > 0) {
+					    showMessage('success', data["message"]);
+					    location.href="ADMIN_MAIN/member/memberlevellist";
+				} else {
+						showMessage('error', data["message"]);
+					
+				}
+			}
+		});
+	}
+	/*修改等级名称*/
+// 	function load(){
+// 		$('.level_name').change(function(){
+// 			var field_name = 'level_name';
+// 			var field_value = $(this).val();
+// 			var level_id = $(this).attr('level_id');
+// 			$.ajax({
+// 				type:"post",
+// 				url:"{:__URL('ADMIN_MAIN/member/modityMemberLevelField')}",
+// 				data:{'field_name':field_name,'field_value':field_value,'level_id':level_id},
+// 				async:true,
+// 				success: function (data) {
+// 					if(data['code'] > 0){
+// 						/* showMessage('success', data["message"]); */
+// 					}else{
+// 						showMessage('error', data["message"]);
+// 					}
+// 				}
+// 			}); 
+// 		});
+// 	}
+</script>
+{/block}

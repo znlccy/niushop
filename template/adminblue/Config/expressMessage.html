@@ -1,0 +1,77 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+.hint{vertical-align: middle;margin:0 0 0 10px;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>接口名称:</dt>
+		<dd><p>快递鸟</p></dd>
+	</dl>
+	<dl>
+		<dt>APPID:</dt>
+		<dd>
+			<input id="appid" type="text" value="{$emconfig.value.appid}" class="input-common"/>
+			<span class="hint">应用APPID</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>APPKEY:</dt>
+		<dd>
+			<input id="appkey" type="text" value="{$emconfig.value.appkey}" class="input-common"/>
+			<span class="hint">应用密钥</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>说明:</dt>
+		<dd>
+			<a href="http://www.kdniao.com/" target="_blank">点击申请</a>&nbsp;&nbsp;&nbsp; 
+			<span style="display:none;">回调地址：<a style="color:#666;font-size:13px;">http://域名/</a></span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用:</dt>
+		<dd>
+			<div class="controls">
+				<label class="radio inline"><input type="radio" name="is_use" value="1" {if condition="$emconfig['is_use'] eq 1"}checked="checked"{/if}>是</label> 
+				<label class="radio inline"><input type="radio" name="is_use" value="0" {if condition="$emconfig['is_use'] eq 0"}checked="checked"{/if}>否</label>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setExpressConfigAjax();">提交</button></dd>
+	</dl>
+</div>
+<script>
+function setExpressConfigAjax(){
+	var appid = $('#appid').val();
+	var appkey = $('#appkey').val();
+	var back_url = $(".back_url").text();
+	var is_use = $("input[type='radio'][name='is_use']:checked").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/expressmessage')}",
+		data : {
+			"appid" : appid,
+			"appkey":appkey,
+			"back_url" : back_url,
+			"is_use" : is_use
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/config/expressmessage')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

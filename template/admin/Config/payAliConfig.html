@@ -1,0 +1,57 @@
+{extend name="admin/base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>账号:</dt>
+		<dd><input id="ali_seller" type="text" value="{$config['value']['ali_seller']}"/></dd>
+	</dl>
+	<dl>
+		<dt>合作者身份ID:</dt>
+		<dd><input id="ali_partnerid" type="text" value="{$config['value']['ali_partnerid']}"/></dd>
+	</dl>
+		<dl>
+		<dt>安全校验码:</dt>
+		<dd><input id="ali_key" type="text" value="{$config['value']['ali_key']}"/></dd>
+	</dl>
+	<dl>
+		<dt>是否启用:</dt>
+		<dd>
+			<p>
+					<input id="is_use" type="checkbox" class="checkbox" {if condition="$config.is_use==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setConfigAjax()">提交</button>
+</div>
+<script>
+	function setConfigAjax(){
+		var ali_partnerid = $("#ali_partnerid").val();
+		var ali_seller = $("#ali_seller").val();
+		var ali_key = $("#ali_key").val();
+		var is_use = 0;
+		if($("#is_use").is(":checked")){
+			is_use = 1;
+		}
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/config/payaliconfig')}",
+			data:{
+				'partnerid':ali_partnerid,
+				'seller':ali_seller,
+				'ali_key':ali_key,
+				'is_use' : is_use,
+				'type' : 'alipay'
+			},
+			async:true,
+			success:function (data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"]);
+					 location.href=__URL("ADMIN_MAIN/config/paymentconfig");
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}
+</script>
+{/block}

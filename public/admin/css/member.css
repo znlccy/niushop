@@ -1,0 +1,19 @@
+﻿@charset "utf-8";
+/* CSS Document */
+
+/*member list*/
+.member-info{margin-bottom:10px;}
+.pro-visiter{}
+.pro-visiter-title{margin:0 0 0 0;font-size:14px;font-weight:bold;}
+.pro-visiter-ul{margin:0;}
+.pro-visiter-li{margin-bottom:10px;zoom:1;}
+.pro-visiter-li:before,
+.pro-visiter-li:after{content:".";display:block;height:0;clear:both;visibility:hidden;}
+.pro-visiter-li a{color:#333;}
+.pro-visiter-li a:hover{text-decoration:none;}
+.pro-visiter-li a:hover .name{text-decoration:underline;}
+.pro-visiter-li .img{float:left;margin-right:10px;}
+.pro-visiter-li .img img{width:60px;height:60px;border-radius:3px;}
+.pro-visiter-li .info{overflow:hidden;}
+.pro-visiter-li .price{color:#d4472f;font-size:14px;}
+.pro-visiter-li .price b{font-size:20px;}

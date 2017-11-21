@@ -1,0 +1,22 @@
+<!--
+	创建人：李志伟
+	创建时间：2017年2月7日17:36:58
+	功能描述：品牌专区推荐
+-->
+<div class="brand-banner">
+	<div class="brand-scroll">
+		<a href="javascript:void(0);" class="scrleft disabled"></a>
+		<div class="banner">
+			<ul id="goods-banner" >
+				{volist name="recommend_list" id="vo"}
+				<li>
+					<a href="{:__URL('SHOP_MAIN/goods/goodslist','brand_id='.$vo['brand_id'])}" title="{$vo['brand_name']}" target="_blank">
+						<img src="{:__IMG($vo['brand_pic'])}" alt="{$vo['brand_name']}" />
+					</a>
+				</li>
+				{/volist}
+			</ul>
+		</div>
+		<a href="javascript:void(0);" class="scrright"></a>
+	</div>
+</div>

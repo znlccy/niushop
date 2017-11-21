@@ -1,0 +1,255 @@
+<!--功能：提交订单不同地址样式显示-->
+<!--创建人：李志伟-->
+<!--时间：2017年2月7日16:58:26-->
+<script src="__TEMP__/{$style}/public/js/ns_init_address.js"></script>
+{if condition="count($address_list) > 0"}
+<ul>
+	{foreach name = "address_list" item = "info" key = "k"}
+	<li class="{if condition='$info.is_default==1'}curr{/if}" onmouseover="showAddressEdit(this);" onmouseout="showAddressEdit(this);">
+		{if condition = "$info.is_default==1"}
+		<input type="hidden" value="{$info.id}" id="addressid" />
+		{/if}
+		<div style="width: 100%; height: 100%;" onclick="selDefaultAddress(this, {$info.id})">
+			<table cellpadding="0" cellspacing="0" width="100%">
+				<tbody>
+					<tr>
+						<td>{:lang('addressee')}：{$info.consigner}<br>{:lang('member_detailed_address')}：{$info.address}<br>{:lang('cell_phone_number')}：{$info.mobile}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="edit_addr" id="address_edit_{$k}">
+			<a href="javascript:popAddressEdit({$info.id});">{:lang('member_modify')}</a>
+			<a onclick="del_address_comfirm({$info.id})">{:lang('goods_delete')}</a>
+		</div>
+	</li>
+	{/foreach}
+</ul>
+<div class="address_jm_add" onclick="popAddressEdit(0);">{:lang('use_new_address')}</div>
+<div id="popDiv" class="mydiv" style="display: none;">
+	<div class="mydiv-l" id="PopAddressTitle">{:lang('use_new_address')}</div>
+	<div class="mydiv-r" onclick="javascript:closePopDiv()"></div>
+	<div id="PopAddressCon">
+		<table cellpadding="4" cellspacing="4" width="100%" style="clear: both;">
+			<tbody>
+				<tr>
+					<td style="text-align: right; width: 13%"><font class="main-color">*</font>{:lang('addressee')}</td>
+					<td>
+						<input type="text" name="consignee" class="input_addr2" id="consigner" />
+						<div class="required-notice fl">
+							<i class="notice-icon"></i>
+							<span class="notice-text reciever-notice"></span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;"><font class="main-color">*</font>{:lang('member_location')}</td>
+					<td>{include file='shop/default/controlSelectAddress'/}</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;"><font class="main-color">*</font>{:lang('member_detailed_address')}</td>
+					<td>
+						<input type="text" name="address" class="input_addr1 inputMiddle" id="detailed_address" />
+						<div class="required-notice">
+							<i class="notice-icon"></i>
+							<span class="notice-text detail-address-notice"></span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right;">{:lang('member_zip_code')}</td>
+					<td><input type="text" name="zipcode" class="input_addr3" id="zipcode" /></td>
+				</tr>
+				<tr>
+					<td align="right"><font class="main-color">*</font>{:lang('member_phone_number')}</td>
+					<td>
+						<input type="text" name="mobile" class="input_addr2" id="mobile" />
+						<div class="required-notice">
+							<i class="notice-icon"></i><span class="notice-text phone-notice"></span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><font class="main-color"></font>{:lang('member_fixed_telephone')}</td>
+					<td>
+						<input type="text" name="tel_01" class="input_addr4" id="phone_1" /> - <input type="text" name="tel_02" class="input_addr3" id="phone_2" /> - <input type="text" name="tel_03" class="input_addr4" id="phone_3" />
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><font color="#cccccc">{:lang('required')}</font></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td style="padding-top: 10px;">
+						<input type="hidden" name="address_id" value="0" id="address_id" />
+						<input type="button" class="BonusButton" value="{:lang('goods_determine')}" onclick="submitAddress()" />&nbsp;&nbsp;
+						<input type="button" class="Button_reset" value="{:lang('goods_cancel')}" onclick="closePopDiv()" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<script>
+function selDefaultAddress(obj, address_id){
+	var addrParent = obj.parentNode;
+	var addrYeye = addrParent.parentNode;
+	var addrList = addrYeye.getElementsByTagName('li');
+	for (i=0;i<addrList.length;i++){
+		addrList[i].className='';
+	}
+	$.ajax({
+		url : "{:__URL('SHOP_MAIN/member/updateaddressdefault')}",
+		type : "post",
+		data : {"id" : address_id},
+		success : function(data){
+			if(data.code>0){
+				addrParent.className='curr';
+			}else{
+			}
+		}
+	});
+}
+
+function del_address_comfirm(address_id){
+	$('.pop-compare,.pop-mask').show();
+	$('.pop-compare .pop-text').html('{:lang('goods_sure_delete')}？');
+	$('.pop-compare').css({'top':($(window).height()-$('.pop-compare').outerHeight())/2});	
+	$('.cancel-btn').removeClass('none');
+	$('.pop-sure').click(function(){
+		del_Address(address_id);
+	})
+}
+
+function del_Address(address_id){
+	$.ajax({
+		url : __URL(SHOPMAIN + "/member/memberaddressdelete"),
+		type : "post",
+		data : {"id" :address_id},
+		success : function(res){
+			if(res.code>0){
+				location.reload();
+			}else{
+				$.msg(res.message);
+			}
+		}
+	});
+}
+
+function showAddressEdit(obj){
+	if (obj.className!='curr'){
+		obj.className = obj.className == 'xxxxxx' ? '' : 'xxxxxx';
+	}
+}
+
+function popAddressEdit(id){
+	if (id>0){
+		$("#PopAddressTitle").text("{:lang('member_modify_address')}");
+		$.ajax({
+			url : __URL(SHOPMAIN + "/member/getmemberexpressaddress"),
+			type : "post",
+			data : { "id" : id},
+			success : function(res){
+				if(res != null && res != ""){
+					$("#consigner").val(res.consigner);
+					getSelectAddress(res.province,res.city,res.district);
+					$("#detailed_address").val(res.address);
+					$("#zipcode").val(res.zip_code);
+					$("#mobile").val(res.mobile);
+					var phone_arr = res.phone.split("-");
+					$("#phone_1").val(phone_arr[0]);
+					$("#phone_2").val(phone_arr[1]);
+					$("#phone_3").val(phone_arr[2]);
+					$("#address_id").val(id);
+				}
+			}
+		});
+	}else{
+		$("#PopAddressTitle").text("{:lang('use_new_address')}");
+	}
+	$("#bg").show();
+	$("#popDiv").show();
+}
+
+function closePopDiv(){
+	$("#bg").hide();
+	$("#popDiv").hide();
+}
+</script>
+{else /}
+<div class="blank15"></div>
+<table cellpadding="4" cellspacing="4" width="100%">
+	<tbody>
+		<tr>
+			<td align="right"><font class="main-color">*</font>{:lang('addressee')}</td>
+			<td>
+				<input type="text" name="consignee" class="input_addr2" id="consigner" />
+				<div class="required-notice fl">
+					<i class="notice-icon"></i>
+					<span class="notice-text reciever-notice"></span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><font class="main-color">*</font>{:lang('member_location')}</td>
+			<td>
+				<select name="province" id="selProvinces" onchange="getProvince(this,'#selCities')" class="select_addr">
+					<option value="-1">{:lang('member_select_province')}</option>
+				</select>
+				<select name="city" id="selCities" onchange="getSelCity(this,'#selDistricts')" class="select_addr">
+					<option value="-1">{:lang('member_select_city')}</option>
+				</select>
+				<select name="district" id="selDistricts" class="select_addr">
+					<option value="-1">{:lang('member_selection_area')}</option>
+				</select>
+				<div class="required-notice fl">
+					<i class="notice-icon"></i><span class="notice-text address-notice"></span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><font class="main-color">*</font>{:lang('member_detailed_address')}</td>
+			<td>
+				<input type="text" name="address" class="input_addr1" id="detailed_address" />
+				<div class="required-notice">
+					<i class="notice-icon"></i>
+					<span class="notice-text detail-address-notice"></span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">{:lang('member_zip_code')}</td>
+			<td><input type="text" name="zipcode" class="input_addr3" id="zipcode" /></td>
+		</tr>
+		<tr>
+			<td align="right"><font class="main-color">*</font>{:lang('member_phone_number')}</td>
+			<td>
+				<input type="text" name="mobile" class="input_addr2" id="mobile" />
+				<div class="required-notice">
+					<i class="notice-icon"></i><span class="notice-text phone-notice"></span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><font class="main-color"></font>{:lang('member_fixed_telephone')}</td>
+			<td><input type="text" name="tel_01" class="input_addr4" id="phone_1" /> - <input type="text" name="tel_02" class="input_addr3" id="phone_2" /> - <input type="text" name="tel_03" class="input_addr4" id="phone_3" /></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><font color="#cccccc">{:lang('required')}</font></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td style="padding-top: 10px;">
+				<input type="hidden" name="address_id" value="0" id="address_id">
+				<input type="button" class="BonusButton" value=" {:lang('goods_determine')} " onclick="submitAddress()" />
+			</td>
+		</tr>
+	</tbody>
+</table>
+<script>
+initProvince("#selProvinces");
+</script>
+{/if}

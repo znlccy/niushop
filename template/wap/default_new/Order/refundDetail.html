@@ -1,0 +1,411 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/normalize.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/common-v4.4.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/person-v4.4.css">
+<style>
+#form1{margin:0;}
+#form1 .row{margin:0px;border-bottom: 1px solid #f1f1f1;background-color:#fff;}
+.columns label{width:24%;float:left;font-size:12px;text-align:center;margin-bottom: 0px;line-height: 40px;}
+.columns .columns-select{width:72%;float:right;font-size:12px;position: relative;}
+.columns-select:after{content: " ";display: inline-block;-webkit-transform: rotate(45deg);transform: rotate(45deg);height: 6px;width: 6px;border-width: 2px 2px 0 0;border-color: #C8C8CD;border-style: solid;position: absolute;top: 50%;right: 15px;margin-top: -3px;}
+.columns .columns-input{width:72%;float:right;font-size:12px;line-height: 40px;}
+.columns .columns-input input{border: 0;outline: 0;-webkit-appearance: none;background-color: transparent;color: inherit;height: 1.41176471em;line-height: 1.41176471;}
+.columns select{padding-right: 30px;-webkit-appearance: none;border: 0;outline: 0;background-color: transparent;font-size: 12px;height: 40px;position: relative;z-index: 1;}
+textarea{border: none;font-size: 12px;width: 94%;height: 60px;resize: none;outline: none;background: #fff;padding:10px 3%;}
+a.button{display:block;width:80%;margin:10px auto 0;text-align:center;background-color:#ff6600;border-radius:5px;border:1px solid #ff6600;color:#fff;font-size:16px;height:40px;line-height:40px;}
+.row{margin-bottom:10px;}
+.color-red{margin-right: 5px;}
+.columns{overflow: hidden;}
+.maxRefund{font-size: 12px;}
+.description-block{display:none;}
+</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('application_for_drawback')}</div>
+</section>
+{/block}
+{block name="main" }
+<div data-alert class="alert-box alert" style="display: none;"
+	id="errerMsg">
+	<a href="#" class="close">&times;</a>
+</div>
+<form class="main mt-45">
+	<div class="return-process">
+		<ul class="clear">
+			<li class="step01">
+				<p class="name">{:lang('member_buyers_apply_for_refund')}</p> <span class="number">1</span>
+				<span class="prcess-line prcess-line-r"></span>
+			</li>
+			<li class="step02">
+				<p class="name">{:lang('member_merchant_processing_refund_request')}</p> <span class="prcess-line prcess-line-l"></span>
+				<span class="number">2</span> <span class="prcess-line prcess-line-r"></span>
+			</li>
+			<li class="step03">
+				<p class="name">{:lang('member_refund_completed')}</p> <span class="prcess-line prcess-line-l"></span>
+				<span class="number">3</span>
+			</li>
+		</ul>
+	</div>
+	{if condition="$detail.refund_status eq 0"}
+	<div class="form-c" id="form1">
+		<div class="row">
+			<div class="small-12 columns">
+				<label><span class="color-red">*</span>{:lang('member_treatment_mode')}：</label>
+				<div class="columns-select">
+					<select id="refund_require">
+						<option value="1" selected="selected">{:lang('member_refund_goods')}</option>
+						{neq name="detail['shipping_status']" value="0"}
+						<option value="2">{:lang('member_refund_goods_and_money')}</option>
+						{/neq}
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="small-12 columns">
+				<label><span class="color-red">*</span>{:lang('member_refund_reason')}：</label>
+				<div class="columns-select">
+				<select id="refund_reason">
+					<option value="{:lang('member_buyer_and_seller_agrees')}">{:lang('member_buyer_and_seller_agrees')}</option>
+					<option value="{:lang('member_wrong_and_no_want')}">{:lang('member_wrong_and_no_want')}</option>
+					<option value="{:lang('member_commodity_quality_problems')}">{:lang('member_commodity_quality_problems')}</option>
+					<option value="{:lang('member_goods_not_received')}">{:lang('member_goods_not_received')}</option>
+					<option value="{:lang('member_other')}">{:lang('member_other')}</option>
+				</select></div>
+			</div>
+		</div>
+		{if condition="$refund_money > 0"}
+		<div class="row">
+			<div class="small-12 columns">
+				<label><span class="color-red">*</span>{:lang('member_refund_amount')}：</label>
+				<div class="columns-input">
+					<input value="" id="refund_money" class="maxRefund" type="text" placeholder="{:lang('member_refund_at_most')}{$refund_money}{:lang('element')}" onblur="maxRefund()">
+				</div>
+			</div>
+		</div>
+		{/if}
+		<input value="{$refund_money}" id="maxRefundMoney" type="hidden" />
+		{if condition="$refund_balance>0"}
+		<div class="row">
+			<div class="small-12 columns">
+				<label style="height: 40px;">{if condition="$refund_money == 0"}<span class="color-red">*</span>{:lang('member_refund_amount')}：{/if}</label>
+				<div class="columns-input" style="text-align: left;width: 70%;float: left;margin-left: 14px;">
+				<span>{:lang("member_refund_balance_auto")}<strong style="color:#ff4000;">{$refund_balance}</strong>{:lang('element')}</span>
+				</div>
+			</div>
+		</div>
+		{/if}
+		<div class="description-block">
+			<div class="row">
+				<div class="small-12 columns" style="background-color:#f5f5f5;">
+					<label>{:lang('member_refund_description')}：</label>
+				</div>
+			</div>
+			<textarea rows="5" id="description" placeholder="请输入退款说明"></textarea>
+		</div>
+		<a class="button" href="javascript:void(0)" onclick="btnSave()">{:lang('submit_a_refund_application')}</a>
+	</div>
+	{elseif condition="$detail.refund_status eq -3" /}
+	<div class="form-c" id="form1">
+		<div class="row">
+			<div class="small-12 columns">
+				<label><span class="color-red">*</span>{:lang('member_treatment_mode')}：</label> 
+				<select id="refund_require">
+					{if condition="$detail.refund_type eq 1"}
+						<option value="1" selected="selected">{:lang('member_refund_goods')}</option>
+						{else}<option value="1">{:lang('member_refund_goods')}</option>
+					{/if}
+					{neq name="$detail.shipping_status" value="3"} 
+						{if condition="$detail.refund_type eq 2"}
+						<option value="2" selected="selected">{:lang('member_refund_goods_and_money')}</option>
+						{else }<option value="2">{:lang('member_refund_goods_and_money')}</option>
+						{/if} 
+					{/neq}
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="small-12 columns">
+				<label><span class="color-red">*</span>{:lang('member_refund_reason')}：</label>
+				<select id="refund_reason">
+					{if condition="$detail.refund_reason eq lang('member_buyer_and_seller_agrees') "}
+						<option value="{:lang('member_buyer_and_seller_agrees')}" selected="selected">{:lang('member_buyer_and_seller_agrees')}</option>
+						{else}<option value="{:lang('member_buyer_and_seller_agrees')}">{:lang('member_buyer_and_seller_agrees')}</option>
+					{/if}
+					{if condition="$detail.refund_reason eq lang('member_wrong_and_no_want')"}
+						<option value="{:lang('member_wrong_and_no_want')}" selected="selected">{:lang('member_wrong_and_no_want')}</option>
+						{else}<option value="{:lang('member_wrong_and_no_want')}">{:lang('member_wrong_and_no_want')}</option>
+					{/if}
+					{if condition="$detail.refund_reason eq lang('member_commodity_quality_problems')"}
+						<option value="{:lang('member_commodity_quality_problems')}" selected="selected">{:lang('member_commodity_quality_problems')}</option>
+						{else}<option value="{:lang('member_commodity_quality_problems')}">{:lang('member_commodity_quality_problems')}</option>
+					{/if}
+					{if condition="$detail.refund_reason eq lang('member_goods_not_received')"}
+						<option value="{:lang('member_goods_not_received')}" selected="selected">{:lang('member_goods_not_received')}</option>
+						{else}<option value="{:lang('member_goods_not_received')}">{:lang('member_goods_not_received')}</option>
+					{/if}
+					{if condition="$detail.refund_reason neq lang('member_buyer_and_seller_agrees') || $detail.refund_reason neq lang('member_wrong_and_no_want') || 
+					 $detail.refund_reason neq lang('member_commodity_quality_problems') || $detail.refund_reason neq lang('member_goods_not_received')" ||
+					 $detail.refund_reason eq lang('member_other')"
+					}
+						<option value="{:lang('member_other')}" selected="selected">{:lang('member_other')}</option>
+						{else}<option value="{:lang('member_other')}">{:lang('member_other')}</option>
+					{/if}
+				</select>
+			</div>
+		</div>
+		{if condition="$refund_money > 0"}
+		<div class="row">
+			<div class="small-12 columns">
+				<label><span class="color-red">*</span>{:lang('member_refund_amount')}：</label>
+				<div style="height:40px;line-height:40px;"> 
+					<input value="{$refund_money}" id="refund_money" class="maxRefund" type="text" placeholder="{:lang('member_refund_at_most')}{$refund_money}{:lang('element')}"> 
+				</div>
+			</div>
+		</div>
+		{/if}
+		<input value="{$refund_money}" id="maxRefundMoney" type="hidden" />
+		{if condition="$refund_balance>0"}
+		<div class="row">
+			<div class="small-12 columns">
+				<label style="height: 40px;">{if condition="$refund_money == 0"}<span class="color-red">*</span>{:lang('member_refund_amount')}：{/if}</label>
+				<div class="columns-input" style="text-align: left;width: 72%;float: left;">
+				<span>{:lang("member_refund_balance_auto")}<strong style="color:#ff4000;">{$refund_balance}</strong>{:lang('element')}</span>
+				</div>
+			</div>
+		</div>
+		{/if}
+		{if condition="$detail.refund_reason neq lang('member_buyer_and_seller_agrees') || $detail.refund_reason neq lang('member_wrong_and_no_want') || 
+		 $detail.refund_reason neq lang('member_commodity_quality_problems') || $detail.refund_reason neq lang('member_goods_not_received')" ||
+		 $detail.refund_reason eq lang('member_other')"
+		}
+		<div class="description-block" style="display:block;">
+		{else/}
+		<div class="description-block">
+		{/if}
+			<div class="row">
+				<div class="small-12 columns" style="background-color:#f5f5f5;">
+					<label>{:lang('member_refund_description')}：</label>
+				</div>
+			</div>
+			<textarea rows="5" id="description" placeholder="请输入退款说明"></textarea>
+		</div>
+		<a class="button" href="javascript:void(0)" onclick="btnSave()">{:lang('submit_a_refund_application')}</a>
+	</div>
+	{elseif condition="$detail.refund_status eq 1" /}
+	<div class="none-goods">
+		<i class="icon-tip-circle"></i>
+		<div class="text">
+			<h4>{:lang('wait_for_the_merchant_to_process_the_refund_request')}</h4>
+			<ul>
+				<li>{:lang('if_the_merchant_agreed_to_refund_will_reach_and_refund_to_your_alipay_account_or_bank_card')}。</li>
+			</ul>
+		</div>
+	</div>
+	{elseif condition="$detail.refund_status eq 2" /}
+	<!--已收到货 begin-->
+	<div class="seller-agree" id="form2">
+		<h4>{:lang('member_return_and_fill')}</h4>
+		<h5>1、{:lang('please_return_the_goods')}</h5>
+		<p class="explanation">
+			{:lang('member_use_or_surface')}。<br />
+			{:lang('member_return_address')}： 
+			<span class="address">
+				{if condition="$shop_info.shop_address neq ''"}
+						{$shop_info.shop_address}&nbsp;&nbsp;{$shop_info.seller_name}&nbsp;&nbsp;{$shop_info.seller_mobile}&nbsp;&nbsp;{$shop_info.seller_zipcode}
+				{else /}
+						{:lang('member_no_delivery_address_yet')}
+				{/if}
+			</span>
+		</p>
+		<h5>
+			2、{:lang('member_logistics_information')} <small>（{:lang('member_application_closed')}）</small>
+		</h5>
+		<div class="express-form">
+			<div class="row">
+				<label><span class="color-red">*</span>{:lang('member_logistics_company')}：</label> <input
+					type="text" id="LogisticsCompany" />
+			</div>
+			<div class="row">
+				<label><span class="color-red">*</span>{:lang('member_waybill_number')}：</label> <input
+					type="text" id="ExpressNo" />
+			</div>
+			<div class="row">
+				<a class="button" href="javascript:void(0)" onclick="ExpressSave()">{:lang('member_submit')}</a>
+			</div>
+		</div>
+	</div>
+	{elseif condition="$detail.refund_status eq 3" /}
+	<div class="none-goods">
+		<i class="icon-tip-circle"></i>
+		<div class="text">
+			<h4>{:lang('member_waiting_for_merchant')}</h4>
+			<ul>
+				<li>{:lang('if_the_merchant_agreed_to_refund_will_reach_and_refund_to_your_alipay_account_or_bank_card')}</li>
+			</ul>
+		</div>
+	</div>
+	{elseif condition="$detail.refund_status eq 4" /}
+	<!--等待卖家同意退款 begin-->
+	<div class="wait-seller-agree">
+		<i class="icon-tip-circle"></i>
+		<div class="text" style="padding: 20px 0 1px 5px;">
+			<h4 style="margin-top: 0;">{:lang('member_successfully_applied_for_refund')}</h4>
+		</div>
+	</div>
+	<!--等待卖家同意退款 begin-->
+	{elseif condition="$detail.refund_status eq 5" /}
+	<!--step03 begin-->
+	<div class="return-success">
+		<i class="icon-right-circle"></i>
+		<div class="text">
+			<h4>{:lang('member_refund_successful')}</h4>
+			<p class="time">{:lang('refund_success_time')}:{$detail.refund_time | getTimeStampTurnTime}</p>
+			<p class="money">{:lang('member_refund_amount')}： {$detail.refund_real_money}{:lang('element')}</p>
+			<p>
+			{if condition="$refund_balance>0"}
+			<span>（{:lang("member_refund_balance_auto")}<strong style="color:#ff4000;">{$refund_balance}</strong>{:lang('element')}）</span>
+			{/if}
+			</p>
+		</div>
+	</div>
+	{elseif condition="$detail.refund_status eq -1" /}
+	<!--卖家拒绝 begin-->
+	<div class="disagree-return">
+		<i class="icon-tip-circle"></i>
+		<div class="text" style="padding: 20px 0 1px 5px;">
+			<h4>{:lang('member_seller_rejects')}</h4>
+			<div class="operate"></div>
+		</div>
+	</div>
+	{elseif condition="$detail.refund_status eq -2" /}
+	<div class="return-success">
+		<i class="icon-tip-circle"></i>
+		<div class="text" style="padding: 20px 0 1px 5px;">
+			<h4>{:lang('member_refund_closed')}</h4>
+		</div>
+	</div>
+	{/if}
+</form>
+<script>
+var orderId = {$detail.order_id};
+var itemId ={$detail.order_goods_id};
+$(function() {
+		var refund_status = {$detail.refund_status};
+	if(refund_status == ""){
+		$(".step01").addClass("current");
+	}else if(refund_status == 0){
+		$(".step01").addClass("current");
+	}else if(refund_status == 5){
+		$(".step01").addClass("current");
+		$(".step02").addClass("current");
+		$(".step03").addClass("current");
+	}else if(refund_status < 0){
+		$(".step01").addClass("current");
+		$(".step02").addClass("current");
+	}else{
+		$(".step01").addClass("current");
+		$(".step02").addClass("current");
+	}
+	$("#refund_reason").change(function(){
+		if($(this).val()=="{:lang('member_other')}"){
+			$(".description-block").show();
+		}else{
+			$(".description-block").hide();
+		}
+	})
+});
+
+function ExpressSave(){
+	var LogisticsCompany=$("#LogisticsCompany").val();
+	var ExpressNo=$("#ExpressNo").val();
+	if(LogisticsCompany==""){
+		$("#LogisticsCompany").focus();
+	}else if(ExpressNo==""){
+		$("#ExpressNo").focus();
+	}else{
+		$.ajax({
+			url: "{:__URL('APP_MAIN/order/ordergoodsrefundexpress')}",
+			type: "post",
+			async: false,
+			data: { "order_id": orderId, "order_goods_id": itemId, "refund_express_company": LogisticsCompany, "refund_shipping_no": ExpressNo},
+			dataType: "json",
+			success: function (response) {
+				if(response.code>0){
+					showBox("{:lang('successful_application_for_refund')}");
+					window.location.href = __URL("APP_MAIN/Member/index");
+				}else{
+					showBox("{:lang('failed_to_apply_for_refund')}");
+				}
+			}
+		});
+	}
+}
+
+function btnSave() {
+	var refund_require = $("#refund_require").val();
+	var refund_reason = $("#refund_reason").val();
+	var refund_money = $("#refund_money").val();//退款金额
+	if(refund_money == undefined){
+		refund_money = 0;
+	}
+	var description = $("#description").val();//退款说明
+	var num2 = parseFloat($("#maxRefundMoney").val());
+	if(refund_money == "" && refund_money !== 0){
+		$("#refund_money").focus();
+		showBox("{:lang('please_enter_the_refund_amount')}");
+		return;
+	}
+
+	if(refund_money >= 0){
+		if (refund_money <0 || refund_money >num2 ) {
+			$("#refund_money").focus();
+			showBox("{:lang('member_beyond_refund_amount')}");
+			return;
+		}
+	}
+
+	if(refund_reason == '{:lang('member_other')}'){
+		refund_reason = description;
+		if(refund_reason == ""){
+			showBox("{:lang('member_please_enter_refund_statement')}");
+			return false;
+		}
+	}
+	$.ajax({
+		url: "{:__URL('APP_MAIN/order/ordergoodsrefundaskfor')}",
+		type: "post",
+		async: false,
+		data: {
+			"order_id": orderId, 
+			"order_goods_id": itemId, 
+			"refund_type": refund_require, 
+			"refund_require_money":refund_money,
+			"refund_reason": refund_reason
+		},
+		dataType:"json",
+		success: function (response) {
+			if(response.code>0){
+				window.location.reload();
+			}else{
+				showBox(response.message);
+			}
+		}
+	});
+}
+
+//最多退款金额
+function maxRefund() {
+	var num = parseFloat($("#refund_money").val());
+	var num2 = parseFloat($("#maxRefundMoney").val());
+	if (num < 0 || num >num2) {
+		$("#refund_money").focus();
+		showBox("{:lang('member_beyond_refund_amount')}");
+		return;
+	}
+};
+</script>
+{/block}

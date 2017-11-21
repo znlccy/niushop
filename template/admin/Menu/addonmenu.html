@@ -1,0 +1,19 @@
+{extend name="admin/base" /}
+{block name"resources"}
+<style>
+.table-class th,.table-class td{
+	border:1px soli #e5e5e5;
+}
+.table-class th,.table-class td{
+	border-bottom:0;
+}
+</style>
+{/block}
+{block name="main"}
+
+<?php
+
+	echo hook("$hook_name", $params);
+
+?>
+{/block}

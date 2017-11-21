@@ -1,0 +1,224 @@
+<style>
+.coupon-total{
+  	margin:15px 0 5px 0;
+}
+.coupon-img{
+	width:100%;
+	position:relative;
+}
+.coupon-img img{
+	width:100%;
+}
+
+.coupon-title{
+	position:absolute;
+	left:2.5%;
+	top:28%;
+	font-size:14px;
+	color:#fff;
+}
+.coupon-cent{
+	position:absolute;
+	left:30%;
+	top:28%;
+	color:#666;
+}
+.coupon-receive{
+	position:absolute;
+	right:5%;
+	top:28%;
+	color:#666;
+	padding: 0px 10px;
+    border: 1px solid #eee;
+}
+
+/**/
+.coupon-all{
+	background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    z-index: 2;
+    position: fixed;
+    bottom: 0px;
+    transition: background 0.35s linear,height 0.35s ease-in 200ms;
+	display:none
+}
+.coupon-bottom{
+	position:fixed;
+	bottom:56px;
+	background:#fff;
+	height:300px;
+	    display: none;
+    z-index: 10;
+    width: 100%;	
+	padding-bottom:20px;
+}
+
+.coupon-name{
+	text-align:center;
+	color:#333;
+	font-size:14px;
+	width:100%;
+	height: 40px;
+    line-height: 40px;
+	margin-bottom:-10px;
+}
+.coupon-bottom ul{
+	height: 285px;
+	overflow:auto;
+}
+.coupon-bottom li{
+	width:100%;
+	position:relative;
+	float: left;
+	margin-top:10px;
+}
+
+.coupon-bottom li img{
+	width:100%;
+}
+.coupon-price{
+	position:absolute;
+	 top: 20%;
+    left: 10%;
+	font-size:12px;
+	color:#EB1606;
+}
+.coupon-lose{
+	position:absolute;
+	top: 55%;
+    left: 10%;
+	font-size:12px;
+}
+/* .coupon-get{
+	position:absolute;
+	top: 33%;
+    right: 7.5%;
+     width: 12px; 
+	font-size:0.8em;
+	color:#666;
+	margin-top: 1.5%;
+	color:#fff;
+} */
+/* .coupon-btn{
+	background:#F44336;
+	height:40px;
+	line-height:40px;
+	color:#fff;
+	font-size:14px;
+	text-align:center;
+	margin-top:20px;
+	margin-bottom:30px;
+} */
+.coupon-mask{
+	background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    position: absolute;
+    bottom: 0px;
+    transition: background 0.35s linear,height 0.35s ease-in 200ms;
+	display:none;
+	left:0;
+}
+.coupon-mask span{
+	color:#fff;text-align:center;line-height:71px;display:block;
+}
+</style>
+
+<div class="coupon-total">
+	<div class="coupon-img">
+	    <img src="__TEMP__/{$style}/public/images/wap_coupon.png"/>
+	    <span class="coupon-title">{:lang("coupon_collection")}</span>
+		<span class="coupon-cent">{:lang("get_shop_coupons")}</span>
+		<span class="coupon-receive">{:lang("receive")}</span>
+	</div>
+	
+</div>
+
+<div  class="coupon-all">
+   
+ 
+</div>
+<div class="coupon-bottom">   
+       <div style="padding:0 2%;">
+		   <p class="coupon-name">{:lang("coupon")}</p>
+		   <ul>
+			   {volist name="coupon_list" id="vo" }
+			      <li> 
+			          <a href="javascript:;" onclick="coupon_receive(this,{$vo.coupon_type_id})">
+				          <img src="__TEMP__/{$style}/public/images/coupon_detail.png"/>
+				          <span class="coupon-price">¥{$vo.money}</span>
+						  <span class="coupon-lose">{:lang("consume")}{:lang("member_full")}{$vo.at_least}{:lang("use")}</span>
+						  <!--  <span class="coupon-get">点击领取</span> -->
+						  <span class="coupon-mask">
+						      <span><img src="__TEMP__/{$style}/public/images/coupon_choice.png" style="width:16px; vertical-align: middle;margin-right:10px; "/><i id="mess">{:lang("congratulations_your_success")}，{:lang("receive_successful")}</i></span>
+						  </span>
+					 </a>  
+			      </li>
+			   {/volist}
+		   </ul>
+	   </div>
+	<!--    <p class="coupon-btn"><span>立即领取</span></p> -->
+   </div>
+   
+<script type="text/javascript">
+$(function(){
+	$('.coupon-img').click(function(){
+		$('.coupon-all').show();
+		$('.coupon-bottom').show();
+	})
+	
+// 	$('.coupon-bottom li').click(function(){
+// 		$(this).children().children('.coupon-mask').show();
+// 	})
+	
+	$('.coupon-all').click(function(){
+		$('.coupon-all').hide();
+		$('.coupon-bottom').hide();
+	})
+})
+
+
+
+var couponObj = new Array();	
+function coupon_receive(event,coupon_type_id){
+	var is_have = true;
+	$.each(couponObj, function(key, val) {
+		if(val == coupon_type_id){
+			is_have = false;
+		}
+		
+	});
+
+	if(is_have){
+		couponObj.push(coupon_type_id);
+		$.ajax({
+			type:"post",
+			url : "{:__URL('APP_MAIN/index/getCoupon')}",
+			async: false,
+			dataType:"json",
+			data:{
+				'coupon_type_id' : coupon_type_id
+			},
+			success : function(data){   			
+				//alert(JSON.stringify(data));
+				if(data['code']>0){
+						$(event).children('.coupon-mask').show();
+				}else{
+						$(event).children('.coupon-mask').show();
+						$(event).children().children().children("#mess").text(data['message']);
+				}
+			}
+		})
+	}
+	
+	
+}	
+
+
+
+
+
+</script>

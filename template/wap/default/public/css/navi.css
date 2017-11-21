@@ -1,0 +1,43 @@
+.navi{
+	min-height: 45px;
+    overflow: hidden;
+    padding: 8px;
+    background: #fff;
+}
+.navi .navi-item{
+	overflow: hidden;
+}
+.navi .navi-item .navi-item_row{
+	width: 100%;
+}
+.navi .navi-item .navi-item_row>a{
+	display: block;
+	float: left;
+	width: 20%;
+	min-height: 65px;
+	overflow: hidden;
+	margin-top: 10px;
+}
+.navi .navi-item .navi-item_row>a>span{
+	display: block;
+	float: left;
+	width: 100%;
+	text-align: center;
+}
+.navi .navi-item .navi-item_row>a>span>img{
+	max-height: 68%;
+    max-width: 68%;
+    display: block;
+    margin-left: 16px;
+    margin-bottom: 7px;
+    margin: auto;
+}
+.navi .navi-item .navi-item_row>a>span>span{
+	margin-top: 5px;
+	display: block;
+	width: 100%;
+	text-align: center;
+	font-size: 13px;
+    font-weight: 100;
+    color: #383737;
+}

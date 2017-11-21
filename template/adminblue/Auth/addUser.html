@@ -1,0 +1,127 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>用户名:</dt>
+		<dd>
+			<p><input class="input-common" id="admin_name" type="text"></p>
+			<p class="error">请输入用户名</p>
+			<p class="error">用户名不能包含特殊字符</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>密码:</dt>
+		<dd>
+			<p><input class="input-common" id="user_password" type="password"></p>
+			<p class="error">请输入密码</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>所属用户组:</dt>
+		<dd>
+			<p>
+				<select class="input-common" id="group_id">
+					<option value="-1">请选择用户组</option>
+					{foreach name="auth_group" item="v1"}
+					<option value="{$v1['group_id']}">&nbsp;&nbsp;{$v1['group_name']}</option>
+					{/foreach}
+				</select>
+			</p>
+			<p class="error">请选择用户组</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述:</dt>
+		<dd>
+			<p><textarea id="desc" class="input-common"></textarea></p>
+			<p class="error">请输入描述信息</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="addUserAjax()">提交</button></dd>
+	</dl>
+</div>
+<script>
+//模块输入信息验证
+function verify() {
+	var admin_name = $("#admin_name").val();
+	var group_id = $("#group_id").val();
+	var user_password = $("#user_password").val();
+	var desc = $("#desc").val();
+	if (admin_name == '') {
+		$("#admin_name").parent().next().show();
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	pattern= new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？_]"); 
+	if(pattern.test(admin_name)){
+		$("#admin_name").parent().next().next().show();
+		return false;
+	}
+	if (user_password == '') {
+		$("#user_password").parent().next().show();
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if(group_id == -1){
+		$("#group_id").parent().next().show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+
+var flag = false;//防止重复提交
+//添加用户
+function addUserAjax() {
+	var admin_name = $("#admin_name").val();
+	var group_id = $("#group_id").val();
+	var user_password = $("#user_password").val();
+	var desc = $("#desc").val();
+	if(verify() && !flag){
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/auth/adduser')}",
+			data : {
+				'admin_name' : admin_name,
+				'group_id' : group_id,
+				'user_password' : user_password,
+				'desc' : desc
+			},
+			success : function(data) {
+				if (data['code'] > 0) {
+					$("#dialog").dialog({
+						buttons : {
+							"确定,#51A351" : function() {
+								$(this).dialog('close');
+								flag = false;
+							}
+						},
+						contentText : data["message"],
+						time : 2,
+						timeHref : "{:__URL('ADMIN_MAIN/auth/userlist')}",
+					});
+				} else {
+					$("#dialog").dialog({
+						buttons : {
+							"确定,#e57373" : function() {
+								$(this).dialog('close');
+								flag = false;
+							}
+						},
+						contentText : data["message"]
+					});
+				}
+			}
+		});
+	}
+}
+</script>
+{/block}

@@ -1,0 +1,148 @@
+@CHARSET "UTF-8";
+.store-promote-top {
+	margin-top: 45px;
+	padding: 10px;
+	height: 50px;
+	line-height: 50px;
+}
+.user-portrait {
+	width: 50px;
+	height: 50px;
+	vertical-align: middle;
+	border-radius: 10px;
+}
+.store-promote-top h3 {
+	display: inline-block;
+	color: #999999;
+	font-weight: normal;
+	margin-left: 10px;
+}
+.store-promote-identity {
+	float: right;
+}
+.store-promote-identity span {
+	vertical-align: middle;
+	color: #999999;
+}
+.store-promote-identity img {
+	vertical-align: middle;
+	width: 12px;
+}
+.store-promote-identity img:LAST-CHILD {
+	width: 10px;
+}
+.store-money {
+}
+.can-carry {
+	background: url("../images/store_can_carry.png") no-repeat;
+	position: relative;
+	background-size: 100% 100px;
+}
+.can-carry  h2 {
+	text-align: center;
+	color: #ffffff;
+	font-weight: normal;
+	font-size: 16px;
+	padding: 10px;
+}
+.withdrawal-money {
+	display: block;
+	text-align: center;
+	color: #ffffff;
+	font-size: 28px;
+	padding-bottom: 5px;
+}
+.can-carry  a {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	color: #ffffff;
+	font-size: 12px;
+}
+.money-detail {
+	background: url("../images/store_money_detail.png") no-repeat;
+	color: #ffffff;
+	background-size: 100% 100px;
+	overflow: hidden;
+	padding: 5px;
+}
+.money-detail  li {
+	float: left;
+	width: 31.4%;
+	text-align: center;
+	font-size: 12px;
+    line-height: 19px;
+    padding: 3px;
+}
+.money-detail .money {
+	font-size: 16px;
+}
+.store-personal-title {
+	padding: 10px;
+	border-left: 5px solid #595959;
+	font-size: 16px;
+	color: #333333;
+	font-weight: normal;
+	background: #ffffff;
+}
+.segmentation-line {
+	border: 0;
+	border-bottom: 1px solid #eeeeee;
+}
+.personal-menu {
+	background: #ffffff;
+	overflow: hidden;
+}
+.personal-menu li {
+	float: left;
+	width: 33%;
+	text-align: center;
+	padding: 10px 0;
+	border-right: 1px solid #eeeeee;
+	border-bottom: 1px solid #eeeeee;
+}
+.personal-menu li img {
+	width: 50px;
+	height: 50px;
+}
+.personal-menu li h5 {
+	padding-top: 5px;
+	font-weight: normal;
+	font-size: 14px;
+}
+.personal-menu li span {
+	color: #999999;
+	font-size: 12px;
+}
+.store-banner {
+	width: 100%;
+	margin: 10px 0;
+}
+.store-commission-statistics {
+	background: #ffffff;
+	overflow: hidden;
+	padding: 10px 0;
+	margin-bottom: 10px;
+}
+.store-commission-statistics ul li {
+	text-align: center;
+	float: left;
+	width: 25%;
+	padding: 10px 0;
+}
+.store-commission-statistics ul li strong {
+	color: #FB5430;
+	font-size: 14px;
+	display: block;
+}
+.store-commission-statistics ul li span {
+	font-size: 12px;
+}
+.store-p {
+	padding: 10px;
+	background: #ffffff;
+	text-align: center;
+}
+.store-p span {
+	color: #FF2F2F;
+}

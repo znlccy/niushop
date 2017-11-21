@@ -1,0 +1,21 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<style>
+.group-child{
+	left:0;
+}
+</style>
+{/block}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="{:__URL('APP_MAIN')}"><i class="icon-back"></i></a>
+	<div class="head-title" style="margin-left: 11%;">{:lang('article_center')}{include file="wap/default/controGroup" /}</div>
+</section>
+{/block}
+{block name="main"}
+
+	{include file='wap/default/Articlecenter/controlleft'/}
+
+{/block}
+{block name="bottom"} {/block}

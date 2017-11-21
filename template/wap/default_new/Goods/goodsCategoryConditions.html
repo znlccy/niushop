@@ -1,0 +1,98 @@
+<!-- 筛选条件 -->
+<div class="shade-div"></div>
+<div class="screening_condition">
+	<div class="head-title">
+		<div class="mui-title">筛选</div>
+	</div>
+	<ul class="conditions">
+		<!-- 品牌筛选 -->
+		{if condition="$category_count>0  && count($category_brands) gt 0"}
+		<li>
+			{if condition="count($category_brands) > 2"}
+			<div class="condition_name click-down" is_open = "0"><span>品牌</span><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></div>
+			{else/}
+			<div class="condition_name" is_open = "0"><span>品牌</span></div>
+			{/if}
+			<div class="condition_value"  data-screen-type="brand">
+				<a href="javascript:;" class="selected all">全部<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+				{foreach name="category_brands" item="brand" key="k"}
+				<a href="javascript:;" data-brand-id="{$brand.brand_id}">{$brand.brand_name}<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+				{/foreach}
+			</div>
+		</li>
+		{/if}
+		<!-- 属性筛选 -->
+		{if condition="count($attr_or_spec) gt 0 "}
+			{foreach name="attr_or_spec" item="vo" key="key"}
+				{if condition="$vo.type neq 1 and $vo.value neq ''"}
+					{if condition="$vo.is_search eq '1'"}
+					<li>
+						{if condition="count($vo['value_items']) > 2"}
+						<div class="condition_name click-down" is_open = "0"><span>{$vo.attr_value_name}</span><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></div>
+						{else/}
+						<div class="condition_name" is_open = "0"><span>{$vo.attr_value_name}</span></div>
+						{/if}
+						<div class="condition_value" data-screen-type="attr">
+							<a href="javascript:;" class="selected all">全部<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+							{foreach name="vo.value_items" item="value" key="k"}
+								<a href="javascript:;" data-attr-value="{$vo.attr_value_name},{$value.value},{$vo.attr_value_id}">{$value.value}<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+							{/foreach}
+						</div>
+					</li>
+					{/if}
+				{/if}
+			{/foreach}		
+		{/if}
+		<!-- 规格筛选 -->
+		{if condition="count($goods_spec_array) gt 0 "}
+			{foreach name="goods_spec_array" item="vo" key="key"}
+				{if condition="$vo.is_screen eq 1 and $vo.spec_name neq ''"}
+				<li>
+					{if condition="count($vo['values']) > 2"}
+					<div class="condition_name click-down" is_open = "0"><span>{$vo.spec_name}</span><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></div>
+					{else/}
+					<div class="condition_name" is_open = "0"><span>{$vo.spec_name}</span></div>
+					{/if}
+					<div class="condition_value" data-screen-type="spec">
+						<a href="javascript:;" class="selected all">全部<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+						{foreach name="vo.values" item="value" key="k"}
+							<a href="javascript:;" data-spec-value="{$value.spec_id}:{$value.spec_value_id}">{$value.spec_value_name}<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+						{/foreach}
+					</div>
+				</li>
+				{/if}
+			{/foreach}
+		{/if}
+		<!-- 价格筛选 -->
+		{if condition="$category_count>0 "}
+			<li>
+				{if condition="count($category_price_grades) > 2"}
+				<div class="condition_name click-down" is_open = "0"><span>价格</span><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></div>
+				{else/}
+				<div class="condition_name" is_open = "0"><span>价格</span></div>
+				{/if}
+				<div class="condition_value">
+					<a href="javascript:;" class="selected all">全部<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+					{foreach name="$category_price_grades" item="price_grades" key="k"}
+						<a href="javascript:;" data-min-price="{$price_grades[0]}" data-max-price="{$price_grades[1]}">￥{$price_grades[0]}&nbsp;-&nbsp;￥{$price_grades[1]}<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+					{/foreach}
+				</div>
+			</li>
+		{/if}
+	</ul>
+	<div class="bottom-area">
+		<a href="javascript:;" class="reset">重置</a>
+		<a href="javascript:;" class="confirm_screen">确认</a>
+	</div>
+</div>
+<!-- 价格区间 最小 -->
+<input type="hidden" id="min_price" value=""> 
+<!-- 价格区间 最大 -->
+<input type="hidden" id="max_price" value="">
+<!-- 筛选属性值 -->
+<input type="hidden" id="attr" value="">
+<!-- 筛选规格 -->
+<input type="hidden" id="spec" value="">
+<!-- 品牌id -->
+<input type="hidden" id="brand_id" value="{$brand_id}">
+		

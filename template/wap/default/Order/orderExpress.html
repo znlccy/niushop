@@ -1,0 +1,207 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+    <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/foundation.css">
+    
+    <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/common-v4.4.css">
+	<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/person-v4.4.css">
+	<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/my_order_list.css">
+    <script src="__TEMP__/{$style}/public/js/order.js"></script>
+	<script type="text/javascript">window.onerror=function(){return true;}</script>
+	<script type="text/javascript">
+		var CONTROLLER = "{:__URL('APP_MAIN/Orders')}";
+		var APP_MAIN = 'APP_MAIN';
+		function backPage(){
+			window.location.href="{:__URL('APP_MAIN/member/')}";
+		};
+		
+	</script>
+	<style>
+	.express_goods{
+		line-height: 23px;
+	    padding: 7px;
+	    font-size: 12px;
+	    color: #666;
+		}
+		.head {
+   		 position: inherit;
+		height:auto;
+		}
+		.cf-tab-item a {
+		    width: 19%;
+		}
+		.cf-container .cf-tab-item.select a{
+		color:#707070;
+		border-bottom:2px solid rgb(245, 183, 8);
+		}
+		.express_info{
+			width:100%;
+			min-height: 100px;
+			background: #fff;
+			padding:20px 0;
+		}
+		.express_info ul{
+			width: 92%;
+			margin:0 4%;
+			border-left: 1px solid #CCCCCC;
+		}
+		.express_info ul li{
+			width: 96%;
+			margin-left: 15px;
+			border-bottom: 1px solid #eee;
+			position: relative;
+		}
+		.express_info ul li:last-child{
+			border-bottom: none;
+		}
+		.express_info ul li .Traces,.express_info ul li .AcceptTime{
+			min-height: 30px;
+			vertical-align: middle;
+			color: #999999;
+		}
+		.express_info ul li .Traces{
+			font-size: 14px;
+
+		}
+		.express_info ul li .AcceptTime{
+			font-size: 12px;
+			line-height: 30px;
+		}
+		.express_info ul li .Dot{
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: #CCCCCC;
+			position: absolute;
+			z-index: 5;
+			left: -20px;
+			top: 41%;
+		}
+		.express_info ul li:first-child .Dot{
+			background: #39C267;
+			top:0;
+			width: 12px;
+			height: 12px;
+			border:2px solid #A1EEC2;
+			left: -21px;
+		}
+		.express_info ul li:first-child .Traces,.express_info ul li:first-child .AcceptTime{
+			color: #39C267;
+		}
+		.express_title{
+			height: 40px;
+		    line-height: 40px;
+		    background: #fff;
+		    border-bottom: 1px solid #ddd;
+		    margin-top: 10px;
+		    color: #666;
+		    font-size: 14px;
+		    padding-left: 10px;
+		}
+	</style>
+{/block}
+
+{block name="goodsHead"}
+
+{/block}
+{block name="main"}
+
+    <!--topbar end-->
+    <div class="main myorder">
+    <section class="head">
+    <a class="head_back" id="backoutapp" onclick="window.history.go(-1)" href="javascript:void(0)"><i class="icon-back"></i></a>
+		<div class="head-title">{:lang('shipped_order')}</div>
+		<div class="cf-container" data-reactid="2">
+    		<div class="cf-edge" data-reactid="3"></div>
+			<ul class="cf-content" data-reactid="4">
+				{foreach name="order['goods_packet_list']" item="vo" key=key}
+    			<li class="cf-tab-item" data-index="1" data-reactid="7"><a statusid="{$key}" href="javascript:;" >{$vo.packet_name}</a></li>
+	    		{/foreach}
+	    	</ul>
+		</div>
+	</section>
+    	<!-- 商品列表 -->
+    	
+	    	{foreach name="order['goods_packet_list']" item="vo" key=k}
+	    	<div class="status status-{$key}" data-express-id="{$vo.express_id}" data-is-express="{$vo.is_express}">
+	    	<div style="height:80px;line-height:80px;">
+		    	{foreach name="vo['order_goods_list']" item="vg"}
+		    	<img src="{:__IMG($vg['picture_info']['pic_cover_micro'])}" style="margin-left: 10px;"/>
+		    	{/foreach}
+		    </div>
+		    {if condition="$vo['is_express'] eq 1"}
+		    	<div style="background:#fff;" class="express_goods">
+		    		<span>{:lang('goods_total')}{$vo['order_goods_list']|count}{:lang('goods_goods')}，{:lang('obey')}{$vo['express_name']}{:lang('accept_for_carriage')}</span><br/>
+		    		<span>{:lang('waybill_number')}：{$vo['express_code']}</span>
+		    	</div>
+		    	<!-- JS动态查询物流信息 -->
+		    	<div class="express_title">
+		    		物流跟踪
+		    	</div>
+		    	<div class="express_info">
+	    			<ul id="js-express-info">
+	    				
+	    			</ul>
+	    		</div>
+		    	{else}
+	    		<div style="background:#fff;" class="express_goods">
+		    		<span>{:lang('goods_total')}{$vo['order_goods_list']|count}{:lang('goods_goods')},{:lang('no_logistics_required')}</span><br/>
+		    		<span>{:lang('waybill_number')}：--</span>
+		    	</div>
+		    	<div style="background:#fff;margin-top:10px;color:rgb(245, 183, 8);font-size:13px;" class="express_goods">
+		    		<div>{:lang('member_logistics_tracking')}：</div>
+			    	<div>{:lang('no_logistics_information')}</div>
+		    	</div>
+	    	{/if}
+	    	</div>
+	    	{/foreach}
+    	
+    </div>
+ <script>
+ 	$(function(){
+ 		$('.cf-container .cf-tab-item').eq(0).click();
+ 		$("div[data-express-id]").each(function(){
+ 			var curr = $(this);
+ 			var express_id = curr.attr("data-express-id");
+ 			var is_express = curr.attr("data-is-express");
+ 			if(parseInt(is_express)){
+				$('.js-express-info-'+express_id).html("{:lang('in_load')}...");
+	 			if(express_id != undefined){
+		 			$.ajax({
+		 	 			type : 'post',
+		 				url : "{:__URL('APP_MAIN/order/getordergoodsexpressmessage')}",
+		 				data : {"express_id":express_id},
+		 				beforesend : function(){
+		 					showLoadMaskLayer();
+		 				},
+		 				success : function(data){
+		 					var html = '';
+		 					if (data["Success"]) {
+		 						$(".express_title").text("物流跟踪");	
+		 						for (var i = 0; i < data["Traces"].length; i++){
+		 							html +='<li>';
+				    				html +='<div class="Traces">'+data["Traces"][i]["AcceptStation"]+'</div>';
+				    				html +='<div class="AcceptTime">'+data["Traces"][i]["AcceptTime"]+'</div>';
+									html +='<div class="Dot"></div>';
+				    				html +='</li>';
+		 						}
+		 					}else{
+		 						$(".express_title").text(data['Reason']);						
+		 					}
+		 					$('#js-express-info').html(html);
+		 					hiddenLoadMaskLayer();
+		 				}
+		 	 		});
+	 			}
+ 			}
+ 		});
+ 	});
+	 $('.cf-container .cf-tab-item').click(function(){
+   		$('.cf-container .cf-tab-item').removeClass('select');
+   		$(this).addClass('select');
+   		//alert($(this).find('a').attr('statusid'));
+   		$(".status").hide();
+   		$(".status-"+$(this).find('a').attr('statusid')).show();
+	  })
+ </script>
+{/block}
+{block name="bottom"}{/block}

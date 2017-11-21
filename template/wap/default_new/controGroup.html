@@ -1,0 +1,115 @@
+<style>
+*{
+	padding:0;
+	margin:0;
+}
+.group{
+	display: inline-block;
+	width: 44px;
+	height: 44px;
+	background: #F7F7F7;
+	float: right;
+	text-align: center;
+	border-left: 1px solid #F7F7F7;
+}
+.group img{
+	width: 20px;
+	margin-top: 15px;
+}
+.group-child{
+	position: absolute;
+	z-index: 10;
+	width: 100%;
+	height: 60px;
+	background: #fff;
+	margin-top: 1px;
+	border-bottom: 1px solid #E2E2E2;
+	display: none;
+}
+.group-child ul.gorup-nav{
+	width: 100%;
+}
+.group-child ul.gorup-nav li{
+	display: inline-block;
+	width: 25%;
+	height: 59px;
+	float: left;
+	text-align: center;
+}
+.group-child ul.gorup-nav li a{
+	position: static;
+	display: block;
+}
+.group-child ul.gorup-nav li a div{
+	text-align: center;
+	height: 54px;
+	padding-top: 5px;
+}
+.group-child ul.gorup-nav li a div img{
+	width: 25px;
+	height: 25px;
+	display: block;
+	margin:5px auto 0 auto;
+}
+.group-child ul.gorup-nav li a div span.nav_name{
+	font-size: 13px!important;
+	height: 15px;
+	display: block;
+	color: #979899;
+	margin-top: -10px;
+}
+</style>
+<div class="group" data-show="false">
+	<img src="__TEMP__/{$style}/public/images/group.png" alt="">
+</div>
+<div class="group-child">
+	<ul class="gorup-nav">
+		<li>
+			<a href="{:__URL('APP_MAIN')}">
+				<div>
+					<img src="__TEMP__/{$style}/public/images/home_uncheck.png"/>
+					<span class="nav_name">{:lang('home_page')}</span>
+				</div>
+			</a>
+		</li>
+		<li>
+			<a href="{:__URL('APP_MAIN/goods/goodsclassificationlist')}">
+				<div>
+					<img src="__TEMP__/{$style}/public/images/classify_uncheck.png"/>
+					<span class="nav_name">{:lang('category')}</span>
+				</div>
+			</a>
+		</li>
+		<li>
+			<a href="{:__URL('APP_MAIN/goods/cart')}">
+				<div>
+					<img src="__TEMP__/{$style}/public/images/cart_uncheck.png"/>
+					<span class="nav_name">{:lang('goods_cart')}</span>
+				</div>
+			</a>
+		</li>
+		<li>
+			<a href="{:__URL('APP_MAIN/member/index')}">
+				<div>
+					<img src="__TEMP__/{$style}/public/images/user_uncheck.png"/>
+					<span class="nav_name">{:lang('member_member_center')}</span>
+				</div>
+			</a>
+		</li>
+	</ul>
+</div>
+<script>
+	$(".group").click(function(){
+			if($(this).attr("data-show") == "false"){
+				$(this).css({"background":"#fff","border-bottom":"1px solid #fff","border-left":"1px solid #E2E2E2"});
+				$(".group-child").slideDown();
+				$(this).attr("data-show","true");
+			}else{
+				$(this).css({"background":"#F7F7F7","border-bottom":"none","border-left":"1px solid #F7F7F7"});
+				$(".group-child").slideUp();
+				$(this).attr("data-show","false");
+			}
+			
+		}
+	)
+</script>

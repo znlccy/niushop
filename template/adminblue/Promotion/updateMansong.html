@@ -1,0 +1,375 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
+<style  type="text/css">
+.set-style h4{color:#0072D2;margin-left:10px;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4>活动信息</h4>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;活动名称:</dt>
+		<dd>
+			<input type="text" id="mansong_name" maxlength="10" value="{$mansong_info['mansong_name']}" class="input-common">
+			<p class="error">请输入活动名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;生效时间:</dt>
+		<dd>
+			<input class="input-medium input-common" type="text" id="start_time" value="{$mansong_info['start_time'] | getTimeStampTurnTime}" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<span class="mlr5">至</span> 
+			<input class="input-medium input-common" size="15"type="text" id="end_time" value="{$mansong_info['end_time'] | getTimeStampTurnTime}" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<p class="error">请输入生效时间</p>
+		</dd>
+	</dl>
+	<h4>优惠设置</h4>
+	<dl>
+		<dt>优惠方式:</dt>
+		<dd>
+			<label><input class="input-mini" type="radio" name="type" value="1" {if condition="$mansong_info['type'] eq 1"}checked="checked"{/if}> 普通优惠</label>
+			<label><input class="input-mini" type="radio" name="type" value="2" {if condition="$mansong_info['type'] eq 2"}checked="checked"{/if}> 多级优惠</label>
+			<p class="hint">（每级优惠不累积叠加）</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;优惠条件:</dt>
+		<dd style="width:100%;">
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>层级</th>
+							<th>优惠门槛</th>
+							<th>优惠方式（可多选）</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						{volist name="mansong_info['rule']" id="vo"}
+						<tr>
+							<td>{$key+1}</td>
+							<td>满&nbsp;<input type="text" id="price{$key+1}" value="{$vo['price']}" style="width:50px;vertical-align:middle;" class="input-common">&nbsp;元</td>
+							<td>
+								<div>
+									<p>
+										<label>
+											<input type="checkbox" name="mansong" class="discount{$key+1}" onchange="set_rule('discount',{$key+1},this)" {if condition="$vo['discount'] gt 0"}checked{/if}>
+											<span id="discount{$key+1}">{if condition="$vo['discount'] gt 0"}减<input type='text' id='discount_input{$key+1}' value="{$vo['discount']}" style='width:50px;'/>元{else/}减现金{/if}</span>
+										</label>
+									</p>
+									<p>
+										<label>
+											<input type="checkbox" name="mansong" class="free_shipping{$key+1}" {if condition="$vo['free_shipping'] eq 1"}checked{/if}>
+											<span id="free_shipping{$key+1}">免邮</span>
+										</label>
+									</p>
+									<p>
+										<label>
+											<input type="checkbox" name="mansong" class="give_point{$key+1}" onchange="set_rule('give_point',{$key+1},this)" {if condition="$vo['give_point'] gt 0"}checked{/if}>
+											<span id="give_point{$key+1}">{if condition="$vo['give_point'] gt 0"}送<input type='text' id='give_point_input{$key+1}' value="{$vo['give_point']}" style='width:50px;'/>积分{else/}送积分{/if}</span>
+										</label>
+									</p>
+									<p>
+										<label>
+											<input type="checkbox" name="mansong" class="give_coupon{$key+1}" onchange="set_rule('give_coupon',{$key+1},this)" {if condition="$vo['give_coupon'] gt 0"}checked{/if}>
+											<span id="give_coupon{$key+1}">{if condition="$vo['give_coupon'] gt 0"}送<select id="give_coupon_select{$key+1}">{volist name="coupon_type_list['data']" id="vc"}<option value="{$vc['coupon_type_id']}" {if condition="$vo['give_coupon'] eq $vc['coupon_type_id']"}selected{/if}>{$vc['coupon_name']}</option>{/volist}</select>{else/}送优惠券{/if}</span>
+										</label>
+									</p>
+									<!-- <p>
+										<label>
+											<input type="checkbox" name="mansong" class="gift_id{$key+1}" onchange="set_rule('gift_id',{$key+1},this)" {if condition="$vo['gift_id'] gt 0"}checked{/if}>
+											<span id="gift_id{$key+1}">{if condition="$vo['gift_id'] gt 0"}送<select id="gift_id_select{$key+1}">{volist name="gift_list['data']" id="vc"}<option value="{$vc['gift_id']}" {if condition="$vo['gift_id'] eq $vc['gift_id']"}selected{/if}>{$vc['gift_name']}</option>{/volist}</select>{else/}送赠品{/if}</span>
+										</label>
+									</p> -->
+								</div>
+							</td>
+							<td>{if condition="$key+1 > 1"}<a href="javascript:void(0);" onclick="del_cengji({$key+1})">删除</a>{/if}</td>
+						</tr>
+						{/volist}
+					</tbody>
+					<tfoot style="display:none;">
+						<tr>
+							<td colspan="4">
+								<a href="javascript:void(0)" onclick="add_reward()">+新增一级优惠</a>
+								<span class="gray pl20">最多可设置五个层级</span>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</dd>
+	</dl>
+	<h4>选择活动商品</h4>
+	{include file="adminblue/Promotion/selectGoods" /}
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="updateMansong();">提交</button></dd>
+	</dl>
+</div>
+<input type="hidden" id="mansong_id" value="{$mansong_info['mansong_id']}"/>
+<script>
+$(function(){
+	if({$mansong_info['range_type']} == 1){
+		$("input[type=radio][name='range_type'][value=1]").attr("checked","checked");
+		ShopRadio(1);
+	}else if({$mansong_info['range_type']} == 0){
+		$("input[type=radio][name='range_type'][value=0]").attr("checked","checked");
+		ShopRadio(0);
+		$("ul.ui-nav-tab li.js-tab").eq(1).addClass("active");
+		selected_goods($("ul.ui-nav-tab li.js-tab").eq(1));
+	}
+	$goods_selected_array = {$mansong_info}.goods_list;
+	$goods_id_selected_array = {$mansong_info}.goods_id_array;
+	LoadingInfo(1);
+	refresh_data();
+});
+
+//保存
+var flag = false;//防止重复提交
+function updateMansong(){
+	var mansong_id = $("#mansong_id").val();
+	var mansong_name = $("#mansong_name").val();
+	var start_time = $("#start_time").val();
+	var end_time = $("#end_time").val();
+	var type = $("input[type='radio'][name='type']:checked").val();
+	var range_type = $("input[type='radio'][name='range_type']:checked").val();
+	var rule = '';
+	var obj = $(".table tbody tr");
+	if(!verify(mansong_name, start_time, end_time)){
+		return false;
+	}
+	for(var i=1;i<=obj.length;i++){
+		//满减送价格
+		if($("#price"+i).val() > 0){
+			var price = $("#price"+i).val();
+		}else{
+			var price = 0;
+			showMessage('error', '请输入优惠门槛金额');
+			return false;
+		}
+		//减现金
+		if($("input.discount"+i+"[type='checkbox']").is(':checked') == true){
+			var discount = $("#discount_input"+i+"").val();
+		}else{
+			var discount = 0;
+		}
+		//免邮
+		if($("input.free_shipping"+i+"[type='checkbox']").is(':checked') == true){
+			var free_shipping = 1;
+		}else{
+			var free_shipping = 0;
+		}
+		//送积分
+		if($("input.give_point"+i+"[type='checkbox']").is(':checked') == true){
+			var give_point = $("#give_point_input"+i).val();
+		}else{
+			var give_point = 0;
+		}
+		//送优惠券
+		if($("input.give_coupon"+i+"[type='checkbox']").is(':checked') == true){
+			var give_coupon = $("#give_coupon_select"+i).val();
+		}else{
+			var give_coupon = 0;
+		}
+		//送赠品
+		/* if($("input.gift_id"+i+"[type='checkbox']").is(':checked') == true){
+			var gift_id = $("#gift_id_select"+i).val();
+		}else{ */
+			var gift_id = 0;
+		/* } */
+		if(discount+free_shipping+give_point+give_coupon+gift_id == 0){
+			showMessage('error', '请至少选择一种优惠方式');
+			return false;
+		}
+		rule += ';'+price+','+discount+','+free_shipping+','+give_point+','+give_coupon+','+gift_id;
+	}
+	rule = rule.substring(1);
+	
+	var obj = $(".select-two table tbody tr");
+	var goods_id_array = '';
+	obj.each(function(i){
+		goods_id_array += ','+obj.eq(i).attr("goodsid");
+	});
+	goods_id_array = goods_id_array.substring(1);
+	if(goods_id_array == '' && range_type == 0){
+		showMessage('error', '请选择参加活动的商品');
+		return false;
+	}
+		if(flag){
+			return;
+		}
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/updatemansong')}",
+			data : {
+				'mansong_id' : mansong_id,
+				'mansong_name' : mansong_name,
+				'start_time' : start_time,
+				'end_time' : end_time,
+				'type' : type,
+				'range_type' : range_type,
+				'rule' : rule,
+				'goods_id_array' : goods_id_array
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/promotion/mansonglist')}");
+				}else{
+					showMessage('error', data["message"]);
+					flag = false;
+				}
+			}
+		});
+}
+/**
+*模块输入信息验证
+*/
+function verify(mansong_name, start_time, end_time){
+	if(mansong_name == ''){
+		$("#mansong_name").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(start_time == '' || end_time == ''){
+		$("#start_time").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+
+//控制商品列表显示数据
+function ShopRadio(num){
+	if(num == 0){
+		$("#some_pro").show();
+	}else if(num == 1){
+		$("#some_pro").hide();
+		$("#DiscountList").hide();
+		$("#goodsCountList tr").remove();
+		$("#condition").val("");
+		$goodsArr = new Array();
+	}
+}
+
+//添加一级优惠
+function add_reward(){
+	var len = $(".table tbody tr").length;
+	if(len >= 5){
+		$(".table tfoot").hide();
+	}else{
+		var cengji =  Number(len)+1;
+		var html = '';
+		html += '<tr>';
+		html += '<td>'+cengji+'</td>';
+		html += '<td>满&nbsp;<input type="text" id="price'+cengji+'" class="input-common" style="width:50px;vertical-align:middle;">&nbsp;元</td>';
+		html += '<td><div>';
+		html += '<p><label><input type="checkbox" name="mansong" class="discount'+cengji+'" onchange="set_rule(\'discount\','+cengji+',this)"><span id="discount'+cengji+'">减现金</span></label></p>';
+		html += '<p><label><input type="checkbox" name="mansong" class="free_shipping'+cengji+'"><span id="free_shipping'+cengji+'">免邮</span></label></p>';
+		html += '<p><label><input type="checkbox" name="mansong" class="give_point'+cengji+'" onchange="set_rule(\'give_point\','+cengji+',this)"><span id="give_point'+cengji+'">送积分</span></label></p>';
+		html += '<p><label><input type="checkbox" name="mansong" class="give_coupon'+cengji+'" onchange="set_rule(\'give_coupon\','+cengji+',this)"><span id="give_coupon'+cengji+'">送优惠券</span></label></p>';
+		// html += '<p><label><input type="checkbox" name="mansong" class="gift_id'+cengji+'" onchange="set_rule(\'gift_id\','+cengji+',this)"><span id="gift_id'+cengji+'">送赠品</span></label></p>';
+		html += '</div></td>';
+		html += '<td><a href="javascript:void(0);" onclick="del_cengji('+cengji+')">删除</a></td>';
+		html += '</tr>';
+		$(".table tbody").append(html);
+		if(cengji == 5){
+			$(".table tfoot").hide();
+		}
+	}
+}
+
+function del_cengji(cengji){
+	$(".table tbody tr:last").remove();
+}
+
+$("input[name='type']").change(function(){
+	var c = $(this).val();
+	if(c == 2){
+		$(".table tfoot").show();
+	}else{
+		$(".table tbody tr:gt(0)").remove();
+		$(".table tfoot").hide();
+	}
+});
+
+//优惠类型点击
+function set_rule(type,num,e){
+	if(type == 'discount'){
+		discount(num,e);
+	}else if(type == 'give_point'){
+		give_point(num,e);
+	}else if(type == 'give_coupon'){
+		give_coupon(num,e);
+	}else if(type == 'gift_id'){
+		gift_id(num,e);
+	}
+}
+
+//减现金
+function discount(num,e){
+	if(e.checked == true){
+		var html = "减&nbsp;<input type='text' id='discount_input"+num+"' style='width:50px;vertical-align:middle;' class='input-common'/>&nbsp;元";
+	}else{
+		var html = "减现金";
+	}
+	$("#discount"+num).html(html);
+}
+
+//送积分
+function give_point(num,e){
+	if(e.checked == true){
+		var html = "送&nbsp;<input type='text' id='give_point_input"+num+"' style='width:50px;vertical-align:middle;' class='input-common' />&nbsp;积分";
+	}else{
+		var html = "送积分";
+	}
+	$("#give_point"+num).html(html);
+}
+
+//送优惠券
+function give_coupon(num,e){
+	if(e.checked == true){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/coupontypelist')}",
+			success : function(data) {
+				var html = '送&nbsp;<select id="give_coupon_select'+num+'">';
+				for(var i=0;i<data['data'].length;i++){
+					html += '<option value="'+data['data'][i]['coupon_type_id']+'">'+data['data'][i]['coupon_name']+'</option>';
+				}
+				html += "</select>";
+				$("#give_coupon"+num).html(html);
+			}
+		});
+	}else{
+		var html = "送优惠券";
+		$("#give_coupon"+num).html(html);
+	}
+}
+
+//送赠品
+function gift_id(num,e){
+	if(e.checked == true){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/giftlist')}",
+			success : function(data) {
+				var html = '送&nbsp;<select id="gift_id_select'+num+'">';
+				for(var i=0;i<data['data'].length;i++){
+					html += '<option value="'+data['data'][i]['gift_id']+'">'+data['data'][i]['gift_name']+'</option>';
+				}
+				html += "</select>";
+				$("#gift_id"+num).html(html);
+			}
+		});
+	}else{
+		var html = "送赠品";
+		$("#gift_id"+num).html(html);
+	}
+}
+</script>
+{/block}

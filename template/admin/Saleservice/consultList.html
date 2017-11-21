@@ -1,0 +1,355 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.tr-title {
+	height: 30px;
+	background: #E3E3E3;
+	border: 1px solid rgba(234, 233, 233, 0.51);
+}
+
+.fun-a {
+	margin-top: 0px;
+	padding: 6px 15px 0 15px;
+}
+
+.a-pro-view-img {
+	float: left;
+}
+
+.thumbnail-img {
+	width: 60px;
+	margin-right: 10px;
+}
+
+.cell i {
+	display: block;
+}
+
+.remodal-bg.with-red-theme.remodal-is-opening, .remodal-bg.with-red-theme.remodal-is-opened
+	{
+	filter: none;
+}
+
+.remodal-overlay.with-red-theme {
+	background-color: #f44336;
+}
+
+.remodal.with-red-theme {
+	background: #fff;
+}
+
+input[type="radio"], input[type="checkbox"] {
+	margin: -1px 5px 0;
+	margin-left: 0px;
+}
+
+.edit-group {
+	border-bottom: 1px solid #ebebeb;
+	margin-bottom: 10px;
+}
+
+.edit-group label {
+	font-weight: normal;
+}
+
+.edit-group-title {
+	height: 15px;
+	line-height: 15px;
+	width: 140px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+.edit-group-button {
+	border-color: #3283fa;
+	border: 1px solid #bbb;
+	height: 26px;
+	line-height: 24px;
+	padding: 0 5px;
+}
+
+.group-button-bg {
+	background: #3283fa;
+	color: #fff;
+}
+
+.div-pro-view-name {
+	width: 75%;
+}
+
+i.hot, i.recommend, i.new {
+	font-size: 12px;
+	margin-right: 10px;
+	font-style: normal;
+	color: #fff;
+	background-color: #E84C3D;
+	border-radius: 2px;
+	padding: 1px 2px;
+}
+</style>
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th style="line-height:33px;">
+			咨询时间：
+			<input type="text" id="startDate" class="input-medium" placeholder="请选择开始日期" onclick="WdatePicker()" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-medium" onclick="WdatePicker()" />
+			咨询用户：<input id="goods_name" class="input-medium" type="text" value="" placeholder="请输入商品名称" >
+			咨询类型：
+			<select id="ct_id">
+				<option value="">全部</option>
+				{foreach name="ct_list" item="v"}
+				<option value="{$v['ct_id']}">{$v['ct_name']}</option>
+				{/foreach}
+			</select>
+			<input type="button" onclick="LoadingInfo(1)" value="搜索" />
+		</th>
+	</tr>
+</table>
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane active">
+		<table class="table table-striped table-main" border="0">
+			<colgroup>
+				<col style="width: 2%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 7%;">
+				<col style="width: 7%;">
+			</colgroup>
+			<tbody>
+				<tr class="table-title" style="background: white; z-index: 10; border: 1px solid #E3E3E3;">
+					<th></th>
+					<th colspan="2">商品</th>
+					<th>咨询用户</th>
+					<th colspan="1" style="text-align: center;">咨询时间</th>
+					<th style="padding-right: 35px; text-align: center;">操作</th>
+				</tr>
+				<tr class="trcss">
+					<td colspan="3">
+						<label style="display: inline-block; vertical-align: middle;">
+							<input onclick="CheckAll(this)" type="checkbox">
+							<span style="display: inline-block; margin-left: 0px; margin-right: 10px; font-weight: 400;">全选</span>
+						</label>
+						<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+					</td>
+					<td colspan="3" style="text-align: right;">
+						
+					</td>
+				</tr>
+			</tbody>
+			<tbody id="productTbody" style="border: 0px;"></tbody>
+		</table>
+	</div>
+</div>
+<input type="hidden" id="type" value="{$type}">
+
+<div class="modal fade hide" id="consult" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">咨询管理</h4>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td><b>咨询内容：</b></td>
+							<td id="consult_content"></td>
+						</tr>
+						<tr>
+							<td><b>回复内容:</b></td>
+							<td><textarea id="consult_reply"></textarea></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="hidden" id="consult_id" value="">
+				<button type="button" class="btn btn-success" data-dismiss="modal"
+					onclick="replyConsultAjax()">保存</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script type="text/javascript">
+	/**
+	 * 隐藏商品分组
+	 */
+	function hideEditGroup(){
+		$("#editGroup").popover("hide");
+	}
+	function hideSetRecommend(){
+		$("#setRecommend").popover("hide");
+	}
+	//查询用户列表
+	function LoadingInfo(page_index) {
+		var ct_id = $("#ct_id").val();
+		var type = $("#type").val();
+		var start_date = $("#startDate").val();
+		var end_date = $("#endDate").val();
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/saleservice/consultlist')}",
+			data : {
+				"page_index" : page_index, 
+				"ct_id" : ct_id, 
+				'type' : type, 
+				'page_size' : $("#showNumber").val(),
+				"start_date":start_date,
+				"end_date":end_date,
+				"goods_name" : $("#goods_name").val()
+			},
+			success : function(data) {
+				var html = '';
+				if (data["data"].length > 0) {
+					for (var i = 0; i < data["data"].length; i++) {
+						html += '<tr class="tr-title" style=" width: 1502px;"><td class="td-'+ data["data"][i]["consult_id"]+'"><label><input value="'
+								+ data["data"][i]["consult_id"]
+								+ '" tj="" name="sub" data-state="'+data["data"][i]["state"]+'" type="checkbox"></label></td>';
+						html += '<td colspan="2"><div style="display: inline-block; width: 100%;" class="pro-code"><a href="'+__URL('SHOP_MAIN/goods/goodsinfo?goodsid='+ data["data"][i]["goods_id"])+'" target="_blank"><span style="margin-right:5px;width:60px;float:left;"><img src="'+ __IMG(data["data"][i]["picture_info"]["pic_cover_micro"]) + '"/></span><span style="width: 335px;">'+ data["data"][i]["goods_name"] + '</span></a></td>';
+								/* if(data["data"][i]["state"] == 1){
+									html += '<span class="pro-code" style="color: #f35252; float: right;"> <i class="fa fa-long-arrow-up" style="margin-right: 4px;"></i>已上架';
+								}else{
+										html += '<span class="pro-code" style="color: #27A9E3; float: right;"> <i class="fa fa-long-arrow-up" style="margin-right: 4px;"></i>已下架';
+								} */
+						if(data["data"][i]["uid"] == 0){
+							html += '<td><span class="pro-code">咨询用户： 游客</span></td>';
+						}else{
+							html += '<td><span class="pro-code">咨询用户： '+data["data"][i]["member_name"]+'</span></td>';
+						}
+						html += '<td colspan="2"><span class="pro-code" >咨询时间：'+timeStampTurnTime(data["data"][i]["consult_addtime"]);
+						html += '</span></div></td></tr>';
+						html += '<tr>';
+						html += '<td colspan="5" style="background: white;">';
+						html += '<p><b>咨询内容:</b> <span class="consult_content">'+ data["data"][i]["consult_content"]+'</span></p>';
+						if(data["data"][i]["consult_reply"] != ''){
+							html += '<p><b>回复内容:</b> <span class="consult_reply">'+ data["data"][i]["consult_reply"]+'</span></p>';
+						}
+						html += '</td>';
+						html += '<td style="background: white;"><div class="cell"><div class="bs-docs-example tooltip-demo"style="text-align: center;">';
+						if(data["data"][i]["consult_reply"] != ''){
+							html += '<a href="javascript:;" data-placement="bottom" data-original-title="编辑"><span class="edit" style="display: inline-block; width: 19%;" onclick="replyConsult('
+								+ data["data"][i]["consult_id"]
+								+ ',this)"><i class="icon-edit" style="width: initial;"></i>编辑</span></a>';
+						}else{
+							html += '<a href="javascript:;" data-placement="bottom" data-original-title="回复"><span class="edit" style="display: inline-block; width: 19%;" onclick="replyConsult('
+								+ data["data"][i]["consult_id"]
+								+ ',this)"><i class="icon-edit" style="width: initial;"></i>回复</span></a>';
+						}
+						
+						html += '<a href="javascript:void(0)" data-placement="bottom"onclick="deleteConsult('
+								+ data["data"][i]["consult_id"]
+								+ ')" data-original-title="删除"><span class="del" style="display: inline-block; width: 19%;"><i class="icon-trash" style="width: initial;"></i>删除</span></a></div></div></td></tr>';
+					}
+				} else {
+					html += '<tr align="center"><th colspan="6" style="text-align: center;font-weight: normal; color: #999;">暂无符合条件的数据记录</th></tr>';
+				}
+				$("#productTbody").html(html);
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+		});
+	}
+
+	function batchDelete() {
+		var consult_id= new Array();
+		$("#productTbody input[type='checkbox']:checked").each(function() {
+			if (!isNaN($(this).val())) {
+				consult_id.push($(this).val());
+			}
+		});
+		if(consult_id.length ==0){
+			$( "#dialog" ).dialog({
+				buttons: {
+					"确定,#e57373": function() {
+						$(this).dialog('close');
+					}
+				},
+				contentText:"请选择需要操作的记录",
+				title:"消息提醒",
+			});
+			return false;
+		}
+		deleteConsult(consult_id);
+	}
+	
+	// 删除
+	function deleteConsult(consult_id){
+		$( "#dialog" ).dialog({
+            buttons: {
+                "确定": function() {
+                    $(this).dialog('close');
+                    $.ajax({
+            			type : "post",
+            			url : "{:__URL('ADMIN_MAIN/saleservice/deleteconsult')}",
+            			data : {
+            				"consult_id" : consult_id.toString()
+            			},
+    					dataType : "json",
+            			success : function(data) {
+            				if(data['code'] > 0){
+            					LoadingInfo(getCurrentIndex(consult_id,'#productTbody','tr[class="tr-title"]'));
+            					showMessage('success', data['message']);
+            				}else{
+            					showMessage('error', data['message']);
+            				}
+            			}
+            		});
+                },
+                "取消,#e57373" : function(){
+                	$(this).dialog('close');
+                }
+            },
+            contentText:"你确定删除吗？",
+            title:"消息提醒"
+        });
+	}
+	//全选
+	function CheckAll(event){
+		var checked = event.checked;
+		$("#productTbody input[type = 'checkbox']").prop("checked",checked);
+	}
+	//回复 弹出框
+	function replyConsult(consult_id, event){
+		var consult_content = $(event).parents('tr').find('.consult_content').html();
+		var consult_reply = $(event).parents('tr').find('.consult_reply').html();
+		if(consult_reply == undefined){
+			consult_reply = '';
+		}
+		$("#consult_reply").val(consult_reply);
+		$("#consult").modal('show');
+		$("#consult_id").val(consult_id);
+		$("#consult_content").html(consult_content);
+	}
+	// 回复提交
+	function replyConsultAjax(){
+		var consult_id = $("#consult_id").val();
+		var consult_reply = $("#consult_reply").val();
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/saleservice/replyconsultAjax')}",
+			data : {
+				"consult_id" : consult_id, "consult_reply" : consult_reply
+			},
+			success : function(data) {
+				if(data['code'] > 0){
+					LoadingInfo(getCurrentIndex(consult_id,'#productTbody','tr[class="tr-title"]'));
+					showMessage('success', data['message']);
+				}else{
+					showMessage('error', data['message']);
+				}
+			}
+		});
+	}
+</script>
+{/block}

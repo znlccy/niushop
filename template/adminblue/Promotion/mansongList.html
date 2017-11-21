@@ -1,0 +1,271 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<style>
+.modal-infp-style{width:90%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="10%" style="text-align: left;">
+			<button style="margin:0 5px 0 0 !important;" class="btn-common-delete btn-small" onclick="batchDelete()">批量删除</button>
+			<button style="margin:0 5px 0 0 !important;" class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/promotion/addmansong')}';">添加满减送</button>
+		</th>
+		<th width="10%">
+			<input type="text" id = 'search_text' placeholder="请输入活动名称" class="input-common" />
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<thead>
+		<tr align="center">
+			<th><input type="checkbox" onclick="CheckAll(this)"></th>
+			<th>活动名称</th>
+			<th>有效时间</th>
+			<th>活动状态</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="mansongInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>满减送详情</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td style="width:60px;">活动名称</td>
+							<td colspan='5' id="gift_name"></td>
+						</tr>
+						<tr>
+							<td>有效期</td>
+							<td colspan='5' id="time"></td>
+						</tr>
+						<tr>
+							<td>活动状态</td>
+							<td colspan='5' id="status"></td>
+						</tr>
+						<tr>
+							<td colspan='6'>优惠规则</td>
+						</tr>
+						<tr id="rule">
+							<td>满足金额</td>
+							<td>减现金</td>
+							<td>免邮费</td>
+							<td>送积分</td>
+							<td>送优惠券</td>
+							<td>送赠品</td>
+						</tr>
+						<tr>
+							<td colspan='6'>商品列表</td>
+						</tr>
+						<tr id="goods_list"></tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	var status = {$status};
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/mansonglist')}",
+		data : {
+			"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text,"status" : status
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					switch(parseInt(data['data'][i]['status'])){
+						case 0:
+							var status_name = '未发布';
+							break;
+						case 1:
+							var status_name = '正常';
+							break;
+						case 3:
+							var status_name = '已关闭';
+							break;
+						case 4:
+							var status_name = '已结束';
+							break;
+					}
+					html += '<tr align="center">';
+					html += '<td><div class="cell">';
+					if(data['data'][i]['status'] == 1){
+						html += '<label ><input name="sub_use" type="checkbox" value="'+data["data"][i]["mansong_id"]+'" disabled>';
+					}else{
+						html += '<label ><input name="sub_no_use" type="checkbox"  value="'+data["data"][i]["mansong_id"]+'">';
+					}
+					html += '</label></div></td>';
+					html += '<td>' + data["data"][i]["mansong_name"] + '</td>';;
+					html += '<td>' + timeStampTurnTime(data["data"][i]["start_time"]) + ' 至 ' + timeStampTurnTime(data["data"][i]["end_time"]) + '</td>';
+					html += '<td>'+ status_name +'</td>';
+					html += '<td>';
+					if(data['data'][i]['status'] == 0){
+						html += '<a href="'+__URL('ADMIN_MAIN/promotion/updatemansong?mansong_id=' + data["data"][i]["mansong_id"])+'">编辑</a>&nbsp;';
+						html += '<a href="javascript:void(0);"onclick="delMansong('+data["data"][i]["mansong_id"]+')">删除</a>&nbsp;'; 
+					}else if(data['data'][i]['status'] == 1){
+						html += '<a href="javascript:void(0);"onclick="closeMansong('+data["data"][i]["mansong_id"]+')">关闭</a>&nbsp;'; 
+					}else if(data['data'][i]['status'] == 3){
+						html += '<a href="javascript:void(0);"onclick="delMansong('+data["data"][i]["mansong_id"]+')">删除</a>&nbsp;'; 
+					}else if(data['data'][i]['status'] == 4){
+						html += '<a href="javascript:void(0);"onclick="delMansong('+data["data"][i]["mansong_id"]+')">删除</a>&nbsp;'; 
+					}
+					html += '<a href="javascript:void(0);"onclick="mansongInfo('+data["data"][i]["mansong_id"]+')">详情</a>&nbsp;';
+					html += '</td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+	});
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+
+//关闭满减送
+function closeMansong(mansong_id){
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/promotion/closemansong')}",
+		data : { "mansong_id" : mansong_id },
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/Promotion/mansongList')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	})
+}
+
+//删除满减送
+function delMansong(mansong_id){
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/promotion/delmansong')}",
+		data : { "mansong_id" : mansong_id.toString() },
+		dataType : "json",
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/promotion/mansonglist')}");
+			}else if(data["code"] == -1){
+				showMessage('error', '正在进行中的活动不可删除！');
+			}else{
+				showMessage('error', data['message']);
+			}
+		}
+	})
+}
+
+function mansongInfo(mansong_id){
+	$("#mansongInfo").modal("show");
+	$.ajax({
+		type:"get",
+		url : "{:__URL('ADMIN_MAIN/promotion/getmansongdetail')}",
+		data : { "mansong_id" : mansong_id },
+		success : function(data) {
+			$("#gift_name").text(data["mansong_name"]);
+			$("#time").text(timeStampTurnTime(data['start_time'])+' 至 '+timeStampTurnTime(data['end_time']));
+			switch(parseInt(data['status'])){
+				case 0:
+					var status_name = '未发布';
+					break;
+				case 1:
+					var status_name = '正常';
+					break;
+				case 3:
+					var status_name = '已关闭';
+					break;
+				case 4:
+					var status_name = '已结束';
+					break;
+			}
+			$("#status").text(status_name);
+			var rule_html = '';
+			for(var i=0;i<data['rule'].length;i++){
+				rule_html += '<tr class="rule">';
+				rule_html += '<td>'+data['rule'][i]['price']+'</td>';
+				rule_html += '<td>'+data['rule'][i]['discount']+'</td>';
+				rule_html += '<td>'+data['rule'][i]['free_shipping_name']+'</td>';
+				rule_html += '<td>'+data['rule'][i]['give_point']+'</td>';
+				rule_html += '<td>'+data['rule'][i]['coupon_name']+'</td>';
+				rule_html += '<td>'+data['rule'][i]['gift_name']+'</td>';
+				rule_html += '</tr>';
+			}
+			$("#mansongInfo table tr.rule").remove();
+			$("#rule").after(rule_html);
+			var goods_list = '';
+			if(!data['goods_list']){
+				goods_list = '<tr class="goods_list"><td colspan="6" style="text-align:center;">全场商品</td></tr>';
+			}else{
+				
+				for(var i=0;i<data['goods_list'].length;i++){
+					goods_list += '<tr class="goods_list">';
+					goods_list += '<td><img src="'+__IMG(data['goods_list'][i]['picture_info']['pic_cover_micro'])+'"></td>';
+					goods_list += '<td colspan="5">'+data['goods_list'][i]['goods_name']+'</td>';
+					goods_list += '</tr>';
+				}
+			}
+			$("#mansongInfo table tr.goods_list").remove();
+			$("#goods_list").after(goods_list);
+		}
+	})
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox'][name='sub_no_use']").prop("checked",checked);
+}
+
+//批量删除
+function batchDelete() {
+	var mansong_id = new Array();
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			mansong_id.push($(this).val());
+		}
+	});
+	if(mansong_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	delMansong(mansong_id);
+}
+</script>
+{/block}

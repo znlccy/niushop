@@ -1,0 +1,101 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<style>
+.table-logo{display:inline-block;width:75px;float:left;}
+.table-pay{display:inline-block;width:590px;overflow:hidden;margin-top: 7px;}
+.table-desc{display:inline-block;width:590px;overflow:hidden;}
+</style>
+{/block}
+{block name="main"}
+<table class="table-class">
+	<colgroup>
+		<col width="70%">
+		<col width="15%">
+		<col width="15%">
+	</colgroup>
+	<thead>
+		<tr class="table-title" style="background: white;z-index: 10;border: 1px solid #E3E3E3;">
+			<th>第三方登录</th>
+			<th style="text-align: center;">状态</th>
+			<th style="text-align: center;">操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<div class="table-logo"><img src="__PUBLIC__admin/images/wchat.png"></div>
+				<span class="table-pay">微信登录</span>
+				<span class="table-desc"></span>
+			</td>
+			{if condition="$wchat_config.is_use eq 1"}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-start" status =1 onclick="set_status('WCHAT', this)">
+					<img src="__ROOT__/public/admin/images/start.png" />
+				</a>
+			</td>
+			{else/}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-close" status =0 onclick="set_status('WCHAT', this)">
+					<img src="__ROOT__/public/admin/images/close.png" />
+				</a>
+			</td>
+			{/if}
+			<td style="text-align: center;line-height:59px;">
+				<a href="{:__URL('ADMIN_MAIN/config/loginconfig','type=wchat')}">配置</a>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="table-logo"><img src="__PUBLIC__admin/images/qq.png"></div>
+				<span class="table-pay">qq登录</span>
+				<span class="table-desc"></span> 
+			</td>
+			{if condition="$qq_config.is_use eq 1"}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-start" status =1 onclick="set_status('QQLOGIN', this)">
+					<img src="__ROOT__/public/admin/images/start.png" />
+				</a>
+			</td>
+			{else/}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-close" status =0 onclick="set_status('QQLOGIN', this)">
+					<img src="__ROOT__/public/admin/images/close.png" />
+				</a>
+			</td>
+			{/if}
+			<td style="text-align: center;line-height:59px;">
+				<a href="{:__URL('ADMIN_MAIN/config/loginconfig','type=qq')}">配置</a>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<script>
+function set_status(type,event){
+	var status = $(event).attr('status');
+	if(status == 1){
+		var change_status = 0;
+	}else{
+		var change_status = 1;
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/setstatus')}",
+		data : { 'is_use' : change_status, 'type' : type },
+		success : function(data) {
+			if (data["code"] > 0) {
+				if(status == 1){
+					$(event).attr('status', 0);
+					$(event).find('img').attr('src', '__ROOT__/public/admin/images/close.png');
+				}else{
+					$(event).attr('status', 1);
+					$(event).find('img').attr('src', '__ROOT__/public/admin/images/start.png');
+				}
+				showMessage('success', data["message"]);
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

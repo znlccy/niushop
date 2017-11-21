@@ -1,0 +1,162 @@
+{extend name="adminblue/base" /} 
+{block name="resources"/}
+{/block}
+{block name="alert_info"}
+<p>1.如果要使用伪静态，需找到application/config.php中的“REWRITE_MODEL”，将false改为true。</p>
+<p>2.路由规则添加成功后，删除掉runtime下的缓存文件，再清除掉浏览器缓存，最后进入前台首页。</p>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>伪静态路由规则：</dt>
+		<dd>
+			<input type="text" class="input-common" id="rule" onpaste="return false" onchange="url_route_if_exists('rule',this);" onKeyUp="value=value.replace(/[^\d|\w]/g,'')" maxlength="100"/>
+			<p class="hint">
+				<span style="color: orange;">伪静态路由规则不可使用"addons,base,cms,components"这些关键字</span>
+			</p>
+			<p class="error rule_error">该路由规则已经存在</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>路由地址：</dt>
+		<dd>
+			<input type="text" class="input-common" id="route" onchange="url_route_if_exists('route',this);" placeholder="路由地址由 模块名/控制器名/方法名 组成" maxlength="150" />
+			<p class="error route_error">该路由地址已经存在</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>所属模块：</dt>
+		<dd>
+			<select id="route_model" class="select-common">
+				<option value="1">shop</option>
+				<!-- <option value="2">wap</option>
+				<option value="3">admin</option> -->
+			</select>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用：</dt>
+		<dd>
+			<p><input type="checkbox" id="is_open" class="checkbox" checked></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述：</dt>
+		<dd>
+			<textarea name="" id="remark" cols="30" rows="10"></textarea>
+		</dd>
+	</dl>	
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="save();">提交</button></dd>
+	</dl>
+</div>
+<script>
+//关键字
+var keyword = new Array("addons","base","cms","components","helpcenter","login","member","notice","order","topic","basecontroller");
+$(function(){
+	keywordstr = keyword.join(",");
+	$(".hint").html('<span style="color: orange;">伪静态路由规则不可使用"' + keywordstr +'"这些关键字</span>');
+})
+var rule_if_exists = false; //伪静态路由规则是否存在
+var route_if_exists = false; //路由地址是否存在
+//判断路由规则或者路由地址是否存在
+function url_route_if_exists(type, event){
+	var value = $(event).val().toLowerCase();
+	$(event).val(value);
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/url_route_if_exists')}",
+		async : false,
+		data : {
+			"type" : type,
+			"value" : value
+		},
+		success : function(data){
+			if(data == true && type == "rule"){
+				rule_if_exists = true;
+				$(".rule_error").text("该路由规则已经存在").show();
+			}else if(data == false && type == "rule"){
+				$(".rule_error").hide();
+				rule_if_exists = false;
+			}
+			if(data == true && type == "route"){
+				route_if_exists = true;
+				$(".route_error").text("该路由地址已经存在").show();
+			}else if(data == false && type == "route"){
+				$(".route_error").hide();
+				route_if_exists = false;
+			}
+		}
+	})
+}
+var is_sub = false;
+function save(){
+	var rule = $("#rule").val().toLowerCase();
+	var route = $("#route").val().toLowerCase();
+	var route_model = $("#route_model").val();
+	if($("#is_open").is(":checked")){
+		var is_open = 1;
+	}else{
+		var is_open = 0;
+	}
+	var remark = $("#remark").val();
+	if(vertify(rule,route)){
+		if(!is_sub){
+			is_sub = true;
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/config/addRoutingRules')}",
+				data : {
+					"rule" : rule,
+					"route" : route,
+					"route_model" : route_model,
+					"is_open" : is_open,
+					"remark" : remark
+				},
+				success : function(data){
+					is_sub = false;
+					if(data["code"] > 0){
+						showMessage("success","添加成功","{:__URL('ADMIN_MAIN/config/customPseudoStaticRule')}");
+					}else{
+						showMessage("error","添加失败");
+					}
+				}
+			})	
+		}
+	}
+}
+
+function vertify(rule,route){
+	if(rule.length == 0){
+		$(".rule_error").text("伪静态路由规则不可为空").show();
+		$("#rule").focus();
+		return false;
+	}else if(rule_if_exists){
+		$(".rule_error").text("该路由规则已经存在").show();
+		$("#rule").focus();
+		return false;
+	}else{
+		for(var i = 0; i < keyword.length; i++){
+			if(rule == keyword[i]){
+				$(".rule_error").text("关键字"+ keyword[i]+"不可作为路由规则").show();
+				$("#rule").focus();
+				return false;
+			}
+		}
+	}
+	if(route.length == 0){
+		$(".route_error").text("路由地址不可为空").show();
+		$("#route").focus();
+		return false;
+	}else if(route_if_exists){
+		$(".route_error").text("该路由地址已经存在").show();
+		$("#route").focus();
+		return false;
+	}
+	$(".rule_error").hide();
+	$(".route_error").hide();
+	return true;
+}
+</script>
+{/block}

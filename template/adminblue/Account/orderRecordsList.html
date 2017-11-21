@@ -1,0 +1,91 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<td>
+			下单时间：
+			<input type="text" id="startDate" class="input-common w200" placeholder="请选择开始日期" onclick="WdatePicker()" value="{$start_time | getTimeStampTurnTime}"/>
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common w200" onclick="WdatePicker()" value="{$end_time | getTimeStampTurnTime}"/>
+			<input type="button" class="btn-common" onclick="searchData()" value="搜索" />
+		</td>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 20%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th>订单号</th>
+			<th>商品总价</th>
+			<th>订单总价</th>
+			<th>余额支付</th>
+			<th>优惠金额</th>
+			<th>实付金额</th>
+			<th>退款金额</th>
+			<th>创建时间</th>
+		</tr>
+	</thead>
+	<colgroup>
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 20%;">
+	</colgroup>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//加载数据
+function LoadingInfo(page_index) {
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/account/orderrecordslist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"start_date" : start_date,
+			"end_date" : end_date
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td>' + data["data"][i]["out_trade_no"] + '</td>';
+					html += '<td>' + data["data"][i]["goods_money"] + '</td>';
+					html += '<td>' + data["data"][i]["order_money"] + '</td>';
+					html += '<td>' + data["data"][i]["user_platform_money"] + '</td>';
+					html += '<td>' + data["data"][i]["promotion_money"] + '</td>';
+					html += '<td>' + data["data"][i]["pay_money"] + '</td>';
+					html += '<td>' + data["data"][i]["refund_money"] + '</td>';
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"]) + '</td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="8">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

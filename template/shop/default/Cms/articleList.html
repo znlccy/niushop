@@ -1,0 +1,33 @@
+{extend name="shop/default/Cms/base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="content w990 clearfix">
+	{include file='shop/default/Cms/controlLeftMenu'/}
+	<!-- 右半部分内容 -->
+	<div class="fr">
+		<div class="right-inner">
+<!-- 			<div class="title-bar"> -->
+<!-- 				<h3 class="help-tit" style="text-align: left;">{$name}</h3> -->
+<!-- 			</div> -->
+			{if condition="count($result) neq 0"}
+			{volist name="result" id="news"}
+			<div style="margin-top: 15px;">
+				<div style="margin-top: 15px; overflow: hidden;">
+					<a href="{:__URL('SHOP_MAIN/cms/articleclassinfo', 'article_id='.$news.article_id)}" style="float: left;">{$news.title}</a>
+					<span style="float: right;">{$news.create_time | getTimeStampTurnTime}</span>
+				</div>
+			</div>
+			{/volist}
+			{else/}
+			<div style="margin-top: 15px;">
+				<div style="margin-top: 15px; overflow: hidden;">
+					<span>{:lang('no_article')}</span>
+				</div>
+			</div>
+			{/if}
+		</div>
+	</div>
+	<!-- 右半部分内容 -->
+</div>
+{/block}
+{block name="javascript"} {/block}

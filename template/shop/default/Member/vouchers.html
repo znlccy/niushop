@@ -1,0 +1,45 @@
+{extend name="shop/default/Member/base" /}
+{block name="main"}
+   <div class="user-right">
+    	<div class="box">
+          <div class="tabmenu">
+            <ul class="tab pngFix">
+              <li class="active"  > <a href="#">{:lang('member_coupons')}</a> </li>
+            </ul>
+<!--             <span class="ncm-btn" title="红包序列号"> -->
+<!--             <form name="addBouns" action="user.php" method="post" onSubmit="return addBonus()"> -->
+<!--               <input onblur="if(this.value=='') this.value='优惠券序列号';" onfocus="if(this.value=='优惠券序列号') this.value='';"  name="bonus_sn" type="text" size="10" class="inputBgb" value="优惠券序列号"/> -->
+<!--               <input type="hidden" name="act" value="act_add_bonus" class="inputBg" /> -->
+<!--               <input type="submit" class="bnt_blue_b" style="border:none;width:78px;" value="添加优惠券" /> -->
+<!--             </form> -->
+<!--             </span> -->
+             </div>   
+          <div class="mar_top">
+            <div id="tab_tab1_1">
+                {if condition="count($list) neq ''"}
+              <ul class="bonus_con"> 
+	             	 {foreach name="list" item="vo"}                
+			                <li >
+			                  <p class="bonus_con_1"><strong>￥</strong><span class="type_money">{$vo.money}</span><span class="bonus_status">{$vo.state}</span></p>
+			                 <!--  <p>发行店铺：<a href="#"></a></p> -->
+			                 <p>{:lang('preference_type')}：{$vo.coupon_name}</p>
+			                 <p>{:lang('member_coupon_encoding')}：{$vo.coupon_code}</p>
+			                  <p>{:lang('member_effective_time')}：{:lang('member_by')}{$vo.end_time | getTimeStampTurnTime}</p>
+			                </li>
+	                  {/foreach} 
+             </ul>
+                 {else/}
+                  <div>
+                      <div class="emptyFrame"> <i class="user_coupon"></i><span>{:lang('member_no_coupon_yet')}！</span> </div>
+                  </div>
+	              {/if}  
+              <div class="blank5"></div>
+              <form name="selectPageForm" action="/user.php" method="get">
+      </form>
+<script>
+</script>  </div>
+          </div> 
+         
+        </div>
+    </div>
+{/block}

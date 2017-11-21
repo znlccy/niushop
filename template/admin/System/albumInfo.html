@@ -1,0 +1,204 @@
+{extend name="admin/base" /}
+{block name="resources"/}{/block}
+ {block name="right_tab"}
+<li><a  class="ncsc-btn ncsc-btn-green" style="right: 100px;position: static; "data-toggle="modal" data-target="#addalbum"><i class="icon-folder-open "></i>创建相册</a></li>
+{/block}
+{block name="main"}
+<input type="hidden" id="album_id"value="{$album_id}"/>
+<table class="mytable">
+	<tr>
+		<th>排序方式</th>
+		<th width="9%">
+			<select name="sort" id="img_sort" style="width:150px;">
+              <option value="4" selected="">按排序从大到小</option>
+              <option value="5">按排序从小到大</option>
+              <option value="0">按创建时间从晚到早</option>
+              <option value="1">按创建时间从早到晚</option>
+              <option value="2">按相册名降序</option>
+              <option value="3">按相册名升序</option>
+            </select>
+			</th>
+		<th width="10%"><input type="button" value="搜索" /></th>
+	</tr>
+</table>
+<div id="pictureFolder" class="ncsc-picture-folder">
+  <dl class="ncsc-album-intro">
+    <dt class="albume-name"><a href="index.php?act=store_album&amp;op=album_pic_list&amp;id=1">默认相册</a></dt>
+    <dd class="album-covers"><i class="icon-picture"></i></dd>
+    <dd class="album-info"></dd>
+  </dl>
+  <div id="gallery" class="ad-gallery">
+    <div class="ad-nav"><div class="ad-back"></div>
+      <div class="ad-thumbs">
+        <ul class="ad-thumb-list" id="album_Info"></ul>
+      </div>
+    <div class="ad-forward"></div></div>
+    <div class="ad-image-date">
+      <dt>图片名称</dt>
+      <dd id="img_name">640</dd>
+      <dt>图片属性</dt>
+      <dd>
+        <p id="upload_time"><b>上传时间：</b>2016-11-18</p>
+        <p><b>相册名称：</b>默认相册</p>
+        <p id="default_size"><b>原图大小：</b>16.75KB</p>
+        <p id="default_spec"><b>原图尺寸：</b>539x350</p>
+        <p>原图<span><a href="JavaScript:void(0);" target="_black" id="default_popup" class="view popup">查看</a></span></p>
+        <p>大图<span><a href="JavaScript:void(0);" target="_black" id="max_popup" class="view popup">查看</a></span></p>
+        <p>中图<span><a href="JavaScript:void(0);" target="_black" id="mid_popup" class="view popup">查看</a></span></p>
+        <p>小图<span><a href="JavaScript:void(0);" target="_black" id="small_popup" class="view popup">查看</a></span></p>
+        <p>微图<span><a href="JavaScript:void(0);" target="_black" id="tiny_popup" class="view popup">查看</a></span></p>
+      </dd>
+    </div>
+    <div class="ad-image-wrapper"><div class="ad-image" style="width: 539px; height: 350px; top: 164.778px; left: 70.2778px;"><img src="http://localhost/shop_nc/data/upload/shop/store/goods/1/1_05327773485824559_1280.jpg" width="539" height="350"><p class="ad-image-description" style="width: 525px;"><strong class="ad-description-title">640</strong></p></div><img class="ad-loader" src="http://localhost/shop_nc/shop/templates/default/images/loading.gif" style="display: none;"><div class="ad-next"><div class="ad-next-image" style="opacity: 0.7;"></div></div><div class="ad-prev" style="height: 679.556px;"><div class="ad-prev-image" style="opacity: 0.7; display: none;"></div></div></div>
+    <div class="clear"></div>
+  </div>
+</div>
+<script src="ADMIN_JS/jquery.ad-gallery.js"></script> 	
+<script type="text/javascript">
+$(function() {
+	loaduser(1);
+    var galleries = $('.ad-gallery').adGallery({loader_image:'http://localhost/shop_nc/shop/templates/default/images/loading.gif', start_at_index:0, slideshow:{enable: false,start_label: '自动播放', stop_label: '暂停'}});
+    $('#switch-effect').change(
+      function() {
+        galleries[0].settings.effect = $(this).val();
+        return false;
+      }
+    );
+    $('#toggle-slideshow').click(
+      function() {
+        galleries[0].slideshow.toggle();
+        return false;
+      }
+    );
+    $('#toggle-description').click(
+      function() {
+        if(!galleries[0].settings.description_wrapper) {
+          galleries[0].settings.description_wrapper = $('#descriptions');
+        } else {
+          galleries[0].settings.description_wrapper = false;
+        }
+        return false;
+      }
+    );
+	//var img_type = '';
+	//查看原图
+	$("#default_popup").click(function(){
+		var pic = $(".ad-image > img").attr('src');
+		p = pic.lastIndexOf('.')+1;
+		img_type = pic.substring(p);
+		pic = pic.replace('_1280.'+img_type,'');
+		$('#default_popup').attr('href',pic + '.' + img_type);
+	});
+
+	//	查看大图
+	$("#max_popup").click(function(){
+		var pic = $(".ad-image > img").attr('src');
+		p = pic.lastIndexOf('.')+1;
+		img_type = pic.substring(p);
+		pic = pic.replace('_1280'+img_type,'');
+		$('#max_popup').attr('href',pic);
+	});
+	
+	//	查看中图
+	$("#mid_popup").click(function(){
+		var pic = $(".ad-image > img").attr('src');
+		p = pic.lastIndexOf('.')+1;
+		img_type = pic.substring(p);
+		pic = pic.replace('_1280.','_360.');
+		$('#mid_popup').attr('href',pic);
+	});
+	//	查看小图
+	$("#small_popup").click(function(){
+		var pic = $(".ad-image > img").attr('src');
+		p = pic.lastIndexOf('.')+1;
+		img_type = pic.substring(p);
+		pic = pic.replace('_1280.','_240.');
+		$('#small_popup').attr('href',pic);
+	});
+	//	查看微图
+	$("#tiny_popup").click(function(){
+		var pic = $(".ad-image > img").attr('src');
+		p = pic.lastIndexOf('.')+1;
+		img_type = pic.substring(p);
+		pic = pic.replace('_1280.','_60.');
+		$('#tiny_popup').attr('href',pic);
+	});
+
+	$(".image0").click(function(){
+		ajax_change_imgmessage(this.src);
+	});
+	$(".ad-next").click(function(){
+		ajax_change_imgmessage($(".ad-image > img").attr('src'));
+	});
+	$(".ad-prev").click(function(){
+		ajax_change_imgmessage($(".ad-image > img").attr('src'));
+	});
+
+	$('.ad-back').live('click',function(){
+		if (typeof(curpage) == 'undefined'){
+			curpage = 0		}else{
+			if (curpage > 1){
+				curpage --;
+			}else{
+				return;
+			}
+		}
+		$('.ad-thumb-list').load('index.php?act=store_album&op=album_ad_ajax&id=918&class_id=1&curpage='+curpage);
+	});
+	$('.ad-forward').live('click',function(){
+		if (typeof(curpage) == 'undefined'){
+			curpage = 2;
+		}else{
+			if (curpage < 9){
+				curpage ++;
+			}else{
+				return;
+			}
+		}
+		$('.ad-thumb-list').load('index.php?act=store_album&op=album_ad_ajax&id=918&class_id=1&curpage='+curpage);
+	});
+});
+
+function ajax_change_imgmessage(url){
+	$.getJSON("http://localhost/shop_nc/shop/index.php?act=store_album&op=ajax_change_imgmessage", {'url':url}, function(data){
+		$("#img_name").html(data.img_name);
+		$("#upload_time").html('<b>上传时间：</b>'+timeStampTurnTime(data.upload_time));
+		$("#default_size").html('<b>原图大小：</b>'+data.default_size+'KB');
+		$("#default_spec").html('<b>原图尺寸：</b>'+data.default_spec);
+	});
+}
+
+function loaduser(pageIndex) {
+	var album_id = $("#album_id").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/System/albumInfo')}",
+		async : true,
+		data : {
+			"pageIndex" : pageIndex,
+			"album_id":album_id
+		},
+		success : function(data) {
+			var html = '';
+			var width=40;
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++){
+					if(i == 0){
+						html += ' <li><a href="'+ data["data"][i]["pic_cover"] +'" value="'+ data["data"][i]["pic_id"] +'" class="ad-thumb'+ i +'  ad-active"> <img title="'+ data["data"][i]["pic_name"] +'" src="'+ data["data"][i]["pic_cover_micro"] +'" class="image0" style="opacity: 1;">';
+						html += ' <input type="hidden" value=""></a> </li>';
+					}else{
+						html += ' <li><a href="'+ data["data"][i]["pic_cover"] +'" value="'+ data["data"][i]["pic_id"] +'" class="ad-thumb0"> <img title="'+ data["data"][i]["pic_name"] +'" src="'+ data["data"][i]["pic_cover_micro"] +'" class="image0" style="opacity: 1;">';
+						html += ' <input type="hidden" value=""></a> </li>';
+					}
+					width=width+100;
+				}
+			}else{
+				html += '暂无符合条件的数据记录';
+			}
+			$("#album_Info").css("width",width);
+			$("#album_Info").html(html);
+		}
+	});
+}
+</script>
+{/block}

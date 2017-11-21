@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{:lang('pay')}-{$title}</title>
+<script src="__TEMP__/{$style}/public/js/jquery.js"></script>
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/pay/pc_option_payment_common.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/pay/pc_option_payment.css">
+<style>
+.cart-btn{
+	background: #4CAF50;
+}
+.cart-btn:hover{
+	background: #479C4B;
+}
+</style>
+</head>
+<body>
+{if condition="$status==-1"}
+	<div style="position: absolute;width: 100%;height: 100%;background: rgba(0,0,0,0.8);text-align: center;">
+		<img src="__TEMP__/{$style}/public/css/pay/other_view.png" class="other-view "/>
+	</div>
+{else/}
+	
+	<div class="header container">
+		<div class="logo fl" style="width: 280px;">
+			<img src="{:__IMG($web_info.logo)}" style="width: 100%;" />
+		</div>
+	</div>
+	
+	<div class="layout cart-btn-wrap">
+		<div class="js-main container border border-gray-white text-default">
+			<div style="padding:40px;">
+				{if condition="$status==1"}
+					<p style="font-size:16px;">
+						<img src="__TEMP__/{$style}/public/css/pay/pay_success.png" style="vertical-align: middle;margin-right: 10px;width: 30px;"/>{:lang('you_have_paid_successfully')}
+					</p>
+				{else/}
+					<p style="font-size:16px;">
+						<img src="__TEMP__/{$style}/public/css/pay/pay_error.png" style="vertical-align: middle;margin-right: 10px;width: 30px;"/>{:lang('payment_failed')}
+					</p>
+				{/if}
+				<p style="text-indent: 40px;">
+					{:lang('payer')}：<span class="text-sub">{$member_info['user_info']['nick_name']}</span>
+				</p>
+				{notempty name="$order_no"}
+				<p style="text-indent: 40px;">
+					{:lang('order_number')}：<span class="text-sub">{$order_no}</span>
+				</p>
+				{/notempty}
+			</div>
+			<div class="padding-small order-container" style="margin-top:20px;">
+				<div class="text-center">
+					<a class="cart-btn text-default" href="{:__URL('SHOP_MAIN/member/index')}">{:lang('access_member_center')}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="footer">
+		<div class="copyright">
+			<div class="ft-copyright">
+				<a href="javascript:;" target="_blank">{$title}{:lang('provide_technical_support')}</a>
+			</div>
+		</div>
+	</div>
+
+{/if}
+<script>
+$(function() {
+	setFooterStyle();
+});
+function setFooterStyle(){
+	var main_height = $(".js-main").height()+220;
+	var window_height = $(window).height();
+	if(main_height>window_height){
+		$('.footer').css("position","relative");
+	}else{
+		$('.footer').css("position","fixed");
+	}
+}
+
+window.onresize = function(){
+	setFooterStyle();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.style0list table input{
+	color:#666;
+	width:206px;
+	margin-bottom: 0px;
+	border: 1px solid #ccc;
+}
+.style0list table input.sort{
+	width: auto;
+	text-align: center;
+}
+.style0list tbody td {
+	line-height:28px;
+}
+.tip-box{
+	width: 975px;
+	line-height: 150px;
+	text-align: center;
+}
+</style>
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/goods/addgoodsgroup')}"><i class="fa fa-plus-circle"></i>&nbsp;添加商品标签</a></li>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="con style0list">
+			
+			<table>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 75%;">
+					<col style="width: 20%;">
+				</colgroup>
+				<thead>
+					<tr align="center">
+						<th>排序</th>
+						<th style="text-align: left;">商品标签</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="productTbody"></tbody>
+			</table>
+
+		</div>
+	</div>
+</div>
+<style>
+</style>
+<script type="text/javascript">
+$(".style0list table input").live("change",function(){
+	var fieldid = $(this).attr('fieldid');
+	var fieldname = $(this).attr('fieldname');
+	var fieldvalue = $(this).val();
+	if(fieldvalue == ""){
+		showTip("修改内容不可为空","warning");
+		return false;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/goods/modifygoodsgroupfield')}",
+		data:{'fieldid':fieldid,'fieldname':fieldname,'fieldvalue':fieldvalue},
+		async:true,
+		success: function (data) {
+			if(data>0){
+				showTip("操作成功","success");
+			}else{
+				showTip("操作成功","error");
+			}
+		}
+	});
+});
+function tab_switch(module_id){
+	if($(".pid_"+module_id).css('display') != 'none'){
+		$(".tab_jian_"+module_id).hide();
+		$(".tab_jia_"+module_id).show();
+		$(".pid_"+module_id).hide(300);
+	}else{
+		$(".tab_jian_"+module_id).show();
+		$(".tab_jia_"+module_id).hide();
+		$(".pid_"+module_id).show(500);
+	}
+}
+	/* 删除分类 */
+	function delGroup(group_id){
+		$( "#dialog" ).dialog({
+            buttons: {
+                "确定": function() {
+                    $(this).dialog('close');
+					$.ajax({
+						type:"post",
+						url:"{:__URL('ADMIN_MAIN/goods/deletegoodsgroup')}",
+						data:{'group_id':group_id},
+						dataType : "json",
+						success:function (data) {
+							if(data['code'] > 0){
+								showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/goods/goodsgrouplist')}");
+							}else{
+								showMessage('error', data["message"]);
+							}
+						}
+					});
+                },
+    			"取消,#e57373":function(){
+    				$(this).dialog('close');
+    			}
+            },
+            contentText:"你确定删除吗？",
+            title:"消息提醒"
+        });
+	}
+	
+	function LoadingInfo(page_index) {
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/goods/goodsGroupList')}",
+			data : {
+				"page_index" : page_index,
+				"page_size" : $("#showNumber").val()
+			},
+			success : function(data) {
+				//alert(JSON.stringify(data));
+				var html = '';
+				if (data["data"].length > 0) {
+					for (var i = 0; i < data["data"].length; i++) {
+						html +='<tr class="pid_0" style="height: 30px;">';
+						html +='<td style="text-align: center;"><input type="text" class="sort" fieldid="'+data["data"][i]['group_id']+'" fieldname="sort" value="'+data["data"][i]['sort']+'" size="1" min="0"></td>';	
+						/* html +='<td style="text-align: center;">';
+						if(data["data"][i]['picture']['pic_cover'] != ''){
+							html +='<img src="'+__IMG(data["data"][i]['picture']['pic_cover'])+'" style="height:30px;">';	
+						}else{
+							html +='<img src="__STATIC__/images/left_agent_commission.png" style="height:30px;">';	
+						}
+						html +='</td>';	 */
+						
+						html +='<td><input type="text" fieldid="'+data["data"][i]['group_id']+'" fieldname="group_name" value="'+data["data"][i]['group_name']+'"></td>';	
+						/* if(data["data"][i]["is_visible"] == 1){
+							html +='<td style="text-align: center;">是</td>';
+							
+						}else{
+							html +='<td style="text-align: center;">否</td>';
+						} */
+						html +='<td style="text-align: center;"><a href="'+__URL('ADMIN_MAIN/goods/updategoodsgroup?group_id='+data["data"][i]['group_id'])+'">修改</a>&nbsp;&nbsp;';	
+						html +='<a href="javascript:void(0);" onclick="delGroup('+data["data"][i]['group_id']+')">删除</a></td>';	
+						html +='</tr>';
+					}
+				} else {
+					html += '<tr align="center"><th colspan="8" style="text-align: center;font-weight: normal;color: #999;">';
+					html += '<div class="tip-box">';
+					html += '当前系统还没有商品标签，<a href="'+__URL('ADMIN_MAIN/goods/addgoodsgroup')+'">马上添加</a>';
+					html += '</div>';
+					html += '</th></tr>';
+					
+				}
+				$("#productTbody").html(html);
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+		});
+	}
+</script>
+{/block}

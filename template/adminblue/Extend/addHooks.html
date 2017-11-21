@@ -1,0 +1,74 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>钩子名称:</dt>
+		<dd>
+			<p><input id="name" type="text" class="input-common"></p>
+			<p class="error">请输入钩子名称</p>
+			<p class="hint">需要在程序中先添加钩子，否则无效</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>钩子描述:</dt>
+		<dd>
+			<p><textarea id="desc" class="input-common"></textarea></p>
+			<p class="hint">钩子的描述信息</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>钩子类型:</dt>
+		<dd>
+			<p>
+				<select id="type" class="select-common">
+					<option value="1">视图</option>
+					<option value="2">控制器</option>
+				</select>
+			</p>
+			<p class="hint">区分钩子的主要用途</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="save()">确定</button></dd>
+	</dl>
+</div>
+<script>
+//添加广告位
+function save() {
+	var name = $("#name").val();
+	var desc = $("#desc").val();
+	var type = $("#type").val();
+	if(verify(name)){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/extend/addHooks')}",
+			data : {
+				'name' : name,
+				'desc' : desc,
+				'type' : type,
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', "添加成功","{:__URL('ADMIN_MAIN/extend/hookslist')}");
+				}else{
+					showMessage('error', "添加失败");
+				}
+			}
+		});
+	}
+}
+
+function verify(name){
+	if(name == ''){
+		$("#name").parent().next(".error").show();
+		$('#name').focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+</script>
+{/block}

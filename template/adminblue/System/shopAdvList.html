@@ -1,0 +1,149 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<style>
+.adv_url{
+	width: 200px;
+	height: 30px!important;
+	overflow : hidden;
+  	text-overflow: ellipsis;
+  	display: -webkit-box;
+  	-webkit-line-clamp: 2;
+  	-webkit-box-orient: vertical;
+}
+</style>
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/system/addshopadv','ap_id='.$ap_id)}';">添加广告</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 5%;">
+		<col style="width: 19%;">
+		<col style="width: 19%;">
+		<col style="width: 19%;">
+		<col style="width: 19%;">
+		<col style="width: 19%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th><input type="checkbox" onclick="CheckAll(this)"></th>
+			<th>名称</th>
+			<th>所属广告位</th>
+			<th>链接地址</th>
+			<th>排序</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<colgroup>
+		<col style="width: 5%;">
+		<col style="width: 19%;">
+		<col style="width: 19%;">
+		<col style="width: 19%;">
+		<col style="width: 19%;">
+		<col style="width: 19%;">
+	</colgroup>
+	<tbody id="list"></tbody>
+</table>
+<input type="hidden" id="ap_id" value="{$ap_id}">
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	LoadingInfo(1);
+})
+
+function CheckAll(event){
+	if($(event).is(":checked")){
+		$("input[name='sub']").prop("checked",true);
+	}else{
+		$("input[name='sub']").prop("checked",false);
+	}
+}
+
+function LoadingInfo(page_index) {
+	var ap_id = $("#ap_id").val();
+	var search_text = '';
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/shopadvlist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"search_text" : search_text, 
+			"ap_id" : ap_id
+		},
+		success : function(data) {
+			var html = '';
+			if (data['data'].length > 0) {
+				for (var i = 0; i < data['data'].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><input type="checkbox" name="sub" value="'+ data['data'][i]['adv_id']+'"></td>';
+					html += '<td>'+ data['data'][i]['adv_title']+'</td>';
+					html += '<td>' + data['data'][i]["ap_info"]['ap_name'] + '</td>';
+					html += '<td class="adv_url">' + data['data'][i]["adv_url"] + '</td>';
+					html += '<td class="center"><input type="text" class="silde_sort" fieldid="'+ data['data'][i]['adv_id']+'"  value="'+ data['data'][i]["slide_sort"] + '" onchange="updateAdvSort(this)" size="1" ></td>';
+					html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/updateshopadv?adv_id=' + data['data'][i]["adv_id"])+'">编辑</a> ';
+					html += '<a href="javascript:;" onclick="delShopAdv(' + data['data'][i]["adv_id"] + ')">删除</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="6">暂无符合条件的数据记录</td></tr>';
+			}
+			$("#list").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//广告列表排序
+function updateAdvSort(my){
+	var over = $(my);
+	var fieldid = over.attr('fieldid');
+	var fieldvalue = over.val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/System/modifyAdvSort')}",
+		data:{'fieldid':fieldid,'fieldvalue':fieldvalue},
+			success: function (data) {
+				window.location.reload();
+		}
+	});
+}
+
+function delShopAdv(adv_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/system/delshopadv')}",
+					data : { "adv_id" : adv_id },
+					success : function(data) {
+						if(data["code"] > 0 ){
+							showMessage('success', data["message"],__URL('ADMIN_MAIN/system/shopadvlist?ap_id={$ap_id}'));
+						}else{
+							showMessage('error', data["message"]);
+						}
+					}
+				})
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+
+$("#search_text").keypress(function(e){
+	if(e.keyCode == 13){
+		LoadingInfo(1);
+	}
+});
+</script>
+{/block}

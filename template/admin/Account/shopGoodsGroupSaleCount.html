@@ -1,0 +1,358 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/highcharts.js"></script>
+<script src="ADMIN_JS/exporting.js"></script>
+<style type="text/css">
+body{
+	font: 12px/20px "Hiragino Sans GB","Microsoft Yahei",arial,ç€¹å¬©ç¶‹,"Helvetica Neue",Helvetica,STHeiTi,sans-serif !important;
+}
+.alert{
+	color: #C09853;
+	height:auto;
+}
+.alert-info{
+	color: #3A87AD;
+}
+.w210{
+	width:210px;
+}
+.h30 {
+	height: 30px !important;
+}
+.top-alert{
+	border: 1px solid #FBEED5;
+}
+.w450 {
+	width: 450px!important;
+}
+.mr50 {
+margin-right: 50px !important;
+}
+.count-box li{
+	font: 12px/20px 'Hiragino Sans GB','Microsoft Yahei',arial,ç€¹å¬©ç¶‹,'Helvetica Neue',Helvetica,STHeiTi,sans-serif;
+}
+.mytable {border: 0;}
+.style0list tbody td {vertical-align: middle;}
+.style0list  tbody tr {border-bottom: 1px dashed  #E3E3E3;}
+a{
+	cursor:pointer;
+}
+
+.charts-nav ul li{
+	float:left;
+	margin-left:20px;
+}
+
+.mt5 li{
+	font: 12px/20px 'Hiragino Sans GB','Microsoft Yahei',arial,ç€¹å¬©ç¶‹,'Helvetica Neue',Helvetica,STHeiTi,sans-serif;
+}
+.text{
+	height:18px;
+}
+.tab-nav{
+	margin-top:10px;
+	border-bottom: 1px solid #e6e6e6;
+	margin-left:0px;
+}
+.group-class{
+	width:155px;
+}
+</style>
+ {/block}
+{block name="main"}
+<div class="alert mt10" style="clear:both;">
+	<ul class="mt5">
+		<li>1、符合以下任何一种条件的订单即为有效订单：a）采用在线支付方式支付并且已付款；b）采用货到付款方式支付并且交易已完成</li>
+		<li>2、图表展示了符合搜索条件的有效订单中的下单总金额和下单商品总数排名前30位的商品</li>
+	</ul>
+</div>
+
+<table class="search-form">
+	<input type="hidden" name="act" value="statistics_goods" />
+	<input type="hidden" name="op" value="hotgoods" />
+	<tbody>
+		<tr>
+			<td class="tr">
+				<div class="fr">
+					<label class="submit-border">
+						<input type="submit" class="submit" onclick="searchGoodsSale();"value="搜索">
+					</label>
+				</div>
+				<div class="fr">
+					<div class="fl" style="margin-right:3px;">
+						 商品分类
+						<select id="category_id_1" data-level="1"class="querySelect group-class" onchange="ClickHasSubCategory(this)">
+							<option value="0" selected>请选择</option>
+							{foreach name="cateGoryList" item="category"}
+							<option value="{$category.category_id}">{$category.category_name}</option>
+							{/foreach}
+						</select>
+						<select id="date" class="querySelect group-class">
+							<option value="1">按照天统计</option>
+							<option value="3">按照周统计</option>
+							<option value="4">按照月统计</option>
+						</select>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<div class="tabmenu tab-nav">
+	<ul class="tab pngFix">
+		<li class="ui-tabs-selected">
+			<a class="a-nav"onclick="getGoodsSalesCharts(1)">下单金额</a>
+		</li>
+		<li>
+			<a class="a-nav" onclick="getGoodsSalesCharts(2)">下单商品数</a>
+		</li>
+	</ul>
+</div>
+<div id="orderamount_div" class="ui-tabs-panel" style="display: block;">
+	<div id="container_ordergamount" data-highcharts-chart="1">
+		<div class="highcharts-container" id="highcharts-2" style="position: relative; overflow: hidden; width: 920px; height: 400px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); font-family: &amp; quot; Lucida Grande&amp;quot; , &amp; quot; Lucida Sans Unicode&amp;quot; , Verdana , Arial, Helvetica, sans-serif; font-size: 12px;"></div>
+	</div>
+</div>
+
+<div id="goodsnum_div" class="ui-tabs-panel ui-tabs-hide hide">
+	<div id="container_goodsnum" style="width: 930px;"
+		data-highcharts-chart="0">
+		<div class="highcharts-container" id="highcharts-0" style="position: relative; overflow: hidden; width: 930px; height: 400px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); font-family: &amp; quot; Lucida Grande&amp;quot; , &amp; quot; Lucida Sans Unicode&amp;quot; , Verdana , Arial, Helvetica, sans-serif; font-size: 12px;"></div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var saleNumChart, saleUnit,saleTitle,saleMoneyChart,saleMoneyStatistical,saleMoneyTimeStatistical;
+var saleNumStatistical = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var saleTimeStatistical = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
+var saleMoneyStatistical = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var saleMoneyTimeStatistical = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
+$(function() {
+	saleNumChart = new Highcharts.Chart("highcharts-2",{
+		title : {
+			text : "热卖商品top30",
+			align : "center",
+			useHTML : true
+		},
+		xAxis : {
+			categories :saleTimeStatistical 
+		},
+		lang : {
+			printChart : "打印",
+			downloadPNG : "导出PNG格式图片",
+			downloadJPEG : "导出JPEG格式图片",
+			downloadPDF : "导出PDF格式图片",
+			downloadSVG : "导出SVG格式图片"
+		},
+		yAxis : {
+			title : {
+				text :'元'
+			},
+			plotLines : [ {
+				value : 0,
+				width : 1,
+				color : '#808080'
+			} ]
+		},
+		tooltip : {
+			 valueSuffix : "元"
+		},
+		legend : {
+			enabled : false
+		},
+		credits : {
+			enabled : false,// 默认值，如果想去掉版权信息，设置为false即可
+			text : 'Niushop商城', // 显示的文字
+			href : '#', // 链接地址
+		},
+		exporting : {
+			allowHTML : true,
+			buttons : {
+				contextButton : {
+				// text : '导出'
+				}
+			}
+		},
+		series : [ {
+			name : '商品',
+			data : saleNumStatistical
+		}]
+	});
+	
+	saleMoneyChart = new Highcharts.Chart("highcharts-0",{
+		title : {
+			text : "热卖商品top30",
+			align : "center",
+			useHTML : true
+		},
+		xAxis : {
+			categories : saleMoneyTimeStatistical
+		},
+		lang : {
+			printChart : "打印",
+			downloadPNG : "导出PNG格式图片",
+			downloadJPEG : "导出JPEG格式图片",
+			downloadPDF : "导出PDF格式图片",
+			downloadSVG : "导出SVG格式图片"
+		},
+		yAxis : {
+			title : {
+				text :"件"
+			},
+			plotLines : [ {
+				value : 0,
+				width : 1,
+				color : '#808080'
+			} ]
+		},
+		tooltip : {
+			 valueSuffix : "件"
+		},
+		legend : {
+			enabled : false
+		},
+		credits : {
+			enabled : false,// 默认值，如果想去掉版权信息，设置为false即可
+			text : 'Niushop商城', // 显示的文字
+			href : '#', // 链接地址
+		},
+		exporting : {
+			allowHTML : true,
+			buttons : {
+				contextButton : {
+				// text : '导出'
+				}
+			}
+		},
+		series : [ {
+			name : '今日',
+			data : saleMoneyStatistical
+		}]
+	});
+	getGoodsSalesCharts(1);
+});
+//走势图数据
+var var_type;
+function getGoodsSalesCharts(type){
+	if(type == 1){
+		$("#orderamount_div").show();
+		$("#goodsnum_div").hide();
+	}else{
+		$("#goodsnum_div").show();
+		$("#orderamount_div").hide();
+	}
+	$(".a-nav").css("background-color","#FFF");
+	$(".a-nav").css("color","#27A9E3");
+
+	var num = type-1;
+	$(".a-nav:eq("+num+")").css("background-color","#27A9E3");
+	$(".a-nav:eq("+num+")").css("color","#FFF");
+
+	var start_date = $("#start_date").val();
+	var end_date = $("#end_date").val();
+	var category_id_1=$("#category_id_1").val();
+	var category_id_2=$("#category_id_2").val();
+	var category_id_3=$("#category_id_3").val();
+	var date = $("#date").val();
+	//type 走势图类型 2 金额 1 数量
+	var_type = type;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/account/getgoodssaleschartcount')}",
+		data:{ "type":type, "date":date, "category_id_1":category_id_1,"category_id_2":category_id_2,"category_id_3":category_id_3},
+		success : function(data) {	
+			if(type == 1){
+				saleUnit = "元";
+				saleNumStatistical = data[0];
+				saleNumChart.update({
+					xAxis : {
+						categories : saleNumStatistical
+					},
+					tooltip : {
+						 valueSuffix : saleUnit
+					},
+					series : [ {
+						name : "销售金额",
+						data : data[1]
+					}],
+					yAxis : {
+						title : {
+							text :saleUnit
+						},
+						plotLines : [ {
+							value : 0,
+							width : 1,
+							color : '#808080'
+						} ]
+					},
+				})
+				
+			}else{
+				saleUnit = "件";
+				saleMoneyStatistical = data[0];
+				saleMoneyChart.update({
+					xAxis : {
+						categories : saleMoneyStatistical
+					},
+					tooltip : {
+						 valueSuffix : saleUnit
+					},
+					series : [ {
+						name : "销售数量",
+						data : data[1]
+					}],
+					yAxis : {
+						title : {
+							text :saleUnit
+						},
+						plotLines : [ {
+							value : 0,
+							width : 1,
+							color : '#808080'
+						} ]
+					},
+				})
+				
+			}
+		
+		}
+	});
+}
+/**
+ * 查询商品销售情况
+ */
+function searchGoodsSale(){
+	getGoodsSalesCharts(var_type);
+}
+/**
+ * 获取子级分类
+ */
+function ClickHasSubCategory(event){
+	var id = $(event).val();
+	var level = $(event).data("level");
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/getchildcategory')}",
+		data:{ "categoryID":id},
+		success : function(data){
+			if(data.length > 0 && level <3){
+				if(level == 1){
+					$("#category_id_2").remove();
+					$("#category_id_3").remove();
+				}else{
+					$("#category_id_3").remove();
+				}
+			
+				var html = "<select data-level='"+(level+1)+"'id='category_id_"+(level+1)+"'class='querySelect group-class'  onchange='ClickHasSubCategory(this);'>";
+				html +="<option value='0'>请选择</option>";
+				for (var i = 0; i < data.length; i++) {
+					html +="<option value='"+data[i]["category_id"]+"'>"+data[i]["category_name"]+"</option>";
+				}
+				html += "</select>";
+				$(event).after(html);
+			}
+		}
+	})
+}
+</script>
+{/block}

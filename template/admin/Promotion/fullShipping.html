@@ -1,0 +1,163 @@
+{extend name="admin/base" /}
+{block name="main"}
+<link href="ADMIN_CSS/express/freight_edit.css" rel="stylesheet" type="text/css" />
+<div class="mod-table">
+	<div class="table-div">
+		<table>
+			<tbody>
+				<tr>
+					<td colspan="2" class="back-f5f5f5">
+						<div class="table-title-font">
+							<span>信息填写</span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="table-1td">满额包邮</td>
+					<td>
+						<div class="controls">
+							<label class="radio inline"><input type="radio" name="fare" value="1" checked="checked" id="manebaoyouResultYes">启用</label>
+							<label class="radio inline"><input type="radio" name="fare" value="0" checked="checked" id="manebaoyouResultNo">禁用</label>
+							<input type="hidden" id="is_open" value='{$info.is_open}' />
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="table-1td">包邮所需订单金额</td>
+					<td>
+						<div>
+							<input id="full_mail_money" class="input-mini input-integral" type="number" min="0.01" step="0.01" value="{$info.full_mail_money}" />
+							<span id="full_mail" class="help-inline ml15" style="display: none;color:red;">请输入包邮所需订单金额</span>
+						</div>
+						<span>请设定数字参数，全场包邮请填写0</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="table-1td">设置不包邮地区</td>
+					<td>
+						<div>
+							<span class="js-region-info region-info">{$no_mail_province}</span>
+							<a class="btn-gradient-blue js-select-city" data-flag="0" href="javascript:;">指定地区城市</a>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<p class="button mt60">
+		<button class="edit_button" type="button" onclick="SavepointConfig();">保存</button>
+	</p>
+</div>
+<!-- 不包邮地区 -->
+<div class="mask-layer"></div>
+<div id="select-region" style="left:50%;margin-left:-346px;" class="modal hide ui-draggable ui-draggable-handle in" tabindex="-1" role="dialog" >
+	<div class="title">
+		<h2>选择地区</h2>
+		<span class="cancle js-cancle">[取消]</span>
+		<span class="confirm js-confirm">[确定]</span>
+	</div>
+	<div class="cont">
+		<div class="selectSub dialog-areas">
+			<ul class="js-regions">
+				{foreach name="$address_list" item="area" key="k"}
+				{if condition="$area.province_list_count"}
+				<li>
+					<div class="dcity clearfix">
+						<!-- 大类 -->
+						<div class="ecity gcity">
+							<span class="group-label">
+								<input id="first_region_{$k}" data-first-index="{$k}" value="{foreach name="area.province_list" item="province"}{$province.province_id},{/foreach}" type="checkbox" />
+								<label for="first_region_{$k}" title="{$area.area_name}">{$area.area_name}</label>
+							</span>
+						</div>
+						
+						<!-- 省 -->
+						<div class="province-list">
+						
+							{foreach name="area.province_list" item="province" key="second"}
+							<div class="ecity">
+								<span class="gareas">
+
+									<input data-second-parent-index="{$k}" data-province-id="{$province.province_id}" id="second_region_{$k}_{$province.province_id}" type="checkbox" data-province-name="{$province.province_name}" value="{$province.province_id}" />
+									<label for="second_region_{$k}_{$province.province_id}" title="{$province.province_name}">{$province.province_name}</label>
+									<img class="drop-down" src="ADMIN_IMG/freight_city_drop_down.gif" data-level="province" />
+									
+									<!-- 市 -->
+									<div class="citys" id="citys_{$province.province_id}">
+										{foreach name="province.city_list" item="city" key="third"}
+											<span class="areas">
+												<input data-third-parent-index="{$k}" data-province-id="{$province.province_id}" data-city-id="{$city.city_id}" value="{$city.city_id}" id="third_{$k}_{$city.city_id}" type="checkbox" />
+												<label for="third_{$k}_{$city.city_id}" title="{$city.city_name}">{$city.city_name}</label>
+											</span>
+										{/foreach}
+									</div>
+								</span>
+							</div>
+							{/foreach}
+							
+						</div>
+					</div>
+				</li>
+				{/if}
+				{/foreach}
+			</ul>
+		</div>
+	</div>
+</div>
+{if condition="$info['no_mail_province_id_array'] !=''"}
+<input type="hidden" id="hidden_province_id_array" value="{$info['no_mail_province_id_array']}" />
+{else/}
+<input type="hidden" id="hidden_province_id_array"/>
+{/if}
+
+{if condition="$info['no_mail_city_id_array'] !=''"}
+<input type="hidden" id="hidden_city_id_array" value="{$info['no_mail_city_id_array']}" />
+{else/}
+<input type="hidden" id="hidden_city_id_array"/>
+{/if}
+
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+window.onload=function(){
+	var is_open = $("#is_open").val();
+	if(parseInt(is_open) == 0){
+		$("#manebaoyouResultNo").prop("checked","checked");
+	}else{
+		$("#manebaoyouResultYes").prop("checked","checked");
+	}
+};
+
+function SavepointConfig(){
+	setProvinceIdArray();
+	setCityIdArray();
+	var is_open = $("input[type='radio'][name='fare']:checked").val();
+	var full_mail_money = $("#full_mail_money").val();
+	if(full_mail_money == ''){
+		$("#full_mail").show();
+		return false;
+	}
+	var no_mail_province_id_array = $("#hidden_province_id_array").val();
+	var no_mail_city_id_array = $("#hidden_city_id_array").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/promotion/fullshipping')}",
+		data : {
+			"is_open" : is_open,
+			"full_mail_money" : full_mail_money,
+			"no_mail_province_id_array" : no_mail_province_id_array, 
+			"no_mail_city_id_array" : no_mail_city_id_array, 
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showMessage('success', data["message"]);
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+<script src="ADMIN_JS/selectNoMailArea.js"></script>
+{/block}

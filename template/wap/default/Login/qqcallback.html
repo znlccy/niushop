@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{$platform_shopname}{:lang('frame_system')}</title>
+<meta name="viewport"
+	content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<!-- <link rel="stylesheet" type="text/css"
+	href="__TEMP__/{$style}/public/css/login_wap.css"> -->
+<style type="text/css">
+.back-box {
+	width: 80%;
+	margin: 0 auto;
+}
+
+ul {
+	width: 100%;
+	list-style-type: none;
+	-webkit-padding-start: 0px !important;
+}
+
+.box-middle ul li {
+	width: 100%;
+	border-bottom: #d7dcde 1px solid;
+	height: 30px;
+	line-height: 30px;
+}
+
+.box-middle ul li img {
+	float: left;
+	height: 20px;
+	margin-top: 4px;
+	margin-right: 10px;
+}
+
+.box-middle {
+	margin-top: 10px;
+}
+
+.box-middle ul li input {
+	border: none;
+	height: 20px;
+	color: #74828d;
+	font-size: 15px;
+}
+
+.button-style {
+	width: 100%;
+	background-color: #3499DA;
+	height: 40px;
+	line-height: 40px;
+	font-size: 16px;
+	color: #FFF;
+	text-align: center;
+	border: none;
+	margin-top: 10px;
+}
+
+.xieyi-text {
+	font-size: 10px;
+}
+
+.xieyi-text input[type="checkbox"] {
+	float: left;
+	margin-top: -0px;
+}
+</style>
+</head>
+<body>
+	<script src="__TEMP__/{$style}/public/js/jquery.js"></script>
+	<div class="back-box" style="">
+		<div style="text-align: center; width: 100%;">
+			<img src="{$data.figureurl_qq_1}"
+				style="height: 100px; width: 100px; border: 1px solid black;" />
+		</div>
+		<div style="text-align: center; width: 100%;">{$data.nickname}</div>
+		<div class="box-middle">
+			<ul>
+				<li><img src="__TEMP__/{$style}/public/images/head_photo.png" /><input
+					type="text" value="{$data.nickname}" id="username" /></li>
+				<li><img src="__TEMP__/{$style}/public/images/head_pass.png" /><input
+					type=password value="" id="password" /></li>
+			</ul>
+			<input type="hidden" id="qq_info" value="{$qq_info}"> <input
+				type="hidden" id="qq_openid" value="{$qq_openid}">
+		</div>
+		<!-- <div class="xieyi-text"style="font-size:12px;">
+			<input type="checkbox" value="" />我已阅读并接受 《版权声明》 和 《隐私保护》			
+		</div> -->
+		<div>
+			<button class="button-style" onclick="addUser()">{:lang('binding')}</button>
+		</div>
+	</div>
+	<script>
+		function addUser() {
+			var username = $("#username").val();
+			var password = $("#password").val();
+			var qq_info = $("#qq_info").val();
+			var qq_openid = $("#qq_openid").val();
+			$.ajax({
+				type : "post",
+				url : "{:__URL('APP_MAIN/Login/addUser')}",
+				data : {
+					'username' : username,
+					'password' : password,
+					'qq_openid' : qq_openid,
+					'qq_info' : qq_info
+				},
+				async : true,
+				success : function(data) {
+					if (data['code'] > 0) {
+						location.href = '{:__URL("ADMIN_MAIN")}';
+					} else {
+						alert(data['message']);
+					}
+				}
+			});
+		}
+	</script>
+</body>
+</html>

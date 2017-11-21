@@ -1,0 +1,23 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_default.css">
+
+{/block}
+
+{block name="headAd"}
+{include file='shop/blue/Index/controlHeadAd' ap_id='1051'/}
+{/block}
+
+{block name="headGoodType"}
+{include file='shop/blue/controlHeadGoodType'/}
+
+{/block}
+
+{block name="main"}
+<div class="w1210">
+	<div style="min-height:400px;">{$info.content}</div>
+</div>
+
+{/block}
+{block name="javascript"}{/block}

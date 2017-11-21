@@ -1,0 +1,404 @@
+{extend name="shop/blue/Login/registerBase"}
+{block name="main"}
+<script>
+$(document).ready(function(){
+	$("#mobile").keyup(function(){
+		var mobile = $("#mobile").val();
+		var isset_mobile = $("#isset_mobile").attr("value");
+		if(mobile.search(/^1(3|4|5|7|8)\d{9}$/) == -1){
+			$("#mobile").trigger("focus");
+			$('#mobile').css("border","1px solid red");
+			$("#mobileyz").css("color","red").text("{:lang('member_enter_correct_phone_format')}");
+			return false;
+		}else{
+			$('#mobile').css("border","1px solid #ccc");
+			$("#mobileyz").css("color","red").text("");
+		}
+		if(isset_mobile == "true"){
+			$('#mobile').css("border","1px solid red");
+			$("#mobileyz").css("color","red").text("{:lang('phone_has_been_registered')}");
+			$("#mobile").trigger("focus");
+			return false;
+		}else{
+			$('#mobile').css("border","1px solid #ccc");
+			$("#mobileyz").css("color","red").text("");
+		}
+	})
+	$("#password").keyup(function(){
+		var password = $("#password").val();
+		if(password.length<5){
+			$("#password").trigger("focus");
+			$('#password').css("border","1px solid red");
+			$("#yzpassword").css("color","red").text("密码最小长度为5");
+			return false;
+		}else{
+			$('#password').css("border","1px solid #ccc");
+			$("#yzpassword").css("color","red").text("");
+		}
+	})
+	$("#repass").keyup(function(){
+		var password = $("#password").val();
+		var repass = $("#repass").val();
+		if( !(repass == password)){
+			$("#repass").trigger("focus");
+			$("#repass").css("border","1px solid red");
+			$("#qrrepass").css("color","red").text("{:lang('two_input_is_inconsistent')}");
+			$("#password").css("border","1px solid #ccc");
+			$("#yzpassword").css("color","red").text("");
+			return false;
+		}else{
+			$("#qrrepass").text("");
+			$("#repass").css("border","1px solid #ccc");
+		}
+	})
+	$("#btn_submit").click(function(){
+		var mobile = $("#mobile").val();
+		var password = $("#password").val();
+		var repass = $("#repass").val();
+		var isset_mobile = $("#isset_mobile").attr("value");
+		var vertification = $("#captcha").val();
+		var code = $("#mobileregistermodel-sms_captcha").val();
+		var agree=$('#agree').is(':checked')?'1':'0';
+		if(mobile.search(/^1(3|4|5|7|8)\d{9}$/) == -1){
+			$("#mobile").trigger("focus");
+			$('#mobile').css("border","1px solid red");
+			$("#mobileyz").css("color","red").text("{:lang('member_enter_correct_phone_format')}");
+			return false;
+		}else{
+			$('#mobile').css("border","1px solid #ccc");
+			$("#mobileyz").css("color","red").text("");
+		}
+		if(isset_mobile == "true"){
+			$('#mobile').css("border","1px solid red");
+			$("#mobileyz").css("color","red").text("{:lang('phone_has_been_registered')}");
+			$("#mobile").trigger("focus");
+			return false;
+		}else{
+			$('#mobile').css("border","1px solid #ccc");
+			$("#mobileyz").css("color","red").text("");
+		}
+		/* if(!( password.length >=6 && password.length <=16)){
+			$("#password").trigger("focus");
+			$("#password").css("border","1px solid red");
+			$("#yzpassword").css("color","red").text("密码为6到16位");
+			$('#mobile').css("border","1px solid #ccc");
+			$("#mobileyz").css("color","red").text("");
+			return false;
+		} */
+		//后台设置注册验证
+		var is_password_true = verifyPassword(password);
+		if(is_password_true > 0){
+			return false;
+		}
+		if( !(repass == password)){
+			$("#repass").trigger("focus");
+			$("#repass").css("border","1px solid red");
+			$("#qrrepass").css("color","red").text("{:lang('two_input_is_inconsistent')}");
+			$("#password").css("border","1px solid #ccc");
+			$("#yzpassword").css("color","red").text("");
+			return false;
+		}else{
+			$("#qrrepass").text("");
+			$("#repass").css("border","1px solid #ccc");
+		}
+		//验证码开启
+		{if condition = "$login_verify_code['pc'] == 1"}
+			if(vertification == ''){
+				$("#captcha").trigger("focus");
+				$("#captcha").css("border","1px solid red");
+				$("#yzpassword").text("");
+				$("#password").css("border","1px solid #ccc");
+				$("#qrrepass").text("");
+				$("#repass").css("border","1px solid #ccc");
+				$("#vertify").css("color","red").text("{:lang('please_enter_verification_code')}");
+				return false;
+			}else{
+				$("#captcha").css("border","1px solid #ccc");
+				$("#vertify").css("color","#fff");
+			}
+			{if condition="$notice['noticeMobile'] neq 1"}
+				var result="";
+				$.ajax({
+					type:"post",
+				url:"{:__URL('SHOP_MAIN/login/vertify')}",
+				data:{'vertification':$("#captcha").val()},
+				async : false,
+				dataType:'json',
+				success:function(data){
+					if (data['code'] == 1) {
+						$("#vertify").text("");
+						$("#captcha").css("border","1px solid #ccc");
+						result = true;
+						}else {
+							$("#vertify").css("color","red").text("{:lang('member_verify_code_error')}");
+							$(".verifyimg").attr("src","{:__URL('SHOP_MAIN/captcha')}");
+							result = false;
+						}
+						return result;
+				}
+				});
+				if(!result){
+					return false;
+				}
+			{/if}
+		{/if}
+		{if condition="$notice['noticeMobile'] eq 1"}
+		//短信开启
+	 	if(code.length != 6){
+			$("#mobileregistermodel-sms_captcha").trigger("change");
+			$("#mobileregistermodel-sms_captcha").css("border","1px solid red");
+			$("#qryzm").css("color","red").text("{:lang('enter_correct_authentication_code')}");
+			$("#repass").css("border","1px solid #ccc");
+			$("#qrrepass").css("color","red").text("");
+			return false;
+		} 
+		var res = false;
+		$.ajax({
+			type:"post",
+			url:"{:__URL('SHOP_MAIN/login/register_check_code')}",
+			data:{'send_param':code},
+			async : false,
+			dataType:'json',
+			success:function(data){
+				//alert(JSON.stringify(data));
+				if (data['code'] == 0) {
+					if(agree == '0'){
+						$("#is_agree").css("color","red").text("{:lang('agreement_registration_agreement')}");
+						res = true;
+					}else{
+						$("#is_agree").css("color","red").text("");
+					}
+				}else {
+					$("#qryzm").css("color","red").text("{:lang('sms_verification_code_error')}");
+					res = true;
+				}
+			}
+		}); 
+		if(res){
+			return false;
+		}	
+		{/if}
+ 		if(agree == '0'){
+			$("#is_agree").css("color","red").text("{:lang('agreement_registration_agreement')}");
+			return false;
+		}else{
+			$("#is_agree").css("color","red").text("");
+		}
+		$("#MobileRegisterModel").submit();
+	
+	});
+	$("#mobile").change(function(){
+		if(!($(this).val().search(/^1(3|4|5|7|8)\d{9}$/)==-1)){
+			$('#mobile').css("border","1px solid #ccc");
+			$("#mobileyz").css("color","red").text("");
+			$("#isset_mobile").attr("value","false");
+			$.ajax({
+				type: "GET",
+				url:"{:__URL('SHOP_MAIN/login/mobile')}",
+				data: {"mobile":$('#mobile').val()},
+				success: function(data){
+					if(data){
+						$('#mobile').css("border","1px solid red");
+						$("#mobileyz").css("color","red").text("{:lang('phone_has_been_registered')}");
+						$("#isset_mobile").attr("value","true");
+					}
+				} 
+			});
+		}
+	});
+	var is_click = 0;
+	$("#sendOutCode").click(function (){
+		var mobile = $("#mobile").val();
+		{if condition = "$login_verify_code['pc'] == 1"}
+		var vertification = $("#captcha").val();
+		{else /}
+		var vertification = '';
+		{/if}
+		//验证手机号格式是否正确
+		if(mobile.search(/^1(3|4|5|7|8)\d{9}$/) == -1){
+			$("#mobile").trigger("focus");
+			$('#mobile').css("border","1px solid red");
+			$("#mobileyz").css("color","red").text("{:lang('member_enter_correct_phone_format')}");
+			return false;
+		}
+		//验证手机号是否已经注册
+		$.ajax({
+			type: "GET",
+			url:"{:__URL('SHOP_MAIN/login/mobile')}",
+			data: {"mobile":mobile},
+			async: false,
+			success: function(data){
+				if(data){
+					$('#mobile').css("border","1px solid red");
+					$("#mobileyz").css("color","red").text("{:lang('phone_has_been_registered')}");
+					$("#isset_mobile").attr("value","true");
+					return false;
+				}else{
+			 		//判断输入的验证码是否正确 
+			 		if(is_click != 0){
+			 			return false;
+			 		}
+			 		is_click = 1;
+					$.ajax({
+						type: "POST",
+						url:"{:__URL('SHOP_MAIN/login/sendsmsregistercode')}",
+						data: {"mobile":mobile,"vertification":vertification},
+						success: function(data){
+							if(data["code"] == 0){
+								$("#mobileyz").css("color","red").text("{:lang('send_successfully')}");
+								time();
+								is_click = 0;
+							}else{
+								layer.msg(data["message"]);
+								$(".verifyimg").attr("src","{:__URL('SHOP_MAIN/captcha')}");
+								is_click = 0;
+								return false;
+							}
+						}
+					});
+				}
+			} 
+		});
+	});
+});
+var wait=120; 
+function time() { 
+	if (wait == 0) {
+		$("#sendOutCode").removeAttr("disabled");
+		$("#sendOutCode").val("{:lang('get_validation_code')}"); 
+		wait = 120;
+	} else { 
+		$("#sendOutCode").attr("disabled", 'disabled');
+		$("#sendOutCode").val(wait+"s{:lang('post_resend')}"); 
+		wait--; 
+		setTimeout(function() { 
+			time() 
+		},1000);
+	}
+}
+</script>
+<input type="hidden" value="false" id="isset_mobile"/>
+<div class="header w990">
+	<div class="logo-info">
+		<a href="{:__URL('SHOP_MAIN')}" class="web-logo-a">
+			<img alt="logo" src="{:__IMG($web_info['logo'])}" class="weblogo"/>
+		</a>
+	</div>
+</div>
+<div class="reg-content">
+	<div class="w990">
+		<div class="reg-form">
+			<div class="reg-con">
+				{include file='shop/blue/loginTopNav'/}
+				<div class="reg-wrap">
+					<div class="reg-wrap-con" style="background: url(__TEMP__/{$style}/public/images/register_bg_image.png) no-repeat right 70px;">
+					<!-- 手机注册 start -->
+						<form id="MobileRegisterModel" class="form-horizontal" name="MobileRegisterModel" action="{:__URL('SHOP_MAIN/login/mobile')}" method="post">
+							<input type="hidden" name="_csrf" value="eXVLd2ExOFMhBiocM0N.Eh0.Mg0nY2BiOxkaRAwBVxUgDQcQGQVWKw==" />
+							<!-- 手机号 -->
+							<div class="form-group form-group-spe">
+								<label for="mobileregistermodel-mobile" class="input-left">
+									<span class="spark">*</span>
+									<span>{:lang('cell_phone_number')}：</span>
+								</label>
+								<div class="form-control-box">
+									<input type="text" id="mobile" class="form-control" name="mobile" placeholder="{:lang('input_your_mobile_phone_number')}" />
+									<!-- <span class='state1'>请输入手机号</span> -->
+									<span id="mobileyz"></span>
+								</div>
+								<div class="invalid"></div>
+							</div>
+				
+							<!-- 密码 -->
+							<div class="form-group form-group-spe">
+								<label for="mobileregistermodel-password" class="input-left">
+									<span class="spark">*</span>
+									<span>{:lang('password')}：</span>
+								</label>
+								<div class="form-control-box">
+									<input type="password" id="password" class="form-control" name="password" autocomplete="off" placeholder="{:lang('please_input_password')}">
+									<span id="yzpassword"></span>
+									<!-- <span class='state1'>请输入密码</span>-->
+									<!--  <i class="fa fa-eye-slash pwd-toggle" data-id="password"></i>	-->	
+								</div>
+								<div class="invalid"></div>
+							</div>
+			
+							<!-- 确认密码 -->
+							<div class="form-group form-group-spe">
+								<label for="mobileregistermodel-password" class="input-left">
+									<span class="spark">*</span>
+									<span>{:lang('member_confirm_password')}：</span>
+								</label>
+								<div class="form-control-box">
+									<input type="password" id="repass" class="form-control" name="repass" autocomplete="off" placeholder="{:lang('confirm_the_password')}">
+									<!-- <span class='state1'>请确认密码</span> -->
+									<!--  <i class="fa fa-eye-slash pwd-toggle" data-id="password"></i>	-->	
+									<span id="qrrepass"></span>
+								</div>
+								<div class="invalid"></div>
+							</div>
+				
+							<!-- 验证码 -->
+							{if condition = "$login_verify_code['pc'] == 1"}
+							<div class="form-group form-group-spe">
+								<label for="mobileregistermodel-captcha" class="input-left">
+									<span>{:lang('member_verification_code')}：</span>
+								</label>
+								<div class="form-control-box" style="width: 450px;">
+									<input type="text" id="captcha" name="captcha" tabindex="2" placeholder="{:lang('please_enter_verification_code')}" autocomplete="off" class="text text-te" style="width: 100px;"/>
+									<label class="img" style="margin-left: 5px">
+										<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()"  alt="captcha" style="vertical-align: middle; cursor: pointer; height: 35px;" />
+									</label>
+									<span id="vertify" style="margin-left: 25px;"></span>
+								</div>
+							</div>
+							{/if}
+							
+							<!-- 短信校验码 -->	
+							{if condition="$notice['noticeMobile'] eq 1"}
+			 				<div class="form-group form-group-spe">
+								<label for="mobileregistermodel-sms_captcha" class="input-left">
+									<span class="spark">*</span>
+									<span>{:lang('sms_check_code')}：</span>
+								</label>
+								<div class="form-control-box">
+									<input type="text" id="mobileregistermodel-sms_captcha" class="input-small" name="mobile_code" />
+									<!--<a href="javascript:void(0);" class="phonecode" id="sendOutCode" name="code_mobile">获取短信校验码</a> -->
+									<input type="button" class="phonecode" id="sendOutCode" name="code_mobile" value="{:lang('get_sms_check_code')}">
+									<span id="qryzm"></span>
+								</div>
+								<div class="invalid"></div>
+							</div>
+							{/if}
+
+							<div class="form-group m-10">
+								<label class="input-left">&nbsp;</label>
+								<div class="form-control-box">
+									<label for="remember1">
+										<input type="checkbox"  name="remember" id="agree" class="checkbox m-b-6" />
+										<span>{:lang('read_and_agreed')}<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=17&class_id=6')}" class="user_protocol" target="_blank">《{:lang('user_registration_protocol')}》</a></span>
+										&nbsp;&nbsp;&nbsp;&nbsp;
+										<span id="is_agree" ></span>
+									</label>
+								</div>
+							</div>
+							<div class="reg-btn">
+								<div class="form-group form-group-spe">
+									<label for="" class="input-left"></label>
+									<div class="form-control-box">
+										<input type="button" class="btn-img btn-entry bg-color" id="btn_submit" name="btn_submit" value="{:lang('agreement_and_registrationr')}" title="{:lang('fill_in_accordance_requirements')}" />
+									</div>
+									<div class="invalid"></div>
+								</div>
+							</div>
+						</form>
+						<div id="message" style="color:red;width: 170px;height: 30px;margin-left: 160px;margin-top: -36px; display:none">{:lang('must_meet_rules_register')}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{/extend}

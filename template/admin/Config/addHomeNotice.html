@@ -1,0 +1,97 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.all.common.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>公告标题</dt>
+		<dd>
+			<input id="title" type="text" class="input-common" />
+			<span class="error">请输入公告标题</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>排序:</dt>
+		<dd>
+			<p>
+				<input id="sort" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" class="input-common" value="0" />
+				<span class="error">请输入排序号</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>公告内容</dt>
+		<dd>
+			<script id="editor" type="text/plain" style="width: 100%; height: 100px;"></script>
+			<span class="error">请输入公告内容</span>
+		</dd>
+	</dl>
+	<div style="margin:auto;width:30%;">
+		<button class="edit_button" onclick="save()">发布公告</button>
+	</div>
+</div>
+<script>
+var flag = false;//防止重复提交
+var ue = UE.getEditor('editor',{ "initialFrameHeight" : 450});
+//验证数据
+function verification(title,sort,content){
+	if(title.length == 0){
+		$("#title").next(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(sort.length == 0){
+		$("#sort").next(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(content.length == 0){
+		$("#editor").next(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+
+function save(){
+	var title = $("#title").val();
+	var sort = $("#sort").val();
+	var content = ue.getContent().replace(/\n*/g, "").replace(/\r*/g, "");
+	if(verification(title,sort,content)){
+		//防止重复提交
+		if(!flag){
+			flag = true;
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/config/addOrModifyHomeNotice')}",
+				data : {
+					'title' : title,
+					'content' : content,
+					'sort' : sort
+				},
+				success : function(data){
+					if(data['code'] > 0){
+						showMessage("success","发布成功", "{:__URL('ADMIN_MAIN/config/userNotice')}");
+					}else{
+						showMessage("error","发布失败");
+					}
+					flag = false;
+				}
+			})
+		}
+	}
+}
+</script>
+{/block}
+  
+
+
+	
+
+	
+	

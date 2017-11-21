@@ -1,0 +1,166 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.style0list tbody td{border:0;vertical-align: middle;}
+.color_danger{
+	color: red;
+	font-size: 10px;
+}
+td{
+	text-align: center;
+}
+.total{}
+.statistics{
+	border:1px solid #F5F6F5;
+	width:25%;
+	height:70px;
+	float:left;
+}
+.statistics img{
+	padding-left:15px;
+	padding-top:10px;
+	float:left;
+}
+.statistics  ul{
+	float:left;
+	font-size:12px;
+}
+.income{
+	width:100%;
+	height:260px;
+	/* border:1px solid red; */
+	clear:both;
+}
+.income-left{
+	float:left;
+	width:25%;
+	text-align:center;
+}
+.income-left ul{
+	margin:0;
+}
+.income-left ul li{
+	line-height:35px;
+}
+.income-right{
+	min-width:70%;
+	height:260px;
+	float:left;"
+}
+.withdraw-left{
+	float:left;
+	width:25%;
+	text-align:center;
+}
+.withdraw-left ul{
+	margin:0;
+}
+.withdraw-left ul li{
+	line-height:35px;
+}
+.withdraw-right{
+	min-width:70%;
+	height:260px;
+	float:left;"
+}
+.mytable select {
+	width:150px;
+}
+.goods-name{
+	max-width:30px;
+	white-space: nowrap; 
+ 	overflow:hidden;  
+	text-overflow:ellipsis;
+}
+</style>
+{/block}
+{block name="right_tab"}{/block}
+{block name="main"}
+<table class="mytable" style="margin-top:20px;">
+	<tr>
+		<th>
+			<input type="text" id="startDate" class="input-sm form-control"placeholder="请选择开始日期" onclick="WdatePicker()" />
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-sm form-control"onclick="WdatePicker()" />
+			<input type="button" onclick="LoadingInfo(1)" value="搜索" />
+		</th>
+	</tr>
+</table>
+<div class="total">
+	<div class="statistics">
+		<img src="__STATIC__/images/balance.png" />
+		<ul>
+			<li style="line-height: 40px;"><span>商品销售量</span></li>
+			<li><span style="font-size: 15px; font-weight: bold;" id="goods_sale_num">0</span></li>
+		</ul>
+	</div>	
+</div>
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="style0list">
+			<table>
+				<colgroup>
+					<col style="width: 40%;">
+					<col style="width: 20%;">
+					<col style="width: 10%;">
+					<col style="width: 30%;">
+				</colgroup>
+				<thead>
+					<tr align="left">
+						<th>商品名称 </th> 
+						<th>sku名称</th>
+						<th style="text-align:center;">购买数量</th>
+						<th style="text-align:center;">购买时间</th>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width: 40%;">
+					<col style="width: 20%;">
+					<col style="width: 10%;">
+					<col style="width: 30%;">
+				</colgroup>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+//查询用户列表
+function LoadingInfo(page_index) {
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/account/shopgoodsaccountList')}"",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"goods_id":"{$goods_id}",
+			"start_date":start_date,
+			"end_date":end_date,
+		},
+		success : function(data) {
+			var html = '';
+			if (data['data'].length > 0) {
+				for (var i = 0; i < data['data'].length; i++) {
+					html += '<tr align="center">';
+					html += '<td class="goods-name" title="' + data['data'][i]["goods_name"] + '" style="text-align:left;">' + data['data'][i]["goods_name"] + '</td>';
+					html += '<td style="text-align:left;">' + data['data'][i]["sku_name"] + '</td>';
+					html += '<td>' + data['data'][i]["num"] + '</td>';
+					html += '<td>' + timeStampTurnTime(data['data'][i]["create_time"]) + '</td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="4">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			$("#goods_sale_num").html(data['total_count']);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

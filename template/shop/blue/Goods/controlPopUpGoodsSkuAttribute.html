@@ -1,0 +1,22 @@
+<script src="__TEMP__/{$style}/public/js/goods/popupGoodsSkuAttribute.js" type="text/javascript"></script>
+<style>
+#mask{display: none; position: fixed; z-index: 9999; width: 1903px; height: 1097px; top: 0px; left: 0px; opacity: 0.15; background: rgb(0, 0, 0);}
+</style>
+<div id="speDiv" style="display: none;">
+	<div class="pop-header">
+		<span>{:lang('goods_select_commodity_attribute')}</span> <a href="javascript:closeBuy()" title="{:lang('goods_close')}" class="spe-close"></a>
+	</div>
+	<div class="attr-list js-sku-list" style="margin: 0;"><!-- ajax 加载sku属性--></div>
+	<div class="spe-btn">
+		<a href="javascript:addToCart()" class="sure-btn">{:lang('goods_add_cart')}</a>
+		<a href="javascript:closeBuy()" class="cancel-btn">{:lang('goods_cancel')}</a>
+	</div>
+	<input type="hidden" id="hidden_goodsid" />
+	<input type="hidden" id="hidden_goods_name" />
+	<input type="hidden" id="hidden_skuid" />
+	<input type="hidden" id="hidden_skuname" />
+	<input type="hidden" id="hidden_sku_price" />
+	<input type="hidden" id="hidden_default_img_id" />
+	<input type="hidden" id="hidden_max_buy" />
+</div>
+<div id="mask"></div>

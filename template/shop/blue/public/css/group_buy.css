@@ -1,0 +1,150 @@
+@charset "utf-8";
+/* CSS Document */
+.footer-info{ margin-top: 0px; padding-top: 15px;}
+.group-list .brand-info .brand-name-wrap .brand-time i, #filter .order b, #filter .pagin .icon, .filter-tag .icon, .list-grid .operate-btn i{
+	background: url(../images/common-icon.png) no-repeat;
+}
+/*************** 首页焦点区域 **********/
+.banner{ width: 100%; height: 443px; position: relative; margin-bottom: 15px;}
+/* 满屏背静切换焦点图 */
+.banner ul.full-screen-slides { width: 100%; height: 443px; position: relative; z-index: 1;}
+.banner ul.full-screen-slides li { width: 100%; height: 100%; position: absolute; z-index: 1; top: 0; left: 0;}
+.banner ul.full-screen-slides li a { display: block; width: 750px; height: 290px; text-indent: -9999px; margin-left: -365px; position: absolute; z-index: 2; left: 50%; top: 0px;}
+.banner ul.full-screen-slides-pagination { font-size: 0; *word-spacing:-1px/*IE6、7*/; text-align: center; display: block; list-style: none; width: 776px; height: 16px; padding: 7px 8px; margin-left: -395px; position: absolute; left: 50%; bottom: 10px; z-index: 3;}
+.banner ul.full-screen-slides-pagination li { vertical-align: top; letter-spacing: normal; word-spacing: normal; display: inline-block; *display:inline/*IE6、7*/; list-style: none; width: 10px; height: 10px; border-radius: 50%; margin-left: 10px; filter:progid:DXImageTransform.Microsoft.gradient(enabled='true', startColorstr='#3F000000', endColorstr='#3F000000'); background: rgba(0,0,0,0.25); overflow: hidden; cursor: pointer; *zoom:1;}
+.banner ul.full-screen-slides-pagination a { display: block; width: 100%; height: 100%; padding: 0; margin: 0; text-indent: -9999px;}
+.banner ul.full-screen-slides-pagination .current { background: #0689e1;}
+.main { width: 1210px; min-height: 430px; margin: 15px auto;}
+.group-list{ width: 1225px; display: inline-block;}
+.group-list li { float: left; width: 225px; height: 305px; border: 1px solid #ececec; position: relative; cursor: pointer; margin-right: 15px; margin-bottom: 15px; overflow: hidden;}
+.group-list li:hover { border-width: 1px; border-style: solid; bordor-color:#red;}
+.group-list li .brand-logo { position: absolute; width: 80px; height: 30px; background: #fff; top: 5px; left: 5px; z-index: 2;}
+.group-list li a { height: 100%; width: 100%; display: block; text-decoration: none; position: absolute; top: 0; left: 0; z-index: 8; cursor: pointer;}
+.group-list li a:hover { text-decoration: none;}
+.group-list li .p-img { position: relative; width: 225px; height: 220px; overflow: hidden; margin: 0 auto; text-align: center; cursor: pointer;line-height: 220px;}
+.group-list li .p-img img { vertical-align: top; width: 220px; height: 220px;}
+.group-list .brand-info { width: 198px; height: 85px; padding: 0 15px;}
+.group-list .brand-info .brand-name-wrap { height: 38px; overflow: hidden;}
+.group-list .brand-info .brand-name-wrap .b-name { width: 100%; font-size: 16px; height: 38px; line-height: 38px; color: #333; overflow: hidden;}
+.group-list li .p-img .brand-time { width: 100%; height: 35px; line-height: 35px; color: #999; margin-top: 12px; font-family: verdana; font-size: 12px; position: absolute; left: 0px; bottom: 0px; background-color: #eee; opacity: 0.9; text-align: text; }
+.group-list li .p-img .p_discount {height: 30px;top: 1px;width: 57px;z-index: 10;position: absolute;right: -9px;background-color: red;line-height: 30px;color: #fff;border-radius: 3px;}
+.group-list li .p-img .brand-time i { width: 18px; height: 18px; background-position: -364px -64px; vertical-align: middle; margin-right: 5px; margin-top: 2px; display: inline-block;}
+.group-list li .p-img .brand-time span { color: #000; font-size: 12px; display: inline-block; vertical-align: middle; text-indent: 0px;}
+.group-list .brand-info .line { width: 100%; height: 1px; border-bottom: 1px #ddd dashed; display: block; overflow: hidden;}
+.group-list .brand-info .b-price { color: #999;}
+.group-list .brand-info .b-price .price { margin-top: 5px;}
+.group-list .brand-info .b-price .price strong { font-size: 22px; display: inline-block;}
+.group-list .brand-info .b-price .price span { vertical-align: bottom; display: inline-block;}
+.group-list .brand-info .b-price .fr { margin-top: 10px;}
+.group-list .brand-info .b-price .main-btn { width: 75px; height: 25px; color: #fff; line-height: 25px; text-align: center; margin-left: 1px; border-radius: 2px; display: inline-block;}
+/*团购列表筛选*/
+.classify-screen{ border:1px solid #ececec; font-size: 12px; padding:5px 20px 0px; margin:20px auto;}
+.classify-box { border-bottom:0px; padding:10px 0px;}
+.classify-box-reg{ border: none;}
+.classify-box .classify-name{ width: 100px; float: left; font-size: 14px; font-weight: 400; text-indent: 15px;}
+.classify-box .classify-screen-con{ float: left; width: 1060px;}
+.classify-box .classify-screen-con .classify-choose{ width: 960px; float: left;}
+.classify-box .classify-screen-con a { display: inline-block; color: #666; font-size: 12px; width: 100px; height: 20px; line-height: 20px; margin-bottom: 5px; cursor: pointer; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
+.classify-box .classify-screen-con a:hover { text-decoration: none;}
+.classify-box .classify-screen-con a span { padding: 3px 10px;}
+.classify-box .classify-screen-con a:hover span { color: #ffffff;}
+.classify-box .classify-screen-con a.selected span { color: #ffffff; background: #0689e1;}
+.classify-screen-con1{ float: left; width: 960px; margin: 8px 10px 10px 92px; background: #FBFBFB; padding: 10px 10px 5px; border: 1px solid #f0f0f0;}
+/*排序*/
+#filter { border: 1px solid #EEE; background: #FFF;}
+#filter.filter-fixed { position: fixed;top: 0; z-index: 999999; width: 1208px;}
+#filter.filter-fixed .fore2 { display: none;}
+#filter .fore1 { background: #F9F9F9; height: 38px; line-height: 38px; overflow: hidden;}
+#filter .order { float: left; height: 38px;}
+#filter .order dd { float: left;}
+#filter .order a { display: block; height: 38px; padding: 0 18px; border-left: solid 1px #F9F9F9; border-right: solid 1px #F9F9F9; margin-left: -1px;}
+#filter .order .first a, #filter .order .curr.first a { margin-left: 0; border-left: 0;}
+#filter .order .curr a, #filter .order a:hover { position: relative; z-index: 1; background: #FFF; border-color: #eee; color: #E31939;}
+#filter .order b { position: relative; top: 3px; right: -1px; width: 14px; height: 14px; overflow: hidden; display: inline-block; z-index: 2;}
+#filter .order b.icon-order-DESCending { background-position: 2px -147px;}
+#filter .order .curr b.icon-order-ASCending { background-position: -23px -169px;}
+#filter .order .curr b.icon-order-DESCending, #filter .order a:hover b.icon-order-DESCending { background-position: -23px -147px;}
+#filter .pagin { float: right; line-height: 38px; overflow: hidden;}
+#filter .pagin .prev, #filter .pagin .next, #filter .pagin .text { float: left; line-height: 37px;}
+#filter .pagin .prev, #filter .pagin .next { padding: 0 15px; height: 38px;}
+#filter .pagin .icon { display: inline-block; width: 6px; height: 9px; margin-top: 14px;}
+#filter .pagin .prev .prev-btn { background-position: -26px 0;}
+#filter .pagin .prev-btn:hover { background-position: -42px 0;}
+#filter .pagin .prev-disabled { background-position: -58px 0;}
+#filter .pagin .next .next-btn { background-position: -74px 0;}
+#filter .pagin .next-btn:hover { background-position: -90px 0;}
+#filter .pagin .next-disabled { background-position: -106px 0;}
+#filter .total { float: right;}
+#filter .total span { padding: 0 3px;}
+/*列表 表格形式*/
+.list-grid { overflow: hidden;}
+.list-grid .item { float: left; font-size: 12px; width: 228px; margin: 15px 15px 0 0; padding: 1px;}
+.list-grid .item.last { margin-right: 0;}
+.list-grid .item:hover { background: #E31939;}
+.list-grid .item-con { background: #FFF; line-height: 18px; padding: 3px; border: solid 1px #eee; position: relative; z-index: 11; overflow: hidden;}
+.list-grid .item:hover .item-con { border-color: #E31939;}
+.list-grid .item-tag-box { position: absolute; left: 3px; top: 3px;}
+.list-grid .item-tag { width: 40px; height: 22px; text-align: center; position: relative; color: #fff; background: #E31939; z-index: 2;}
+.list-grid .item-tag span { display: block; width: 40px; height: 22px; line-height: 22px; text-align: center; font-size: 12px;}
+.list-grid .item-tag i { position: absolute; display: block; border-style: solid; border-width: 9px 20px; border-color: #E31939 transparent transparent;
+ left: 0; top: 22px;}
+.list-grid .item-pic a{ width: 220px; height: 220px; display: inline-block; text-align: center;}
+.list-grid .item-pic, .list-grid .item-pic img { max-width: 220px; max-height: 220px; text-align: center;}
+.list-grid .shop-over { width: 220px; height: 220px; position: absolute; left: 4px; top: 4px; background: url(../images/soldout.png) no-repeat center center;}
+.list-grid .item-info { padding: 0 6px;}
+.list-grid .item-price { display: block; height: 20px; line-height: 20px; padding: 15px 0 0; overflow: hidden;}
+.list-grid .sale-price { font-size: 20px; font-weight: 400; font-family: Arial, Helvetica, sans-serif; text-overflow: ellipsis; white-space: nowrap; width: auto; float: left; margin-right: 5px; overflow: hidden;}
+.list-grid del{ color: #b9b9b9;}
+.list-grid .sale-count { float: right; font-family: "Microsoft YaHei", Arial; color: #b9b9b9;}
+.list-grid .item-name { line-height: 20px; color: #999; height: 40px; display: block; overflow: hidden; margin: 5px 0;}
+.list-grid .item-name i{ margin-left: 5px;}
+.list-grid .item-name i.free-shipping{ border: 1px solid #ffe1d3; color: #E31939; background: #fff0e7; padding: 0px 5px;}
+.list-grid .item-name i.gift{ color: #fff; background: #0ABEDE; padding: 0px 3px;}
+.list-grid .item-con-info{ height: 30px; overflow: hidden;}
+.list-grid .item-con-info .item-operate { overflow: hidden; position: relative; height: 22px; padding: 3px 0;}
+.list-grid .item-con-info .operate-btn { float: left; width: auto; height: 18px; overflow: hidden; margin-right: 10px; padding-left: 18px; color: #b9b9b9; position: relative;}
+.list-grid .item-con-info .operate-btn i {	position: absolute; display: block; width: 14px; height: 14px; left: 0; top: 2px;}
+.list-grid .item-con-info .collet-btn i { background-position: -91px -11px;}
+.list-grid .item-con-info .operate-btn.curr, .list-grid .operate-btn:hover { color: #E31939; cursor: pointer;}
+.list-grid .item-con-info .collet-btn.curr i, .list-grid .collet-btn:hover i { background-position: -107px -11px;}
+.list-grid .item-con-info .comment-btn i { background-position: -124px -11px;}
+.list-grid .item-con-info .comment-btn:hover i { background-position: -141px -11px;}
+.list-grid .item-con-info .main-btn{ width: 50px; height: 20px; color: #fff; line-height: 20px; text-align: center; border-radius: 2px; display: inline-block;}
+/*没有信息内容时显示*/
+.tip-box { position: static; top: 50%; width: 270px; margin: 80px auto; text-align: center;}
+.tip-box .tip-icon { display: block; width: 156px; height: 85px; margin: 0 auto; background: url(../images/right_no_data.png) no-repeat 0 0;}
+.tip-box .tip-text { line-height: 20px; padding: 10px;}
+/*新增售罄样式*/
+.sell-out{ position:absolute;width: 95px;height: 95px;top: 60px;left: 50%;margin-left: -47px;background: url(../images/no-is-buy.png) no-repeat;}
+.sell-out-btn{background:#aeaeae;}
+/* ul 一行4个li  限时折扣列表 */
+ul.row-4{ width: 1225px; display: inline-block;}
+ul.row-4 li { float: left; width: 240px; padding:20px; height: 348px; border: 1px solid #ececec; position: relative; cursor: pointer; margin-right: 24px; margin-bottom: 18px; overflow: hidden;}
+ul.row-4 li:hover { border-width: 1px; border-style: solid;}
+ul.row-4 li .brand-logo { position: absolute; width: 80px; height: 30px; background: #fff; top: 5px; left: 5px; z-index: 2;}
+ul.row-4 li a.scope { height: 100%; width: 100%; display: block; text-decoration: none; position: absolute; top: 0; left: 0; z-index: 8; cursor: pointer;}
+ul.row-4 li a:hover { text-decoration: none;}
+ul.row-4 li .p-img { position: relative; width: 240px; height: 240px; overflow: hidden; margin: 20px auto 0; text-align: center; cursor: pointer;}
+ul.row-4 li .p-img img { vertical-align: top; width: 240px; height: 240px;}
+ul.row-4 .brand-info { width: 240px; height: 85px;margin:auto;}
+ul.row-4 .brand-info .brand-name-wrap { height: 38px; overflow: hidden;}
+ul.row-4 .brand-info .brand-name-wrap .b-name { width: 100%; font-size: 16px; height: 38px; line-height: 38px; color: #333; overflow: hidden;}
+ul.row-4 li .p-img .brand-time { width: 100%; height: 35px; line-height: 35px; color: #999; margin-top: 12px; font-family: verdana; font-size: 12px; position: absolute; left: 0px; bottom: 0px; background-color: #eee; opacity: 0.9; text-align: text; }
+ul.row-4 li .p-img .p_discount {height: 30px;top: 1px;width: 57px;z-index: 10;position: absolute;right: -9px;background-color: red;line-height: 30px;color: #fff;border-radius: 3px;}
+ul.row-4 li .p-img .brand-time i { width: 18px; height: 18px; background-position: -364px -64px; vertical-align: middle; margin-right: 5px; margin-top: 2px; display: inline-block;}
+ul.row-4 li .p-img .brand-time span { color: #000; font-size: 12px; display: inline-block; vertical-align: middle; text-indent: 0px;}
+ul.row-4 li .p-img .p-name{position:absolute; left:0px; bottom:0px; width:240px; height:48px; }
+ul.row-4 li .p-img .p-name .d-name{background:#fff;display:inline-block;padding:4px;border-radius:14px;margin:auto;}
+ul.row-4 li .p-img .p-name .d-name strong{background:#E84C3D; color:#fff;font-size:12px;font-weight:600;line-height:20px;padding:0 5px;border-radius:10px;}
+ul.row-4 li .p-img .p-name .g-name{background:#fff;color:#999;line-height:20px;display:block;width:240px;padding:14px 0 0;margin-top:-14px;text-align:center;}
+ul.row-4 li .goods-price{display: block;text-align: center;margin-top: 10px;}
+ul.row-4 li .goods-price .sale{color: #333;margin-right: 10px;}
+ul.row-4 li .goods-price .sale em{    font-size: 24px;color: #E84C3D;vertical-align: bottom;margin: 0 2px;}
+ul.row-4 li .goods-price .depreciate{display: block; color: #1BBC9D;}
+ul.row-4 li .goods-buy{padding: 15px 0;overflow: hidden;}
+ul.row-4 li .goods-buy .btn{    font-size: 14px;background-color: #C1392B; color: #FFF;display: block;float: right;padding: 6px 12px; border-radius: 4px;}
+ul.row-4 .brand-info .line { width: 100%; height: 1px; border-bottom: 1px #ddd dashed; display: block; overflow: hidden;}
+ul.row-4 .brand-info .b-price { color: #999;text-align: center;}
+ul.row-4 .brand-info .b-price .price { margin-top: 5px;}
+ul.row-4 .brand-info .b-price .fr { margin-top: 10px;float: none;}
+ul.row-4 .brand-info .b-price .main-btn {font-size:14px; width: 80px; height: 32px; color: #fff; line-height: 32px; text-align: center; margin-left: 1px; border-radius: 2px; display: inline-block;}

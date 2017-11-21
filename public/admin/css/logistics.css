@@ -1,0 +1,84 @@
+@charset "utf-8";
+/* CSS Document */
+
+.out-table-bar .textExplanation{display:inline-block;margin:10px 10px 10px 20px;font-size:16px;}
+.out-table-bar .number{padding:0 5px;color:#de533c;font-size:20px;}
+.out-table-bar .edit{display:inline-block;margin:10px 10px 10px 0;}
+.out-table-bar .edit .icon-pen-gray{background-position:-203px 0px;height:20px;
+									-webkit-transition:0.5s ease;
+												-moz-transition:0.5s ease;
+													-o-transition:0.5s ease;
+														transition:0.5s ease;
+}
+.out-table-bar .edit:hover .icon-pen-gray{background-position:-203px -30px;}
+
+/**tlt 0504 begin**/
+.inv-info { page-break-after:always;max-width:1000px;margin:auto; }
+.inv-info h2{padding:0 15px 10px 15px;margin:0px; border-bottom:1px dashed #ccc;text-align:center;font-size:30px;}
+.inv-info .rowcol2,
+.inv-info .rowcol1{margin:0;font-size:16px;}
+.inv-info .rowcol2:before,
+.inv-info .rowcol2:after,
+.inv-info .rowcol1:before,
+.inv-info .rowcol1:after { content:".";display:block;height:0;clear:both;visibility:hidden;}
+.inv-info .rowcol2 li{float:left;padding:3px 0;min-width:50%;}
+.inv-info .rowcol1 li {padding:5px 0; width:100%;}
+.inv-info .inv-table{margin:5px 0;border:solid 1px #333;border-radius:0;}
+.inv-info .inv-table tr{border:none;border-bottom:solid 1px #333;}
+.inv-info .inv-table td{padding:6px;border:none;border-right:solid 1px #333;font-size:16px;text-align:center;}
+.inv-info .custom-info{width:965px;height:145px;}
+/*tlt 0603 transportation*/
+.log-form .content{padding:20px;}
+.log-form .control-label{width:100px;}
+.log-form.form-horizontal .controls{margin-left:120px;}
+.log-form .c-box{margin-top:10px;padding:10px;border:1px solid #e9e9e9;background:#fdfdfd;}
+.log-form .c-box h3{margin:0 0 10px 0;line-height:30px;font-size:14px;font-weight:bold;}
+.log-form .number{margin:0 8px;font-style:normal;}
+.log-form .control-group.text{margin-bottom:5px;}
+.log-form .control-group.text .controls{padding-top:5px;vertical-align:middle;}
+.log-form .text-width{width:120px;}
+.log-form .tra-list{overflow:hidden;margin-left:29px;}
+.log-form .tra-mesg{margin:0 0 10px 0;float:left;}
+.log-form .tra-mesg li{float:left;margin:5px 0 0 0;min-width:150px;height:30px;}
+.log-form .uprow{overflow:hidden;}
+.log-form .uprow .upbox{float:left;padding:5px 29px;width: 100%;background:#efefef;}
+.log-form .uprow .upbox span,
+.log-form .uprow .upbox select,
+.log-form .uprow .upbox input[type="text"]{float:left;margin-right:10px;padding:0;height:20px;vertical-align:middle;border-radius:0;}
+.log-form .uprow .upbox select{width:60px;border-radius:3px;}
+.log-form .uprow .upbox .uploadBtn{position:relative;float:left;overflow: hidden;margin-left: -11px;width:65px;height:22px;}
+.log-form .uprow .upbox .uploadBtn input[type="file"]{position:absolute;left:0;opacity:0;height:22px;}
+.log-form .uprow .upbox .uploadBtn button{padding: 0;width:100%;height:22px;border-radius:0;border: solid 1px #adadad;}
+.log-form .tra-box{margin:10px 0;border:solid 2px #9b9b9b;}
+
+/**tlt 0505 formModal begin**/
+.form-horizontal.add-form .control-label{width:120px;}
+.form-horizontal.add-form .controls{margin-left:140px;}
+.form-horizontal.add-form .controls .input-small{width:50px;}
+.form-horizontal.add-form .controls select.input-small{width:110px;}
+.form-horizontal.add-form .controls .txtTelephone{width:138px;}
+
+.form-horizontal.set-temp .c-box{padding:20px 10px;}
+.form-horizontal.set-temp .c-box .control-group:last-child{margin-bottom:0;}
+.form-horizontal.set-temp .control-label{width:120px;}
+.form-horizontal.set-temp .controls{margin-left:140px;}
+.form-horizontal.set-temp .controls input[type="text"].in-freight{margin-left:5px;width:70px;}
+
+.form-horizontal.set-temp .radio.inline + .radio.inline,
+.form-horizontal.set-temp .checkbox.inline + .checkbox.inline{margin-left:25px;}
+
+.form-horizontal.set-temp .set-temptable{margin:0;width:100%;background:#fff;}
+.form-horizontal.set-temp .set-temptable tr th,
+.form-horizontal.set-temp .set-temptable tr td{border-right:solid 1px #e7e7eb;}
+.form-horizontal.set-temp .set-temptable tr th:last-child,
+.form-horizontal.set-temp .set-temptable tr td:last-child{border-right:solid 1px #e7e7eb;}
+
+.btn-gradient-blue{display:inline-block;padding:4px 15px;border:1px solid #377ced;border-radius:3px;color:#fff;
+					background:-webkit-linear-gradient(#4a8bf6,#377ced);
+						background:-moz-linear-gradient(#4a8bf6,#377ced);
+							background:-o-linear-gradient(#4a8bf6,#377ced);
+								 background:linear-gradient(#4a8bf6,#377ced);
+								 	background:#4a8bf6;
+}
+.btn-gradient-blue:hover,
+.btn-gradient-blue:focus{background:#377ced;color:#fff;}

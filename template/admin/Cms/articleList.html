@@ -1,0 +1,202 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.fun-a {
+	margin-top: 0px;
+	padding: 6px 15px 0 15px;
+}
+.style0list tbody td a{
+	margin-left: 8px;
+}
+.num{width:40px;text-align:center;}	
+.cell_total{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:250px;display: block;}
+.style0list table input {
+	margin-bottom: 0px;
+}
+
+.style0list table input.sort {
+	width: auto;
+	text-align: center;
+}
+
+.style0list tbody td {
+	line-height: 28px;
+}
+</style>
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/cms/addarticle')}" ><i class="fa fa-plus-circle"></i>&nbsp;添加文章</a></li>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<table class="mytable">
+			<tr>
+				<th width="2%" style="text-align: left;">
+					<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+				</th>
+				<th width="20%">
+					<input type="text" id = 'search_text' placeholder="请输入文章标题或分类名称" />
+					<input type="button" onclick="searchData()" value="搜索" />
+				</th>
+			</tr>
+		</table>
+
+	<div class="con style0list">
+		<table>
+			 <colgroup>
+				<col style="width: 1%">
+				<col style="width: 5%;">
+				<col style="width: 25%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 14%;">
+				<col style="width: 5%;">
+				<col style="width: 12%;">
+			</colgroup>
+			<thead>
+				<tr align="center">
+					<th><label><input id="ckall" type="checkbox" onClick="CheckAll(this)"></label></th>
+					<th class="x-tab"><div class="iconbg-arrow up">排序</div></th>
+					<th class="x-tab tal"><div class="iconbg-arrow up">标题</div></th>
+					<th class="x-tab tal"><div class="iconbg-arrow up">分类</div></th>
+					<th class="x-tab"><div class="iconbg-arrow up">点击量 / 评论量</div></th>
+					<th class="x-tab"><div class="iconbg-arrow up">发布时间</div></th>
+					<th class="x-tab"><div class="iconbg-arrow up">状态</div></th>
+					<th class="x-tab">操作</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$('.num').live("change",function(){
+	var fieldid = $(this).attr('fieldid');
+	var sort = $(this).val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/cms/modifyarticlefield')}",
+		data:{'fieldid':fieldid,'sort':sort},
+		success: function (data) {
+			if(data['code'] > 0){
+				showTip("修改成功","success");
+				LoadingInfo(getCurrentIndex(fieldid,'.style0list tbody'));
+			}else{
+				showTip("修改失败","error");
+			}
+		}
+	});
+});
+//分页数据
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/cms/articlelist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text },
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+					html += '<td><div class="cell"><label><input name="sub" type="checkbox" value="'+ data['data'][i]['article_id']+'" ></label></div></td>';
+					html += '<td><input type="number"  min="0" value="'+ data["data"][i]["sort"]+'"  fieldid="'+ data['data'][i]['article_id']+'" class="num" ></td>';	
+					html += '<td class="tal" title="'+data["data"][i]["title"]+'">' + data["data"][i]["title"]+ '</td>';
+					if(data["data"][i]["name"]==null){
+						html += '<td class="tal"></td>';
+					}else{
+						html += '<td class="tal">' + data["data"][i]["name"]+ '</td>';
+					}
+					html += '<td>' + data["data"][i]["click"]+ ' / ' + data["data"][i]["comment_count"]+ '</td>';
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"])+ '</td>';
+					if(data["data"][i]["status"]==0){
+						html += '<td>草稿</td>';	
+					}else if(data["data"][i]["status"]==1){
+						html += '<td>待审核</td>';
+					}else if(data["data"][i]["status"]==2){
+						html += '<td>已发布</td>';
+					}else if(data["data"][i]["status"]==-1){
+						html += '<td>回收站</td>';
+					}
+					html += '<td><a target="_blank" href="'+__URL('SHOP_MAIN/cms/articleclassinfo?article_id='+ data['data'][i]['article_id']+'&class_id='+data["data"][i]["class_id"])+'">预览</a><a href="'+__URL('ADMIN_MAIN/cms/updatearticle?id='+ data['data'][i]['article_id'])+'">修改</a><a style="cursor: pointer;" onclick="deleteArticle('+data['data'][i]['article_id']+')">删除</a></td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="9">暂无文章</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}	
+
+function batchDelete() {
+	var article_id= new Array();
+	$(".style0list tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			article_id.push($(this).val());
+		}
+	});
+	if(article_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteArticle(article_id);
+}
+var flag = false;
+//删除分类
+function deleteArticle(article_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				if(!flag){
+					flag = true;
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/cms/deletearticle')}",
+						data : { "article_id" : article_id.toString() },
+						dataType : "json",
+						success : function(data) {
+							if (data["code"] > 0) {
+								showMessage('success', data["message"]);
+								LoadingInfo(getCurrentIndex(article_id,'.style0list tbody'));
+							}else{
+								showMessage('error', data["message"]);
+							}
+							flag = false;
+						}
+					})
+				}
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否删除文章？",
+	});
+}
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".style0list tbody input[type = 'checkbox']").prop("checked",checked);
+}
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

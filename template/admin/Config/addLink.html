@@ -1,0 +1,130 @@
+{extend name="admin/base" /} {block name="resources"/}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<style>
+label {float:left;text-align: left;font-size: 12px; width:8%;overflow:hidden;color:#666;font-weight: normal;line-height: 32px;margin-bottom:0}
+label input[type="radio"]{margin: 0 5px 0 0;} 
+</style>
+{/block} {block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>名称：</dt>
+		<dd>
+			<input id="link_title" type="text" />
+			<p class="error">请输入名称</p>
+		</dd>
+		
+	</dl>
+	<dl>
+		<dt>图片：</dt>
+		<dd>
+			<div class="class-logo">
+				<p>
+					<img id="imglink_pic">
+				</p>
+			</div>
+			<div class="ncsc-upload-btn">
+				<a href="javascript:void(0);"><span> <input
+						hidefocus="true" size="1" class="input-file" name="file_upload"
+						id="uploadImg" nc_type="change_store_label" type="file"
+						onchange="imgUpload(this);"> <input type="hidden"
+						id="link_pic" /></span>
+					<p>
+						<i class="fa fa-cloud-upload text"></i>上传图片
+					</p> </a>
+			</div>
+			<p class="hint">
+				<br> <span style="color: orange;">建议使用宽100像素-高100像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否新窗口打开:</dt>
+		<dd>
+		    <label for="navigationtype1"><input type="radio" value="1" name="navigationtype" id="navigationtype1" checked/>是</label>
+			<label for="navigationtype2"><input type="radio" value="2" name="navigationtype" id="navigationtype2" />否</label>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否显示:</dt>
+		<dd>
+			<label for="showtype1"><input type="radio" value="1" name="showtype" id="showtype1" checked/>是</label>
+		    <label for="showtype2"><input type="radio" value="2" name="showtype" id="showtype2"/>否</label>
+		</dd>
+	</dl>
+	<dl>
+		<dt>链接地址:</dt>
+		<dd>
+			<p>
+				<input id="link_url" type="text" />
+			</p>
+			<p class="hint">用于网站搜索引擎的优化，关键字之间请用英文逗号分隔</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序:</dt>
+		<dd>
+			<p>
+				<input id="link_sort" type="number"  onkeyup="this.value=this.value.replace(/\D/g,'')"/>
+			</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setConfigAjax();">提交</button>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+	/**
+	 *图片上传
+	 */
+	function imgUpload(event) {
+		var fileid = $(event).attr("id");
+		var data = { 'file_path' : UPLOADCOMMON };
+		uploadFile(fileid,data,function(res){
+			if(res.code){
+				$("#imglink_pic").attr("src",__IMG(res.data));
+				$("#link_pic").val(res.data);
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		});
+	}
+	function setConfigAjax() {
+		var link_title = $("#link_title").val();
+		var link_url = $("#link_url").val();
+		var link_pic = $("#link_pic").val();
+		var link_sort = $("#link_sort").val();
+		var is_blank = $("input[name='navigationtype']:checked").val();
+		var is_show = $("input[name='showtype']:checked").val();
+		if(link_title.length == 0){
+			$("#link_title").next(".error").show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/config/addlink')}",
+			data : {
+				'link_title' : link_title,
+				'link_url' : link_url,
+				'link_pic' : link_pic,
+				'link_sort' : link_sort,
+				'is_blank' : is_blank,
+				'is_show' : is_show
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],
+							__URL("ADMIN_MAIN/config/linklist"));
+				} else {
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}
+</script>
+{/block}

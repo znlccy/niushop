@@ -1,0 +1,234 @@
+{extend name="shop/default/Member/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+{/block}
+{block name="main"}
+
+<div class="user-right"> 
+	<div class="account">
+	
+		<div class="notice">
+			<i></i>
+			<span>{:lang('member_user_center_bulletin')}：</span>
+			<marquee direction="left" align="left" behavior="scroll" scrollamount="1" scrolldelay="0" loop="-1">{$user_notice}</marquee>
+		</div>
+		
+		<div class="money">
+			<ul class="clearfix">
+				
+				<li class="first">
+					<div class="title"><span>{:lang('member_balance')}</span></div>
+					<div class="pic">
+						<a href="{:__URL('SHOP_MAIN/member/balancelist')}"><i class="user_bg"></i></a>
+					</div>
+					<p><a href="{:__URL('SHOP_MAIN/member/balancelist')}">{$balance}</a></p>
+				</li>
+				
+				<li class="third">
+					<div class="title"><span>{:lang('goods_integral')}</span></div>
+					<div class="pic">
+						<a href="{:__URL('SHOP_MAIN/member/integrallist')}"><i class="user_bg"></i></a>
+					</div>
+					<p><a href="{:__URL('SHOP_MAIN/member/integrallist')}">{$point}{:lang('goods_integral')}</a></p>
+				</li>
+				
+				<li class="second">
+					<div class="title"><span>{:lang('coupon')}</span></div>
+					<div class="pic">
+						<a href="{:__URL('SHOP_MAIN/member/vouchers')}"><i class="user_bg"></i></a>
+					</div>
+					<p><a href="{:__URL('SHOP_MAIN/member/vouchers')}">{$vouchersCount} {:lang('member_zhang')}</a></p>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="security">
+			{if condition="$member_info['user_info']['user_tel'] neq '' and $member_info['user_info']['user_email'] neq ''"}
+			
+			<div class="improve">
+				<p>{:lang('member_safety_level')}</p>
+				<span class="improve-name">{:lang('member_security')}</span>
+				<i class="hign"><em></em></i>
+				<a href="{:__URL('SHOP_MAIN/member/usersecurity')}" title="{:lang('member_security_level')}">{:lang('member_promote')} &gt;</a>
+			</div>
+			
+			{elseif condition="$member_info['user_info']['user_tel'] neq '' OR $member_info['user_info']['user_email'] neq ''"/}
+			
+			<div class="improve">
+				<p>{:lang('member_safety_level')}</p>
+				<span class="improve-name">{:lang('member_good')}</span>
+				<i class="middle"><em></em></i> 
+				<a href="{:__URL('SHOP_MAIN/member/usersecurity')}" title="{:lang('member_security_level')}">{:lang('member_promote')} &gt;</a>
+			</div>
+			
+			{else /}
+			
+			<div class="improve">
+				<p>{:lang('member_safety_level')}</p>
+				<span class="improve-name">{:lang('goods_commonly')} </span>
+				<i class="low"><em></em></i> 
+				<a href="{:__URL('SHOP_MAIN/member/usersecurity')}" title="{:lang('member_security_level')}">{:lang('member_promote')} &gt;</a>
+			</div>
+			
+			{/if}
+			
+			<div class="safe-info clearfix">
+				<div class="safe-type phone">
+					<i class="tit-icon"></i>
+					<span class="safe-name">{:lang('member_phone')}：
+					{if condition="$member_info['user_info']['user_tel'] neq ''"}
+						<span class="user_safe_info" title="{$member_info['user_info']['user_tel']}">{$member_info['user_info']['user_tel']}</span></span>
+						<a class="res jc" href="{:__URL('SHOP_MAIN/member/usersecurity','atc=user_mobile')}">{:lang('member_unbound')}</a>
+					{else /}
+					</span>
+						<a class="res" href="{:__URL('SHOP_MAIN/member/usersecurity','atc=user_mobile')}">{:lang('member_no_bound')}</a>
+					{/if}
+				</div>
+				
+				<div class="safe-type mail">
+					<i class="tit-icon"></i>
+					<span class="safe-name">{:lang('mailbox')}：
+					{if condition="$member_info['user_info']['user_email'] neq ''"}
+					<span class="user_safe_info" title="{$member_info['user_info']['user_email']}">{$member_info['user_info']['user_email']}</span></span>
+					<a class="res jc" href="{:__URL('SHOP_MAIN/member/usersecurity','atc=user_email')}">{:lang('member_unbound')}</a>
+					{else /}
+					</span><a class="res" href="{:__URL('SHOP_MAIN/member/usersecurity','atc=user_email')}">{:lang('member_no_bound')}</a>
+					{/if}
+				</div>
+			</div>
+			
+		</div>
+
+		<div class="middle order">
+			<div class="line1 clearfix">
+				<div class="title"><i></i><span>{:lang('member_transaction_reminder')}</span></div>
+				<div class="status">
+					<ul>
+						<li>
+							<a href="{:__URL('SHOP_MAIN/member/orderlist','status=0')}" title="{:lang('member_pending_payment')}">{:lang('member_pending_payment')}<span>{$order_status_num['wait_pay']}</span></a>
+							<i></i>
+						</li>
+						<li>
+							<a href="{:__URL('SHOP_MAIN/member/orderlist','status=5')}" title="{:lang('member_pending_evaluation')}">{:lang('member_pending_evaluation')}<span>{$order_status_num['wait_evaluate']}</span></a>
+						</li>
+					</ul>
+				</div>
+				<a class="more" href="{:__URL('SHOP_MAIN/member/orderlist')}" title="{:lang('member_view_all_orders')}">{:lang('member_view_all_orders')} &gt;</a>
+			</div>
+			
+			{if condition="count($orderList) neq 0"}
+			<div class="proListUc">
+				{foreach $orderList as $order}
+				<ul class="listLine clearfix">
+					<li>
+						<ul class="img clearfix">
+							<li>
+								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$order['order_item_list'][0]['goods_id'])}" title="{$order.order_item_list.0.goods_name}" target="_blank">
+									<img src="{:__IMG($order['order_item_list'][0]['picture']['pic_cover_small'])}" alt="{$order.order_item_list.0.goods_name}" /> 
+								</a>
+								<span class="order-num">{$order.order_item_list|count}</span>
+							</li>
+						</ul>
+					</li>
+					<li class="name">
+						<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$order['order_item_list'][0]['goods_id'])}" title="{$order.order_item_list.0.goods_name}" target="_blank">{$order.order_item_list.0.goods_name}</a>
+					</li>
+					<li class="attr"></li>
+					<li class="type">
+						<a class="cancel-order" href="javascript:;" onclick="cancle_order({$order.order_id})">{:lang('member_cancellation_order')}</a>
+					</li>
+					<li class="check">
+						<a href="{:__URL('SHOP_MAIN/member/orderdetail','orderid='.$order['order_id'])}" title="{:lang('member_view_order')}" target="_blank">{:lang('member_see')}</a>
+					</li>
+				</ul>
+				{/foreach}
+			</div>
+			{else/}
+			<div class="emptyFrame clearfix"><i class="user_bg"></i><span>{:lang('goods_empty_and_look')}！</span></div>
+			{/if}
+		</div>
+		
+		<div class="middle cart">
+			<div class="line1 clearfix">
+				<div class="title"><i></i><span>{:lang('member_my_shopping_cart')}</span></div>
+			</div>
+			{if condition="count($cart_list) neq 0"}
+			<div class="proListUc_cart">
+				<div class="div_scroll">
+					<div style="float:left; height:auto; width:auto">
+						<ul class="listLine_cart clearfix">
+						{foreach name="cart_list" item = "cart"}
+							<li>
+								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$cart['goods_id'])}" target="_blank" title="{$cart.goods_name}" class="pic">
+									<img src="{:__IMG($cart['picture_info']['pic_cover_small'])}" alt="{$cart.goods_name}" />
+								</a>
+								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$cart['goods_id'])}" target="_blank" title="{$cart.goods_name}" class="name">{$cart.goods_name}</a>
+								<p>{:lang('goods_sale_price')}：<font>￥{$cart.price}</font></p>
+							</li>
+						{/foreach}
+						</ul>
+					</div>
+				</div>
+				<p class="more"><a href="{:__URL('SHOP_MAIN/goods/cart')}" target="_blank" title="{:lang('member_view_shopping_cart')}">{:lang('member_view_shopping_cart')} &gt;</a></p>
+			</div>
+			{else/}
+			<div class="emptyFrame_cart"><i class="user_bg"></i><span>{:lang('goods_empty_and_look')}！</span></div>
+			{/if}
+		</div>
+
+		<div class="middle collect">
+			<div class="line1" id="tab1">
+				<div class="title"><i></i><span>{:lang('member_merchandise_collection')}</span></div>
+			</div>
+			<div style="height:0px;line-height:0px;clear:both"></div>
+			<div class="tab_con" style="width:100%">
+				<div id="con_tab_1">
+					{if condition="$goods_collection_list_count>0"}
+					<div class="colList clearfix">
+						<div class="colFrame">
+							<ul style="left: 0px;" class="clearfix">
+							{foreach name="goods_collection_list" item="goods" key="k"}
+								{notempty name="$goods['goods_id']"}
+									<li class="first">
+										<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" title="{$goods.goods_name}" target="_blank" class="img">
+											<img src="{:__IMG($goods['pic_cover_mid'])}" alt="{$goods.goods_name}" />
+											<span>￥{$goods.promotion_price}</span>
+										</a>
+										<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" title="{$goods.goods_name}" target="_blank" class="name">{$goods.goods_name}</a>
+									</li>
+								{/notempty}
+							{/foreach}
+							</ul>
+						</div>
+						<p class="more"><a href="{:__URL('SHOP_MAIN/member/goodscollectionlist')}" title="{:lang('member_check_out_collection')}">{:lang('member_check_out_collection')} &gt;</a></p>
+					</div>
+					{else/}
+					<div class="emptyFrame_collect"> <i class="user_bg"></i><span>{:lang('goods_empty_and_look')}！</span></div> 
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="javascript"}
+<script type="text/javascript">
+function cancle_order(order_id){
+	$.ajax({
+		url:"{:__URL('SHOP_MAIN/member/orderclose')}",
+		type:'post',
+		data:{'order_id':order_id},
+		dataType:"json",
+		success:function(res){
+			// alert(JSON.stringify(res));
+			if(res['code']>0){
+				$.msg("{:lang('member_cancel_order_successfully')}");
+				location.href=__URL("SHOP_MAIN/member/index");
+			}else{
+				$.msg(res['message']);
+			}
+		}
+	})
+}
+</script>
+{/block}

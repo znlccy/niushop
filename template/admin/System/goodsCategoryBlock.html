@@ -1,0 +1,495 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style  type="text/css">
+.modal-div{
+	width:90%;
+	margin:auto;
+}
+.modal-dl{
+	overflow:hidden;
+}
+.modal-dl dt{
+	line-height:33px;
+	float:left;
+	font-weight:normal;
+}
+.modal-dl dd{
+	float:left;
+}
+.modal-dl dd span{
+	display:block;
+	color:#de533c;
+}
+.btn.off{
+	background-color:#e26f6f;
+	color:#FFF;
+}
+.btn.sure{
+	color:#FFF;
+	background-color:#62c462;
+}
+.silde_sort {
+	width: auto;
+	text-align: center;
+}
+
+/*独立*/
+.status-error{
+	display:inline-block;
+	padding-left:5px;
+	padding-right:5px;	
+	padding-bottom:3px;
+	padding-top:3px;
+	color:#FFF;
+	background-color:#de533c;
+}
+/*独立*/
+.status-success{
+	display:inline-block;
+	color:#FFF;
+	padding-left:5px;
+	padding-right:5px;	
+	padding-bottom:3px;
+	padding-top:3px;
+	background-color:#5be15b;
+}
+.style0list input{margin-bottom:0px;}
+.style0list tbody td{
+	vertical-align:inherit;
+}
+.category_alias{
+	width:100px;
+}
+.short_name{
+	width:100px;
+}
+.sort{
+	width:30px;
+}
+.floor_goods_sort_type{
+	width: 120px;
+}
+.floor_checked{
+	display: none;
+}
+.floor_checked + label{
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	background: url("ADMIN_IMG/un_checked.png") center no-repeat;
+	background-size: 15px 15px;
+	margin-bottom: 0;
+}
+.floor_checked + label + span{
+	color: #777;
+	position: relative;
+    margin-left: 5px;
+    top: -2px;
+}
+.floor_checked:checked + label{
+	background: url("ADMIN_IMG/checked.png") center no-repeat;
+	background-size: 15px 15px;
+}
+.floor_checked:checked + label + span{
+	color: #0072D2;
+}
+</style>
+
+ {/block}
+{block name="right_tab"}
+
+{/block}
+{block name="main"}
+
+	
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="con style0list">
+			<table>
+				<colgroup>
+<!-- 					<col style="width: 5%;"> -->
+					<col style="width: 12%;">
+					<col style="width: 8%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+					<col style="width: 6%;">
+					<col style="width: 8%;">
+					<col style="width: 12%;">
+					<col style="width: 8%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+				</colgroup>
+				<thead>
+					<tr>
+<!-- 						<th><label style="margin-left: 5px;"> <input type="checkbox"  onclick="CheckAll(this)"></label></th> -->
+						<th class="tal">分类名称</th>
+						<th class="tal" align="center">是否显示</th>
+						<th class="tal">别名</th>
+						<th class="tal">简称</th>
+						<th class="tal">颜色</th>
+						<th class="tal" align="center">品牌显示</th>
+						<th class="tal" align="center">下级分类显示</th>
+						<th class="tal">排序</th>
+						<th class="tal">商品排序</th>
+						<th class="tal">广告图</th>
+					</tr>
+				</thead>
+				<colgroup>
+<!-- 					<col style="width: 5%;"> -->
+					<col style="width: 12%;">
+					<col style="width: 8%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+					<col style="width: 6%;">
+					<col style="width: 8%;">
+					<col style="width: 12%;">
+					<col style="width: 8%;">
+					<col style="width: 10%;">
+					<col style="width: 10%;">
+				</colgroup>
+				<tbody id="list">
+					
+				</tbody>
+			</table>
+		</div>
+		<input type="hidden" id="ap_id" value="{$ap_id}">
+	</div>
+</div>
+<!-- 广告添加  -->
+<div class="modal fade hide" id="add_adv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">广告添加</h4>
+			</div>
+			<div class="modal-body">
+				<div class="set-style">
+					<dl>
+						<dt>主标题:</dt>
+						<dd>
+							<p><input id="title" type="text" value=""> </p>
+							<p class="error">请输入标题</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>副标题:</dt>
+						<dd>
+							<p><input  id="subtitle" type="text" value=""> </p>
+							<p class="error">请输入副标题</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>图片:</dt>
+						<dd>
+							<div class="class-logo"><p><img id="imgLogo" src="" ></p></div>
+							<div class="ncsc-upload-btn"> 
+							    <a href="javascript:void(0);"><span>
+							          <input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImg" nc_type="change_store_label" type="file" onchange="imgUpload(this);">
+							        </span><p><i class="icon-upload-alt"></i>上传图片</p>
+							    </a> 
+							</div>
+							<input type="hidden"id="Logo"value=""/>
+							 <p class="error">请输入设置广告图片</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>背景色:</dt>
+						<dd>
+							<div class="ncsc-upload-btn"> 
+							    <a href="javascript:void(0);">
+							          <input id="background" type="color" style="width:60px;height:25px;"  value="#ffffff"/>
+							    </a>  
+							</div>
+						</dd>
+					</dl>
+					<dl>
+						<dt>链接地址:</dt>
+						<dd>
+							<p><input  id="url" type="text" value=""> </p>
+							<p class="error">请输入链接地址</p>
+						</dd>
+					</dl>
+				</div>	
+				<input type="hidden" id="id" value=""/>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onclick="addGoodsAdv();">保存</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+	LoadingInfo();
+	$(".page").hide();
+})
+//查询广告列表
+	function LoadingInfo() {
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/system/getGoodsCategoryBlock')}",
+			async : false,
+			success : function(data) {
+// 				console.log(JSON.stringify(data));
+				var html = '';
+				if (data.length > 0) {
+					for (var i = 0; i < data.length; i++) {
+						var show_html ="";
+						var is_show = "否";
+						if(data[i]["is_show"] == 1){
+							show_html = "checked";
+							var is_show = "是";
+						}
+						var is_show_lower_category = "否";
+						var lower_category_html ="";
+						if(data[i]["is_show_lower_category"] == 1){
+							lower_category_html = "checked";
+							var is_show_lower_category = "是";
+						}
+						var is_show_brand = "否";
+						var show_brand_html = "";
+						if(data[i]["is_show_brand"] == 1){
+							show_brand_html = "checked";
+							var is_show_brand = "是";
+						}
+						var goods_sort_type = data[i]['goods_sort_type'];
+						html += '<tr>';
+// 						html += '<td><label style="margin-left:10px;"> <input type="checkbox" name="sub" value="'+ data[i]['id']+'"></label></td>';
+						html += '<td class="tal">'+ data[i]['category_name']+'</td>';
+						html += '<td class="tal"><label><input type="checkbox" class="floor_checked is_show" onchange="setGoodsCategoryField(this, '+data[i]['id']+')" '+show_html+'/><label></label><span>'+ is_show +'</span></label></td>';
+						html += '<td class="tal category_alias'+data[i]['id']+'"><input type="text"class="category_alias"  value="' + data[i]["category_alias"] + '" onchange="setGoodsCategoryField(this, '+data[i]['id']+');"/></td>';
+						html += '<td class="tal short_name'+data[i]['id']+'"><input type="text"class="short_name"  value="' + data[i]["short_name"] + '" onchange="setGoodsCategoryField(this, '+data[i]['id']+');" maxlength="4"/></td>';
+						html += '<td class="tal"><input type="color" class="color"style="width:30px;"  onchange="setGoodsCategoryField(this, '+data[i]['id']+');"  value="'+data[i]["color"]+'"></td>';
+						html += '<td class="tal"><label><input type="checkbox" class="floor_checked is_show_brand" onchange="setGoodsCategoryField(this, '+data[i]['id']+');" '+show_brand_html+'/><label></label><span>'+is_show_brand+'</span></label></td>';
+						html += '<td class="tal"><label><input type="checkbox" class="floor_checked is_show_lower_category" onchange="setGoodsCategoryField(this, '+data[i]['id']+');" '+lower_category_html+'/><label></label><span>'+is_show_lower_category+'</span></label></td>';
+						html += '<td class="tal"><input type="number" class="sort" onchange="setGoodsCategoryField(this, '+data[i]['id']+');" value="'+data[i]['sort']+'"/></td>';
+						html += '<td class="tal"><select class="floor_goods_sort_type" onchange="setGoodsCategoryField(this, '+data[i]['id']+');"><option value="0" '+ is_selected(0,goods_sort_type) +'>默认排序</option><option value="1" '+ is_selected(1,goods_sort_type) +'>按发布时间排序</option><option value="2" '+ is_selected(2,goods_sort_type) +'>按销量排序</option><option value="3" '+ is_selected(3,goods_sort_type) +'>按排序号排序</option><option value="4" '+ is_selected(4,goods_sort_type) +'>按人气排序</option></select></td>';
+						html += '<td class="tal">';
+						if(data[i]['ad_picture'] != undefined && data[i]['ad_picture'] !=''){
+							//alert(data[i]['ad_picture']);
+							var ad_picture = data[i]['ad_picture'];
+							ad_picture = JSON.parse(ad_picture);
+							var title = ad_picture.title;
+							var subtitle = ad_picture.subtitle;
+							var picture = ad_picture.picture;
+							var background = ad_picture.background;
+							var url = ad_picture.url;
+							html +='<a href="javascript:void(0)" onclick="editgoodsAd('+ data[i]['id']+', \''+title+'\', \''+subtitle+'\', \''+picture+'\', \''+background+'\', \''+url+'\');">编辑广告</a>';
+							html +='<br/><a href="javascript:void(0)" onclick="deleteGoodsAd('+ data[i]['id']+');">删除广告</a>';
+						}else{
+							html +='<a href="javascript:void(0)" onclick="addgoodsAd('+ data[i]['id']+');">添加广告</a>';
+						}
+						html +='</td>';
+						html += '</tr>';
+					}
+				} else {
+					html += '<tr><th colspan="8">暂无符合条件的数据记录</th></tr>';
+				}
+				$("#list").html(html);
+			}
+		});
+		$(".checkbox").simpleSwitch({
+			"theme": "FlatRadius"
+		});
+	}
+
+	function is_selected(value,goods_sort_type){
+		var select = "";
+		if(value == goods_sort_type){
+			select = "selected";
+		}
+		return select;	
+	}
+
+	/**
+	*修改商品分类楼层
+	*/
+	function setGoodsCategoryField(obj,id){
+		var parent_obj = $(obj).parents("tr");
+		var category_alias = parent_obj.find(".category_alias").val();
+		var short_name = parent_obj.find(".short_name").val();
+		var is_show = 0;
+		var color = parent_obj.find(".color").val();
+		var is_show_lower_category = 0;
+		var is_show_brand = 0;
+		var sort = parent_obj.find(".sort").val();
+		if(parent_obj.find(".is_show").is(":checked")){
+			is_show = 1;
+		}
+		if(parent_obj.find(".is_show_lower_category").is(":checked")){
+			is_show_lower_category = 1;
+		}
+		if(parent_obj.find(".is_show_brand").is(":checked")){
+			is_show_brand = 1;
+		}
+		var goods_sort_type = parent_obj.find(".floor_goods_sort_type").val();
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/system/setgoodscategoryblock')}",
+			async : false,
+			data:{
+				'category_alias':category_alias,
+				'is_show':is_show,
+				'color':color,
+				'is_show_lower_category':is_show_lower_category,
+				'is_show_brand':is_show_brand,
+				'id':id,
+				'sort':sort,
+				'short_name':short_name,
+				'goods_sort_type' : goods_sort_type
+				},
+			async:true,
+			success: function (data) {
+				if(data.code > 0){
+					showTip("编辑成功","success");
+					LoadingInfo();
+				}else{
+					showTip("编辑失败","error");
+				}
+			}
+		 });
+	}
+	/**
+	*商品广告
+	*/
+	function addgoodsAd(id){
+		clearBlock();
+		$("#id").val(id);
+		$('#add_adv').modal(show);	
+	}
+	function editgoodsAd(id, title, subtitle, picture, background, url){
+		clearBlock();
+		$("#id").val(id);
+		
+		$('#add_adv').modal(show);	
+	//	if(ad_picture != undefined && ad_picture != ""){
+	//	ad_picture = eval(ad_picture);
+		$("#add_adv").find("#title").val(title);
+		$("#add_adv").find("#subtitle").val(subtitle);
+		$("#add_adv").find("#Logo").val(picture);
+		$("#add_adv").find("#background").val(background);
+		$("#add_adv").find("#url").val(url);
+		$("#add_adv").find("#imgLogo").attr("src",__IMG(picture));
+	//	}
+	}
+	/**
+	*添加商品分类广告
+	*/
+	function addGoodsAdv(){
+		var id = $("#id").val();
+		var title = $("#add_adv").find("#title").val();
+		var subtitle = $("#add_adv").find("#subtitle").val();
+		var picture = $("#add_adv").find("#Logo").val();
+		var background = $("#add_adv").find("#background").val();
+		var url = $("#add_adv").find("#url").val();
+		var ad_picture = {
+				"title":title,
+				"subtitle":subtitle,
+				"picture":picture,
+				"background":background,
+				"url":url};
+		var ad_picture = JSON.stringify(ad_picture);
+		if(title == ''){
+			$("#title").focus();
+			$("#title").parent().next().show();
+			return false;
+		}else{
+			$("#title").parent().next().hide();
+		}
+		if(subtitle == ''){
+			$("#subtitle").focus();
+			$("#subtitle").parent().next().show();
+			return false;
+		}else{
+			$("#subtitle").parent().next().hide();
+		}
+		if(picture == ''){
+			$("#Logo").focus();
+			$("#Logo").next().show();
+			return false;
+		}else{
+			$("#Logo").next().hide();
+		}
+		if(url == ''){
+			$("#url").focus();
+			$("#url").parent().next().show();
+			return false;
+		}else{
+			$("#url").parent().next().hide();
+		}
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/system/setgoodscategoryadv')}",
+			data:{
+				'ad_picture':ad_picture,
+				'id':id
+				},
+			async:true,
+			success: function (data) {
+				if(data.code > 0){
+					showTip("保存成功","success");
+					$("#id").val('');
+					LoadingInfo();
+					$('#add_adv').modal("hide");	
+				}else{
+					showTip("广告添加失败","error");
+				}
+			}
+		 }); 
+	}
+	function imgUpload(event) {
+		var fileid = $(event).attr("id");
+		var data = { 'file_path' : UPLOADADV };
+		uploadFile(fileid,data,function(res){
+			if(res.code){
+				$("#imgLogo").attr("src",__IMG(res.data));
+				$("#Logo").val(res.data);
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		});
+	}
+	/**
+	*清除模态框内容
+	*/
+	function clearBlock(){
+		$("#add_adv").find("#title").val('');
+		$("#add_adv").find("#subtitle").val('');
+		$("#add_adv").find("#Logo").val('');
+		$("#add_adv").find("#background").val("#ffffff");
+		$("#add_adv").find("#url").val('');
+		$("#add_adv").find("#imgLogo").attr("src",'');
+		$("#id").val('');
+	}
+	/**
+	*删除广告
+	*/
+	function deleteGoodsAd(id){
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/system/setgoodscategoryadv')}",
+			data:{
+				'ad_picture':'',
+				'id':id
+				},
+			async:true,
+			success: function (data) {
+				if(data.code > 0){
+					showTip("保存成功","success");
+					LoadingInfo();	
+				}else{
+					showTip("广告添加失败","error");
+				}
+			}
+		 }); 
+	}
+</script>
+{/block}

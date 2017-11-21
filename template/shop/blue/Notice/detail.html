@@ -1,0 +1,42 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<style>
+.fr{ width:1200px; background-color: #fff; }
+.help-tit { text-align: center;  padding: 10px 0; font-size: 18px; line-height: 150%; font-weight: normal; color: #666; border-bottom: 1px dashed #ddd;}
+.create_time{ text-align: center; width: 100%;display: block;line-height: 30px; }
+.help-detail { padding: 15px 20px; line-height: 2em;}
+.help-detail img{ max-width: 100%; height: auto;}
+.help-detail .help-search-name a{ font-size: 14px;}
+.help-detail .help-search-content{ color: #999;}
+.prev{ float: left; }
+.next{ float: right; }
+</style>
+{/block}
+{block name="main"}
+<div class="content w990 clearfix">
+	<div class="breadcrumb clearfix" style="margin: 10px 10px 5px auto;">
+		<a href="{:__URL('SHOP_MAIN/index')}" class="index">{:lang('home_page')}</a>
+		<span class="crumbs-arrow">&gt;</span>
+		<a href="{:__URL('SHOP_MAIN/notice/noticeList')}"><span class="last">{:lang('notice')}</span></a>
+	</div>
+	<!-- 内容部分 -->
+	<div class="fr" id="question">
+		<div class="right-inner">
+			<h3 class="help-tit">{$info['notice_title']}</h3>
+			<time class="create_time">发布时间：{$info.create_time|date="Y-m-d H:i:s",###} &nbsp;&nbsp;&nbsp;&nbsp;</time>
+			<div class="help-detail">
+				<p style="color: #666666;">{$info['notice_content']|html_entity_decode}</p>
+			</div>
+			<div class="location_other_article">
+				{notempty name="prev_info"}
+				<a href="{:__URL('SHOP_MAIN/notice/detail', 'id='.$prev_info.id)}" class="prev">上一篇：{$prev_info.notice_title}</a>
+				{/notempty}
+				{notempty name="next_info"}
+				<a href="{:__URL('SHOP_MAIN/notice/detail', 'id='.$next_info.id)}" class="next">下一篇：{$next_info.notice_title}</a>
+				{/notempty}
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="javascript"}{/block}

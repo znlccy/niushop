@@ -1,0 +1,180 @@
+<script>
+//验证用户名
+function verifyUsername(username){
+	
+	var is_true =0;
+	if(/.*[\u4e00-\u9fa5]+.*$/.test(username) ){
+		is_true = 1;
+		$("#mobileregistermodel-username").trigger("focus");
+		$('#mobileregistermodel-username').css("border","1px solid red");
+		$("#usernameyz").css("color","red").text("用户名中不能包含汉字");
+		return is_true;
+	}
+	if(/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(username) ){
+		is_true = 1;
+		$("#mobileregistermodel-username").trigger("focus");
+		$('#mobileregistermodel-username').css("border","1px solid red");
+		$("#usernameyz").css("color","red").text("用户名不能是邮箱");
+		return is_true;
+	}
+	if(/^1(3|4|5|7|8)\d{9}$/.test(username) ){
+		is_true = 1;
+		$("#mobileregistermodel-username").trigger("focus");
+		$('#mobileregistermodel-username').css("border","1px solid red");
+		$("#usernameyz").css("color","red").text("用户名不能是手机号");
+		return is_true;
+	}
+	var username_verify = "{$reg_config['name_keyword']}";
+	var usernme_verify_array = new Array();
+	if($.trim(username_verify) != "" && username_verify != undefined){
+		usernme_verify_array  = username_verify.split(",");
+	}
+	usernme_verify_array.push(",");
+	usernme_verify_array.push(" ");
+	$.each(usernme_verify_array,function(k,v){
+		if($.trim(v) != ""){
+			if(username.indexOf(v) >= 0){
+				is_true = 1;
+				$("#mobileregistermodel-username").trigger("focus");
+				$('#mobileregistermodel-username').css("border","1px solid red");
+				$("#usernameyz").css("color","red").text("用户名中不能包含'"+v+"'这样的字符");
+				return false;
+			}
+		}
+	});
+	return is_true;
+}
+//验证密码
+function verifyPassword(password){
+	var is_true = 0;
+	var min_length_str = "{$reg_config['pwd_len']}";
+	if($.trim(min_length_str) != "" ){
+		var min_length = parseInt(min_length_str);
+	}else{
+		var min_length = 5;
+	}
+	if($.trim(password) == ""){
+		is_true = 1;
+		$("#password").trigger("focus");
+		$("#password").css("border","1px solid red");
+		$("#yzpassword").css("color","red").text("密码不能为空");
+		return is_true;
+	}else{
+		$("#password").css("border","1px solid #ccc");
+		$("#yzpassword").css("color","red").text("");
+	}
+	if(min_length  > 0){
+		
+		if(password.length < min_length){
+			is_true = 1;
+			$("#password").trigger("focus");
+			$("#password").css("border","1px solid red");
+			$("#yzpassword").css("color","red").text("密码最小长度为"+min_length);
+			return is_true;
+		}else{			
+			$("#password").css("border","1px solid #ccc");
+			$("#yzpassword").css("color","red").text("");
+		}
+		
+	}else{
+		
+	}
+	
+	//验证汉字
+	if(/.*[\u4e00-\u9fa5]+.*$/.test(password) ){
+		is_true = 1;
+		$("#password").trigger("focus");
+		$("#password").css("border","1px solid red");
+		$("#yzpassword").css("color","red").text("密码中不能包含汉字!");
+		return is_true;
+	}else{			
+		$("#password").css("border","1px solid #ccc");
+		$("#yzpassword").css("color","red").text("");
+	}
+	var regex_str = "{$reg_config['pwd_complexity']}";
+	if($.trim(regex_str) != "" && regex_str != undefined){
+		//验证是否包含数字
+		if(regex_str.indexOf("number") >= 0){
+			var number_test =  /[0-9]/;
+			if(!number_test.test(password)){
+				is_true = 1;
+				$("#password").trigger("focus");
+				$("#password").css("border","1px solid red");
+				$("#yzpassword").css("color","red").text("密码中必须包含数字!");
+				$('#mobileregistermodel-username').css("border","1px solid #ccc");
+				$("#usernameyz").css("color","red").text("");
+				return is_true;
+			}else{
+				$("#password").css("border","1px solid #ccc");
+				$("#yzpassword").css("color","red").text("");
+			}	
+		}
+		//验证是否包含小写字母
+		if(regex_str.indexOf("letter") >= 0){
+			var letter_test =  /[a-z]/;
+			if(!letter_test.test(password)){
+				is_true = 1;
+				$("#password").trigger("focus");
+				$("#password").css("border","1px solid red");
+				$("#yzpassword").css("color","red").text("密码中必须包含小写字母!");
+				$('#mobileregistermodel-username').css("border","1px solid #ccc");
+				$("#usernameyz").css("color","red").text("");
+				return is_true;
+			}else{
+				$("#password").css("border","1px solid #ccc");
+				$("#yzpassword").css("color","red").text("");
+			}	
+		}
+		//验证是否包含大写字母
+		if(regex_str.indexOf("upper_case") >= 0){
+			var upper_case_test =  /[A-Z]/;
+			if(!upper_case_test.test(password)){
+				is_true = 1;
+				$("#password").trigger("focus");
+				$("#password").css("border","1px solid red");
+				$("#yzpassword").css("color","red").text("密码中必须包含大写字母!");
+				$('#mobileregistermodel-username').css("border","1px solid #ccc");
+				$("#usernameyz").css("color","red").text("");
+				return is_true;
+			}else{
+				$("#password").css("border","1px solid #ccc");
+				$("#yzpassword").css("color","red").text("");
+			}	
+		}
+		//验证是否包含特殊字符
+		if(regex_str.indexOf("symbol") >= 0){
+			var symbol_test =  /[^A-Za-z0-9]/;
+			if(!symbol_test.test(password)){
+				is_true = 1;
+				$("#password").trigger("focus");
+				$("#password").css("border","1px solid red");
+				$("#yzpassword").css("color","red").text("密码中必须包含符号!");
+				$('#mobileregistermodel-username').css("border","1px solid #ccc");
+				$("#usernameyz").css("color","red").text("");
+				return is_true;
+			}else{
+				$("#password").css("border","1px solid #ccc");
+				$("#yzpassword").css("color","red").text("");
+			}	
+		}
+	}
+	return is_true;
+}
+
+</script>
+<div class="reg-type">
+	<p class="login-info">
+		我已经注册，现在就<a href="{:__URL('SHOP_MAIN/login/index')}" title="去登录" class="color">&nbsp;登录</a>
+	</p>
+	<ul class="clearfix">
+		{if condition = "strpos($reg_config['register_info'],'plain') !== false"}
+		<li {if condition = "$login_type eq 'plain'"}class="active" {/if}><a {if condition = "$login_type eq 'plain'"}href="javascript:void(0);"{else/}href="{:__URL('SHOP_MAIN/login/register')}"{/if}>普通注册</a></li>
+		{/if} 
+		{if condition = "strpos($reg_config['register_info'],'mobile') !== false"}
+		<li {if condition = "$login_type eq 'mobile'"}class="active" {/if}><a {if condition = "$login_type eq 'mobile'"}href="javascript:void(0);"{else/}href="{:__URL('SHOP_MAIN/login/mobile')}"{/if}>手机注册</a></li>
+		{/if} 
+		{if condition = "strpos($reg_config['register_info'],'email') !== false"}
+		<li {if condition = "$login_type eq 'email'"}class="active" {/if}><a {if condition = "$login_type eq 'email'"}href="javascript:void(0);"{else/}href="{:__URL('SHOP_MAIN/login/email')}"{/if}>邮箱注册</a></li>
+		{/if}
+	</ul>
+</div>

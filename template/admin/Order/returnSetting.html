@@ -1,0 +1,97 @@
+{extend name="admin/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;收货地址:</dt>
+		<dd>
+			<p><input id="address" type="text" value="{$info.shop_address}"></p>
+			<p class="error">请输入收货地址</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;收件人:</dt>
+		<dd>
+			<p><input id="receive" type="text" value="{$info.seller_name}" maxlength="15"></p>
+			<p class="error">请输入收件人</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;电话:</dt>
+		<dd>
+			<p><input id="phone" type="text" value="{$info.seller_mobile}" onkeyup="checkMobile(this)" maxlength="26"></p>
+			<p class="error">请输入联系电话</p>
+			<p class="error">请输入正确的电话格式</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>邮编:</dt>
+		<dd>
+			<p><input id="zip" type="text" value="{$info.seller_zipcode}" maxlength="6" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></p>
+			
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="addReturnAjax();">提交</button>
+</div>
+
+ <script>
+ 	function checkMobile(event){
+		if($(event).val().length > 25){
+			$(event).parent().next().next(".error").show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+	}
+	/**
+	 *添加物流公司
+	 **/
+	function addReturnAjax() {
+		var address = $("#address").val();
+		var receive = $("#receive").val();
+		var phone = $("#phone").val();
+		var zip = $("#zip").val();
+ 
+		if (address == '') {
+			$("#address").parent().next().show();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+		if (receive == '') {
+			$("#receive").parent().next().show();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+		if(phone.length == 0){
+			$("#phone").parent().next().show();
+			return false;
+		} else {
+			$(".error").hide();
+		}
+		
+		
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/order/returnsetting')}",
+			data : {
+				'address' : address,
+				'real_name' : receive,
+				'mobile' : phone,
+				'zipcode' : zip
+			},
+			async : true,
+			success : function(data) {
+				if (data['code'] > 0) {
+					    showMessage('success', data["message"],window.location.reload());
+
+				} else {
+						showMessage('error', data["message"]);
+					
+				}
+			}
+		});
+	}
+</script>
+{/block}

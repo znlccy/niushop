@@ -1,0 +1,24 @@
+{extend name="shop/blue/base" /}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('member_exchange_points')}</li>
+				</ul>
+			</div>
+			<input type="hidden" value="{$shop_id}" id="getshopid"/>
+			<span style="font-size:24px; display:block; text-align:center; width:100%;color:#0689e1;margin-top:100px;">{:lang('member_successful_exchange')}</span>
+		</div>
+	</div>
+</div>
+<script>
+$(function(){
+	setTimeout(function(){
+		window.location = __URL("SHOP_MAIN/member/integrallist");
+	},1000);
+});
+</script>
+{/block}

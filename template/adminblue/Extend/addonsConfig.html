@@ -1,0 +1,43 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="set-style">
+	<?php
+	if(config_hook != ''){
+		echo hook("$config_hook");
+	}else{
+	?>
+		<form action="{:__URL('ADMIN_MAIN/extend/saveAddonsConfig')}" class="form-horizontal" method="post">
+			{foreach name="data['config']" item="form" key="key"}
+				{switch name="form.type"}
+					{case value="text"}
+						<dl>
+							<dt>{$form.title}:</dt>
+							<dd>
+								<p><input type="text" name="config[{$key}]" value="{$form.value}" class="input-common"></p>
+								<p class="hint">{$form.tip}</p>
+							</dd>
+						</dl>
+					{/case}
+					{case value="password"}
+						<dl>
+							<dt>{$form.title}:</dt>
+							<dd>
+								<p><input type="password" name="config[{$key}]" value="{$form.value}" class="input-common"></p>
+								<p class="hint">{$form.tip}</p>
+							</dd>
+						</dl>
+					{/case}
+				{/switch}
+			{/foreach}
+			<dl>
+				<dt></dt>
+				<dd>
+					<button type="submit" class="btn-common btn-big">确定</button>
+					<input type="hidden" name="addons_id" value="{$addons_id}">
+				</dd>
+			</dl>
+		</form>
+<?php } ?>
+</div>
+{/block}

@@ -1,0 +1,219 @@
+<style>
+.upload-thumb{
+	display:block !important;
+	float:left;
+	width:147px !important;
+	height:147px !important;
+	position:relative;
+}
+.upload-thumb img{
+	width:100%;
+	height:100%;
+}
+.img-box, .sku-img-box{
+	overflow:hidden;
+}
+.off-box, .sku-off-box{
+	position:absolute;
+	width:18px;
+	height:18px;
+	right:0;
+	top:0;
+	line-height: 18px;
+	background-color:#FFF;
+	cursor:pointer;
+	text-align: center;
+}
+
+.black-bg{
+	position:absolute;
+	right:0;
+	top:0;
+	left:0;
+	bottom:0;
+	background-color:rgba(0,0,0,0.3);	
+}
+.img-error{
+	color:red;s
+	height:25px;
+	line-height:25px;
+	display:none;
+}
+</style>
+<script src="ADMIN_JS/drag-arrange.js" type="text/javascript" charset="utf-8"></script>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script> 
+<script type="text/javascript" src="__STATIC__/js/jquery.ui.widget.js" charset="utf-8"></script>
+<script type="text/javascript" src="__STATIC__/js/jquery.fileupload.js" charset="utf-8"></script>
+
+<input type="hidden" id="album_id" value="{$detault_album_id}"/>
+<script type="text/javascript">
+var dataAlbum;
+$(function() {
+	//给图片更换位置事件
+	$('.draggable-element').arrangeable();
+	
+  	var album_id = $("#album_id").val();
+  	dataAlbum = {
+  			"album_id" : album_id,
+  			"type" : "1,2,3,4",
+  			'file_path' : UPLOADGOODS
+  		};
+    // ajax 上传图片
+    var upload_num = 0; // 上传图片成功数量
+    $('#fileupload').fileupload({
+        url: "{:__URL('APP_MAIN/upload/photoalbumupload')}",
+        dataType: 'json',
+        formData:dataAlbum,
+        add: function (e,data) {
+        	$("#goods_picture_box .img-error").hide();
+        	$("#goods_picture_box #default_uploadimg").remove();
+        	//显示上传图片框
+        	var html = "";
+        	$.each(data.files, function (index, file) {
+        		html +='<div class="upload-thumb draggable-element"  nstype="' + file.name + '">'; 
+        		html +='<img nstype="goods_image" src="ADMIN_IMG/album/uoload_ing.gif">';  
+        		html +='<input type="hidden"  class="upload_img_id" nstype="goods_image" value="">'; 
+        		html +='<div class="black-bg hide">'; 
+        		html +='<div class="off-box">&times;</div>'; 
+            	html +='</div>'; 
+        		html +='</div>'; 
+            });
+            $(html).appendTo('#goods_picture_box .img-box');
+          //模块可拖动事件
+        	$('#goods_picture_box .draggable-element').arrangeable();
+        	data.submit();    	
+        },
+        done: function (e,data) {
+        	var param = data.result;
+            $this = $('#goods_picture_box div[nstype="' + param.origin_file_name + '"]');
+           if(param.state > 0){
+	           	$this.removeAttr("nstype");
+	           	$this.children("img").attr("src",__IMG(param.file_name));
+	           	$this.children("input[type='hidden']").val(param.file_id);           	
+            }else{
+            	$this.remove();
+            	if($("#goods_picture_box .img-box .upload-thumb").length == 0){
+            		var  img_html ='<div class="upload-thumb" id="default_uploadimg">';
+            			 img_html +='<img src="ADMIN_IMG/album/default_goods_image_240.gif">';
+            			 img_html +='</div>';
+            		$("#goods_picture_box .img-box").append(img_html);
+            	}
+            	$("#goods_picture_box .img-error").html("请检查您的上传参数配置或上传的文件是否有误，<a href='{:__URL('ADMIN_MAIN/config/uploadtype')}' target='_blank' style='text-decoration: underline;'>去设置</a>").show();               	
+            }
+        }      
+    })
+    
+  
+
+    //图片幕布出现
+    $(".draggable-element").live('mouseenter',function(){  
+    	  $(this).children(".black-bg").show();
+    });
+  	//图片幕布消失
+    $(".draggable-element").live('mouseleave',function(){    	
+  	  $(this).children(".black-bg").hide();
+  	});
+  	
+  //sku图片幕布出现
+    $(".sku-draggable-element").live('mouseenter',function(){  
+    	  $(this).children(".black-bg").show();
+    });
+  	//sku图片幕布消失
+    $(".sku-draggable-element").live('mouseleave',function(){    	
+  	  $(this).children(".black-bg").hide();
+  	});
+  	
+  	//删除页面图片元素
+    $(".off-box").live('click',function(){ 
+    	if($(".img-box .upload-thumb").length == 1){
+    		var html = "";
+    		html +='<div class="upload-thumb" id="default_uploadimg">';
+    		html +='<img nstype="goods_image" src="ADMIN_IMG/album/default_goods_image_240.gif">';
+    		html +='<input type="hidden" name="image_path" id="image_path" nstype="goods_image" value="">';      
+    		html +='</div>';
+    		$(html).appendTo('.img-box');
+    	}
+    	$(this).parent().parent().remove();           
+  	});
+    $(".sku-off-box").live('click',function(){ 
+    	if($(this).parent().parent().parent().find(".sku-img-box .upload-thumb").length == 1){
+    		var html = "";
+    		html +='<div class="upload-thumb" id="default_uploadimg">';
+    		html +='<img nstype="goods_image" src="ADMIN_IMG/album/default_goods_image_240.gif">';
+    		html +='<input type="hidden" name="image_path" id="image_path" nstype="goods_image" value="">';      
+    		html +='</div>';
+    		$(html).appendTo('.sku-img-box');
+    	}
+    	$(this).parent().parent().remove();           
+  	});
+
+});
+function img_upload(){
+	
+}
+//sku图片上传
+function file_upload(obj){
+	var spec_id = $(obj).attr("spec_id");
+	var spec_value_id = $(obj).attr("spec_value_id");
+	$('.sku-draggable-element'+spec_id+'-'+spec_value_id).arrangeable();
+	  //sku图片上传
+    $(obj).fileupload({
+        url: "{:__URL('APP_MAIN/upload/photoalbumupload')}",
+        dataType: 'json',
+        formData:dataAlbum,
+        add: function (e,data) {
+        	
+        	var box_obj = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        	var spec_id = box_obj.attr("spec_id");
+        	var spec_value_id = box_obj.attr("spec_value_id");
+        	box_obj.find(".img-error").hide();
+        	box_obj.find("#sku_default_uploadimg").remove();
+        	//显示上传图片框
+        	var html = "";
+        	$.each(data.files, function (index, file) {
+        		html +='<div class="upload-thumb sku-draggable-element'+ spec_id +'-'+ spec_value_id +' sku-draggable-element"  nstype="' + file.name + '">'; 
+        		html +='<img nstype="goods_image" src="ADMIN_IMG/album/uoload_ing.gif">';  
+        		html +='<input type="hidden"  class="sku_upload_img_id" nstype="goods_image" spec_id="" spec_value_id="" value="">'; 
+        		html +='<div class="black-bg hide">'; 
+        		html +='<div class="sku-off-box">&times;</div>'; 
+            	html +='</div>'; 
+        		html +='</div>'; 
+            });
+        	
+        	box_obj.find('.sku-img-box').append(html);
+          //模块可拖动事件
+        	$('.sku-draggable-element'+spec_id+'-'+ spec_value_id ).arrangeable();
+        	data.submit();    	
+        },
+        done: function (e,data) {
+        	var box_obj = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        	var spec_id = box_obj.attr("spec_id");
+        	var spec_value_id = box_obj.attr("spec_value_id");
+        	var param = data.result;
+            $this = box_obj.find('div[nstype="' + param.origin_file_name + '"]');
+           if(param.state > 0){
+	           	$this.removeAttr("nstype");
+	           	$this.children("img").attr("src",__IMG(param.file_name));
+	           	$this.children("input[type='hidden']").val(param.file_id); 
+	        	$this.children("input[type='hidden']").attr("spec_id", spec_id);
+	        	$this.children("input[type='hidden']").attr("spec_value_id", spec_value_id);
+	        	//将上传的规格图片记录
+	        	for(var i = 0; i < $sku_goods_picture.length ; i ++ ){
+	        		if($sku_goods_picture[i].spec_id == spec_id && $sku_goods_picture[i].spec_value_id == spec_value_id){
+	        			$sku_goods_picture[i]["sku_picture_query"].push({"pic_id":param.file_id, "pic_cover_mid":param.file_name});
+	        		}
+	        	}
+            }else{
+            	$this.remove();
+            	if(box_obj.find(".upload-thumb").length == 0){
+            		var  img_html ='<div class="upload-thumb" id="default_uploadimg">';
+            			 img_html +='<img src="ADMIN_IMG/album/default_goods_image_240.gif">';
+            			 img_html +='</div>';
+            			 box_obj.find(".sku-img-box").append(img_html);
+            	}
+            	box_obj.find(".img-error").html("请检查您的上传参数配置或上传的文件是否有误，<a href='{:__URL('ADMIN_MAIN/config/uploadtype')}' target='_blank' style='text-decoration: underline;'>去设置</a>").show();
+            }                   
+        }      
+    })
+}
+</script>

@@ -1,0 +1,19 @@
+{extend name="shop/default/base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_help.css" />
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/help.js"></script>
+{/block}
+{block name="main"}
+<div class="content w990 clearfix">
+	{include file='shop/default/Helpcenter/controlLeftMenu'/}
+	<!-- 右半部分内容 -->
+	<div class="fr" id="question">
+		<h3 class="help-tit">{$help_document_info['title']}</h3>
+		<div class="help-detail">
+			<p style="color: #666666;">{$help_document_info['content']}</p>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="document_id" name="document_id" value="{$document_id}" />
+{/block}
+{block name="javascript"}{/block}

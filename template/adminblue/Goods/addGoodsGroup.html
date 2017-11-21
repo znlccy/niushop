@@ -1,0 +1,41 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>商品标签名称:</dt>
+		<dd>
+			<p><input id="group_name" type="text" class="input-common"></p>
+			<p class="error">请输入商品标签名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序:</dt>
+		<dd>
+			<p><input id="sort" type="text" class="input-common"></p>
+			<p class="error">请输入序号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>标签图片:</dt>
+		<dd>
+			<div class="class-logo"><p><img id="imgLogo"></p></div>
+			<div class="upload-btn" onclick="imgUpload();">
+				<span><input type="hidden" id="group_pic"/></span>
+				<p><i class="fa fa-cloud-upload"></i>&nbsp;图片上传</p>
+			</div>
+			<p class="hint"><span style="color:orange;">建议使用宽200像素*高60像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="addGoodsGroupAjax();">提交</button></dd>
+	</dl>
+</div>
+<script src="ADMIN_JS/goods/goods_group_edit.js"></script>
+{/block}

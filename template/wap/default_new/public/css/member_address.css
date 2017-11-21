@@ -1,0 +1,49 @@
+@charset "UTF-8";
+.btn-save {
+    display: block;
+    height: 35px;
+    line-height: 35px;
+    background: #F15353;
+    text-align: center;
+    color: #fff;
+    width: 85%;
+    border: 0;
+    font-size: 15px;
+    margin: auto;
+	border-radius: 5px;
+	    margin-bottom: 20px;
+}
+.div-item {
+	padding: 10px;
+	background: #fff;
+	border-bottom: 1px solid #e2e2e2;
+}
+.div-item span {
+	width: 20%;
+	text-align: center;
+	display: inline-block;
+	vertical-align: middle;
+}
+.div-item input, .div-item select {
+	display: inline-block;
+	width: 75%;
+	border: none;
+	line-height: 42px;
+	height: 30px;
+	margin: 0;
+	background: #fff;
+	border:0;
+}
+.form-info {
+	margin: 45px 0px 15px;
+}
+select {
+    appearance:none;
+    -moz-appearance:none;
+    -webkit-appearance:none;
+    outline: none;
+    -moz-outline: none;
+    -webkit-outline: none;
+}
+/*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+select::-ms-expand { display: none; }

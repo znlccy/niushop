@@ -1,0 +1,148 @@
+<!-- 遮罩层 -->
+<div class="shade" style="position:fixed;top:0px;left:0px;width:100%;height:100%;margin-top:0;background: rgba(0, 0, 0, 0.7);z-index: 999;"><span style="float: right; padding: 15px;font-size: 22px;color: #fff;background: transparent;" id="close"></span></div>
+<!-- 微信登录绑定手机号 -->
+<div class="modal fade" id="wchat_binding" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+<!-- 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+				<div class="modal-title" id="myModalLabel">需绑定手机号</div>
+			</div>
+			<input type="hidden" name="uid" value="{$uid}" id="session_uid"/>
+			<div id="nk_text1" style="display: block;">
+					<div class="log-cont" style="margin-top: 20px;">
+						<label style="line-height:40px;" class="log-txt" for="username">手机号&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:60%;" type="text" name="binding_mobile" id="binding_mobile" placeholder="请输入手机号"> <i class="right_login_user"> </i>
+						</label>
+					</div>
+					{if condition="$notify_list.is_use eq 1"}
+					<div class="log-cont" style="margin-bottom:15px;position:relative;">
+						<label style="line-height:40px;" for="password">验证码&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="sms_captcha" name="sms_captcha" placeholder="请输入动态码">
+						
+						</label>
+						<span class="getvilidate" id="sendOutCode" style="position:absolute;float: right;top: 3px;right: 3%;" onclick="sendOutCode()" style="float:right;">获取验证码</span>
+					</div>
+					{/if}
+					<input type="hidden" id="mobile_is_has" value="1">
+					<input type="hidden" id="bind_user_id" value="{$uid}">
+					<input type="hidden" id="mobile_is_use" value="{$notify_list.is_use}"/>
+					<div class="loginbotton">
+					<button style="height:35px;line-height:35px;font-size:14px;" id="login-button" class="lang-btn" onclick="modifyusermobile()">登录并绑定</button>
+					</div>
+			</div>
+			
+			
+		</div>
+	</div>
+	
+</div>
+<!-- 微信登录绑定手机号 -->
+	<script>
+	//发送验证码
+function sendOutCode(){
+	var mobile = $("#binding_mobile").val();
+	var user_id = $("#bind_user_id").val();
+	//alert(user_id);
+	//验证手机号格式是否正确
+	if(mobile.search(/^1(3|4|5|7|8)\d{9}$/) == -1){
+		$("#mobile").trigger("focus");
+		layer.msg("请输入正确的手机格式");
+		return false;
+	}
+	//验证手机号是否已经注册
+	$.ajax({
+		type: "post",
+		url: "{:__URL('APP_MAIN/login/checkMobileIsHas')}",
+		data: {"mobile":mobile},
+		async: false,
+		success: function(data){
+			if(data != 0){
+				layer.msg("当前手机号已被绑定");
+				$("#mobile_is_has").val(0);
+				return false;
+			}else{
+				$("#mobile_is_has").val(1);
+		 		//判断输入的验证码是否正确 
+				$.ajax({
+					type: "POST",
+					url: "{:__URL('APP_MAIN/Login/sendsmsbindmobile')}",
+					data: {"mobile":mobile, "user_id":user_id},
+					success: function(data){
+// 						alert(JSON.stringify(data));
+						if(data['code']==0){
+							layer.msg("发送成功");
+							time();
+						}else{
+							layer.msg(data["message"]);
+							return false;
+						}
+					}
+				});
+			}
+		} 
+	});
+}
+	var wait=120; 
+	function time() { 
+        if (wait == 0) {
+        	$("#sendOutCode").removeAttr("disabled");  
+        	$("#sendOutCode").css("border", "1px solid #FF5073");  
+        	$("#sendOutCode").css("color", "#ff6a88"); 
+        	$("#sendOutCode").val("获取验证码"); 
+            wait = 120; 
+        } else { 
+        	$("#sendOutCode").attr("disabled", 'disabled');
+        	$("#sendOutCode").css("border", "1px solid #ccc");  
+        	$("#sendOutCode").css("color", "#ccc"); 
+        	$("#sendOutCode").val(wait+"s后重新发送"); 
+            wait--; 
+            setTimeout(function() { 
+                time() 
+            }, 
+            1000)
+        }
+	} 
+
+function modifyusermobile(){
+	var mobile = $("#binding_mobile").val();
+	var uid = $("#session_uid").val();
+	var sms_captcha = $("#sms_captcha").val();
+	var mobile_is_has = $("#mobile_is_has").val();
+	var mobile_is_use = $("#mobile_is_use").val();
+	if(mobile == ''){
+		$("#binding_mobile").trigger("focus");
+		layer.msg('手机号不能为空');
+		return false;
+	}else if(mobile.search(/^1(3|4|5|7|8)\d{9}$/) == -1){
+			$("#binding_mobile").trigger("focus");
+			layer.msg('请输入正确的手机格式');
+		return false;
+	}else if(mobile_is_has == 0){
+		layer.msg('当前手机号已被注册');
+		return false;
+	}
+	if(mobile_is_use == 1){
+		if(sms_captcha == ''){
+			layer.msg('动态码不能为空');
+			return false;
+		}
+	}
+	$.ajax({
+		type: "POST",
+		url: "{:__URL('APP_MAIN/Login/modifybindingmobile')}",
+		data: {"mobile":mobile, "sms_captcha" : sms_captcha, "uid":uid},
+		success: function(data){
+			if(data['code'] > 0){
+				layer.msg("绑定成功");
+				$("#wchat_binding").hide();
+				$(".shade").hide();
+			}else if(data["code"] == -10){
+				layer.msg("绑定失败");
+			}else{
+				layer.msg(data["message"]);
+			} 
+		}
+	});
+	
+}
+</script>	

@@ -1,0 +1,148 @@
+{foreach name="express_list_pagequery" item="v"}
+<tr class="head">
+	<td colspan="6">
+		{if condition="!$v.is_default"}
+		<input type="checkbox" value="{$v.shipping_fee_id}" name="sub" id="{$v.shipping_fee_id}" />
+		{/if}
+		<label for="{$v.shipping_fee_id}">{$v.shipping_fee_name}</label>
+		<div>
+			<a href="{:__URL('ADMIN_MAIN/express/freighttemplateedit','shipping_fee_id='.$v['shipping_fee_id'].'&co_id='.$co_id)}">编辑</a>
+			{if condition="!$v.is_default"}
+			<a href="javascript:;" onclick="freightTemplateDelete({$v.shipping_fee_id})">删除</a>
+			{/if}
+		</div>
+	</td>
+</tr>
+<tr class="address">
+	<td colspan="6">
+	{if condition="$v.is_default == 1"}
+		<span>默认模板(全国)</span>
+	{else/}
+		{foreach name="$v.address_list.province_list" item="province"}
+		<span>{$province.province_name}</span>
+		{/foreach}
+		<button data-msg="<header>
+						<span>{$v.shipping_fee_name}</span>
+						<i>x</i>
+				</header>
+				<article style='margin-top:40px;overflow: auto;height: 360px;'>
+				{foreach name='$v.address_list.province_list' item='province'}
+				<div>
+					<h3>{$province.province_name}</h3>
+					<ul>
+					{foreach name='province.city_list' item='city' key='k'}
+						<li>{$city.city_name}</li>
+					{/foreach}
+					</ul>
+				</div>
+				{/foreach}
+				</article>
+				"
+		
+		>查看详情</button>
+	{/if}
+	</td>
+</tr>
+
+<tr>
+	<td align="center">按件数</td>
+	<td class="info">
+		<label>首件(件)：</label>
+		<span>{$v.bynum_snum}</span>
+	</td>
+	<td class="info">
+		<label>首件运费(元)：</label>
+		<span>{$v.bynum_sprice}</span>
+	</td>
+	<td class="info">
+		<label>续件(件)：</label>
+		<span>{$v.bynum_xnum}</span>
+	</td>
+	<td class="info">
+		<label>续件运费(元)：</label>
+		<span>{$v.bynum_xprice}</span>
+	</td>
+	<td align="center">
+		{if condition="$v.bynum_is_use"}
+			<span class="status-enable">启用</span>
+		{else/}
+			<span class="status-close">停用</span>
+		{/if}
+	</td>
+</tr>
+
+<tr>
+	<td align="center">按重量</td>
+	<td class="info">
+		<label>首重(kg)：</label>
+		<span>{$v.weight_snum}</span>
+	</td>
+	<td class="info">
+		<label>首重运费(元)：</label>
+		<span>{$v.weight_sprice}</span>
+	</td>
+	<td class="info">
+		<label>续重(kg)：</label>
+		<span>{$v.weight_xnum}</span>
+	</td>
+	<td class="info">
+		<label>续重运费(元)：</label>
+		<span>{$v.weight_xprice}</span>
+	</td>
+	<td align="center">
+		{if condition="$v.weight_is_use"}
+			<span class="status-enable">启用</span>
+		{else/}
+			<span class="status-close">停用</span>
+		{/if}
+	</td>
+</tr>
+
+<tr>
+	<td align="center">按体积</td>
+	<td class="info">
+		<label>首体积量(m³)：</label>
+		<span>{$v.volume_snum}</span>
+	</td>
+	<td class="info">
+		<label>首体积运费(元)：</label>
+		<span>{$v.volume_sprice}</span>
+	</td>
+	<td class="info">
+		<label>续体积量(m³)：</label>
+		<span>{$v.volume_xnum}</span>
+	</td>
+	<td class="info">
+		<label>续体积运费(元)：</label>
+		<span>{$v.volume_xprice}</span>
+	</td>
+	<td align="center">
+		{if condition="$v.volume_is_use"}
+			<span class="status-enable">启用</span>
+		{else/}
+			<span class="status-close">停用</span>
+		{/if}
+	</td>
+</tr>
+
+{/foreach}
+<input type="hidden" id="pagecount" value="{$pagecount}" />
+<input type="hidden" id="totalcount" value="{$totalcount}" />
+<input type="hidden" id="data_length" value="{$data_length}" />
+<script>
+$(function(){
+	$(".address button").click(function(){
+		$(".mask-layer").show();
+		var top = $(".mask-address-info").css("top");
+		var left = $(".mask-address-info").css("left");
+		$(".mask-address-info").html($(this).attr("data-msg")).fadeIn(300);
+		$(".mask-address-info header").css({ "top" : top, "left" : left });
+	});
+	
+	
+	$(".mask-address-info header i").live("click",function(){
+		$(".mask-address-info").fadeOut(300);
+		$(".mask-layer").fadeOut(300);
+	});
+});
+</script>

@@ -1,0 +1,49 @@
+<input type="hidden" id="niushop_rewrite_model" value="{:rewrite_model()}">
+<input type="hidden" id="niushop_url_model" value="{:url_model()}">
+<input type="hidden" id="niushop_admin_model" value="{:admin_model()}">
+<script>
+function __URL(url){
+	url = url.replace('SHOP_MAIN', '');
+	url = url.replace('APP_MAIN', 'wap');
+	url = url.replace('ADMIN_MAIN', $("#niushop_admin_model"));
+	if(url == ''|| url == null){
+		return 'SHOP_MAIN';
+	}else{
+		var str=url.substring(0, 1);
+		if(str=='/' || str=="\\"){
+			url=url.substring(1, url.length);
+		}
+		if($("#niushop_rewrite_model").val()==1 || $("#niushop_rewrite_model").val()==true){
+			return 'SHOP_MAIN/'+url;
+		}
+		var action_array = url.split('?');
+		//检测是否是pathinfo模式
+		url_model = $("#niushop_url_model").val();
+		if(url_model==1 || url_model==true){
+			var base_url = 'SHOP_MAIN/'+action_array[0];
+			var tag = '?';
+		}else{
+			var base_url = 'SHOP_MAIN?s=/'+ action_array[0];
+			var tag = '&';
+		}
+		if(action_array[1] != '' && action_array[1] != null){
+			return base_url + tag + action_array[1];
+		}else{
+			return base_url;
+		}
+	}
+}
+
+//处理图片路径
+function __IMG(img_path){
+	var path = "";
+	if(img_path != undefined && img_path != ""){
+		if(img_path.indexOf("http://") == -1 && img_path.indexOf("https://") == -1){
+			path = UPLOAD+"\/"+img_path;
+		}else{
+			path = img_path;
+		}
+	}
+	return path;
+}
+</script>

@@ -1,0 +1,95 @@
+{extend name="shop/blue/base" /}
+{block name="main"}
+<style type="text/css">
+
+.item_list tbody tr th {
+	font-weight: normal;
+}
+</style>
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('commodity_evaluation_drying_list')}</li>
+				</ul>
+			</div>
+			<div class="blank"></div>
+			<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee" class="item_list">
+				<tr>
+					<th width="20%"></th>
+					<th width="30%">{:lang('goods_commodity_information')}</th>
+					<th width="50%">{:lang('member_evaluate')}</th>
+<!-- 					<th width="20%">晒单</th> -->
+				</tr>
+				<tbody id="list_content">
+					{if condition="count($goodsEvaluationList) eq 0"}
+					<tr>
+						<td colspan="5" align="center">{:lang('member_no_single_sun')}</td>
+					</tr>
+					{else}
+					{volist name="goodsEvaluationList" id="item"}
+					<tr>
+						<td colspan="4">{:lang('member_evaluation_time')}：{$item.addtime | getTimeStampTurnTime}</td>
+					</tr>
+					<tr>
+						<td>
+							<div style="display: inline-block;">
+								<a target="_blank" href="{:__URL('SHOP_MAIN/goods/goodsInfo','goodsid='.$item['goods_id'])}">
+									<img src="{:__IMG($item.goods_image)}" style="max-height: 60px">
+								</a>
+							</div>
+						</td>
+						<td>
+							<div style="display: inline-block;">
+								<a target="_blank" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$item['goods_id'])}">{$item.goods_name}</a>
+							</div>
+						</td>
+						<td width="400">
+							<div>
+								<span>{:lang('member_score')}：</span>
+								{for start="0" end="5"}
+									{if condition="$item.scores gt $i"}
+									<img src="__TEMP__/{$style}/public/images/star-on.png" style="width: 16px;">
+									{else}
+									<img src="__TEMP__/{$style}/public/images/star-off.png" style="width: 16px;">
+									{/if}
+								{/for}
+							</div><br>
+							<div>{:lang('goods_commodity_evaluation')}：{$item.content}</div>
+							{notempty name="$item['evaluationImg']"}
+								<div style="display: inline-block;width: 50px;"></div>
+								
+								{volist name="$item['evaluationImg']" id="vo"}
+									<img src="{:__IMG($vo)}" alt="" style="max-height: 60px;margin: 10px 10px 10px 0; ">
+								{/volist}
+							{/notempty}
+							{if condition="$item.explain_first neq ''"} <br>
+							<div>[{:lang('goods_shopkeeper_replies')}]：{$item.explain_first}</div>
+							{/if}
+							{if condition="$item.again_content neq ''"} <br>
+							<div>{:lang('goods_additional_evaluation')}：{$item.again_content}</div>
+							{/if}
+							{notempty name="$item['againEvaluationImg']"}
+								<div style="display: inline-block;width: 50px;"></div>
+								{volist  name="$item['againEvaluationImg']" id="vo"}
+								<img src="{:__IMG($vo)}" alt="" style="max-height: 6px;margin: 10px 10px 10px 0; ">
+								{/volist}
+							{/notempty}
+							{if condition="$item.again_explain neq ''"} <br>
+							<div>[{:lang('goods_shopkeeper_replies')}]：{$item.again_explain}</div>
+							{/if}
+						</td>
+<!-- 						<td width="80"></td> -->
+					</tr>
+					{/volist}
+					{/if}
+				</tbody>
+			</table>
+			{include file='shop/blue/controlCommonPage'/}
+		</div>
+	</div>
+</div>
+{/block}
+{block name="RightSideBar"}{/block}

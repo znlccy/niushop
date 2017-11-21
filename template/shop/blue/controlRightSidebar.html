@@ -1,0 +1,132 @@
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/shopping_cart.js"></script>
+<script src="__TEMP__/{$style}/public/js/ns_collections.js" type="text/javascript"></script>
+<!-- common.js 刷新了{:lang('goods_cart')}数据 -->
+<script>
+//当浏览器窗口大小改变时，设置显示内容的高度  
+window.onresize = function(){
+	$(".sidebar-cartbox").find('.cart-panel-content').height($(window).height() - 90);
+	$(".sidebar-cartbox").find('.bonus-panel-content').height($(window).height() - 40);
+}
+$(function() {
+	$(".quick-links").css("top",($(window).height())/2);
+	$.ajax({
+		type:"post",
+		url:"{:__URL('SHOP_MAIN/components/getlogininfo')}",
+		success:function(data){
+			if(data != null && data != ""){
+				var img = data["user_info"]["user_headimg"];
+				var name = data["user_info"]["nick_name"];
+				$("#not_logged").css("display","none");
+				$("#right_login_info").css("display","block");
+				$("#right_login_info_name").text(name);
+				if(img == '' ||img == null){
+					$("#login_member_logo").attr('src',"__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png"); 
+				}else{
+					img = __IMG(img);
+					$("#login_member_logo").attr('src',img);
+				}
+			}else{
+				$("#not_logged").css("display","block");
+				$("#right_login_info").css("display","none");
+			}
+		}
+	})
+	$('.ajax-login').click(function(){
+		$('#mask-layer-login').show();
+		$('#layui-layer').show();
+	})
+	$('.layui-layer-close.layui-layer-close1').click(function(){
+		$('#mask-layer-login').hide();
+		$('#layui-layer').hide();
+	})
+	refreshShopCart();
+	refreshShopCartBlue();
+});
+</script>
+<div class="right-sidebar-con">
+	<div class="right-sidebar-main">
+		<div class="right-sidebar-panel">
+			<div id="quick-links" class="quick-links">
+				<ul>
+					<li class="quick-area quick-login sidebar-user-trigger">
+						<a href="javascript:void(0);" class="quick-links-a" title="个人中心{:lang('member_center')}"><i class="user"></i></a>
+						<div class="sidebar-user quick-sidebar">
+							<i class="arrow-right"></i>
+							<div class="sidebar-user-info">
+								<!-- 没有{:lang('login')}的情况 _start -->
+								<div class="NS-USER-NOT-LOGIN">
+										<a href="{:__URL('SHOP_MAIN/member/index')}">
+									<div class="user-pic">
+										<div class="user-pic-mask"></div>
+										<img id="login_member_logo" src="__TEMP__/{$style}/public/images/temp_default_user_portrait_0.png" />
+									</div>
+									</a>
+									<br>
+									<p id="not_logged">{:lang('hello')}！{:lang('please')}<a href="javascript:void(0);" class="quick-login-a color ajax-login">{:lang('login')}</a> | <a href="{:__URL('SHOP_MAIN/login/registerbox')}" class="color">{:lang('register')}</a></p>
+									<p id="right_login_info">{:lang('hello')}！<span id="right_login_info_name"></span></p>
+								</div>
+								<!-- 没有{:lang('login')}的情况 _end -->
+								<!-- 有{:lang('login')}的情况 _start -->
+								<div class="js-user-already-login" style="display: none;">
+									<div class="user-have-login">
+										<div class="user-pic">
+											<div class="user-pic-mask"></div>
+											<img src="" class="NS-USER-PIC">
+										</div>
+										<div class="user-info">
+											<p>
+												{:lang('user')}&nbsp;&nbsp;&nbsp;{:lang('name')}： <span class="NS-USER-NAME"></span>
+											</p>
+										</div>
+									</div>
+									<p class="m-t-10">
+										<span class="prev-login"> {:lang('last_login_time')}： 
+											<span class="NS-USER-LAST-LOGIN"></span>
+										</span>
+										<a href="{:__URL('SHOP_MAIN/member/index')}" class="btn account-btn" target="_blank">{:lang('member_center')}</a>
+										<a href="{:__URL('SHOP_MAIN/member/orderlist')}" class="btn order-btn" target="_blank">{:lang('order_center')}</a>
+									</p>
+								</div>
+								<!-- 有{:lang('login')}的情况 _end -->
+							</div>
+						</div>
+					</li>
+					<li class="sidebar-tabs" data-ns-flag="shopping_cart">
+						<!-- 购物车 -->
+						<div class="cart-list quick-links-a sidebar-cartbox-trigger" title="{:lang('goods_cart')}">
+							<i class="cart"></i>
+							<span class="cart_num js-cart-count">0</span>
+						</div>
+					</li>
+					<li id="collectGoods" class="sidebar-tabs" data-ns-flag="collections_goods" title="{:lang('my_collection')}">
+						<a href="javascript:;" class="mpbtn_collect quick-links-a">
+							<i class="collection"></i>
+						</a>
+					</li>
+					<li class="quick-area">
+						<a class="quick-links-a" href="{$custom_service['value']['service_addr']}" title="{:lang('contact_customer_service')}" target="_blank">
+							<!-- http://wpa.qq.com/msgrd?v=3&uin={$web_info['web_qq']}&site=qq&menu=yes -->
+							<i class="customer-service"></i>
+						</a>
+					</li>
+					
+					<li class="quick-area">
+						<a class="quick-links-a" href="javascript:void(0);" title="{:lang('mall_code')}"><i class="qr-code"></i></a>
+						<div class="sidebar-code quick-sidebar" style="display: none;">
+							<i class="arrow-right"></i> 
+							<img src="{:__IMG($web_info['web_qrcode'])}">
+						</div>
+					</li>
+					<li class="returnTop" style="display: none;background: #0689e1;">
+						<a href="javascript:void(0);" class="return_top quick-links-a">
+							<i class="top"></i>
+						</a>
+						<div class="popup" style="left: -121px; visibility: hidden;">
+							{:lang('back_top')} <i class="arrow-right"></i>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

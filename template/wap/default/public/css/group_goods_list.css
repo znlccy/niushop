@@ -1,0 +1,325 @@
+html {
+	height: 100%;
+}
+div, ul, li {
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+}
+.custom-tag-list {
+	height: 100%;
+	padding-top: 45px;
+}
+a, a:link, a:visited, a:hover, a:active {
+	color: #333;
+	text-decoration: none;
+}
+*, a {
+	font-family: "微软雅黑", "Helvetica Neue", "Helvetica", Helvetica, Arial,
+		sans-serif;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	outline: none;
+}
+.custom-tag-list .custom-tag-list-menu-block {
+	height: 100%;
+	z-index: 5;
+	background-color: #fff;
+	overflow: hidden;
+}
+.custom-tag-list .custom-tag-list-menu-block ul {
+	position: relative;
+	overflow: auto;
+	height: 93%;
+}
+.custom-tag-list .custom-tag-list-menu-block ul::-webkit-scrollbar {
+	display: none;
+}
+.custom-tag-list .custom-tag-list-menu-block li a {
+	color: #000000;
+}
+.custom-tag-list-side-menu li a.selected {
+	color: #f44;
+	border-left: 4px solid #f44;
+	background: #fff;
+	padding-left: 11px;
+}
+.custom-tag-list .custom-tag-list-menu-block .custom-tag-list-side-menu
+	{
+	background-color: #F8F8F8;
+}
+.custom-tag-list .mask {
+	position: fixed;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: none;
+}
+.custom-tag-list .two-list-menu li a {
+	width: 95px;
+	display: block;
+	padding: 13px 10px 13px 15px;
+	font-size: 14px;
+	line-height: 18px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+	word-wrap: break-word;
+	color: #000000;
+}
+.custom-tag-list .two-list-menu li {
+	border-bottom: 1px solid #e5e5e5;
+	margin-top: -1px;
+}
+.two-list-menu {
+	position: absolute;
+	top: 0px;
+	left: 84px;
+	z-index: 6;
+	background: #fff;
+	overflow: hidden;
+	width: 94px;
+	height: 100%;
+	display: none;
+}
+.two-list-menu ::-webkit-scrollbar {
+	width: 0px
+}
+.two-list-menu ul {
+	height: 100%;
+	overflow: auto;
+	display: block;
+	width: 101px;
+	z-index: 3;
+	background-color: #fff;
+}
+.two-list-menu li {
+	display: none;
+}
+.custom-tag-list .custom-tag-list-goods {
+	overflow: auto;
+	float: left;
+	width: 72%;
+	height: 100%;
+	background-color:#f8f8f8;
+}
+.custom-tag-list-goods dl {
+	width: 50%;
+	margin: auto;
+	float:left;
+}
+.custom-tag-list-goods dl span {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+	position: relative;
+	margin-top: 10px;
+}
+.custom-tag-list-goods dl span img {
+	display: block;
+	width: 95%;
+	height: auto;
+	margin: 0 auto;
+}
+.custom-tag-list-goods dt {
+	width: 100%;
+	height: 20px;
+	margin-top: 19px;
+	margin-bottom: 9px;
+}
+.custom-tag-list-goods dd {
+	display: block;
+	overflow: hidden;
+	background: #fff;
+	padding: 7px 10px 5px 10px;
+}
+.catalog-box {
+	width: 100%;
+	overflow: hidden;
+}
+.catalog-info {
+	width:28%;
+	float: left;
+	text-align: center;
+	margin: 5px;
+	padding: 0;
+	height:85px;
+}
+.catalog-info a img {
+	display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    height: auto;
+}
+.catalog-info a em {
+	display: block;
+	height: 31px;
+	color: #686868;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-box;
+	display: -o-box;
+	line-clamp: 2;
+	-webkit-line-clamp: 2;
+	-moz-line-clamp: 2;
+	-ms-line-clamp: 2;
+	-o-line-clamp: 2;
+	box-orient: vertical;
+	-webkit-box-orient: vertical;
+	-moz-box-orient: vertical;
+	-ms-box-orient: vertical;
+	-o-box-orient: vertical;
+	word-break: break-all;
+	box-align: center;
+	-webkit-box-align: center;
+	-moz-box-align: center;
+	-ms-box-align: center;
+	-o-box-align: center;
+	box-pack: center;
+	-webkit-box-pack: center;
+	-moz-box-pack: center;
+	-ms-box-pack: center;
+	-o-box-pack: center;
+	z-index: 2;
+	position: relative;
+	line-height: 15px;
+	margin-top: 10px;
+}
+.custom-tag-list-goods dt a {
+	display: block;
+	height: 20px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #232326;
+	padding-left: 5px;
+	background: url(../images/more_r.png)
+		no-repeat right 40%;
+	background-size: auto 17px;
+}
+a.all {
+	display: block;
+	background: #f23030;
+	font-size: 13px;
+	line-height: 20px;
+	text-align: center;
+	margin: auto;
+	margin-bottom: 10px;
+	border-radius: 3px;
+	margin-top: 10px;
+	padding: 8px 5px;
+}
+.custom-tag-list .custom-tag-list-goods>p {
+	line-height: 32px;
+	padding-left: 10px;
+	font-size: 14px;
+	background: #F8F8F8;
+}
+.custom-tag-list .custom-tag-list-goods .custom-tag-list-goods-detail .custom-tag-list-goods-buy
+	{
+	display: block;
+	height: 20px;
+	float: right;
+	display: block;
+	color: #fff;
+	border-radius: 5px;
+	margin-right: 8px;
+	background: none;
+}
+.custom-tag-list .custom-tag-list-goods .custom-tag-list-goods-detail .custom-tag-list-goods-buy img
+	{
+	max-width: 100%;
+	max-height: 100%;
+}
+.get_into_cart {
+	position: fixed;
+	z-index: 2;
+	right: 8px;
+	bottom: 8%;
+	height: 42px;
+	width: 42px;
+	text-align: center;
+	display: block;
+	background: url(../images/get_into_cart.png_01.png) no-repeat;
+}
+.get_into_cart.select {
+	background: url(../images/get_into_cart.png_02.png) no-repeat;
+}
+.goodsCategoryList{
+	width: 92%;
+	padding:0px 4% 10px 4%;
+	margin-top: 55px;
+}
+.goodsCategoryList .all_goods{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    background: #F33B43;
+    text-align: center;
+    margin-bottom: 5px;
+}
+.goodsCategoryList .all_goods a{
+    color: #fff;
+	display: block;
+}
+.goodsCategoryList .one_level_category{
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	position: relative;
+}
+.goodsCategoryList .one_level_category span{
+	position: absolute;
+	z-index: 5;
+	height: 30px;
+	line-height: 30px;
+	background: #eee;
+	padding-right: 5px;
+}
+.goodsCategoryList .one_level_category .data-line{
+	width: 100%;
+	height: 2px;
+	margin-top: 8px;
+	background: url("../images/bg_ico.png");
+	position: absolute;
+	z-index: 1;
+	top: 7px;
+}
+.goodsCategoryList .two-level_category{
+	width: 100%;
+	margin: 10px 0;
+}
+.goodsCategoryList .two-level_category ul{
+	width: 100%;
+}
+.goodsCategoryList .two-level_category li{
+	width: 24%;
+	height: 35px;
+	line-height: 35px;
+	display: inline-block;
+	text-align: center;
+	margin:-1px -1px 0 -1px;
+	padding: 1px;
+	border: 1px solid #e1e1e1;
+	float: left;
+	background: #fff;
+}
+.goodsCategoryList .two-level_category li a
+{
+	display: block;
+	width: 94%;
+	height: 35px;
+	line-height: 35px;
+	padding: 0 3%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+    white-space: nowrap;	
+	color: #666;
+}

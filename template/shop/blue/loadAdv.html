@@ -1,0 +1,46 @@
+<section id="one_image_block[ap_id]" style="display:none">
+</section>
+<section id="images_block[ap_id]" style="display:none">
+</section>
+<section id="slide_block[ap_id]" style="display:none">
+</section>
+<script>
+//当前页面还不成熟待用
+var ap_id=[ap_id];
+var data=PlatformAdvLoad(ap_id);
+if(data != ''){
+	if(data.ap_display == 0){
+		//幻灯广告形式
+	}else if(data.ap_display == 1){
+		//单图展示形式
+		$('#one_image_block[ap_id]').append('<a href="'+data['adv_list'][0]['adv_url']+'"> <img src="'+__IMG(data['adv_list'][0]['adv_image'])+'" width="'+data['ap_width']+'px" height="'+data['ap_height']+'px"> </a>');
+		$("#one_image_block[ap_id]").show();
+	}else if(data.ap_display == 2){
+		//多图平铺
+		var listhtml='';
+		for(var i=0;i<data['adv_list'].length;i++){
+				listhtml+='<div class="item">';
+				listhtml+='<a class="ad-img" target="_blank" href="'+data['adv_list'][i]['adv_url']+'" >';
+				listhtml+='<img class="lazy" src="'+__IMG(data['adv_list'][i]['adv_image'])+'" width="'+data['ap_width']+'px" height="'+data['ap_height']+'px" style="display: inline;">';
+				listhtml+='</a></div>';
+			}
+		$('#images_block[ap_id]').append(listhtml);
+		$('#images_block[ap_id]').show();
+	}
+}
+
+function PlatformAdvLoad(ap_id){
+	var result='';
+	$.ajax({
+		type:"post",
+		url:__URL(SHOPMAIN+"/components/getplatfromadvpositiondetial"),
+		data:{'ap_id':ap_id},
+		dataType:'json',
+		success:function(data){
+			result=data;
+			return result;
+		}
+	});
+	return result;
+}
+</script>

@@ -1,0 +1,51 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.style0list tbody td{
+	vertical-align:middle;
+}
+</style>
+ {/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/express/addexpresscompany')}">添加物流公司</a></li>
+{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<table class="mytable">
+			<tr>
+				<th width="2%" style="text-align: left;">
+					<a class="btn btn-small fun-a" href="javascript:batchDelete()">批量删除</a>
+				</th>
+				<th width="20%">
+					<input type="text" id = 'search_text' placeholder="请输入物流公司名称或编号" />
+					<input type="button" onclick="searchData()" value="搜索" />
+				</th>
+			</tr>
+		</table>
+		<div class="con style0list">
+			<table>
+				<thead>
+					<tr align="center">
+						<th><label><input type="checkbox"  onclick="CheckAll(this)"></label></th>
+						<th class="tal">物流公司</th>
+						<th class="tal">物流编号</th>
+						<th class="tal">联系电话</th>
+						<th class="tal">是否默认</th>
+						<th>排序</th>
+						<th>是否启用</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="productTbody"></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script src="ADMIN_JS/express/express_company.js"></script>
+<script>
+var pageshow = "{$pageshow}";
+</script>
+{/block}

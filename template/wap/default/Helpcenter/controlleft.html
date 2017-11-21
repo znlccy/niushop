@@ -1,0 +1,93 @@
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/group_goods_list.css">
+<style>
+.custom-tag-list .two-list-menu li a{
+	overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+}
+.two-list-menu{
+	left: 27%;
+	top: 44px;
+	border-left:1px solid #e5e5e5;
+	width: 100px;
+	line-height: 17px;
+}
+.custom-tag-list .two-list-menu li a{
+	padding: 13.5px 10px 13.5px 15px;
+}
+</style>
+<!-- 分类 -->
+<div class="custom-tag-list clearfix">
+    <div class="mask" id="grouGoodsListmask"></div>
+	<div class="custom-tag-list-menu-block" >
+		<div style="height: 294px; display: none;"></div>
+		<ul class="custom-tag-list-side-menu" style="position: relative;" id='goods_group'>
+			{foreach name="platform_help_class" id="class_vo" key="k"}
+			<li>
+				<a data-groupid="{$class_vo.class_id}" onclick="showChild(this,{$class_vo.class_id})" {if condition="$k==0"}class="selected"{/if}>
+					<span>{$class_vo.class_name}</span>
+				</a>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<div class="two-list-menu">
+		<ul id='two_menu'>
+				{foreach name="platform_help_document" id="document_vo"}
+			<li pid="{$document_vo.class_id}" style="display: none;">
+				<a href="javascript:getgoodlist({$document_vo.id})">
+					<span>{$document_vo.title}</span>
+				</a>
+			</li>
+		        {/foreach}
+		</ul>	
+	</div>
+	
+    <div class="custom-tag-list-goods" id='good_list'>
+        <p style="padding-left: 40%;">{$help_document_info.title}</p>
+        <p style="font-size:12px;">{$help_document_info.content}</p>
+    </div>
+</div>
+<script>
+function showChild(obj,id){
+	$(".custom-tag-list-side-menu li a").removeClass("selected");
+	$(obj).addClass("selected");
+	$(".two-list-menu").show();
+	$("#grouGoodsListmask").show();
+	$("#two_menu li[pid]").hide();
+	$("#two_menu li[pid='"+id+"']").show();
+}
+$('.custom-tag-list .mask').click(function(){
+	$(this).hide();
+	$('.two-list-menu').hide();
+})
+
+//通过文章ID获取文章内容
+ function getgoodlist(id){
+	$('#grouGoodsListmask').hide();
+	$('.two-list-menu').hide();
+	$('.two-list-menu li[pid]').hide();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('APP_MAIN/Helpcenter/index')}",
+		async : true,
+		data : {'id':id },
+		beforeSend:function(){
+			showLoadMaskLayer();
+		},
+		success : function(data){
+			//alert(JSON.stringify(data));
+			var html = '';
+			html+='<p style="padding-left: 40%;">'+data['data'][0]['title']+'</p>';
+			if(data['data'][0]['content']==''){
+				html+='<p style="font-size:12px;">{:lang("no_relevant_content")}</p>';
+			}else{
+				html+='<p style="font-size:12px;">'+data['data'][0]['content']+'</p>';
+			}
+			$('#good_list').html(html);
+			hiddenLoadMaskLayer();
+		}
+	});
+} 
+</script>

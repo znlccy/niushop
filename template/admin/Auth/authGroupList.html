@@ -1,0 +1,472 @@
+{extend name="admin/base"} {block name="resources"}
+<script src="ADMIN_JS/allselect.js" type="text/javascript"></script>
+<script src="ADMIN_JS/rolejs.js" type="text/javascript"></script>
+<script src="ADMIN_JS/art_dialog.source.js" type="text/javascript"></script>
+<link href="ADMIN_CSS/default1.css" rel="stylesheet" type="text/css">
+<link href="ADMIN_CSS/system.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.mod-table-main .style0line td input {
+	margin: 3px 0 5px 5px;
+}
+.overflow table td{border-bottom:1px solid #ccc; }
+table{width:100%;}
+.tr-Current ul{clear:both;}
+.tr-Current ul li{float:left;}
+.star{color:red;margin-right:10px;}
+</style>
+{/block}
+{block name="right_tab"}
+<li><a class="nscs-table-handle_green" href="javascript:;" id="addrole"><i class="fa fa-plus-circle"></i>&nbsp;添加用户组</a></li>
+{/block} {block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		<div class="con style0list">
+			<table>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 50%;">
+					<col style="width: 15%;">
+					<col style="width: 15%;">
+					<col style="width: auto;">
+				</colgroup>
+				<thead>
+					<tr align="center">
+						<th>
+							<label style="margin-left: 5px;">
+								<input id="ckall" type="checkbox" onclick="CheckAll(event)">
+							</label>
+						</th>
+						<th style="text-align: left;">用户组</th>
+						<th>是否是管理员组</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 80%;">
+					<col style="width: 15%;">
+					<col style="width: auto;">
+				</colgroup>
+				<tbody id="grouplis" style="font-size: 12px;"></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="hidden_rolename" />
+<input type="hidden" name="sendCheckDatas" id="sendCheckDatas">
+<script type="text/javascript">
+function open_UpdateRoleManage(module_id_array, roleId, name) {
+	popupOperate("gray-edit-role", "用户组设置", "gray-edit-role");
+	$("#currentRoleID").val(roleId);
+	$("#EditRoleName").val(name);
+	if (roleId == 1) {
+		$("[name = permiss]").attr("checked", true);
+	} else {
+		$("[name = permiss]").attr("checked", false);
+		$('input[name = permiss]').each(function() {
+			if (module_id_array.indexOf($(this).attr('id')) >= 0) {
+				$(this).attr('checked', 'checked');
+			}
+		});
+	}
+}
+
+//修改
+function update_RoleManage() {
+	var roleId = $("#currentRoleID").val();
+	var $roleName = $("#EditRoleName").val();
+	var $array = $("#EditsendCheckDatas").val();
+	if ($roleName == '') {
+		showMessage("error","请填写用户组名称");
+		$("#btn").removeAttr("disabled");
+		return;
+	}
+
+		/* var roleNamestr = $("#hidden_rolename").val();
+		alert(JSON.stringify(roleNamestr));
+		return false;
+		roleNamestr = roleNamestr.substr(1);
+		var roleNameArray = new Array();
+		roleNameArray = roleNamestr.split(",");
+		for (var i = 0; i < roleNameArray.length; i++) {
+			if (roleNameArray[i] == $roleName) {
+				showMessage("error","已存在该分组");
+				$("#btn").removeAttr("disabled");
+				return;
+			}
+		} */
+
+	
+	if ($array == '') {
+		showMessage("error","请选择权限");
+		return false;
+	}
+	$.ajax({
+		url : "{:__URL('ADMIN_MAIN/auth/addusergroup')}",
+		type : "post",
+		data : {
+			"roleId" : roleId,
+			"array" : $array,
+			"roleName" : $roleName
+		},
+		success : function(res) {
+			if(res['code'] > 0){
+				window.location.reload();
+			}else{
+				showMessage("error",res['message']);
+			}
+		}
+	})
+}
+
+//删除
+function deleteRole(group_id) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+				url : "{:__URL('ADMIN_MAIN/auth/deletesystemusergroup')}",
+				data : { "group_id" : group_id },
+				type : "post",
+				dataType : "json",
+				success : function(data) {
+					//alert(group_id);
+					if(data['code'] > 0){
+						$("#dialog").dialog({
+							buttons: {
+								"确定": function() {
+									$(this).dialog('close');
+								}
+							},
+							time:2,
+							contentText:data['message']
+						})
+						window.location.reload();
+					}else{
+						$("#dialog").dialog({
+							buttons: {
+								"确定,#e57373": function() {
+									$(this).dialog('close');
+								}
+							},
+							contentText:data['message']
+						})
+					}
+				}
+			});
+		},
+		"取消,#e57373": function() {
+			$(this).dialog('close');
+		}
+	},
+	contentText:"确定删除吗"
+	});
+}
+
+//添加
+function add_RoleManage() {
+	var $roleName = $("#RoleName").val();
+	var array = $("#sendCheckDatas").val();
+	if ($roleName == '') {
+		showMessage("error","请填写用户组名称");
+		$("#btn").removeAttr("disabled");
+		return;
+	}
+/* 	var roleNamestr = $("#hidden_rolename").val();
+	roleNamestr = roleNamestr.substr(1);
+	var roleNameArray = new Array();
+	roleNameArray = roleNamestr.split(",");
+	for (var i = 0; i < roleNameArray.length; i++) {
+		if (roleNameArray[i] == $roleName) {
+			showMessage("error","已存在该分组");
+			$("#btn").removeAttr("disabled");
+			return;
+		}
+	} */
+
+	if (array == '') {
+		showMessage("error","请选择权限");
+		$("#btn").removeAttr("disabled");
+		return;
+	}
+	$.ajax({
+		url : "{:__URL('ADMIN_MAIN/auth/addusergroup')}",
+		type : "post",
+		data : {
+			"array" : array,
+			"roleName" : $roleName
+		},
+		success : function(res) {
+			if(res['code'] > 0){
+				window.location.reload();
+			}else{
+				showMessage("error",res['message']);
+				$("#btn").removeAttr("disabled");
+			}
+		}
+	})
+}
+
+//查询 pageNum：显示那一页   where：条件
+function LoadingInfo(page_index) {
+	$.ajax({
+		url : "{:__URL('ADMIN_MAIN/auth/authgrouplist')}",
+		type : "post",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		dataType : "json",
+		success : function(res) {
+			//alert(JSON.stringify(res));
+			$("#grouplis").children("tr").remove();
+			for (var i = 0; i < res['data'].length; i++) {
+				var array = res['data'][i];
+				var name = array["group_name"];
+				var roleId = array["group_id"];
+				var is_system = array["is_system"];
+				var module_id_array = array['module_id_array'];
+				if(is_system == 0){
+					var is_system_name = '否';
+				}else{
+					var is_system_name = '是';
+				}
+				$("#hidden_rolename").val($("#hidden_rolename").val() + "," + name);
+				var strBeg = "<tr class='tr-Current' align='center'><td><div class='cell'><label ><input name='sub' type='checkbox' value="
+					+ roleId
+					+ " is_system="
+					+ is_system
+					+ " onclick='CheckThis()'></label>";
+				strBeg = strBeg
+					+ "</div></td><td align='left'><div class='cell'>"
+					+ name
+					+ "</div></td><td>"
+					+ is_system_name
+					+ "</td>";
+				if(is_system == 0){
+					strBeg = strBeg
+					+ "<td><div class='cell'><div class='mod-operate'><div class='con style0editel'><a class='edit' href='javascript:void(0)' onclick='open_UpdateRoleManage(&#39;"
+					+ module_id_array
+					+ "&#39;,"
+					+ roleId
+					+ ",&#39;"
+					+ name
+					+ "&#39;)'>编辑</a>  <a class='del' href='javascript:void(0)' onclick='javascript:deleteRole("
+					+ roleId + ")'>删除</a>";
+				}else{
+					strBeg = strBeg
+					+ "<td>";
+				}
+				strBeg = strBeg + "</div></div></div></td></tr>";
+				$('#grouplis').append(strBeg);
+			}
+			initPageData(res["page_count"],res['data'].length,res['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	})
+}
+// enter 键模糊查询 bug 2013-11-16 14:10:06
+document.onkeypress = function() {
+	var iKeyCode = -1;
+	if (arguments[0]) {
+		iKeyCode = arguments[0].which;
+	} else {
+		iKeyCode = event.keyCode;
+	}
+	if (iKeyCode == 13) {
+		if ($("#txtSearch").val() == null || $("#txtSearch").val() == "请输入用户组名称..." || $.trim($("#txtSearch").val()) == '') {
+			roleManageList(1);
+		} else {
+			roleManageList(1, $("#txtSearch").val());
+		}
+	}
+}
+
+// 查询
+function txtSearch() {
+	if ($("#txtSearch").val() == null || $("#txtSearch").val() == "请输入用户组名称..." || $.trim($("#txtSearch").val()) == '') {
+		roleManageList(1);
+	} else {
+		roleManageList(1, $("#txtSearch").val());
+	}
+}
+</script>
+<!-- 添加权限 -->
+<div id="gray-add-role" style="display: none;">
+	<div style="width: 850px; height: 350px;" class="content scroll">
+		<div>
+			<!--content begin-->
+			<div class="mod-form">
+				<div class="con style0alert b10">
+					<ul class="list-ul">
+						<li class="list-li"><span class="star">*</span>用户组名称 <input
+							type="text" value="" name="RoleName" id="RoleName"
+							style="margin-left: 10px;"> <span class="prompt"></span>
+						</li>
+						<li class="list-li">
+							<div class="float-l w100" ><span class="star">*</span>权限 </div>
+							<div class="overflow">
+								<ul id="AllMenuConetnt">
+									<li id="contentPaltForm"><input id="Add01" name="import"
+										style="margin: -1px 0 0;" dir="title" type="checkbox"
+										onclick="AllCheckBoxClick(event);"><span>平台</span> <!-- 列表 begin -->
+										<div class="mod-table l30">
+											<div class="mod-table-main">
+												<div class="con style0line" style="padding-left: 9px;">
+													<table class="table table-hover">
+														<colgroup>
+															<col style="width: 10%;">
+															<col style="width: 90%;">
+														</colgroup>
+														<tbody id="platFormContent">
+															{foreach item="vo" name="list"}
+														<tr class="tr-Current">
+															<td><div>
+																		<label> <input type="checkbox" name="add_per"
+																			dir="parent" id="{$vo.module_id}"
+																			value="{$vo.module_id}"
+																			onclick="AllCheckBoxClick(event);" />&nbsp;{$vo.module_name}
+																		</label>
+																	</div></td>
+															<td>
+															{foreach item="per" name="vo['child']"}
+																<ul class="second">
+																<li style="margin-right:10px;"><div class="cell">
+																		<label class="w120"><input
+																			type="checkbox" name="add_per" dir="son"
+																			id="{$per.module_id}" value="{$per.module_id}"
+																			onclick="AllCheckBoxClick(event);" />&nbsp;<span style="font-weight:normal;color:#000;">{$per.module_name}</span></label>
+																	</div></li>
+																
+																	{foreach item="three" name="per['child']"} 
+																<li><div class="cell">
+																					<label class="w120"><input
+																						type="checkbox" name="add_per" dir="sonson"
+																						id="{$three.module_id}" value="{$three.module_id}"
+																						onclick="AllCheckBoxClick(event);" />&nbsp;<span style="font-weight:normal;color:#666;">{$three.module_name}</span></label>
+																				</div></li>
+																{/foreach}
+																</ul>
+															{/foreach}
+															</td>
+															
+														</tr>
+														{/foreach}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div> <!-- 列表 end --></li>
+								</ul>
+							</div>
+							<div class="float-l">
+								<span class="prompt"></span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--content end-->
+			<button class="submit01-alert r10" style="display: none"
+				id="addSubmit" type="submit">保存</button>
+		</div>
+	</div>
+	<div class="btn">
+		<div class="indiv" style="text-align:right;">
+			<button class="submit01-alert r10" onclick="btn()" type="button"
+				id="btn">保存</button>
+			<button class="reset01-alert" onclick="roleClose()">关闭</button>
+		</div>
+	</div>
+</div>
+
+<!-- 修改权限 -->
+<div id="gray-edit-role" style="display: none;">
+	<div style="width: 850px; height: 350px;" class="content scroll">
+		<div>
+			<!--content begin-->
+			<div class="mod-form ">
+				<div class="con style0alert b10">
+					<ul class="list-ul">
+						<li class="list-li"><span class="star">*</span>用户组名称 <input
+							type="text" name="EditRoleName" id="EditRoleName" class="w230">
+							<span class="prompt"></span></li>
+						<li class="list-li">
+							<div class="float-l w100">
+								<span class="star">*</span>权限
+							</div>
+							<div class="overflow">
+								<ul id="EditAllMenuConetnt">
+									<li id="EditcontentPaltForm"><input id="Edit01"
+										name="import" dir="top" type="checkbox"
+										style="margin: -1px 0 0;"
+										onclick="EditAllCheckBoxClick(event);"> <span
+										for="Edit01"> 平台</span> <!-- 列表 begin -->
+										<div class="mod-table l30">
+											<div class="mod-table-main" style="padding-left: 9px;">
+												<div class="con style0line">
+													<table class="table table-hover">
+														<colgroup>
+															<col style="width: 10%;">
+															<col style="width: 90%;">
+														</colgroup>
+														<tbody id="EditplatFormContent">
+														{foreach item="vo" name="list"}
+														<tr class="tr-Current">
+															<td><div>
+																		<label> <input type="checkbox" name="permiss"
+																			dir="parent" id="{$vo.module_id}"
+																			value="{$vo.module_id}"
+																			onclick="AllCheckBoxClick(event);" />&nbsp;{$vo.module_name}
+																		</label>
+																	</div></td>
+															<td>
+															{foreach item="per" name="vo['child']"}
+																<ul class="second">
+																<li  style="margin-right:10px;"><div class="cell">
+																		<label class="w120"><input
+																			type="checkbox" name="permiss" dir="son"
+																			id="{$per.module_id}" value="{$per.module_id}"
+																			onclick="AllCheckBoxClick(event);" />&nbsp;<span style="font-weight:normal;color:#000;">{$per.module_name}</span></label>
+																	</div></li>
+																	{foreach item="three" name="per['child']"} 
+																<li><div class="cell">
+																					<label class="w120"><input
+																						type="checkbox" name="permiss" dir="sonson"
+																						id="{$three.module_id}" value="{$three.module_id}"
+																						onclick="AllCheckBoxClick(event);" />&nbsp;<span style="font-weight:normal;color:#666;">{$three.module_name}</span></label>
+																				</div></li>
+																{/foreach}
+																</ul>
+															{/foreach}
+															</td>
+															
+														</tr>
+														{/foreach}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div> <!-- 列表 end --></li>
+								</ul>
+							</div>
+							<div class="float-l">
+								<span class="prompt"></span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--content end-->
+			<button type="submit" id="EditSubmit" style="display: none"
+				class="submit01 r10">保存</button>
+		</div>
+	</div>
+	<input type="hidden" id="currentRoleID" name="EditRoleID"> <input
+		type="hidden" name="EditsendCheckDatas" id="EditsendCheckDatas">
+	<div class="btn">
+		<div class="indiv" style="text-align:right;">
+			<button class="submit01-alert r10" onclick="Editbtn()">保存</button>
+			<button class="reset01-alert" onclick="btnCancel()">关闭</button>
+		</div>
+	</div>
+</div>
+{/block}

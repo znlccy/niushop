@@ -1,0 +1,144 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.fun-a {
+	margin-top: 0px;
+	padding: 6px 15px 0 15px;
+}
+.num{width:40px;text-align:center;}	
+.cell_total{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:250px;display: block;}
+.style0list table input {
+	margin-bottom: 0px;
+}
+
+.style0list table input.sort {
+	width: auto;
+	text-align: center;
+}
+
+.style0list tbody td {
+	line-height: 28px;
+}
+.cell_total{
+	width:120px;
+}
+</style>
+{/block}
+{block name="right_tab"}
+<!-- <li><a class="nscs-table-handle_green" href="ADMIN_MAIN/extend/addaddons" ><i class="fa fa-plus-circle"></i>&nbsp;添加插件</a></li> -->
+{/block}
+{block name="main"}
+
+<div class="mod-table">
+	<div class="con style0list">
+			<table>
+				 <colgroup>
+                    <col style="width: 10%;">
+                    <col style="width: 11%;">
+                    <col style="width: 25%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%">
+                    <col style="width: 15%">
+                    </colgroup>
+				<thead>
+					<tr align="center">
+                          <th class="x-tab tal"><div class="iconbg-arrow up">名称</div></th>
+                          <th class="x-tab tal"><div class="iconbg-arrow up">标识</div></th>
+                          <th class="x-tab tal"><div class="iconbg-arrow up">描述</div></th>
+                          <th class="x-tab tal"><div class="iconbg-arrow up">状态</div></th>
+                          <th class="x-tab tal"><div class="iconbg-arrow up">作者</div></th>
+                          <th class="x-tab tal"><div class="iconbg-arrow up">版本</div></th>
+					      <th class="x-tab tal">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+</div>
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:700px;left:45%;top:30%;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">插件详情</h4>
+			</div>
+			<div class="set-style">
+				<dl>
+					<dt>详情:</dt>
+					<dd>
+						<div id="content" style="min-width:400px;min-height:100px;"></div>
+					</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/extend/addonslist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			var html = '';
+			if (data['data'].length > 0) {
+				for (var i = 0; i < data['data'].length; i++) {
+					var status = '';
+					var operation = '';
+					var url = '';
+					if(data['data'][i]['has_addonslist'] == 1){
+						url = __URL('ADMIN_MAIN/extend/pluginlist?id='+data['data'][i]['id']);
+					}else{
+						url = __URL('ADMIN_MAIN/extend/addonsconfig?id='+data['data'][i]['id']);
+					}
+					if(data['data'][i]['status'] == -1){
+						status = '损坏';
+						operation = '';
+					}else if(data['data'][i]['status'] == 0){
+						status = '禁用';
+						operation = '<a href="'+url+'">设置</a>&nbsp;<a href="javascript:;" onclick="detail('+ data['data'][i]['id'] +')">详情</a>&nbsp;<a href="ADMIN_MAIN/extend/enable?id='+ data['data'][i]['id'] +'">启用</a>&nbsp;<a href="'+__URL('ADMIN_MAIN/extend/uninstall?id='+ data['data'][i]['id'])+'" >卸载</a>';
+					}else if(data['data'][i]['status'] == 1){
+						status = '启用';
+						operation = '<a href="'+url+'">设置</a>&nbsp;<a href="javascript:;" onclick="detail('+ data['data'][i]['id'] +')">详情</a>&nbsp;<a href="'+__URL('ADMIN_MAIN/extend/disable?id='+ data['data'][i]['id'])+'">禁用</a>&nbsp;<a href="'+__URL('ADMIN_MAIN/extend/uninstall?id='+ data['data'][i]['id'])+'" >卸载</a>';
+					}else if(data['data'][i]['status'] == undefined){
+						operation = '<a href="'+__URL('ADMIN_MAIN/extend/install?addon_name='+ data['data'][i]['name'])+'">安装</a>';
+						status = '未安装';
+					}
+					html += '<tr>';
+					html += '<td class="tal">'+ data['data'][i]['title'] +'</td>';
+					html += '<td class="tal">'+ data['data'][i]['name'] +'</td>';
+					html += '<td class="tal">'+ data['data'][i]['description'] +'</td>';
+					html += '<td class="tal">'+ status +'</td>';
+					html += '<td class="tal">'+ data['data'][i]['author'] +'</td>';
+					html += '<td class="tal">'+ data['data'][i]['version'] +'</td>';
+					html += '<td>'+ operation +'</td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="8">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+function detail(id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/extend/getAddonsDetail')}",
+		data : { "id" : id },
+		success : function(data) {
+			$("#content").html(data.content);
+			$("#detail").modal("show");
+		}
+	});
+}
+</script>
+{/block}

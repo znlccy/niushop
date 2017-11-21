@@ -1,0 +1,156 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/group_goods_list.css">
+<style>
+body{background: #eee;}
+.custom-search-button{top:6px;}
+.category{width:95%;margin:10px auto;display: none;}
+.category img{display: inline-block;width: 100%;}
+.nothing-data{margin-top:50%;}
+.custom-tag-list-goods dl{width:100%;}
+.custom-tag-list-goods dt a {padding:0 10px;}
+.custom-tag-list{height:92%;}
+/* .category img{
+	display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    height: auto;
+} */
+/* .custom-tag-list,.custom-tag-list .custom-tag-list-menu-block,.custom-tag-list .custom-tag-list-goods{height:initial;}
+ body{ 
+	height:initial;
+} */ 
+.controlSearch {
+    width: 85%;
+    padding: 0; 
+    background: none; 
+    margin: 8px 0 5px 9%;
+}
+.controlSearch .control-search-input{
+	height: 30px;
+	border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
+    overflow: hidden;
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
+}
+.controlSearch .control-search-input .search-input {
+    width: 72%;
+    height: 20px;
+    line-height: 20px;
+    margin: 4px 0;
+    padding: 0 15px;
+    border: none;
+    color: #999;
+    float: left;
+    font-size: 13px;
+    background:#EFEFEF;
+}
+.controlSearch .control-search-input .search-button{
+	margin: 4px 0;
+}
+.more{
+	height: 4rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #333;
+}
+.pull_icon{
+	width: 25px;
+	height: 25px;
+	background-image: url('__TEMP__/{$style}/public/images/pull.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 25px;
+	transition: all .5s;
+}
+.more span{
+	padding-left: .5rem;
+}
+
+.scroller{
+	background-color: #fff;
+}
+
+
+.more .flip{
+	transform: rotate(180deg);
+}
+.loading{
+	background-image: url('__TEMP__/{$style}/public/images/loading.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 25px;
+	width: 25px;
+	height: 25px;
+	position: relative;
+	display: inherit;
+}
+.more i.loading{
+    transform: rotate(0deg) translateZ(0);
+    transition-duration: 0;
+    animation-name: loading;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes loading {
+  from {
+    -webkit-transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    -webkit-transform: rotate(360deg) translateZ(0);
+  }
+}
+.custom-tag-list .custom-tag-list-goods .custom-tag-list-goods-detail .custom-tag-list-goods-buy img {
+    max-width: 120%;
+    max-height: 120%;
+}
+/*#goods_list{
+	margin-bottom: 40px;
+}*/
+</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="head_back" href="{:__URL('APP_MAIN')}"><i class="icon-back"></i></a>
+	<div class="head-title"><span>{include file='wap/default_new/Index/controlSearch'/}</span></div>
+</section>
+{/block}
+
+{block name="main"}
+<div class="goodsCategoryList">
+	<div class="all_goods">
+		<a href="{:__URL('APP_MAIN/goods/goodslist')}">全部商品</a>
+	</div>
+	{foreach name="goods_category_list" item="vo"}
+	<div class="one_level_category">
+		<span>{$vo.category_name}</span>
+		<div class="data-line"></div>
+	</div>
+	<div class="two-level_category">
+		<ul>
+			<li><a href="{:__URL('APP_MAIN/goods/goodslist','category_id='.$vo['category_id'])}">全部</a></li>
+			{notempty name="$vo['child_list']"}
+				{foreach name="$vo['child_list']" item="to"}
+					<li><a href="{:__URL('APP_MAIN/goods/goodslist','category_id='.$to['category_id'])}">{$to.category_name}</a></li>
+				{/foreach}
+			{/notempty}
+			{for start="0" end="$vo['num']"}
+				<li><a href="javascript:;">&nbsp;</a></li>
+			{/for}
+		</ul>
+		<div style="clear: both;"></div>
+	</div>
+	<div style="clear: both;"></div>
+	{/foreach}
+</div>
+<script>
+$(function(){
+	bottomActive('#bottom_classify');
+});
+</script>
+{/block}

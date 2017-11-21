@@ -1,0 +1,67 @@
+{extend name="shop/default/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件-->
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_brand.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_sale.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_default.css">
+{/block}
+{block name="main"}
+	{include file='shop/default/controlBrandSale' ap_id='1075'/}
+	<div class="w1210">
+		<div class="sale-container">
+			<div class="sale-middle">
+				{include file='shop/default/Goods/controlBrandType'/}
+			</div>
+			<div class="wrapper sale-footer">
+				{include file='shop/default/Goods/controlBrandFloor'/}
+			</div>
+				{include file='shop/default/controlCommonPage'/} 
+		</div>
+		{include file='shop/default/controlLoveOrHistory' /}
+	</div>
+{/block}
+{block name="javascript"}
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_brand.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_index.js"></script>
+<script type="text/javascript">
+/**
+ * 计算每次偏移值
+ */
+$(function(){
+	var d_li=$('.pinpaijngxuan_pro_title li');
+	var li_count=d_li.length;
+	var d_width=d_li.width();
+	$('.brand-showcase-list>ul').css('width',li_count*d_width+'px');
+
+	$('.focus-next').click(function(){
+		var this_left=$('.brand-showcase-list>ul').css('left');
+		this_left=this_left=='auto' ? 0: this_left;
+		var width_len=(li_count-5)*d_width;
+		if(this_left!='0'){
+			this_left=this_left.substr(1,this_left.length-3);
+		}
+		if(this_left>=width_len)return false;
+		var left=Number(this_left)+Number(d_width);
+		$('.brand-showcase-list>ul').css('left','-'+left+'px');
+	})
+	$('.focus-prev').click(function(){
+		var this_left=$('.brand-showcase-list>ul').css('left');
+		this_left=this_left=='auto' ? 0: this_left;
+		if(this_left!='0'){
+			this_left=this_left.substr(1,this_left.length-3);
+			
+		}
+		var left=Number(this_left)-Number(d_width);
+		$('.brand-showcase-list>ul').css('left','-'+left+'px');
+	})
+})
+/* *
+ * 搜索分类下的品牌,传所选中li的id值和左偏移量 
+ */
+function categoryHref(category_id)
+{
+	var this_left=$('.brand-showcase-list>ul').css('left');
+	location.href=__URL("SHOP_MAIN/goods/brandlist?category_id="+category_id+"&left="+this_left);
+}
+</script>
+{/block}

@@ -1,0 +1,71 @@
+{if condition="$total_count neq 0"}
+<div id="pagination" class="page" >
+	<div class="page-wrap fr">
+		<div class="total">共<span id="totalcount">{$total_count}</span>条</div>
+	</div>
+	<div class="page-num fr">
+		{if condition="$page eq 1"}
+			<span id="home_page"><a href="javascript:;" class="num prev disabled" data-go-page="1" title="第一页" >首页</a></span>
+			<span id="pre_page"><a href="javascript:;" class="num prev disabled " title="上一页" >上一页</a></span>
+		{else /}
+			<span id="home_page"><a href="{:__URL('SHOP_MAIN/'.$path_info,'page=1'.$query_string)}"  class="num prev" data-go-page="1" title="第一页" >首页</a></span>
+			<span id="pre_page"><a href="{:__URL('SHOP_MAIN/'.$path_info,'page='.($page-1).$query_string)}"  class="num prev " title="上一页" >上一页</a></span>
+		{/if}
+		<div id="page_list" style="float: left;{$path_info}">
+			<!-- 分页页码显示计算 -->
+			
+			<!-- 总页数小于总页码时就都显示 -->
+			{if condition="$page_count elt $page_num "}
+				{for start="1" end="$page_count+1"}
+					{if condition="$i eq $page"}
+						<span class="num curr"><a href="javascript:;" data-cur-page="{$i}">{$i}</a></span>
+					{else /}
+						<span class="num"><a href="{:__URL('SHOP_MAIN/'.$path_info,'page='.$i.$query_string)}" data-cur-page="{$i}">{$i}</a></span>
+					{/if}
+				   
+				{/for}
+			<!-- 当前页小于页码的页码的平均两面的值时显示 -->
+			{elseif condition="$page elt ($page_num-1)/2"}
+				{for start="1" end="$page_num+1"}
+					{if condition="$i eq $page"}
+						<span class="num curr"><a href="javascript:;" data-cur-page="{$i}">{$i}</a></span>
+					{else /}
+						<span class="num"><a href="{:__URL('SHOP_MAIN/'.$path_info,'page='.$i.$query_string)}" data-cur-page="{$i}">{$i}</a></span>
+					{/if}
+				   
+				{/for}
+			<!-- 如果总页数等于当前页 或者 总页数小于当前页加上页码总数平均值显示 -->
+			{elseif condition="$page_count eq $page or $page_count elt $page+($page_num-1)/2 " /}
+				{for start="$page_count-$page_num+1" end="$page_count+1"}
+					{if condition="$i eq $page"}
+						<span class="num curr"><a href="javascript:;" data-cur-page="{$i}">{$i}</a></span>
+					{else /}
+						<span class="num"><a href="{:__URL('SHOP_MAIN/'.$path_info,'page='.$i.$query_string)}" data-cur-page="{$i}">{$i}</a></span>
+					{/if}
+				   
+				{/for}
+			<!-- 否则就正常显示 -->
+			{else /}
+				{for start="$page-($page_num-1)/2" end="$page+($page_num-1)/2+1"}
+					{if condition="$i eq $page"}
+						<span class="num curr"><a href="javascript:;" data-cur-page="{$i}">{$i}</a></span>
+					{else /}
+						<span class="num"><a href="{:__URL('SHOP_MAIN/'.$path_info,'page='.$i.$query_string)}" data-cur-page="{$i}">{$i}</a></span>
+					{/if}
+				   
+				{/for}
+			{/if}
+			
+		</div>
+		
+		{if condition="$page neq $page_count"}
+			<span id="next_page"><a href="{:__URL('SHOP_MAIN/'.$path_info,'page='.($page+1).$query_string)}" class="num next" title="下一页" >下一页</a></span>
+			<span id="last_page"><a href="{:__URL('SHOP_MAIN/'.$path_info,'page='.$page_count.$query_string)}" class="num next" title="下一页" >尾页</a></span>
+		{else /}
+			<span id="next_page"><a href="javascript:;" class="num next disabled" title="下一页" >下一页</a></span>
+			<span id="last_page"><a href="javascript:;" class="num next disabled" title="下一页" >尾页</a></span>
+		{/if}
+		
+	</div>
+</div>
+{/if}

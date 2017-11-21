@@ -1,0 +1,73 @@
+<!--
+	创建人：李志伟
+	创建时间：2017年2月7日 12:22:28
+	功能描述：导航栏、菜单栏 、商品分类（与首页的样式不同，没有轮播图）
+-->
+{if condition="$is_head_goods_nav eq 1"}
+<div class="category-box">
+{else/}
+<div class="category-box category-box-border">
+{/if}
+	<div class="w1210">
+		<div class="home-category fl">
+			<a href="{:__URL('SHOP_MAIN/goods/category')}" class="menu-event" title="查看全部商品分类"><i></i>全部商品分类</a>
+			{if condition="$is_head_goods_nav eq 1"}
+			<div class="category-layer" style="display: block;">
+			{else/}
+			<div class="expand-menu category-layer" style="display: none;">
+			{/if}
+				<!-- 公共的菜单栏-->
+				<div class="category-layer">
+					<span class="category-layer-bg bg-color"></span>
+					{foreach $goods_category_one as $k=>$vo}
+					{if condition="$k lt 13"}
+					<div class="list">
+						<dl class="cat">
+							<dt class="cat-name">
+								<a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo['category_id'])}" target="_blank" title="{$vo.category_name}">{$vo.category_name}</a>
+							</dt>
+							{if $vo['count'] >0}
+							<i class="right-arrow">&gt;</i>
+							{/if}
+						</dl>
+						<div class="categorys" style="display: none;">
+							<div class="item-left fl">
+								<div class="subitems">
+								{if condition="$vo['child_list'] neq null "}
+								{foreach $vo['child_list'] as $vo2}
+									
+									<dl class="fore1">
+										<dt style="width: 5em;">
+											<a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo2['category_id'])}" target="_blank" title="{$vo2.category_name}">
+												<em>{$vo2.category_name}</em>
+												{if $vo2['count'] >0}
+												<i>&gt;</i>
+												{/if}
+											</a>
+										</dt>
+										<dd>
+										{if condition="$vo2['child_list'] neq null "}
+											{foreach $vo2['child_list'] as $vo3}
+												
+												<a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$vo3['category_id'])}" target="_blank" title="{$vo3.category_name}">{$vo3.category_name}</a>
+												
+											{/foreach}
+											{/if}
+										</dd>
+									</dl>
+									
+								{/foreach}
+								{/if}
+								</div>
+							</div>
+						</div>
+					</div>
+					{/if}
+					{/foreach}
+				</div>
+			</div>
+		</div>
+		<!-- 公共的菜单栏-->
+	{include file='shop/default/controlCommonNav'/}
+	</div>
+</div>

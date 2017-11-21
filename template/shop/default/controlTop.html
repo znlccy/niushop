@@ -1,0 +1,97 @@
+<!--
+	创建时间：2017年2月7日 12:08:45
+	功能描述： 顶部， 
+-->
+<div class="header-top">
+	<div class="header-box">
+		<font id="login-info" class="login-info"></font>
+		<ul>
+			<li><a class="menu-hd home" href="{:__URL('SHOP_MAIN')}" target="_top"><i></i>商城首页</a></li>
+			<li class="menu-item">
+				<div class="menu">
+					<a class="menu-hd myinfo" href="{:__URL('SHOP_MAIN/member/index')}" target="_blank"><i></i> 个人中心 <b></b></a>
+					<div id="menu-2" class="menu-bd">
+						<span class="menu-bd-mask"></span>
+						<div class="menu-bd-panel">
+							<a href="{:__URL('SHOP_MAIN/member/orderlist')}" target="_blank">已买到的宝贝</a>
+							<a href="{:__URL('SHOP_MAIN/member/addresslist')}" target="_blank">我的地址管理</a>
+							<a href="{:__URL('SHOP_MAIN/member/goodscollectionlist')}" target="_blank">我收藏的宝贝</a>
+						</div>
+					</div>
+				</div>
+			</li>
+		<!-- 	<li class="menu-item cartbox"><a class="menu-hd cart" href="{:__URL('SHOP_MAIN/goods/cart')}" target="_top"><i></i>&nbsp;购物车</a></li> -->
+			<!-- <li><a class="menu-hd" target="_blank" href="ADMIN_MAIN">卖家中心</a></li> -->
+			<li class="menu-item">
+				<div class="menu">
+					<a class="menu-hd we-chat"
+						href="javascript:;" target="_top"> <i></i>
+						关注商城 <b></b>
+					</a>
+					<div id="menu-5" class="menu-bd we-chat-qrcode">
+						<span class="menu-bd-mask"></span> <a target="_top"> <img src="{:__IMG($web_info['web_qrcode'])}" alt="官方微信"></a>
+						<p class="font-14">关注官方微信</p>
+					</div>
+				</div>
+			</li>
+			<!-- <li class="menu-item">
+				<div class="menu">
+					<a href="{:__URL('SHOP_MAIN/helpcenter/index')}" class="menu-hd site-nav" target="_blank"> 商家支持 <b></b></a>
+					<div id="menu-7" class="menu-bd site-nav-main">
+						<span class="menu-bd-mask"></span>
+						<div class="menu-bd-panel">
+							<div class="site-nav-con">
+								<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=2')}" target="_blank" title="常见问题">常见问题</a>
+								<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=7')}" target="_blank" title="网上支付">网上支付</a>
+								<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=5')}" target="_blank" title="验货与签收">验货与签收</a>
+								<a href="{:__URL('SHOP_MAIN/helpcenter/index','id=9')}" target="_blank" title="退款说明">退款说明</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li> -->
+			<li class="menu-item"><a  href="{:__URL('APP_MAIN')}" class="menu-hd wap-nav" > <i></i>手机端</a></li>
+			<li class="menu-item"><a href="{:__URL('SHOP_MAIN/helpcenter/index')}" class="menu-hd site-nav" target="_blank">帮助中心</a></li>
+		</ul>
+	</div>
+</div>
+
+<script type="text/javascript">
+getTopLoginInfo();
+function getTopLoginInfo(){
+	$.ajax({
+		type:"post",
+		url:"{:__URL('SHOP_MAIN/components/getlogininfo')}",
+		success:function(data){
+			var login_info_html='';
+			if(data!=null && data!=""){
+	// 			if(data["user_info"]["nick_name"]!= null && data["user_info"]["nick_name"] != ""){
+					login_info_html='<a class="sn-login main-color" href="{:__URL('SHOP_MAIN/member/index')}" target="_top">'+data["user_info"]["nick_name"]+'</a><em>欢迎您回来！</em><a class="sn-register" href="javascript:logout();" target="_top">退出</a>';
+					$('div.login-info').html('<font id="login-info" class="login-info NS-USER-ALREADY-LOGIN"><em><a href="{:__URL('SHOP_MAIN/member/index')}" target="_blank" class="color NS-USER-NAME">'+data["user_info"]["nick_name"]+'</a></em><a href="javascript:logout();" data-method="post" class="logout bg-color">退出</a></font>');
+	// 			}
+			}else{
+				login_info_html='<em>欢迎来到{$title}</em><a class="login color" href="{:__URL('SHOP_MAIN/login/index')}" target="_top">{:lang("login")}</a>&nbsp;|&nbsp;<a class="register" href="{:__URL('SHOP_MAIN/login/registerbox')}" target="_top">{:lang("free_registration")}</a>';	
+				$('div.login-info').html('<font id="login-info" class="login-info"><a class="login color" href="{:__URL('SHOP_MAIN/login/index')}" target="_top">{:lang("login")}</a>&nbsp;|&nbsp;<a class="register bg-color" href="{:__URL('SHOP_MAIN/login/registerbox')}" target="_top">{:lang("free_registration")}</a></font>');
+			}
+			$('#login-info').html(login_info_html);
+		}
+	});
+}
+//退出登录
+function logout(){
+	$.ajax({
+		url: "{:__URL('SHOP_MAIN/member/logout')}",
+		type: "post",
+		success: function (res) {
+			if (res['code'] > 0) {
+				$.msg("退出成功！");
+				window.location.reload();
+			} else {
+				if(res["message"]!=null){
+					$.msg(res["message"]);
+				}
+			}
+		}
+	})
+}
+</script>

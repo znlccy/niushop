@@ -1,0 +1,132 @@
+@CHARSET "UTF-8";
+
+img {
+	vertical-align: top;
+	border: 0;
+}
+
+#MagnifierWrap {
+	position: relative;
+	margin: 0;
+	width: 100%;
+}
+
+.MagnifierMain {
+	position: relative;
+	width: 378px;
+	height: 378px;
+	line-height: 378px;
+	border: 1px solid #eee;
+	padding: 10px;
+	text-align: center;
+}
+
+.MagnifierMain img {
+	vertical-align: middle;
+}
+
+.MagnifierDrag {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: #ccc;
+	opacity: 0.4;
+	filter: alpha(opacity = 40);
+	cursor: move;
+}
+
+.MagnifierPop {
+	position: absolute;
+	top: 0;
+	overflow: hidden;
+	background: #fff url(http://fan.yoka.com/fan5.0/img/loading.gif)
+		no-repeat center center;
+}
+
+.MagnifierImg {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.spec-items {
+	position: relative;
+	width: 340px;
+	height: 55px;
+	overflow: hidden;
+	padding-top: 21px;
+	margin: 0 auto;
+}
+
+.spec-items ul {
+	width: 500%;
+	position: absolute;
+	top: 10px;
+	left: 0;
+}
+
+.spec-items ul * {
+	/* -webkit-transition: all .3s;
+	-o-transition: all .3s;
+	transition: all .3s; */
+	
+}
+
+.spec-items li {
+	width: 60px;
+	height: 60px;
+	float: left;
+	overflow: hidden;
+	margin-right: 5px;
+	border: 2px solid #fff;
+	cursor: pointer;
+}
+
+.spec-items li.on {
+	border: 2px solid #E31939;
+}
+
+.spec-items li img {
+	width: 100%;
+	/* -webkit-transform: scale(1, 1);
+	-ms-transform: scale(1, 1);
+	-o-transform: scale(1, 1);
+	transform: scale(1, 1); */
+}
+
+.spec-items li.on img {
+	/* -webkit-transform: scale(1.2, 1.2);
+	-ms-transform: scale(1.2, 1.2);
+	-o-transform: scale(1.2, 1.2);
+	transform: scale(1.2, 1.2); */
+	
+}
+
+span.spe_leftBtn, span.spe_rightBtn {
+	position: absolute;
+	bottom: 0px;
+	display: block;
+	width: 15px;
+	height: 69px;
+	line-height: 69px;
+	font-family: "黑体";
+	text-align: center;
+	font-size: 30px;
+	color: #ddd;
+	cursor: default;
+	/* 	background-color: #f9f9f9; */
+}
+
+span.on {
+	background-color: #fff;
+	color: #999;
+	cursor: pointer;
+}
+
+span.spe_leftBtn {
+	left: 0;
+}
+
+span.spe_rightBtn {
+	right: 0;
+}

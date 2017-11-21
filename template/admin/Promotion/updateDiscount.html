@@ -1,0 +1,435 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
+<style  type="text/css">
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 120px;
+	height: 100px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	    margin: 0 0 10px;
+		border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 120px;
+	max-height: 100px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+
+.set-style dl dd p{
+	margin-bottom:0;
+}
+
+.table-div  table tr td{
+	    border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+.goodlist-table tr td{
+	    border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+.form-horizontal .control-group {
+    margin-bottom: 0px;
+}
+.form-horizontal .controls {
+    margin-left: 20px; 
+}
+.help-inline{
+	    height: 30px;
+    	line-height: 30px;
+}
+input[type="radio"]{
+	margin-top:6px;
+}
+.controls table tr td input[type="radio"]{
+	margin:0px;
+}
+</style>
+ {/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>活动名称:</dt>
+		<dd><input type="text" id="discount_name" maxlength="10" value="{$info['discount_name']}"><p class="error">请输入活动名称</p></dd>
+		
+	</dl>
+	<dl>
+		<dt>活动有效期:</dt>
+		<dd>
+			<input class="input-medium" type="text" id="start_time" value="{$info['start_time'] | getTimeStampTurnTime}" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<span class="mlr5">-</span> 
+			<input class="input-medium" size="15"type="text" id="end_time" value="{$info['end_time'] | getTimeStampTurnTime}" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<p class="error">请输入活动有效期</p>
+			<p class="error">活动结束时间不能小于当前时间</p>
+			<p class="error">活动结束时间不能小于开始时间</p>
+		</dd>
+	</dl>
+	{include file="admin/Promotion/selectGoods" /}
+	<input type="hidden" id="discount_id" value="{$info['discount_id']}">
+	<button class="edit_button" onclick="updateDiscount();">提交</button>
+</div>
+
+<script>
+$(function(){
+	$('.type_dl dd').hide();
+	$("#some_pro").show();
+	$(".js-tab").eq(1).addClass("active");
+	selected_goods($("ul.ui-nav-tab li.js-tab").eq(1));
+	$(".select-two thead th").eq(1).after("<th></th>");
+	$goods_selected_array = {$info}.goods_list;
+	$goods_id_selected_array = {$info}.goods_id_array;
+	LoadingInfo(1);
+	$(".kucun").after('<th class="text-center cell-10">折扣</th>');
+	refresh_data();
+});
+function LoadingInfo(page_index) {
+	var $goodsArr = new Array();
+	var group_id = $("#group_id").val();
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/getsearchgoodslist')}",
+		data : {
+			"search_text" : search_text, "group_id":group_id,
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+		},
+		success : function(data) {
+			$data_array = data['data'];
+			var html = '';
+			if (data['data'].length > 0) {
+				$("#DiscountList").show();
+				for (var i = 0; i < data['data'].length; i++) {
+					var curr = data['data'][i];
+					if(jQuery.inArray(curr["goods_id"], $goodsArr) == "-1"){
+						$goodsArr.push(curr["goods_id"]);
+					}else{
+						continue;
+					}
+					html +='<tr class="widget-list-item" id="select_'+curr["goods_id"]+'">';
+					html +='<td class="goods-image-td text-center"><div class="goods-image js-goods-image">';
+					if(curr["picture_info"] != null){
+						html +='<img src="'+ __IMG(curr["picture_info"]['pic_cover_micro'])+'"></div></td>';
+					}else{
+						html +='<img src="__ROOT__/"></div></td>';
+					}
+					html +='<td class="goods-meta"><p class="goods-title">';
+					html +='<a href="'+__URL('SHOP_MAIN/goods/goodsinfo?goodsid='+curr["goods_id"])+'" target="_blank" class="new-window" title="'+curr["goods_name"]+'">'+curr["goods_name"]+'</a></p>';
+					html +='<p class="goods-price">'+curr["price"]+'</p></td>';
+					html +='<td class="text-center">'+curr["stock"]+'</td>';
+					html += '<td class="discount_'+curr["goods_id"]+'" style="width:100px;"><input type="number" style="width:40px;text-align:center;margin-bottom:0;" name="discount" onchange="discount(this);" goodsid="'+curr["goods_id"]+'" value="9.99"/><span style="margin-left:3px;margin-top-3px;">折</span></td>';
+					if($goods_id_selected_array.length > 0){
+						if(jQuery.inArray(curr["goods_id"], $goods_id_selected_array) == "-1"){
+							html +='<td class="text-center goods-opt"><a href="javascript:;" class="btn ui-btn-primary js-add-reward" onclick="join('+curr["goods_id"]+',this)" >参加活动</a></td></tr>';	
+						}else{
+							html +='<td class="text-center goods-opt"><a href="javascript:;" class="btn btn-dange js-remove-reward" onclick="cancel_join('+curr["goods_id"]+',this)">取消参加</a></td></tr>';
+						}
+					}else{
+						html +='<td class="text-center goods-opt"><a href="javascript:;" class="btn ui-btn-primary js-add-reward" onclick="join('+curr["goods_id"]+',this)">参加活动</a></td></tr>';
+					}
+				}
+			} else {
+				html += '<tr align="center"><th colspan="6">暂无符合条件的数据记录</th></tr>';
+			}
+			$("tbody.goods-list").html(html);
+
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+/**
+ * 刷新 已选商品
+ */
+
+function refresh_data(){
+	var data = $goods_selected_array;
+	var html = "";
+	for (var i = 0; i < data.length; i++) {
+		if(!data[i]['discount']){
+			data[i]['discount'] = 10.0;
+		}
+		html +='<tr id="selected_'+data[i]["goods_id"]+'">';
+		html +='<td class="goods-image-td text-center"><div class="goods-image js-goods-image">';
+		if(data[i]["picture_info"] != null){
+			html +='<img src="'+__IMG(data[i]["picture_info"]['pic_cover_micro'])+'"></div></td>';
+		}else{
+			html +='<img src="__ROOT__/"></div></td>';
+		}
+		html +='<td class="goods-meta"><p class="goods-title">';
+		html +='<a href="'+__URL('SHOP_MAIN/goods/goodsinfo?goodsid='+data[i]['goods_id'])+'" target="_blank" class="new-window" title="'+data[i]["goods_name"]+'">'+data[i]["goods_name"]+'</a></p>';
+		html +='<p class="goods-price">'+data[i]["price"]+'</p></td>';
+		html += '<td></td>';
+		html +='<td class="text-center">'+data[i]["stock"]+'</td>';
+		html += '<td class="discount_'+data[i]["goods_id"]+'" style="width:100px;"><input type="number" style="width:40px;text-align:center;margin-bottom:0;" name="discount" onchange="discount(this);" goodsid="'+data[i]["goods_id"]+'" value="'+data[i]['discount']+'"/><span style="margin-left:3px;margin-top-3px;">折</span></td>';
+		html +='<td class="text-center goods-opt"><a href="javascript:;" class="btn btn-dange js-remove-reward" onclick="cancel_join('+data[i]["goods_id"]+',this)">取消参加</a></td></tr>';
+	}
+	$(".select-two tbody tr").remove();
+	$(".select-two tbody").append(html);
+}
+function join(goods_id,e){
+	if($("#selected_"+goods_id).length > 0){
+		return false;
+	}else{
+		for(var i=0; i<$data_array.length; i++){
+			if($data_array[i]['goods_id'] == goods_id){
+				$data_array[i]['discount'] = $(".discount_"+goods_id).children("input").val();
+				$goods_selected_array[$goods_selected_array.length] = $data_array[i];
+				$goods_id_selected_array[$goods_id_selected_array.length] = goods_id;
+				refresh_data();
+				break;
+			}
+		}
+		var a = '<a href="javascript:;" class="btn btn-dange js-remove-reward" onclick="cancel_join('+goods_id+',this)">取消参加</a>';
+		$(e).parent("td").html(a);
+		$("#selected_"+goods_id+" .goods-opt").html(a);
+	}
+}
+function cancel_join(goods_id,e){
+	if($("#selected_"+goods_id).length > 0){
+		for(var i=0; i<$goods_selected_array.length; i++){
+			if($goods_selected_array[i]['goods_id'] == goods_id){
+				$goods_selected_array.splice(i,1);
+				$goods_id_selected_array.splice(i,1);
+				refresh_data();
+				break;
+			}
+		}
+		var a = '<a href="javascript:;" class="btn ui-btn-primary js-add-reward" onclick="join('+goods_id+',this)">参加活动</a>';
+		$(e).parent("td").html(a);
+		setDiscount();
+		$(".discount_"+goods_id).children("input").val(9.99);
+		$("#select_"+goods_id+" .goods-opt").html(a);
+	}
+}
+function selected_goods(e){
+	$(e).parents("ul.ui-nav-tab").find(".js-tab").removeClass("active");
+	$(e).parents("li").addClass("active");
+	$(".select-two").show();
+	$(".select-one").hide();
+}
+function select_goods(e){
+	$(e).parents("ul.ui-nav-tab").find(".js-tab").removeClass("active");
+	$(e).parent("li").addClass("active");
+	$(".select-one").show();
+	$(".select-two").hide();
+	setDiscount();
+}
+function setDiscount(){
+	$(".select-two input[type=number][name=discount]").each(function(i,d){
+		var discount = $(d).val();
+		var goodsid = $(d).attr("goodsid");
+		$(".discount_"+goodsid).children('input').val(discount);
+	})
+}
+/**
+*折扣
+*/
+	function discount(event){
+		var discount = parseFloat($(event).val()).toFixed(2);
+		if(discount < 0.01){
+			$(event).val(0.01);
+			discount = 0.01;
+		}else if(discount >9.99){
+			$(event).val(9.99);
+			discount = 9.99;
+		}
+		var goodsid = $(event).attr("goodsid");
+		$(".discount_"+goodsid).children("input").val(discount);
+	}
+
+	//保存
+	var flag = false;//防止重复提交
+	function updateDiscount(){
+		var discount_id = $("#discount_id").val();
+		var discount_name = $("#discount_name").val();
+		var start_time = $("#start_time").val();
+		var end_time = $("#end_time").val();
+		var obj = $(".select-two table input[type='number'][name='discount']");
+		var goods_id_array = '';
+		obj.each(function(i){
+			var dis = obj.eq(i).val() ? obj.eq(i).val() : 10;
+			var gid = obj.eq(i).attr("goodsid");
+			goods_id_array += ','+gid+':'+ dis;
+			if(dis >=10 || dis <= 0 ){
+				showMessage('error', "折扣必须在0.01-9.99之间");
+				flag = true;
+				return false;
+			}else{
+				flag = false;
+			}
+		});
+		
+		goods_id_array = goods_id_array.substring(1);
+		if(verify(discount_name, start_time, end_time, goods_id_array)){
+			if(flag){
+				return;
+			}
+			flag = true;
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/promotion/updatediscount')}",
+				data : {
+					'discount_id' : discount_id,
+					'discount_name' : discount_name,
+					'start_time' : start_time,
+					'end_time' : end_time,
+					'goods_id_array' : goods_id_array,
+				},
+				success : function(data) {
+					if (data["code"] > 0) {
+						showMessage('success', data["message"], "{:__URL('ADMIN_MAIN/promotion/getdiscountlist')}");
+					}else{
+						showMessage('error', data["message"]);
+						flag = false;
+					}	
+				}
+			});
+		}
+	}
+	/**
+	*模块输入信息验证
+	*/
+	function verify(discount_name, start_time, end_time, goods_id_array){
+		if(discount_name == ''){
+			$("#discount_name").parent().find('.error').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(start_time == '' || end_time == ''){
+			$("#start_time").parent().find('.error').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		var dataTime = nowDate();
+		var now = new Date(dataTime.replace("-", "/").replace("-", "/")); 
+		var end = new Date(end_time.replace("-", "/").replace("-", "/"));  
+		var start = new Date(start_time.replace("-", "/").replace("-", "/"));  
+		if(end < now){
+			$("#end_time").next().next('.error').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(end < start){
+			$("#end_time").next().next().next('.error').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(goods_id_array == ''){
+			$("#notSelect").show();
+			return false;
+		}else{
+			$("#notSelect").hide();
+		}
+		return true;
+	}
+	/**
+	当前时间
+	*/
+	function nowDate(){
+		var myDate = new Date();
+		//获取当前年
+		var year=myDate.getFullYear();
+		//获取当前月
+		var month=myDate.getMonth()+1;
+		//获取当前日
+		var date=myDate.getDate(); 
+		var h=myDate.getHours();       //获取当前小时数(0-23)
+		var m=myDate.getMinutes();     //获取当前分钟数(0-59)
+		var s=myDate.getSeconds();  
+
+		var now=year+'-'+month+"-"+date+" "+h+':'+m+":"+s;
+		return now;
+	}
+</script>
+{/block}

@@ -1,0 +1,243 @@
+{extend name="wap/default/base" /} 
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/common.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/components.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/category.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/group_goods_list.css">
+<script src="__TEMP__/{$style}/public/js/jquery.cookie.js" type="text/javascript"></script>
+<script src="__TEMP__/{$style}/public/js/new_goods_list.js" type="text/javascript"></script>
+<style>
+.openList li dd {width: 90%;}
+.openList li dl dt {font-size: 14px;width: 90%;height: 20px;overflow: hidden;}
+.openList .goods-sales {font-size: 12px;}
+.openList li dd i {font-size: 14px;}
+.custom-search{width:90%;margin-left:20px;}
+.custom-search .custom-search-input{width:97%;}
+.custom-search-button{top:6px;}
+</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="head_back"href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{include file='wap/default/Index/controlSearch'/}</div>
+</section>
+{/block}
+{block name="main"}
+<div id="index_content">
+<!--列表页内容start-->
+<section class="category-content-section">
+	<section class="filtrate-term ">
+		<ul>
+			<li class="drop_down data-category"><a href="javascript:;" class="">分类<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></a></li>
+			<li class="drop_down data-ordrt-sort"><a href="javascript:;">排序<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></a></li>
+			<li class="data-screen"><a href="javascript:;">筛选<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></a></li>
+			<!--  <i class="fa fa-list-ul fa-lg" aria-hidden="true"></i>-->
+			<li class="data-display-mode"><a href="javascript:;"><i class="fa fa-th-large fa-lg" aria-hidden="true"></i></a></li>			
+		</ul>
+	</section>
+	<!-- 商品列表 -->
+	<div class="goods-list-grid openList">
+		<div class="blank-div"></div>
+		<div id="goods_list">
+			<div class="tablelist-append clearfix"></div>
+		</div>
+	</div>
+	<!-- 筛选条件 -->
+	{include file="wap/default/Goods/goodsCategoryConditions" /}
+	<!-- 选择分类start -->
+	<div class="data-category-select-layer">
+		<ul class="primary_classification" >
+			{empty name="category_id"}
+			<li onclick="location.href='{:__URL(\'APP_MAIN/goods/goodslist\')}'" class="active">全部分类</li>
+			{else/}
+			<li onclick="location.href='{:__URL(\'APP_MAIN/goods/goodslist\')}'">全部分类</li>
+			{/empty}
+			{foreach name="$goodsCategoryList" item="vo"}
+			<li data-category-id="{$vo['category_id']}" {if condition="$vo['category_id'] eq $category_id"}class="active"{/if}>{$vo.short_name}</li>
+			{/foreach}
+		</ul>
+		<ul class="two_stage_classification">
+			{foreach name="$goodsCategoryList" item="vo"}
+				{foreach name="$vo['child_list']" item="to"}
+				<li {if condition="$to['category_id'] eq $category_id"} class="active" {/if}   {if condition="$to['pid'] eq $category_id"} style="display:block;" {/if} data-pid="{$to.pid}" data-category-id="{$to['category_id']}"><a href="{:__URL('APP_MAIN/goods/goodslist','category_id='.$to['category_id'])}">{$to.category_name}</a></li>
+				{/foreach}
+			{/foreach}
+		</ul>
+	</div>
+	<!-- 选择分类end -->
+	<!-- 排序start -->
+	<div class="filtrate-more sale-num">
+		<span class="filtrate-sort"><a href="javascript:void(0)" class="">默认 </a></span>
+		<span class="filtrate-sort"><a href="javascript:void(0)" class="" data-order-type="ng.sales" data-sort="asc">{:lang('goods_sales_volume')} </a></span>
+		<span class="filtrate-sort"><a href="javascript:void(0)" class="" data-order-type="ng.is_new" data-sort="desc">{:lang('goods_new')} </a></span>
+		<span class="filtrate-sort"><a href="javascript:void(0)" class="" data-order-type="ng.promotion_price" data-sort="desc">{:lang('goods_price')} </a></span>
+	</div>
+	<!-- 排序end -->
+</section>
+</div>
+<div class="mask-div"></div>
+<!-- 总页数 -->
+<input type="hidden" id="page_count">
+<!-- 当前页数 -->
+<input type="hidden" id="page">
+<input type="hidden" id='order' name="order"/>
+<input type="hidden" id='sort' name="sort"/>
+<input type="hidden" id='category_id' name='category_id' value="{$category_id}" />
+{/block}
+{block name="bottom"}{/block}
+{block name="javascript"}
+<script type="text/javascript">
+$(function(){
+	getgoodlist(1)
+})
+var is_load = true;//防止重复加载
+function getgoodlist(page){
+	$('#grouGoodsListmask').hide();
+	$('.two-list-menu').hide();
+	$('.two-list-menu li[pid]').hide();
+	var order = $("#order").val();
+	var sort = $("#sort").val();
+	var min_price = $("#min_price").val();
+	var max_price = $("#max_price").val();
+	var attr = $("#attr").val();
+	var spec = $("#spec").val();
+	var brand_id = $("#brand_id").val();
+	//展示方式
+	if($.cookie("goods_list_display_mode")!= undefined && $.cookie("goods_list_display_mode") != ""){
+		var display_mode = $.cookie("goods_list_display_mode");
+		if(display_mode == "list"){
+			$(".data-display-mode").find("i").attr("class","fa fa-list-ul fa-lg");
+		}else if(display_mode == "big_img"){
+			$(".data-display-mode").find("i").attr("class","fa fa-th-large fa-lg");
+		}
+	}else{
+		var display_mode = "big_img";
+		$(".data-display-mode").find("i").attr("class","fa fa-th-large fa-lg");
+	}
+	$("#page").val(page);
+	if(is_load){
+		is_load = false;
+		$.ajax({
+			type:"post",
+			url : "{:__URL('APP_MAIN/Goods/goodsList')}",
+			data : {
+				'category_id':'{$category_id}',
+				'brand_id':brand_id,
+				'order':order,
+				'sort':sort, 
+				"page" : page,
+				"min_price" : min_price,
+				"max_price" : max_price,
+				"attr" : attr,
+				"spec" : spec
+			},
+			beforeSend:function(){
+				showLoadMaskLayer();
+			},
+			success : function(data){
+				hiddenLoadMaskLayer();
+				$("#page_count").val(data['page_count']);//总页数
+				if(page == 1){
+					var list_html = "";
+				}else if(page > 1){
+					var list_html = $('.tablelist-append').html();
+				}
+				if(data['data'].length >0 ){
+					for(var i=0;i<data['data'].length;i++){
+						var item=data['data'][i];
+						if(display_mode == "big_img"){
+						list_html+='<div class="product single_item info">'
+									+'<li>'
+										+'<div class="item">'
+											+'<div class="item-tag-box">'
+												+'<!--{:lang("hot_sale")}icon{:lang("position_is")}：0px 0px，{:lang("goods_new")}icon{:lang("position_is")}：0px -35px，{:lang("competitive_products")}icon{:lang("position_is")}：0px -70px-->'
+											+'</div>'
+
+											+'<div class="item-pic">'
+												+'<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'">'
+													+'<img class="" src="'+__IMG(item.pic_cover_small)+'" alt="'+item.goods_name+'" style="display: block;max-width:100%;max-height:100%;">'
+												+'</a>'
+											+'</div>'
+
+											+'<dl>'
+												+'<dt>'
+													+'<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'">'+item.goods_name+'</a>'
+												+'</dt>'
+												+'<dd>'
+													+'<i>￥'+item.promotion_price+'</i>'
+												+'</dd>'
+											+'</dl>'
+										+'</div>'
+
+										+'<div class="item-con-info">'
+											+'<span class="goods-sales"> {:lang("goods_sales_volume")}：'+item.sales+'</span>'
+											+'<div class="cart-box">'
+												+'<a class="add-cart increase" data-goods_id="575" href="javascript:CartGoodsInfo('+item.goods_id+','+item.state+')"></a>'
+												+'<a class="decrease hide" data-goods_id="575" style="right: 60px;"></a>'
+											+'</div>'
+										+'</div>'
+									+'</li>'
+								+'</div>';
+						}else if(display_mode == "list"){
+							list_html += '<div class="goods_info">';
+							list_html +='<div class="goods_img">';
+							list_html += '<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'">';
+							list_html += '<img src="'+__IMG(item.pic_cover_small)+'" alt="" class="pic"  onerror="this.src=\'__TEMP__/{$style}/public/images/goods_img_empty.png\'">';
+							list_html += '</a></div>';
+							list_html += '<div class="data_info">';
+							list_html += '<p class="goods_name" onclick="location.href=\''+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'\'">'+item['goods_name']+'</p>';
+							list_html += '<div class="price_share">';
+							list_html += '<span class="price">￥'+item['promotion_price']+'</span>';
+							list_html += '</div>';
+							list_html += '<div class="data-goods-sales-info"><span class="data-sales">销售量：<i>'+item.sales+'</i></span><span class="add_cart" onclick="CartGoodsInfo('+item.goods_id+','+item.state+')"></span></div>';
+							list_html += '</div>';
+							list_html += '</div>';
+						}
+					}
+				}else{
+					list_html+= '<p style="color:#939393;text-align:center;margin-top:100px;"><img src="__TEMP__/{$style}/public/images/wap_nodata.png" height="100"><br>Sorry！没有找到您想要的商品……</p>';
+				}
+				is_load = true;
+				$('.tablelist-append').html(list_html);
+				var	goods_img_height = parseInt($('.goods_img').height());
+				$(".data_info").height(goods_img_height);
+			},
+			error : function(data){
+				hiddenLoadMaskLayer();
+			}
+		});	
+	}
+}
+
+window.onresize = function(){
+	var	goods_img_height = parseInt($('.goods_img').height());
+	$(".data_info").height(goods_img_height);
+}
+
+//滑动到底部加载
+$(window).scroll(function(){
+	var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+	var content_box_height = parseFloat($(".tablelist-append").height()); 
+	if(totalheight - content_box_height >= 100){
+		if(is_load){
+			var page = parseInt($("#page").val()) + 1;//页数
+			var total_page_count = $("#page_count").val(); // 总页数
+			if(page > total_page_count){
+				return false;
+			}else{
+				getgoodlist(page);
+			}
+		}
+		
+	}
+})
+</script>
+<script type="text/javascript">
+$("#head_back").click(function (){
+    var json ={
+            "center" : "2"
+        }
+    window.webkit.messageHandlers.center.postMessage(json);
+})
+</script>
+{/block}

@@ -1,0 +1,101 @@
+{extend name="shop/default/Login/base"}
+{block name="main"}
+<div class="header w990">
+	<div class="logo-info">
+		<a href="{:__URL('SHOP_MAIN')}" class="web-logo-a"><img alt="" src="{:__IMG($web_info['logo'])}"class="weblogo" /></a>
+			<span class="findpw">忘记密码</span>
+	</div>
+</div>   
+
+<div class="w990"> 
+    <div id="find-pw3">
+    <div class="find-con">
+      <div id="sflex04" class="stepflex">
+        <dl class="first done">
+          <dt class="s-num">1</dt>
+          <dd class="s-text"> 填写账户名 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="normal done">
+          <dt class="s-num">2</dt>
+          <dd class="s-text"> 验证身份 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="normal doing">
+          <dt class="s-num">3</dt>
+          <dd class="s-text"> 设置新密码 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="last">
+          <dt class="s-num">&nbsp;</dt>
+          <dd class="s-text"> 完成 <s></s> <b></b> </dd>
+        </dl>
+      </div>
+      <div id="find-box" class="uc_box">
+        <form action="{:__URL('SHOP_MAIN/login/findpasswdFour')}" method="post" id="fpForm" name="fpForm">
+          <div class="find-pwd-con">
+            <input type="hidden" name="act" value="to_success" />
+            <div id="error_container"></div>
+            <div class="item">
+              <label>设置密码</label>
+              <input name="password" id="password" type="password" tabindex="1" placeholder="请输入密码" class="text" />
+            </div>
+            <div class="item">
+              <label>确认密码</label>
+              <input name="confirm_password" id="confirm_password" type="password" tabindex="2" placeholder="请再次确认密码" class="text" />
+            </div>
+            <div class="item">
+              <label></label>
+              <input type="button" id="btn_submit" name="btn_submit" class="btn_next" value="提交" />
+            </div>
+          </div>
+          <input  type="hidden" value="{$username}" name="username"/>
+        </form>
+      </div>
+    </div>
+    <script type="text/javascript">
+			$().ready(function(){
+				var validator = $("#fpForm").validate({
+					debug: false,
+					rules: {
+						password: {
+							required: true,
+							minlength: 6
+						},
+						confirm_password: {
+							required: true,
+							equalTo: "#password"
+						}
+					},
+					messages: {
+						password: {
+							required: "请输入密码",
+							minlength: "登录密码不能少于 6 个字符"
+						},
+						confirm_password: {
+							required: "请再次输入新密码",
+							equalTo: "两次输入的密码不一致，请重新输入"
+						}
+					},
+					errorPlacement: function(error, element) {
+						error.appendTo(element.parent());  
+					}
+				});
+				
+				$("#btn_submit").click(function(){
+					$("#fpForm").submit();
+				});
+			});
+			</script> 
+  </div>
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+  
+</div>
+{/block}

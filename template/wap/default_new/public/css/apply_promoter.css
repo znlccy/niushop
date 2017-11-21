@@ -1,0 +1,116 @@
+@CHARSET "UTF-8";
+.main_content{
+	width: 100%;
+	overflow: hidden;
+	    margin-top: 45px;
+}
+.main_content .title_img img{
+	width: 100%;
+	height: auto;
+}
+.apply_content{
+    margin: 8px 0px;
+    background-color: #fff;
+    overflow: hidden;
+    padding: 10px 0px;
+}
+.a_button{
+	display: block;
+    margin: 10px auto;
+    width: 80%;
+    text-align: center;
+    background: #ea1717;
+    height: 35px;
+    line-height: 35px;
+    color: #fff;
+    font-size: 15px;
+    border-radius: 5px;
+	    font-weight: bold;
+}
+.apply_content .apply_title_one{
+    color: #666;
+    font-size: 15px;
+    border-left: 2px solid #FF4040;
+    padding: -1px 0px;
+    height: 20px;
+    margin: 5px 0px;
+    padding-left: 7px;
+}
+.apply_content .apply_title_one .title_two{
+	    font-size: 12px;
+    color: #ccc;
+    margin-left: 6px;
+}
+.apply_content .content_i
+{
+	padding:5px 0px;
+/* 	max-height: 75px; */
+	overflow: auto;
+	border-top: 1px solid #ddd;
+}
+.apply_content .content_i a{
+    display: inline-block;
+    width: 92%;
+    height: 30px;
+    line-height: 30px;
+    border-bottom: 1px solid #ddd;
+    margin: 0px 4%;
+    font-size: 12px;
+	color: #666;
+}
+.apply_content .content_i a.no_i{
+	color: #ccc;
+}
+.apply_content .content_i a>.weui_icon_curr{
+	float: right;
+    margin-right: 11px;
+}
+.apply_content .content_i a>.weui_icon_curr:before{
+	    font-family: "weui";
+	    display: block;
+    content: '\EA08';
+    color: #EA1511;
+    font-size: 24px;
+}
+.weui_cell{padding: 4px 15px 0px;}
+.apply_content .apply_title_item{
+	    width: 97%;
+    display: inline-block;
+    overflow: hidden;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0px 5px 7px;
+}
+.apply_content .apply_title_item i{
+	margin-right: 10px;
+    display: inline-block;
+    width: 26px;
+    height: 28px;
+    background: url(../images/member_index_ico.png) no-repeat;
+    float: left;
+    margin-top: 9px;
+}
+.apply_content .apply_title_item i.apply_add{
+	background-position: -51px 1px;
+}
+.apply_content .apply_title_item i.extension{
+	background-position: -51px -27px;
+}
+.apply_content .apply_title_item i.team{
+	background-position: -51px -55px;
+}
+.apply_content .apply_title_item .item_row{
+	overflow: hidden;
+	float: left;
+}
+.item_row .item_title{
+	    color: #333;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+.item_row .item_content{
+	color: #999;
+    font-size: 13px;
+}
+.weui_btn_primary {
+    background-color: #f72020;
+}

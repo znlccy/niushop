@@ -1,0 +1,252 @@
+@CHARSET "UTF-8";
+*, *:before, *:after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+ul, ol, dl {
+	font-size: 1rem;
+	line-height: 1.6;
+	margin-bottom: 1.25rem;
+	list-style-position: outside;
+	font-family: inherit;
+}
+div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, p,
+	blockquote, th, td {
+	margin: 0;
+	padding: 0;
+}
+.clear {
+	clear: both;
+	zoom: 1;
+}
+a, a:hover, a:active, a:link, a:visited {
+	text-decoration: none;
+}
+a {
+	font-family: "微软雅黑", "Helvetica Neue", "Helvetica", Helvetica, Arial,
+		sans-serif;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	outline: none;
+}
+.com_main {
+	width: 100%;
+}
+.com_main .com_content {
+}
+.null_default>i {
+	display: block;
+	margin: 0 auto;
+	background: url(../images/icon-addition.png) no-repeat;
+	background-size: 500px;
+}
+.null_default>.icon-nocontent-youhuiquan {
+	display: block;
+	background-position: -325px -180px;
+	margin-top: 30px;
+	width: 100px;
+	height: 120px;
+}
+.null_default>i.icon-nocontent-hongbao {
+	background-position: -199px -205px;
+	margin-top: 30px;
+	width: 100px;
+	height: 120px;
+}
+.null_default>span.nulltext {
+	display: block;
+	text-align: center;
+	font-size: 14px;
+	color: #999;
+}
+.com_main .com_content .youhuiquan-list {
+	margin: 0 10px 10px 10px;
+	list-style: none;
+	font-size: 1rem;
+	line-height: 1.6;
+}
+.com_main .com_content .youhuiquan-list li {
+	margin-bottom: 5px;
+}
+.youhuiquan-list li a.not_use {
+	position: relative;
+	display: block;
+	line-height: 12px;
+	font-size: 12px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+	color: #ffae01;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9),
+		to(#fff));
+}
+.youhuiquan-list li a.not_use>div {
+	height: 54px;
+	text-align: center;
+}
+.youhuiquan-list li a>.p-l {
+	float: left;
+	padding: 7px 0;
+	border-top: solid 1px #f1f1f1;
+	box-sizing: border-box;
+	width: 100%;
+	border-radius: 3px;
+}
+.youhuiquan-list li a>.p-l .active-img {
+	float: left;
+	margin: 0 10px;
+	width: 35px;
+	height: 35px;
+	line-height: 35px;
+	border-radius: 50%;
+	border: 1px solid #ffe7b6;
+	font-size: 14px;
+	box-shadow: 0 0 5px red;
+	color: red;
+	text-align: center;
+}
+.youhuiquan-list li a>.p-l .active-msg {
+	overflow: hidden;
+	text-align: left;
+}
+.youhuiquan-list li a>.p-l .active-msg .name {
+	line-height: 18px;
+	font-size: 14px;
+	color: #333;
+}
+.youhuiquan-list li a>.p-l .active-msg .date {
+	margin-top: 5px;
+	color: #dacfb7;
+}
+.youhuiquan-list li a>.p-r {
+	position: relative;
+	padding: 7px 0;
+	background: red;
+	border-left: 1px dashed rgba(255, 255, 255, .5);
+	border-bottom: 1px solid #f1f1f1;
+	color: #fff;
+	overflow: hidden;
+}
+.youhuiquan-list li a>.p-r .number-money {
+	line-height: 38px;
+	font-size: 16px;
+}
+.youhuiquan-list li a>span.circle {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	height: 100%;
+}
+.youhuiquan-list li a>span.left {
+	left: -3px;
+	background: url(../images/left-harf-radius.png) repeat-y;
+	background-size: 5px;
+}
+.youhuiquan-list li a>span.right {
+	right: -6px;
+	background: url(../images/right-harf-radius.png) repeat-y;
+	background-size: 5px;
+}
+.youhuiquan-list li a.already-use {
+	position: relative;
+	display: block;
+	line-height: 12px;
+	font-size: 12px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+	color: #ffae01;
+	background: #fafafa;
+}
+.youhuiquan-list li a.already-use>.p-l {
+	border-top: 1px solid #f1f1f1;
+	border-bottom: 1px solid #f1f1f1;
+	color: #ccc;
+}
+.youhuiquan-list li a.already-use>.p-l .active-img {
+	border: 1px solid #b5b1b1;
+	box-shadow: 0 0 2px #ddd;
+	color: #b5b1b1;
+}
+.youhuiquan-list li a.already-use>.p-l .name {
+	color: #b5b1b1;
+}
+.youhuiquan-list li a.already-use>.p-l .date {
+	color: #b5b1b1;
+}
+.youhuiquan-list li a.already-use>.p-r {
+	background: #e5e2de;
+	text-align: center;
+}
+a.already-use>.p-l .active-img .name, a.already-use>.p-l .active-img .date
+	{
+	color: #ccc;
+}
+a.already-use>.p-l .active-img .name, a.already-use>.p-r {
+	background: #e5e2de;
+}
+a.already-use>.p-l .active-img .name, a.already-use>.p-r>.explanation {
+	color: #fff;
+}
+a.already-use>.uneless-img {
+	display: block;
+	position: absolute;
+	top: 49px;
+    bottom: 18px;
+    left: 208px;
+	right: 5px;
+	background: url(../images/stamp-useless.png) no-repeat;
+	background-size: auto 100%;
+}
+
+.cf-container {
+	margin-top: 45px;
+	max-width: 640px;
+	height: 2.26rem;
+	top: 0;
+	width: 100%;
+	z-index: 6;
+	background: #fff;
+	overflow: hidden;
+	font-size: 14px;
+	border-bottom: 1px solid #dddddd;
+	margin-bottom: 8px
+}
+.cf-container .cf-content {
+	position: relative;
+	height: 3.35rem;
+	color: #333;
+	text-align: center;
+	top: 0;
+	white-space: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+	z-index: 5;
+	-webkit-overflow-scrolling: touch;
+	margin-left: 0.1rem;
+	margin-right: 0.1rem;
+}
+.cf-container .cf-tab-item {
+	display: block;
+	padding: 0px;
+	line-height: 2.1rem;
+	text-align: center;
+	width: 33%;
+	float: left;
+}
+.cf-container .cf-tab-item.select a {
+	border-bottom: 2px solid #FF6600;
+	padding-bottom: 0px;
+	color: #F15050;
+}
+.cf-container .cur-cf-tab {
+	border-bottom: 2px solid #ff2741;
+	color: #ff2741;
+	height: .21rem;
+	display: inline-block;
+	position: relative
+}
+.cf-tab-item a {
+	padding-right: 3px;
+	padding-left: 3px;
+	color: #707070;
+	font-size: 14px;
+	display: inline-block;
+	width: 100%;
+}

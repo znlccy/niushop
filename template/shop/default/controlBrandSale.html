@@ -1,0 +1,32 @@
+<!-- style=" margin: 0 auto;width:1210px;" -->
+<div class="banner">
+<ul class="full-screen-slides" id="fullScreenSlides" ></ul>
+<ul class="full-screen-slides-pagination" style="height:0px;"></ul>
+</div>
+<!-- 创建人：任鹏强
+     创建时间：2017年2月23日16:37:41
+     创建功能：品牌推广banana图 -->
+  <script type="text/javascript">
+	//logo右侧小广告 
+	var ap_id=[ap_id];
+	var data=platformAdvLoad(ap_id);
+	var str="";slideshtml='';
+    for(var i=0;i<data.length;i++){
+			if(i==0){
+				//str+='<li style="display: list-item;background:'+data[i]['background']+' url(__UPLOAD__/'+data[i]['adv_image']+') 50% 50%;width: '+data[i]['ap_info']['ap_width']+'px;height:'+data[i]['ap_info']['ap_height']+'px; "><a href="'+data[i]['adv_url']+'" target="_blank" title="">&nbsp;</a> </li>';
+				str+='<li style="background:'+data[i]['background']+' url('+__IMG(data[i]['adv_image'])+') 50% 50%;"><a href="'+data[i]['adv_url']+'" target="_blank" title="">&nbsp;</a> </li>';
+			}else{
+				//str+='<li style="display: none;background:'+data[i]['background']+' url(__UPLOAD__/'+data[i]['adv_image']+') 50% 50% ;width: '+data[i]['ap_info']['ap_width']+'px;height:'+data[i]['ap_info']['ap_height']+'px; "><a href="'+data[i]['adv_url']+'" target="_blank" title="">&nbsp;</a> </li>';
+				str+='<li style="display: none;background:'+data[i]['background']+' url('+__IMG(data[i]['adv_image'])+') 50% 50% ;"><a href="'+data[i]['adv_url']+'" target="_blank" title="">&nbsp;</a> </li>';
+			}
+		}
+	for(var i=1;i<=data.length;i++){
+		if(i==1){
+			slideshtml+='<li class="current"><a href="javascript:void(0);">'+i+'</a></li>';	
+		}else{
+			slideshtml+='<li><a href="javascript:void(0);">'+i+'</a></li>';
+		}
+	}
+	$('#fullScreenSlides').html(str);
+	$('.full-screen-slides-pagination').html(slideshtml);
+</script>

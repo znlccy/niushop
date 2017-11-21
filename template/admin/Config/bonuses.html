@@ -1,0 +1,84 @@
+{extend name="admin/base" /}
+{block name="right_tab"}
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>注册送积分:</dt>
+		<dd>
+			<p><input name="UserCode" id="reg_member_self_point" type="text" value="{$res.reg_member_self_point}"></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>签到送积分:</dt>
+		<dd>
+			<p><input name="UserCode" id="sign_point" type="text" value="{$res.sign_point}"></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>分享送积分:</dt>
+		<dd>
+			<p><input name="UserCode" id="share_point" type="text" value="{$res.share_point}"></p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>进店领用优惠劵:</dt>
+		<dd>
+			<p>
+				<select name="" id="into_store_coupon" class="select">
+					<option value="0">选择优惠劵</option>
+					{volist name="coupon" id="vo"}
+					<option value="{$vo.coupon_type_id}" {if condition="$vo['coupon_type_id'] eq $res['into_store_coupon']"}selected{/if}>{$vo.coupon_name}</option>
+					{/volist}
+				</select>	
+			</p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>分享领用优惠劵:</dt>
+		<dd>
+			<p>
+				<select name="" id="share_coupon" class="select">
+					<option value="0">选择优惠劵</option>
+					{volist name="coupon" id="vo"}
+					<option value="{$vo.coupon_type_id}" {if condition="$vo['coupon_type_id'] eq $res['share_coupon']"}selected{/if}>{$vo.coupon_name}</option>
+					{/volist}
+				</select>	
+			</p>
+			<p class="error">请输入阿里旺旺</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="setRewardRuleAjax();" style="margin:20px 0 20px 205px;">提交</button>
+</div>
+<script>
+	function setRewardRuleAjax(){
+		var sign_point = $("#sign_point").val();
+		var share_point = $("#share_point").val();
+		var into_store_coupon = $("#into_store_coupon").val();
+		var share_coupon = $("#share_coupon").val();
+		var reg_member_self_point = $("#reg_member_self_point").val();
+		$.ajax({
+			type : 'post',
+			url : "{:__URL('ADMIN_MAIN/config/bonuses')}",
+			data : {
+				"sign_point" : sign_point,
+				"share_point" : share_point,
+				"into_store_coupon" : into_store_coupon,
+				"share_coupon" : share_coupon,
+				"reg_member_self_point" : reg_member_self_point
+			},
+			success : function(data){
+				if(data['code'] >0){
+					location.href=__URL("ADMIN_MAIN/config/bonuses");
+				}else{
+					showMessage("error", "设置失败");
+				}
+			}
+		})
+	}
+</script>
+{/block}

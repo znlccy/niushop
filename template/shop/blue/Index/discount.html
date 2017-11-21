@@ -1,0 +1,127 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/group_buy.css">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_index.js"></script>	
+<style type="text/css">
+.classify-box .classify-screen-con a{width: 129px;}
+.classify-box .classify-screen-con .classify-choose{ width: 96%;}
+.category-layer-bg{ background: rgba(6, 137, 225, 0.42);}
+.category-layer .list .cat .cat-name a{color: #fff;}
+.category-layer .list .categorys{background: rgba(238, 238, 238, 0.91)};
+</style>
+{/block}
+
+{block name="headGoodType"}
+{include file='shop/blue/controlHeadGoodType'/}
+<!-- 滚动图片广告位 -->
+<div class="template-one">
+	<div class="banner">
+		{include file='shop/blue/Index/controlHeadNav' ap_id='1056'/}
+	</div>
+</div>
+{/block}
+
+{block name="main"}
+<!---活动首页-导航+分类导航--->
+<div class="w1210">
+	<div class="classify-screen">
+		<div class="classify-box clearfix">
+			<h5 class="classify-name">{:lang('classification_goods')}：</h5>
+			<div class="classify-screen-con">
+				<div class="classify-choose">
+					{if condition="$category_id eq 0"}
+						<a target="_self" href="{:__URL('SHOP_MAIN/'.$path_info)}" class="selected" style="height: 45px;float: left;width:66px;"><span>{:lang('whole')}</span></a>
+					{else /}
+						<a target="_self" href="{:__URL('SHOP_MAIN/'.$path_info)}" style="height: 45px;float: left;width:66px;"><span>{:lang('whole')}</span></a>
+					{/if}
+					{volist name="goods_category_one" id="vo"}
+						{if condition="$vo.category_id eq $category_id"}
+						<a target="_self" href="{:__URL('SHOP_MAIN/'.$path_info,'category_id='.$vo['category_id'])}" class="selected" title="{$vo.category_name}"><span>{$vo.category_name}</span></a>
+						{else /}
+						<a target="_self" href="{:__URL('SHOP_MAIN/'.$path_info,'category_id='.$vo['category_id'])}" title="{$vo.category_name}"><span>{$vo.category_name}</span></a>
+						{/if}
+					{/volist}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	
+<!-- 活动展示 _star -->
+<div class="main">
+	<ul class="row-4">
+		{if condition="$total_count eq 0"}
+		<div class="tip-box">
+			<i class="tip-icon"></i>
+			<div class="tip-text">{:lang('sorry')}！{:lang('no_result_you_want')}……</div>
+		</div>
+		{/if}
+	{volist name="discount_list" id="vo"}
+		<li>
+			<a class="scope" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$vo['goods_id'])}" title="{$vo.goods_name}">
+				<div class="p-img">
+					<img alt="" src="{:__IMG($vo['picture']['pic_cover_big'])}">
+<!-- 					<div class="brand-time"> -->
+<!-- 						<em class="time"> -->
+<!-- 							<span class="settime" starttime="{$vo.start_time}" endtime="{$vo.end_time}" ></span> -->
+<!-- 						</em> -->
+<!-- 					</div> -->
+					<div class="p-name">
+						<span class="d-name"><strong>{$vo['discount_name']}</strong></span>
+						<span class="g-name">{$vo.goods_name}</span>
+					</div>
+				</div>
+				<div class="goods-price"><span class="sale">{:lang('promotional_price')}<em>￥{$vo.promotion_price}</em>{:lang('element')}</span><span class="depreciate"><i class="fa fa-down"></i>{:lang('straight_down')}：¥{$vo.sale_down}</span></div>
+<!-- 				</div> -->
+				<div class="brand-info">
+					<div class="b-price clearfix">
+						<div class="price fl">
+							
+						</div>
+						<div class="fr">
+							<span class="buyer"></span>
+							<span class="main-btn bg-color">{:lang('snap_up')}</span>
+						</div>
+					</div>
+				</div>
+			</a>
+		</li>
+	{/volist}
+	</ul>
+	{include file='shop/blue/controlCommonPage'/}
+</div>
+{/block}
+
+{block name="javascript"}
+<script >
+$().ready(function() {
+	updateEndTime();
+});
+
+//倒计时函数
+function updateEndTime() {
+	var date = new Date();
+	var time = date.getTime(); //当前时间距1970年1月1日之间的毫秒数
+	$(".settime").each(function(i) {
+		var endDate = this.getAttribute("endTime"); //结束时间字符串
+		//转换为时间日期类型
+		var endDate1 = eval('new Date(' + endDate.replace(/\d+(?=-[^-]+$)/, function(a) {
+			return parseInt(a, 10) - 1;
+		}).match(/\d+/g) + ')');
+
+		var endTime = endDate1.getTime(); //结束时间毫秒数
+		var lag = (endTime - time) / 1000; ///当前时间和结束时间之间的秒数
+		if (lag > 0) {
+			var second = Math.floor(lag % 60);
+			var minite = Math.floor((lag / 60) % 60);
+			var hour = Math.floor((lag / 3600) % 24);
+			var day = Math.floor((lag / 3600) / 24);
+			$(this).html("{:lang('left')}" + day + "{:lang('days')}" + hour + "{:lang('hours')}" + minite + "{:lang('minutes')}" + second + "{:lang('second')}{:lang('end')}");
+		} else{
+			$(this).html("{:lang('activity_over')}！");
+		}
+	});
+	setTimeout("updateEndTime()", 1000);
+}
+</script>
+{/block}

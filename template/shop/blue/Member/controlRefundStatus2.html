@@ -1,0 +1,34 @@
+<!--已收到货 begin-->
+<div class="alert">
+	<h4>{:lang('member_return_and_fill')}：</h4>
+	<ul>
+		<li>1. {:lang('member_use_or_surface')}</li>
+		<li>2. {:lang('member_logistics_information')} <small>（{:lang('member_application_closed')}）</small></li>
+	</ul>
+</div>
+	
+<h3>{:lang('member_logistics')}</h3>
+<dl>
+	<dt>{:lang('member_return_address')}：</dt>
+	<dd>
+		{if condition="$shop_info.shop_address neq ''"}
+			{$shop_info.shop_address}&nbsp;&nbsp;{$shop_info.seller_name}&nbsp;&nbsp;{$shop_info.seller_mobile}&nbsp;&nbsp;{$shop_info.seller_zipcode}
+		{else /}
+			{:lang('member_no_delivery_address_yet')}
+		{/if}
+	</dd> 
+</dl>
+<dl>
+	<dt>{:lang('member_logistics_company')}：</dt>
+	<dd><input type="text" class="inputBg" id="LogisticsCompany" /></dd>
+</dl>
+<dl>
+	<dt>{:lang('member_waybill_number')}</dt>
+	<dd><input type="text" class="inputBg" id="ExpressNo" /></dd>
+</dl>
+<div class="bottom">
+	<label class="submit-border">
+		<input type="submit" name="submit" class="common-btn" value="{:lang('member_confirm_submission')}" onclick="ExpressSave()" />
+	</label>
+	<a href="javascript:history.go(-1);" class="main-btn main-btn-large">{:lang('member_cancel_and_return')}</a>
+</div>

@@ -1,0 +1,441 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/order.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/pro-detail.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/payment_order_new.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/payment_order_popup.css">
+{/block}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="{:__URL('APP_MAIN')}"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('order_settlement')}</div>
+</section>
+{/block}
+ 
+{block name="main"}
+<div class="h50"></div>
+{if condition="$address_default.id neq ''"}
+<div id="addressok">
+	<input type="hidden" id="addressid" value="{$address_default.id}" />
+	<div class="js-order-address express-panel js-edit-address express-panel-edit">
+		<ul class="express-detail">
+			<a href="{:__URL('APP_MAIN/member/memberaddress?url=cart')}">
+				<li class="clearfix">
+					<span class="name">{:lang('member_consignee')}：{$address_default.consigner}</span>
+					<span class="tel">{$address_default.mobile}</span>
+				</li>
+				<li class="address-detail">{:lang('member_delivery_address')}：{$address_default.address_info}-{$address_default.address}</li>
+			</a>
+		</ul>
+	</div>
+</div>
+{else /}
+<div class="empty-address-tip">
+	<div id="noaddress"><a href="{:__URL('APP_MAIN/member/memberaddress')}">{:lang('member_new_delivery_address')}</a></div>
+</div>
+{/if}
+
+<div class="block-item express" style="padding: 0;"></div>
+<section class="order">
+	{foreach name="itemlist" item="list"}
+	<div class="order-goods-item clearfix" data-subtotal="{$list.subtotal}">
+		<div class="name-card block-item">
+			<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$list['goods_id'])}" class="thumb">
+				<img src="{:__IMG($list['picture_info']['pic_cover_small'])}" alt="{$list.goods_name}" />
+			</a>
+			<div class="detail">
+				<div class="clearfix detail-row">
+					<div class="right-col">
+						<input type="hidden" name="goods_skuid" value="{$list.sku_id}" />
+						<input type="hidden" name="goods_point_exchange"/>
+						￥<span>{$list.price}
+						{if condition="$list.point_exchange_type==1 "}
+							{if condition=" $list.point_exchange>0"}
+								+{$list.point_exchange}{:lang('goods_integral')}
+							{/if}
+						{/if}
+						</span>
+					</div>
+					<div class="left-col">
+						<h3 style="font-weight: normal;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">
+							<a href="javascript:;">{$list.goods_name}</a>
+						</h3>
+					</div>
+				</div>
+				<div class="clearfix detail-row">
+					<div class="right-col">
+						<div class=" c-gray-darker">
+							×<span>{$list.num}</span>
+						</div>
+					</div>
+					<div class="left-col">
+						<p class="c-gray-darker" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{if condition="$list['sku_name'] neq '0'"}{$list.sku_name}{/if}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{/foreach}
+	
+	
+	{if condition="count($coupon_list) >0"}
+	<div class="item-options" data-flag="use-coupon">
+		<label class="float_left">{:lang('member_coupons')}</label>
+		<span class="arrow-right color-gray">{:lang('member_no_coupons')}</span>
+	</div>
+	{/if}
+	
+	
+	<div class="item-options" data-flag="pay" data-select="0">
+		<label>{:lang('member_payment_method')}</label>
+		<span class="arrow-right color-gray">{:lang('member_online_payment')}</span>
+	</div>
+	
+	<div class="item-options" data-flag="distribution" data-select="0">
+		<label>{:lang('member_delivery_mode')}</label>
+		{if condition="!$shop_config.seller_dispatching && !$shop_config.buyer_self_lifting"}
+		<span class="color-gray">{:lang('member_not_configure_distribution')}</span>
+		{else/}
+			{if condition="$shop_config.seller_dispatching"}
+			<span class="arrow-right color-gray">{:lang('member_merchant_distribution')}</span>
+			{elseif condition="$shop_config.buyer_self_lifting"/}
+			<span class="arrow-right color-gray">{:lang('member_stores_from_mentioning')}</span>
+			{/if}
+		{/if}
+	</div>
+	
+	<!-- 开启商家配送并且有物流公司显示 -->
+	{if condition="$shop_config.seller_dispatching"}
+		
+		{if condition="$address_is_have == 1"}
+			{if condition="$express_company_count == 0"}
+			<div class="item-options" data-flag="express_company" data-select="-1">
+				<label>{:lang('member_logistics_company')}</label>
+				<span class="arrow-right color-gray">{:lang('member_not_set_up')}</span>
+			</div>
+			{elseif condition="count($express_company_list)"}
+			{foreach name="express_company_list" item="company" key="k"}
+			{if condition="$k==0"}
+			<div class="item-options" data-flag="express_company" data-select="{$company.co_id}" data-express-fee="{$company.express_fee}">
+				<label>{:lang('member_logistics_company')}</label>
+				<span class="arrow-right color-gray">{$company.company_name}</span>
+			</div>
+			{/if}
+			{/foreach}
+			{else/}
+			<div class="item-options" data-flag="express_company" data-select="-2">
+				<label>{:lang('member_logistics_company')}</label>
+				<span class="arrow-right color-gray">{:lang('member_not_freight_template')}</span>
+			</div>
+			{/if}
+		{else/}
+			<div class="item-options" data-flag="express_company" data-select="-2">
+				<label>{:lang('member_logistics_company')}</label>
+				<span class="arrow-right color-gray">{:lang('please_fill_in_or_select_the_delivery_address_first')}</span>
+			</div>
+		{/if}	
+	{/if}
+	
+	<div class="item-options" data-flag="pickup_address" data-id="0" data-count="{$pickup_point_list.total_count}" style="display:none;">
+		<label>{:lang('member_self_addressed_address')}</label>
+		<span class="arrow-right color-gray"></span>
+	</div>
+	
+	{if condition="$shop_config['order_balance_pay'] == 1"}
+	<div class="item-options">
+		<label>{:lang('member_use_balance')}<b class="account_balance">￥{$member_account.balance}</b></label>
+		<span>
+			{:lang('use')}<input type="text" id="account_balance" data-max="{$member_account.balance}" placeholder="0.00"/>{:lang('element')}
+		</span>
+	</div>
+	{/if}
+	
+	{if condition="count($shop_config.order_invoice_content_list)"}
+	<div class="item-options" data-flag="invoice" data-select="0">
+		<label>{:lang('member_invoice_information')}<span style="font-size:12px;color:#FF9800;font-weight:bold;"></span></label>
+		<span class="arrow-right color-gray">{:lang('member_no_invoice_required')}</span>
+	</div>
+	
+	<div class="item-options invoice">
+		<label><span style="font-size:12px;color:#FF9800;font-weight:bold;">{:lang('will_collect')}{$shop_config.order_invoice_tax}%{:lang('member_invoice_tax_rate')}</span></label>
+	</div>
+	
+	<div class="item-options invoice">
+		<label>{:lang('member_invoice_header')}</label>
+		<textarea id="invoice-title" maxlength="50" placeholder="{:lang('member_personal_or_company_invoice')}"></textarea>
+	</div>
+	
+	<div class="item-options invoice">
+		<label>{:lang('member_taxpayer_identification_number')}</label>
+		<textarea id="taxpayer-identification-number" maxlength="50" placeholder="{:lang('member_taxpayer_identification_number')}"></textarea>
+	</div>
+	
+	
+	<div class="item-options invoice" data-flag="invoice-content">
+		<label>{:lang('member_invoice_content')}</label>
+		<span class="arrow-right color-gray">{:lang('select_invoice_content')}</span>
+	</div>
+	{/if}
+	
+	<div class="item-options">
+		<label>{:lang('member_buyer_message')}</label>
+		<textarea id="leavemessage" placeholder="{:lang('leave_a_message_for_the_seller')}" maxlength="100"></textarea>
+	</div>
+	
+	
+	<div class="order-list">
+		<h3>{:lang('member_settlement_information')}</h3>
+		<p>
+			<label>{:lang('goods_total')}<b class="orange-bold js-goods-num">1</b>{:lang('member_kinds_of_goods')}&nbsp;{:lang('member_total')}</label>
+			<span>￥<b class="js-total-money">0.00</b></span>
+		</p>
+		
+		<p>
+			<label>{:lang('goods_freight')}</label>
+			<span>￥<b id="express">0.00</b></span>
+		</p>
+		
+		<p>
+			<label>{:lang('member_total_discount')}</label>
+			<span>￥<b id="discount_money">0.00</b></span>
+		</p>
+		
+		
+		{if condition="count($shop_config.order_invoice_content_list)>0"}
+		<p>
+			<label>{:lang('member_invoice_tax')}：</label>
+			<span>￥<b id="invoice_tax_money">0.00</b></span>
+		</p>
+		{/if}
+		
+		
+		{if condition="$shop_config['order_balance_pay'] == 1"}
+		<p>
+			<label>{:lang('member_use_balance')}：</label>
+			<span>￥<b id="use_balance">0.00</b></span>
+		</p>
+		{/if}
+	</div>
+</section>
+
+<div class="footer" style="min-height: 86px;" id="bottom_copyright">
+	<div class="copyright">
+		<div class="ft-copyright">
+			<img src="__TEMP__/{$style}/public/images/logo_copy.png" id="copyright_logo_wap">
+			<a href="{:__URL('APP_MAIN')}" target="_blank" id="copyright_companyname"></a>
+		</div>
+	</div>
+</div>
+
+
+<div style="height: 50px"></div>
+<div class="order-total-pay bottom-fix">
+	<div class="pay-container clearfix">
+		<span class="c-gray-darker font-size-12">{:lang('member_amount_payable')}：</span>
+		<span class="font-size-16 theme-price-color">￥<b id="realprice">0.00</b></span>
+		{if condition="$count_point_exchange>0"}
+		<span class="font-size-16 theme-price-color" id="count-point">+{$count_point_exchange}{:lang('goods_integral')}</span>
+		{/if}
+		<button class="commit-bill-btn" onclick="submitOrder()">{:lang('member_place_order')}</button>
+		<input type="hidden" id="hidden_count_point_exchange" value="{$count_point_exchange}" />
+		<input type="hidden" id="hidden_goods_sku_list" value="{$goods_sku_list}"/>
+		<input type="hidden" id="hidden_discount_money" value="{$discount_money}" />
+		<input type="hidden" id="hidden_express" value="{$express}" />
+		<input type="hidden" id="hidden_count_money" value="{$count_money}" />
+		<input type="hidden" id="count_point_exchange" value="{$count_point_exchange}"/>
+		<input type="hidden" id="hidden_full_mail_money" value="{$promotion_full_mail.full_mail_money}"/>
+		<input type="hidden" id="hidden_full_mail_is_open" value="{$promotion_full_mail.is_open}"/>
+		<input type="hidden" id="goods_sku_list" value="{$goods_sku_list}" />
+		<input type="hidden" id="hidden_order_invoice_tax" value="{$shop_config.order_invoice_tax}"/>
+		<input type="hidden" id="hidden_pick_up_money" value="{$pick_up_money}"/>
+	</div>
+</div>
+
+<!----------------------------- 弹出层 ------------------------------>
+<div class="mask-layer"></div>
+
+{if condition="count($coupon_list)"}
+<!-- 选择优惠券弹出框 -->
+<div class="mask-layer-control" data-flag="use-coupon">
+	<div class="header">{:lang('choose_coupons')}<span class="close"></span></div>
+	<div class="list">
+		<ul>
+			<li class="item active">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_no_coupons')}</div>
+			</li>
+			{volist name="coupon_list" id="coupon"}
+			<li class="item" data-id="{$coupon['coupon_id']}" data-code="{$coupon['coupon_code']}" data-money="{$coupon['money']}">
+				<div class="check-img"></div>
+				<div>
+					<p class="font-size-12">{$coupon['coupon_name']}<em class="pull-right">{$coupon['money']}{:lang('element')}</em></p>
+					<p class="font-size-12 c-gray-darker">{:lang('member_full')}{$coupon['at_least']}{:lang('element')}{:lang('member_reduce')}{$coupon['money']}{:lang('element')}</p>
+				</div>
+			</li>
+			{/volist}
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+</div>
+<!-- 选择优惠券弹出框 -->
+{/if}
+
+<!-- 选择支付方式弹出框 -->
+<div class="mask-layer-control" data-flag="pay">
+	<div class="header">{:lang('choose_payment_method')}<span class="close"></span></div>
+	<div class="list">
+		<ul>
+			<li class="item active" data-flag="0">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_online_payment')}</div>
+			</li>
+			<!-- 为了用户更好的体验和理解，只要开启了货到付款就显示，不再考虑配送方式是否开启，是否有物流公司等 -->
+<!-- 		if condition="$shop_config.order_delivery_pay && $shop_config.seller_dispatching && count($express_company_list)"	 -->
+			{if condition="$shop_config.order_delivery_pay"}
+			<li class="item" data-flag="4">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_cash_on_delivery')}</div>
+			</li>
+			{/if}
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+</div>
+<!-- 选择支付方式弹出框 -->
+
+<!-- 选择配送方式弹出框 -->
+<div class="mask-layer-control" data-flag="distribution" data-is-logistics="{$shop_config.is_logistics}">
+	<div class="header">{:lang('choose_delivery_address')}<span class="close"></span></div>
+	{if condition="!$shop_config.seller_dispatching && !$shop_config.buyer_self_lifting"}
+		<p style="padding: 30px;text-align: center;">{:lang('member_not_configure_distribution')}</p>
+	{else/}
+	<div class="list">
+		<ul>
+			<!-- 为了用户更好的体验和理解，只要开启了商家配送，就显示。不考虑是否有物流公司 -->
+<!-- 			if condition="$shop_config.seller_dispatching && count($express_company_list)" -->
+			{if condition="$shop_config.seller_dispatching"}
+			<li class="item active" data-flag="1">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_merchant_distribution')}</div>
+			</li>
+			{/if}
+			{if condition="$shop_config.buyer_self_lifting"}
+			<li class="item" data-flag="2">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_stores_from_mentioning')}</div>
+			</li>
+			{/if}
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+	{/if}
+</div>
+<!-- 选择配送方式弹出框 -->
+
+<!-- 选择物流公司弹出框 -->
+{if condition="$shop_config.seller_dispatching"}
+<div class="mask-layer-control" data-flag="express_company">
+	<div class="header">{:lang('the_choice_of_logistics_company')}<span class="close"></span></div>
+	{if condition="$express_company_count == 0"}
+	<p style="padding: 30px;text-align: center;">{:lang('member_not_set_up')}</p>
+	{elseif condition="count($express_company_list)"}
+		<div class="list">
+			<ul>
+				{foreach name="express_company_list" item="company" key="k"}
+				<li class="item {if condition="$k==0"}active{/if}" data-coid="{$company.co_id}" data-express-fee="{$company.express_fee}">
+					<div class="check-img"></div>
+					<div class="single">{$company.company_name}</div>
+				</li>
+				{/foreach}
+			</ul>
+		</div>
+		<div class="footer">
+			<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+		</div>
+	{else/}
+	<p style="padding: 30px;text-align: center;">{:lang('member_not_freight_template')}</p>
+	{/if}
+</div>
+{/if}
+<!-- 选择物流公司弹出框 -->
+
+{if condition="$shop_config.buyer_self_lifting"}
+<!-- 选择自提地址弹出框 -->
+<div class="mask-layer-control" data-flag="pickup_address">
+	<div class="header">{:lang('member_select_own_address')}<span class="close"></span></div>
+	{if condition="$pickup_point_list.total_count"}
+	<div class="list">
+		<ul>
+			{foreach name="$pickup_point_list.data" item="pickup" key="k"}
+			<li class="item {if condition="$k==0"}active{/if}" data-id="{$pickup.id}">
+				<div class="check-img"></div>
+				<div class="single">{$pickup.province_name}&nbsp;{$pickup.city_name}&nbsp;{$pickup.dictrict_name}&nbsp;{$pickup.address}</div>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+	{else/}
+	<p style="padding: 30px;text-align: center;">{:lang('member_not_configured')}</p>
+	{/if}
+</div>
+<!-- 选择自提地址弹出框 -->
+{/if}
+
+<!-- 选择发票信息弹出框 -->
+<div class="mask-layer-control" data-flag="invoice">
+	<div class="header">{:lang('select_invoice')}<span class="close"></span></div>
+	<div class="list">
+		<ul>
+			<li class="item active" data-flag="0">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_no_invoice_required')}</div>
+			</li>
+			<li class="item" data-flag="1">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_invoice_required')}</div>
+			</li>
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+</div>
+<!-- 选择发票信息弹出框 -->
+
+{if condition="count($shop_config.order_invoice_content_list)"}
+<!-- 选择发票内容信息弹出框 -->
+<div class="mask-layer-control" data-flag="invoice-content">
+	<div class="header">{:lang('select_invoice_content')}<span class="close"></span></div>
+	<div class="list">
+		<ul>
+			{foreach name="$shop_config.order_invoice_content_list" item="invoice" key="k"}
+			<li class="item {if condition="$k==0"}active{/if}">
+				<div class="check-img"></div>
+				<div class="single">{$invoice}</div>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+</div>
+<!-- 选择发票内容信息弹出框 -->
+{/if}
+<!----------------------------- 弹出层 ------------------------------>
+
+{/block}
+{block name="bottom"}{/block}
+{block name="javascript"}
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/payment_order.js"></script>
+{/block}

@@ -1,0 +1,238 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.error{padding:5px 0 0;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<input name="UserCode" id="category_id" type="hidden"value="{$data.category_id}">
+	<dl>
+		<dt><span class="color-red">*</span>商品分类名称:</dt>
+		<dd>
+			<p><input name="UserCode" id="category_name" type="text" value="{$data.category_name}" placeholder="请输入商品分类" > </p>
+			<p class="error">商品分类不能为空，且长度不能超过30个字</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>商品分类简称:</dt>
+		<dd>
+			<p><input name="UserCode" id="short_name" type="text" value="{$data.short_name}" placeholder="请输入商品分类简称" > </p>
+			<p class="error">商品分类简称不能为空，且长度不能超过20个字</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>上级分类:</dt>
+		<dd>
+			<select name="search_type" id="pid">
+				<option value="0">顶级分类</option>
+				{notempty name="category_list"}
+				{foreach name="category_list" item="v1"}
+				<option value="{$v1['category_id']}" {if condition="$data.pid eq $v1['category_id']"}selected{/if}>&nbsp;&nbsp;&nbsp;&nbsp;{$v1['category_name']}</option>
+					{notempty name="v1['child_list']"}
+					{foreach name="v1['child_list']" item="v2"}
+					<option value="{$v2['category_id']}" {if condition="$data.pid eq $v2['category_id']"}selected{/if}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$v2['category_name']}</option>
+					{/foreach} 
+					{/notempty}
+				{/foreach} 
+				{/notempty}
+			</select>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商品类型:</dt>
+		<dd>
+			<select name="attr" id="attr_id">
+				<option value="">选择类型</option>
+				{volist name="goodsAttributeList" id="vo"}
+				<option value="{$vo.attr_id}" {if condition="$data['attr_id'] eq $vo['attr_id']"}selected{/if}>{$vo.attr_name}</option>
+				{/volist}
+			</select>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否可见:</dt>
+		<dd>
+			<p>
+				<input id="is_visible" type="checkbox" class="checkbox" {if condition="$data.is_visible eq 1"}checked="checked"{/if}/>
+				<span class="help-inline" id="is_menuPrompt" style="display: none;"></span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>关键字:</dt>
+		<dd>
+			<p><input name="" id="keywords" type="text" value="{$data.keywords}" placeholder="请输入关键字" /></p>
+			<p class="error">请输入关键字</p>
+			<p class="hint">用于网站搜索引擎的优化，关键字之间请用英文逗号分隔</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序:</dt>
+		<dd>
+			<p><input name="UserCode" id="sort" type="text"value="{$data.sort}" placeholder="请输入序号" ></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>图片:</dt>
+		<dd>
+			<div class="class-logo">
+				<p>
+					{if condition="$data.category_pic != ''"}
+					<img id="imglogo" src="{:__IMG($data['category_pic'])}" >
+					{else/}
+					<img id="imglogo" >
+					{/if}
+				</p>
+			</div>
+			<div class="ncsc-upload-btn"> 
+				<a href="javascript:void(0);">
+					<span>
+						<input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this,'logo')">
+						<input type="hidden" id="logo"value="{$data.category_pic}"/>
+					</span>
+					<p><i class="icon-upload-alt"></i>上传图片</p>
+				</a> 
+			</div>
+			<p class="hint"><br><span style="color:orange;">建议使用宽100像素*高50像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述:</dt>
+		<dd>
+			<p><textarea id="description" placeholder="请输入描述">{$data.description}</textarea></p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="updateGoodsCategoryAjax();">提交</button>
+</div>
+
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+	/**
+	 *图片上传
+	 */
+	function imgUpload(event) {
+		var fileid = $(event).attr("id");
+		var str = $(event).next().attr("id");
+		var data = { 'file_path' : UPLOADGOODSCATEGORY };
+		uploadFile(fileid,data,function(res){
+			if(res.code){
+				$("#img"+str).attr("src",__IMG(res.data));
+				$("#"+str).val(res.data);
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		});
+	}
+	/**
+	*模块输入信息验证
+	*/
+	function verify( category_name,short_name, keywords, sort, description){
+		if(category_name == '' || category_name.length>30){
+			$("#category_name").focus().parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		
+		if(short_name == '' || short_name.length>20){
+			$("#short_name").focus().parent().next().show();
+			return false;
+		}
+		else{
+			$(".error").hide();
+		}
+// 		if(keywords == ''){
+// 			$("#keywords").focus().parent().next().show();
+// 			return false;
+// 		}else{
+// 			$(".error").hide();
+// 		}
+		return true;
+	}
+	
+	/**
+	*	查询当前用户最近一天是否发布过商品，修改过商品分类，要删除cookie中对应的值
+	*/
+	function getCookieGoodsCategory(category_id){
+		var goods_category_quick_new = new Array();// 快速选择商品分类集合
+		$.ajax({
+			url : "{:__URL('ADMIN_MAIN/goods/getquickgoods')}",
+			type : "post",
+			async : false,
+			success : function(res) {
+				var goods_category_quick = eval(res);// 将Cookie中的数据取出来
+				for (var i = 0; i < goods_category_quick.length; i++) {
+					var quick_name = goods_category_quick[i]["quick_name"];
+					var quick_id_arr = goods_category_quick[i]["quick_id"].split(",");
+					if(quick_id_arr[quick_id_arr.length-1] == category_id){
+						continue;
+					}else{
+						var json = {
+							quick_name : quick_name,
+							quick_id : goods_category_quick[i]["quick_id"],
+						};
+						goods_category_quick_new.push(json);
+					}
+				}
+			}
+		});
+		return goods_category_quick_new;
+	}
+	
+
+	/**
+	* 修改模块
+	*/
+	function updateGoodsCategoryAjax() {
+		var category_id = $("#category_id").val();
+		var category_name = $("#category_name").val();
+		var short_name = $("#short_name").val();
+		var pid = $("#pid").val();
+		var keywords = $("#keywords").val();
+		var sort = $("#sort").val();
+		var description = $("#description").val();
+		var category_pic = $("#logo").val();
+		if($("#is_visible").prop("checked")){
+			var is_visible = 1;
+		}else{
+			var is_visible = 0;
+		}
+		var attr_id = $("#attr_id").val();
+		if(attr_id.length>0){
+			var attr_name = $("#attr_id").find("option:selected").text();
+		}else{
+			var attr_name = '';
+		}
+		if(verify(category_name,short_name, keywords, sort, description)){
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/goods/updategoodscategory')}",
+				data : {
+					'category_id' : category_id,
+					'category_name' : category_name,
+					'pid' : pid,
+					'keywords' : keywords,
+					'sort' : sort,
+					'description' : description,
+					'is_visible' : is_visible,
+					"category_pic" : category_pic,
+					"short_name" : short_name,
+					"attr_id" : attr_id,
+					"attr_name" : attr_name,
+					'goods_category_quick' : JSON.stringify(getCookieGoodsCategory(category_id))
+				},
+				success : function(data) {
+					if (data["code"] > 0) {
+						showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/goods/goodscategorylist')}");
+					}else{
+						showMessage('error', data["message"]);
+					}
+				}
+			});
+		}
+	}
+</script>
+{/block}

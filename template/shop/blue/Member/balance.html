@@ -1,0 +1,144 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<style type="text/css">
+td{padding:10px;border: 1px Black; width:46px;}
+table{background-color:#eeeeee;border:0;width:100%;}
+.integral_title{display:block;font-size:18px;text-align:center;padding:20px;}
+.member-main .tabmenu .tab li {border-bottom: 2px #ff6600 solid;} 
+.modal-content{
+	width: 350px;
+	left: 302px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main" >
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('member_account_balance')}</li>
+				</ul>
+			</div>
+			<div class="member-data-header">
+				<span class="member-data-title">
+					{if condition="!isset($shopname)"}
+					{$platform_shopname}
+					{else /}
+					{$shopname}
+					{/if}
+					<span class="sum">({:lang('member_balance')}:{$sum})</span>
+				</span>
+				<div class="common-btn" onclick="recharge();" style="float:right;">{:lang('member_recharge_balance')}</div>
+			</div>
+			{if condition="$total_count neq ''"}
+			<table>
+				<tr align="center">
+					<td>{:lang('member_category')}</td>
+					<td>{:lang('member_amount_money')}</td>
+					<td>{:lang('member_describe')}</td>
+					<td>{:lang('member_time')}</td>
+				</tr>
+				<tbody id="list_content" class="close-order">
+					{foreach $balances.data as $balance}
+					<tr align="center">
+						<td>{$balance.type_name}</td>
+						<td>{$balance.number}</td>
+						<td>{$balance.text}</td>
+						<td>{$balance.create_time | getTimeStampTurnTime}</td>
+					</tr>
+					{/foreach}
+				</tbody>
+			</table>
+			{include file='shop/blue/controlCommonPage'/}
+			{else/}
+			<div>
+				<div class="emptyFrame"> <i class="user_balance"></i><span>{:lang('member_no_balance_yet')}！</span> </div>
+			</div>
+			{/if}
+		</div>
+	</div>
+
+	<!-- 余额充值弹出 -->
+	<div class="modal fade hide" id="add_money" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">{:lang('recharge_balance')}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="modal-infp-style">
+						<table>
+							<tr>
+								<td style="width:20%">{:lang('member_amount_money')}：</td>
+								<td colspan='3'>
+									<input type="text" placeholder="{:lang('member_input_balance')}" id="pay_money" style="height: 25px;" onkeyup="this.value=this.value.replace(/[^0-9.]/g,'')" />
+								</td>
+							</tr>
+						</table>
+						<input type="hidden" id="pay_no" value="{$pay_no}" />
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-info" onclick="calculateRecharge()" id="butSubmit" data-dismiss="modal" aria-hidden="true" style="display:inline-block;">{:lang('member_submit')}</button>
+					<button type="button" class="btn btn-default close">{:lang('goods_close')}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 余额充值弹出结束 -->
+</div>
+{/block}
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script type="text/javascript">
+function recharge(){
+	$("#add_money").show();
+}
+
+$(".close").click(function(){
+	$("#add_money").hide();
+});
+
+$("#pay_money").blur(function(){
+	var pay_money = parseFloat($(this).val()).toFixed(2);
+	if(isNaN(pay_money)){
+		pay_money = 0.00; 
+	}
+	$(this).val(pay_money);
+})
+//充值
+var is_submint = false;
+function calculateRecharge(){
+	var pay_no = $("#pay_no").val();
+	var pay_money = $("#pay_money").val();
+
+	if(pay_money < 0 || pay_money == '' || pay_money == 0){
+		$("#pay_money").val(0).focus();
+		$.msg("{:lang('member_amount_greater_zero')}");
+		return false;
+	}
+	if(is_submint){
+		return false;
+	}
+	is_submint = true;
+	$.ajax({
+		url: "{:__URL('SHOP_MAIN/member/createrechargeorder')}",
+		type: "post",
+		async: false,
+		data: { "recharge_money": pay_money, "out_trade_no": pay_no},
+		dataType: "json",
+		success: function (response) {
+			if(response.code>0){
+				window.location.href = __URL("APP_MAIN/pay/getpayvalue?out_trade_no="+pay_no);
+			}else{
+				is_submint = false;
+				showBox("{:lang('member_recharge_failed')}");
+			}
+		}
+	});
+}
+</script>
+{/block}

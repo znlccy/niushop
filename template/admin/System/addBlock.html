@@ -1,0 +1,524 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style  type="text/css">
+
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 200px;
+	height: 60px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	    margin: 0 0 10px;
+		border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 200px;
+	max-height: 60px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+.edit_button{
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:30px;
+	padding-right:30px;
+	background-color:#51A351;
+	color:#FFF;
+	margin:20px auto;
+	border:none;
+	display:block;
+}
+.error{
+	font-size: 12px;
+    line-height: 16px;
+    color: red;
+    margin-top: 10px;
+	display:none;
+}
+.set-style dl dd p{
+	margin-bottom:0;
+}
+.checkbox-inline{}
+.mlr15{
+	margin:0;
+}
+</style>
+
+ {/block}
+{block name="right_tab"}
+ 
+{/block}
+{block name="main"}
+<div class="mb10 mlr15">
+       <div class="tiphelp-info"><strong>提示：</strong>添加首页楼层，方法如下：<br>
+            1.  带(*)为必填项，单图广告位即前台相应楼层最左侧广告位，多图广告位即楼层右侧格子广告位，幻灯片广告位即楼层轮播图。<br/>
+            2.需要开启“显示”按钮前台才可以显示楼层。
+       </div>
+</div>
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>楼层名称:</dt>
+		<dd>
+			<p><input name="UserCode" id="block_name" type="text" style="width:300px;"> </p>
+			<p class="error">请输入楼层名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>简称:</dt>
+		<dd>
+			<p><input name="UserCode" id="block_short_name" type="text" style="width:300px;"> </p>
+			<p class="error">请输入楼层简称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>颜色风格:</dt>
+		<dd>
+			<input id="block_color" type="color" style="width:60px;height:25px;"/>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>排序:</dt>
+		<dd>
+			<p><input name="UserCode" id="sort" type="number" value="0" style="width:300px;"> </p>
+			<p class="error">请输入序号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否显示:</dt>
+		<dd>
+			<p>
+					<input id="is_display" type="checkbox" class="checkbox" checked>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>推荐单图广告位:</dt>
+		<dd>
+			<p>
+				<input name="" id="recommend_ad_image_name" type="text" placeholder="请输入推荐单图广告位名称" value=""  style="width:300px;"> 
+				<select name="account"  id="recommend_ad_image" style="width:300px;height:34px;">
+					<option value="0">请选择推荐单图广告位</option>
+					{volist name="recommend_ad_image_list" id="va1"}
+						<option value="{$va1['ap_id']}">{$va1['ap_name']}</option>
+					{/volist}
+				</select>
+			</p>
+			<p class="error">推荐单图广告位名称不能为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>推荐多图广告位:</dt>
+		<dd>
+			<p>
+				<input name="" id="recommend_ad_images_name" type="text" placeholder="请输入推荐多图广告位名称" value=""  style="width:300px;"> 
+				<select name="account" class="form-control m-b" id="recommend_ad_images" style="width:300px;height:34px;">
+						<option value="0">请选择推荐多图广告位</option>
+						{volist name="recommend_ad_images_list" id="va2"}
+							<option value="{$va2['ap_id']}">{$va2['ap_name']}</option>
+						{/volist}
+					</select>
+			</p>
+			<p class="error">推荐多图广告位名称不能为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>推荐幻灯片广告位：</dt>
+		<dd>
+			<p>
+				<input name="" id="recommend_ad_slide_name" type="text" placeholder="请输入推荐幻灯片广告位名称" value=""  style="width:300px;"> 
+				<select name="account" class="form-control m-b" id="recommend_ad_slide" style="width:300px;height:34px;">
+					<option value="0">请选择推荐幻灯片广告位</option>
+					{volist name="recommend_ad_slide_list" id="va3"}
+						<option value="{$va3['ap_id']}">{$va3['ap_name']}</option>
+					{/volist}
+				</select>
+			</p>
+			<p class="error">推荐幻灯片广告位名称不能为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>推荐分类商品：</dt>
+		<dd>
+			<input name="" id="recommend_goods_category_name_1" type="text" placeholder="请输入分类别名" value=""  style="width:300px;"> 
+			<select name="account" class="form-control m-b category_first" id="goods_category_first_1" style="width:145px;height:34px;">
+				<option value="0">请选择一级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 1"}
+						<option value="{$vo['category_id']}">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<select name="account" class="form-control m-b hide category_second" id="goods_category_second_1" style="width:145px;height:34px;">
+				<option value="0">请选择二级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 2"}
+						<option value="{$vo['category_id']}" pid="{$vo['pid']}" style="display: none;">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<select name="account" class="form-control m-b hide category_three" id="goods_category_three_1"  style="width:145px;height:34px;">
+				<option value="0">请选择三级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 3"}
+						<option value="{$vo['category_id']}" pid="{$vo['pid']}">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<p class="error">推荐分类商品别名及分类选择不可为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>推荐分类商品：</dt>
+		<dd>
+			<input name="" id="recommend_goods_category_name_2" type="text" placeholder="请输入分类别名" value=""  style="width:300px;"> 
+			<select name="account" class="form-control m-b category_first" id="goods_category_first_2" style="width:145px;height:34px;">
+				<option value="0">请选择一级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 1"}
+						<option value="{$vo['category_id']}">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<select name="account" class="form-control m-b hide category_second" id="goods_category_second_2" style="width:145px;height:34px;">
+				<option value="0">请选择二级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 2"}
+						<option value="{$vo['category_id']}" pid="{$vo['pid']}">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<select name="account" class="form-control m-b hide category_three" id="goods_category_three_2"  style="width:145px;height:34px;">
+				<option value="0">请选择三级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 3"}
+						<option value="{$vo['category_id']}" pid="{$vo['pid']}">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<p class="error">推荐分类商品别名及分类选择不可为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>推荐分类商品：</dt>
+		<dd>
+			
+			<input name="" id="recommend_goods_category_name_3" type="text" placeholder="请输入分类别名" value=""  style="width:300px;"> 
+			<select name="account" class="form-control m-b category_first" id="goods_category_first_3" style="width:145px;height:34px;">
+				<option value="0">请选择一级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 1"}
+						<option value="{$vo['category_id']}">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<select name="account" class="form-control m-b hide category_second" id="goods_category_second_3" style="width:145px;height:34px;">
+				<option value="0">请选择二级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 2"}
+						<option value="{$vo['category_id']}" pid="{$vo['pid']}">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<select name="account" class="form-control m-b hide category_three" id="goods_category_three_3"  style="width:145px;height:34px;">
+				<option value="0">请选择三级分类</option>
+				{volist name="goods_category_list" id="vo"}
+					{if condition="$vo.level eq 3"}
+						<option value="{$vo['category_id']}" pid="{$vo['pid']}">{$vo['category_name']}</option>
+					{/if}
+				{/volist}
+			</select>
+			<p class="error">推荐分类商品别名及分类选择不可为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>推荐品牌：</dt>
+		<dd>
+			<p>
+				{volist name="goods_brand_list" id="vb"}
+					<label class="checkbox-inline" style="display:inline-block;margin-right:5px;font-weight:normal;"> <input type="checkbox"
+						name="recommend_brands" value="{$vb['brand_id']}" style="margin-top:-2px;"> {$vb['brand_name']}
+					</label>
+				{/volist}
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>推荐商品分类：</dt>
+		<dd>
+			<p>
+				{volist name="goods_category_list" id="vc"}
+					<label class="checkbox-inline" style="display:inline-block;margin-right:5px;font-weight:normal;"> <input type="checkbox"
+						name="recommend_categorys" value="{$vc['category_id']}" style="margin-top:-2px;"> {$vc['category_name']}
+					</label>
+				{/volist}
+			</p>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="addBlockAjax();">提交</button>
+</div>	
+
+{/block}
+{block name="script"}
+
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+
+$(function(){
+	$('.category_first').change(function(){
+		var pid = $(this).val();
+		var obj_category_second = $(this).parent().children('.category_second');
+		obj_category_second.children('option:gt(0)').hide().parent().hide();
+		var category_second_option_obj = obj_category_second.children('option[pid="'+pid+'"]')
+		category_second_option_obj.show().parent().show();
+		obj_category_second.val(0);
+		obj_category_second.trigger('change');
+	})
+	$('.category_second').change(function(){
+		var pid = $(this).val();
+		var obj_category_three = $(this).parent().children('.category_three')
+		obj_category_three.val(0);
+		obj_category_three.children('option:gt(0)').hide().parent().hide();
+		obj_category_three.children('option[pid="'+pid+'"]').show().parent().show();
+	})
+})
+
+function addBlockAjax() {
+	var block_name = $("#block_name").val();
+	var block_short_name = $("#block_short_name").val();
+	var block_color = $("#block_color").val();
+	var sort = $("#sort").val();
+	if($("#is_display").prop("checked")){
+		var is_display = 1;
+	}else{
+		var is_display = 0;
+	}
+	var recommend_ad_image_name = $("#recommend_ad_image_name").val();
+	var recommend_ad_image = $("#recommend_ad_image").val();
+	var recommend_ad_images_name = $("#recommend_ad_images_name").val();
+	var recommend_ad_images = $("#recommend_ad_images").val();
+	var recommend_ad_slide_name = $("#recommend_ad_slide_name").val();
+	var recommend_ad_slide = $("#recommend_ad_slide").val();
+	var recommend_brands = '';
+	$("input[type='checkbox'][name='recommend_brands']:checked").each(function(){ 
+		recommend_brands += $(this).val()+","; 
+	});
+	recommend_brands = recommend_brands.substring(0,recommend_brands.length-1);
+	var recommend_categorys = '';
+	$("input[type='checkbox'][name='recommend_categorys']:checked").each(function(){ 
+		recommend_categorys += $(this).val()+","; 
+	});
+	recommend_categorys = recommend_categorys.substring(0,recommend_categorys.length-1);
+	var recommend_goods_category_name_1 = $("#recommend_goods_category_name_1").val();
+	var recommend_goods_category_name_2 = $("#recommend_goods_category_name_2").val();
+	var recommend_goods_category_name_3 = $("#recommend_goods_category_name_3").val();
+	if($("#goods_category_three_1").val() > 0){
+		var recommend_goods_category_1 = $("#goods_category_three_1").val();
+	}else if($("#goods_category_second_1").val() > 0){
+		var recommend_goods_category_1 = $("#goods_category_second_1").val();
+	}else{
+		var recommend_goods_category_1 = $("#goods_category_first_1").val();
+	}
+	if($("#goods_category_three_2").val() > 0){
+		var recommend_goods_category_2 = $("#goods_category_three_2").val();
+	}else if($("#goods_category_second_2").val() > 0){
+		var recommend_goods_category_2 = $("#goods_category_second_2").val();
+	}else{
+		var recommend_goods_category_2 = $("#goods_category_first_2").val();
+	}
+	if($("#goods_category_three_3").val() > 0){
+		var recommend_goods_category_3 = $("#goods_category_three_3").val();
+	}else if($("#goods_category_second_3").val() > 0){
+		var recommend_goods_category_3 = $("#goods_category_second_3").val();
+	}else{
+		var recommend_goods_category_3 = $("#goods_category_first_3").val();
+	}
+
+	if(verify(block_name, recommend_ad_image_name, recommend_ad_image, recommend_ad_images_name, recommend_ad_images, recommend_ad_slide_name, recommend_ad_slide,
+			recommend_goods_category_name_1, recommend_goods_category_1, recommend_goods_category_name_2, recommend_goods_category_2, recommend_goods_category_name_3, recommend_goods_category_3)){
+
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/system/addblock')}",
+			data : {
+				'block_name' : block_name,
+				'block_short_name' : block_short_name,
+				'block_color' : block_color,
+				'sort' : sort,
+				'is_display' : is_display,
+				'recommend_ad_image_name' : recommend_ad_image_name,
+				'recommend_ad_image' : recommend_ad_image,
+				'recommend_ad_images_name' : recommend_ad_images_name,
+				'recommend_ad_images' : recommend_ad_images,
+				'recommend_ad_slide_name' : recommend_ad_slide_name,
+				'recommend_ad_slide' : recommend_ad_slide,
+				'recommend_brands' : recommend_brands,
+				'recommend_categorys' : recommend_categorys,
+				'recommend_goods_category_name_1' : recommend_goods_category_name_1,
+				'recommend_goods_category_1' : recommend_goods_category_1,
+				'recommend_goods_category_name_2' : recommend_goods_category_name_2,
+				'recommend_goods_category_2' : recommend_goods_category_2,
+				'recommend_goods_category_name_3' : recommend_goods_category_name_3,
+				'recommend_goods_category_3' : recommend_goods_category_3
+			},
+			async : true,
+			success : function(data) {
+				//alert(JSON.stringify(data))
+				if (data["code"] > 0) {
+					showMessage('success', "添加成功","{:__URL('ADMIN_MAIN/system/blocklist')}");
+				}else{
+					showMessage('error', "添加失败");
+				}
+			}
+		});
+	}
+}
+function verify(
+		block_name, 
+		recommend_ad_image_name, recommend_ad_image, 
+		recommend_ad_images_name, recommend_ad_images, 
+		recommend_ad_slide_name, recommend_ad_slide,
+		recommend_goods_category_name_1, recommend_goods_category_1, 
+		recommend_goods_category_name_2, recommend_goods_category_2, 
+		recommend_goods_category_name_3, recommend_goods_category_3
+		){
+	if(block_name == ''){
+		$("#block_name").parent().next().show();
+		$("#block_name").focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	if(recommend_ad_image > 0){
+		if(recommend_ad_image_name == ''){
+			$("#recommend_ad_image_name").parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}	
+	}
+	if(recommend_ad_images > 0){
+		if(recommend_ad_images_name == ''){
+			$("#recommend_ad_images_name").parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+	}
+	if(recommend_ad_slide > 0){
+		if(recommend_ad_slide_name == ''){
+			$("#recommend_ad_slide_name").parent().next().show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+	}
+	if(recommend_goods_category_name_1 == '' || recommend_goods_category_1 == 0){
+		$("#recommend_goods_category_name_1").parent().children('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(recommend_goods_category_name_2 == '' || recommend_goods_category_2 == 0){
+		$("#recommend_goods_category_name_2").parent().children('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(recommend_goods_category_name_3 == '' || recommend_goods_category_3 == 0){
+		$("#recommend_goods_category_name_3").parent().children('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+</script>
+{/block}

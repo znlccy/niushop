@@ -1,0 +1,399 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link href="ADMIN_CSS/express/freight_edit.css"  rel="stylesheet" type="text/css" />
+{/block}
+{block name="main"}
+<div class="freight-template">
+	<div class='table-div'>
+		<table>
+			<tr>
+				<td colspan='2' class='bg-f5f5f5'>
+					<div class='table-title-font'>
+						<span>运费信息</span>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td class='table-first-td'>
+					<label for="shipping_fee_name"><span class="star">*</span>模板名称</label>
+				</td>
+				<td>
+				{if condition="$shipping_fee_id"}
+					<input id="shipping_fee_name" type="text" value="{$shipping_fee_detail.shipping_fee_name}" />
+				{else/}
+					<input id="shipping_fee_name" type="text" />
+				{/if}
+				</td>
+			</tr>
+			
+			{if condition="$is_default"}
+			<tr>
+				<td class='table-first-td'>
+					<label>模板地区类型</label>
+				</td>
+				<td>
+					<select id="is_default">
+						<option value="1">默认地区</option>
+						{if condition="$shipping_fee_id"}
+							{if condition="$shipping_fee_detail.province_id_array"}
+							<option value="0" selected="selected">指定地区</option>
+							{else/}
+							<option value="0">指定地区</option>
+							{/if}
+						{else/}
+						<option value="0">指定地区</option>
+						{/if}
+					</select>
+				</td>
+			</tr>
+				
+			{/if}
+			
+			<tr>
+				<td class='table-first-td'>
+					<label><span class="star">*</span>选择地区</label>
+				</td>
+				<td>
+				{if condition="$shipping_fee_id"}
+					<!-- 修改 -->
+					{if condition="$shipping_fee_detail.province_id_array"}
+					<span class="js-region-info region-info">{$shipping_fee_detail.address_name}</span>
+					<!-- 有地区 -->
+					{else/}
+					<!-- 默认 -->
+					<span class="js-region-info region-info"></span>
+					{/if}
+				{else/}
+					<!-- 添加 -->
+					<span class="js-region-info region-info"></span>
+				{/if}
+				
+				
+				{if condition="$shipping_fee_id"}
+					{if condition="$shipping_fee_detail.province_id_array"}
+					<a class="btn-gradient-blue js-select-city" data-flag="0" href="javascript:;">指定地区城市</a>
+					{else/}
+					<a class="btn-gradient-default js-select-city" data-flag="1" href="javascript:;">默认地区(全国)</a>
+					{/if}
+				{else/}
+					{if condition="$is_default"}
+					<a class="btn-gradient-default js-select-city" data-flag="1" href="javascript:;">默认地区(全国)</a>
+					{else/}
+					<a class="btn-gradient-blue js-select-city" data-flag="0" href="javascript:;">指定地区城市</a>
+					{/if}
+				{/if}
+				
+				
+				
+				</td>
+			</tr>
+			
+			<tr>
+				<td class='table-first-td'>
+					<label>按件数</label>
+				</td>
+				<td>
+				
+					<table class="input-info-table">
+						<tr>
+							<td width="20%" align="center">首件(件)</td>
+							<td width="20%" align="center">首件运费(元)</td>
+							
+							<td width="20%" align="center">续件(件)</td>
+							<td width="20%" align="center">续件运费(元)</td>
+							
+							<td width="20%" align="center">是否启用计件方式运费</td>
+						</tr>
+						<tr>
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input type="text" value="{$shipping_fee_detail.bynum_snum}" placeholder="0" id="bynum_snum" data-msg="首件不能是负数、并且必须是整数" data-rule="int" />
+							{else/}
+								<input type="text" placeholder="0" id="bynum_snum" data-msg="首件不能是负数、并且必须是整数" data-rule="int" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input type="text" value="{$shipping_fee_detail.bynum_sprice}" placeholder="0" id="bynum_sprice" data-msg="首件运费不能为负数，并且保留两位小数" />
+							{else/}
+								<input type="text" placeholder="0" id="bynum_sprice" data-msg="首件运费不能为负数，并且保留两位小数" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input type="text" value="{$shipping_fee_detail.bynum_xnum}" placeholder="0" id="bynum_xnum" data-msg="续件不能是负数、并且必须是整数" data-rule="int" />
+							{else/}
+								<input type="text" placeholder="0" id="bynum_xnum" data-msg="续件不能是负数、并且必须是整数" data-rule="greater_int" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input type="text" value="{$shipping_fee_detail.bynum_xprice}" placeholder="0" id="bynum_xprice" data-msg="续件运费不能为负数，并且保留两位小数" data-rule="greater_double" />
+							{else/}
+								<input type="text" placeholder="0" id="bynum_xprice" data-msg="续件运费不能为负数，并且保留两位小数" data-rule="greater_double" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								{if condition="$shipping_fee_detail.bynum_is_use"}
+									<input type="checkbox" checked="checked" class="checkbox" id="bynum_is_use" />
+								{else/}
+									<input type="checkbox" class="checkbox" id="bynum_is_use" />
+								{/if}
+							{else/}
+								<input type="checkbox" class="checkbox" id="bynum_is_use" checked="checked"/>
+							{/if}
+							</td>
+						</tr>
+					</table>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class='table-first-td'>
+					<label>按重量</label>
+				</td>
+				<td>
+				
+					<table class="input-info-table">
+						<tr>
+							<td width="20%" align="center">首重(kg)</td>
+							<td width="20%" align="center">首重运费(元)</td>
+							
+							<td width="20%" align="center">续重(kg)</td>
+							<td width="20%" align="center">续重运费(元)</td>
+							
+							<td width="20%" align="center">是否启用重量运费</td>
+						</tr>
+						<tr>
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input value="{$shipping_fee_detail.weight_snum}" type="text" placeholder="0" id="weight_snum" data-msg="首重不能为负数，并且保留两位小数" />
+							{else/}
+								<input type="text" placeholder="0" id="weight_snum" data-msg="首重不能为负数，并且保留两位小数" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input value="{$shipping_fee_detail.weight_sprice}" type="text" placeholder="0" id="weight_sprice" data-msg="首重运费不能为负数，并且保留两位小数" />
+							{else/}
+								<input type="text" placeholder="0" id="weight_sprice" data-msg="首重运费不能为负数，并且保留两位小数" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input value="{$shipping_fee_detail.weight_xnum}" type="text" placeholder="0" id="weight_xnum" data-msg="续重必须大于0，并且保留两位小数" data-rule="greater_double" />
+							{else/}
+								<input type="text" placeholder="0" id="weight_xnum" data-msg="续重必须大于0，并且保留两位小数" data-rule="greater_double" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input value="{$shipping_fee_detail.weight_xprice}" type="text" placeholder="0" id="weight_xprice" data-msg="续重运费必须大于0，并且保留两位小数" data-rule="greater_double" />
+							{else/}
+								<input type="text" placeholder="0" id="weight_xprice" data-msg="续重运费必须大于0，并且保留两位小数" data-rule="greater_double" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								{if condition="$shipping_fee_detail.weight_is_use"}
+									<input type="checkbox" checked="checked" class="checkbox" id="weight_is_use" />
+								{else/}
+									<input type="checkbox" class="checkbox" id="weight_is_use" />
+								{/if}
+							{else/}
+								<input type="checkbox" class="checkbox" id="weight_is_use" checked="checked"/>
+							{/if}
+							</td>
+						</tr>
+					</table>
+					
+				</td>
+			</tr>
+			<tr>
+				<td class='table-first-td'>
+					<label>按体积</label>
+				</td>
+				<td>
+				
+					<table class="input-info-table">
+						<tr>
+							<td width="20%" align="center">首体积量(m³)</td>
+							<td width="20%" align="center">首体积运费(元)</td>
+							
+							<td width="20%" align="center">续体积量(m³)</td>
+							<td width="20%" align="center">续体积运费(元)</td>
+							
+							<td width="20%" align="center">是否启用体积计算运费</td>
+						</tr>
+						<tr>
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input type="text" value="{$shipping_fee_detail.volume_snum}" placeholder="0" id="volume_snum" data-msg="首体积量不能为负数，并且保留两位小数" />
+							{else/}
+								<input type="text" placeholder="0" id="volume_snum" data-msg="首体积量不能为负数，并且保留两位小数" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input type="text" value="{$shipping_fee_detail.volume_sprice}" placeholder="0" id="volume_sprice" data-msg="首体积运费不能为负数，并且保留两位小数" />
+							{else/}
+								<input type="text" placeholder="0" id="volume_sprice" data-msg="首体积运费不能为负数，并且保留两位小数" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input type="text" value="{$shipping_fee_detail.volume_xnum}" placeholder="0" id="volume_xnum" data-msg="续体积量不能为负数，并且保留两位小数" data-rule="greater_double" />
+							{else/}
+								<input type="text" placeholder="0" id="volume_xnum" data-msg="续体积量不能为负数，并且保留两位小数" data-rule="greater_double" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								<input type="text" value="{$shipping_fee_detail.volume_xprice}" placeholder="0" id="volume_xprice" data-msg="续体积运费不能为负数，并且保留两位小数" data-rule="greater_double" />
+							{else/}
+								<input type="text" placeholder="0" id="volume_xprice" data-msg="续体积运费不能为负数，并且保留两位小数" data-rule="greater_double" />
+							{/if}
+							</td>
+							
+							<td align="center">
+							{if condition="$shipping_fee_id"}
+								{if condition="$shipping_fee_detail.volume_is_use"}
+									<input type="checkbox" checked="checked" class="checkbox" id="volume_is_use" />
+								{else/}
+									<input type="checkbox" class="checkbox" id="volume_is_use" />
+								{/if}
+							{else/}
+								<input type="checkbox" class="checkbox" id="volume_is_use" checked="checked"/>
+							{/if}
+							</td>
+						</tr>
+					</table>
+					
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+	<div class="freight-template-footer">
+		<button type="button" class="edit_button">保存</button>
+		<input type="hidden" id="hidden_co_id" value="{$co_id}" />
+		<input type="hidden" id="hidden_shipping_fee_id" value="{$shipping_fee_id}" />
+		{if condition="$shipping_fee_id"}
+			{if condition="$shipping_fee_detail.province_id_array"}
+			<input type="hidden" id="hidden_province_id_array" value="{$shipping_fee_detail.province_id_array}" />
+			<input type="hidden" id="hidden_city_id_array" value="{$shipping_fee_detail.city_id_array}" />
+			<input type="hidden" id="hidden_district_id_array" value="{$shipping_fee_detail.district_id_array}" />
+			<input type="hidden" id="hidden_is_default" value="0" />
+			{else/}
+			<input type="hidden" id="hidden_province_id_array" />
+			<input type="hidden" id="hidden_city_id_array" />
+			<input type="hidden" id="hidden_district_id_array" />
+			<input type="hidden" id="hidden_is_default" value="{$is_default}" />
+			{/if}
+		{else/}
+		<input type="hidden" id="hidden_province_id_array" />
+		<input type="hidden" id="hidden_city_id_array" />
+			<input type="hidden" id="hidden_district_id_array" />
+			<input type="hidden" id="hidden_is_default" value="{$is_default}" />
+		{/if}
+	</div>
+</div>
+<div class="mask-layer"></div>
+<div id="select-region" style="left:50%;margin-left:-346px;" class="modal hide ui-draggable ui-draggable-handle in" tabindex="-1" role="dialog" >
+	<div class="title">
+		<h2>选择地区</h2>
+		<span class="cancle js-cancle">[取消]</span>
+		<span class="confirm js-confirm">[确定]</span>
+	</div>
+	<div class="cont">
+		<div class="selectSub dialog-areas">
+			<ul class="js-regions">
+				{foreach name="$address_list" item="area" key="k"}
+				{if condition="$area.province_list_count"}
+				<li>
+					<div class="dcity clearfix">
+						<!-- 大类 -->
+						<div class="ecity gcity">
+							<span class="group-label">
+								<input id="first_region_{$k}" data-first-index="{$k}" value="{foreach name="area.province_list" item="province"}{$province.province_id},{/foreach}" type="checkbox" />
+								<label for="first_region_{$k}" title="{$area.area_name}">{$area.area_name}</label>
+							</span>
+						</div>
+						
+						<!-- 省 -->
+						<div class="province-list">
+						
+							{foreach name="area.province_list" item="province" key="second"}
+							<div class="ecity">
+								<span class="gareas">
+									{if condition="$province.is_disabled"}
+									<input disabled="disabled" data-is-disabled="1" data-second-parent-index="{$k}" data-province-id="{$province.province_id}" id="second_region_{$k}_{$province.province_id}" type="checkbox" data-province-name="{$province.province_name}" value="{$province.province_id}" />
+									<label class="disabled" for="second_region_{$k}_{$province.province_id}" title="{$province.province_name}">{$province.province_name}</label>
+									{else/}
+									<input data-second-parent-index="{$k}" data-province-id="{$province.province_id}" id="second_region_{$k}_{$province.province_id}" type="checkbox" data-province-name="{$province.province_name}" value="{$province.province_id}" />
+									<label for="second_region_{$k}_{$province.province_id}" title="{$province.province_name}">{$province.province_name}</label>
+									{/if}
+									<img class="drop-down" src="ADMIN_IMG/freight_city_drop_down.gif" data-level="province" />
+										
+									<!-- 市 -->
+									<div class="citys" id="citys_{$province.province_id}">
+										{foreach name="province.city_list" item="city" key="third"}
+											<span class="areas">
+												{if condition="$city.is_disabled"}
+												<input disabled="disabled" data-is-disabled="1" data-third-parent-index="{$k}" data-province-id="{$province.province_id}" data-city-id="{$city.city_id}" value="{$city.city_id}" id="third_{$k}_{$city.city_id}" type="checkbox" />
+												<label class="disabled" for="third_{$k}_{$city.city_id}" title="{$city.city_name}">{$city.city_name}</label>
+												{else/}
+												<input data-third-parent-index="{$k}" data-province-id="{$province.province_id}" data-city-id="{$city.city_id}" value="{$city.city_id}" id="third_{$k}_{$city.city_id}" type="checkbox" />
+												<label for="third_{$k}_{$city.city_id}" title="{$city.city_name}">{$city.city_name}</label>
+												{/if}
+												{if condition="$city.district_list_count"}
+													<img class="drop-down" src="ADMIN_IMG/freight_city_drop_down.gif" data-level="city" />
+												{/if}
+												
+												{if condition="$city.district_list_count"}
+													<div class="district" id="district_{$city.city_id}">
+													{foreach name="city.district_list" item="district" key="four"}
+													<span class="areas">
+														{if condition="$district.is_disabled"}
+														<input disabled="disabled" data-is-disabled="1" data-four-parent-index="{$k}" data-city-id="{$city.city_id}" data-province-id="{$province.province_id}" value="{$district.district_id}" id="four_{$k}_{$district.district_id}" type="checkbox" />
+														<label class="disabled" for="four_{$k}_{$district.district_id}" title="{$district.district_name}">{$district.district_name}</label>
+														{else/}
+														<input data-four-parent-index="{$k}" data-province-id="{$province.province_id}" data-city-id="{$city.city_id}" value="{$district.district_id}" id="four_{$k}_{$district.district_id}" type="checkbox" />
+														<label for="four_{$k}_{$district.district_id}" title="{$district.district_name}">{$district.district_name}</label>
+														{/if}
+													</span>
+													
+													{/foreach}
+													</div>
+												{/if}
+											</span>
+										{/foreach}
+									</div>
+								</span>
+							</div>
+							{/foreach}
+							
+						</div>
+					</div>
+				</li>
+				{/if}
+				{/foreach}
+			</ul>
+		</div>
+	</div>
+</div>
+<script src="ADMIN_JS/express/freight_edit.js"></script>
+{/block}

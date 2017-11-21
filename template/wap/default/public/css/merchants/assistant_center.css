@@ -1,0 +1,234 @@
+@CHARSET "UTF-8";
+
+.merchants-top {
+	margin-top: 45px;
+	padding: 10px 30px;
+	/* 	height: 100px; */
+	background: url("../../images/merchants/merchants_center_bg.png")
+		no-repeat;
+	background-size: 100% 100%;
+}
+
+.merchants-logo {
+	background: url("../../images/merchants/merchants_center_startbg.png")
+		no-repeat;
+	background-position: top;
+	padding-top: 5px;
+}
+
+.merchants-logo>img {
+	width: 50px;
+	height: 50px;
+	vertical-align: middle;
+	border-radius: 100% 100%;
+}
+
+.merchants-level {
+	position: relative;
+	margin-top: -30px;
+}
+
+.merchants-level h3 {
+	font-weight: normal;
+	color: #ffffff;
+	position: relative;
+	top: 22px;
+}
+
+.merchants-level img {
+	height: 30px;
+	width: 110px;
+}
+
+.merchants-process {
+	margin-top: 10px;
+}
+
+.merchants-process img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.upgrade-merchants {
+	overflow: hidden;
+	background: #ffffff;
+	padding: 10px;
+	margin: 10px 0;
+	font-size: 14px;
+}
+
+.upgrade-merchants img, .upgrade-merchants div {
+	float: left;
+}
+
+.upgrade-merchants img {
+	width: 32px;
+	height: 32px;
+	margin: 5px 10px 0 0;
+}
+
+.upgrade-merchants div h3 {
+	font-weight: normal;
+}
+
+.upgrade-merchants div span {
+	color: #999999;
+}
+
+.upgrade-merchants button {
+	float: right;
+	margin-top: 5px;
+	border: 0;
+	background: #ee444b;
+	border-radius: 3px;
+	color: #ffffff;
+	padding: 5px 10px;
+}
+
+.merchants-title {
+	padding: 10px;
+	border-left: 5px solid #595959;
+	font-size: 16px;
+	color: #333333;
+	font-weight: normal;
+	background: #ffffff;
+}
+
+.segmentation-line {
+	border: 0;
+	border-bottom: 1px solid #eeeeee;
+}
+
+.merchants-myaccount {
+	background: #ffffff;
+	text-align: center;
+	overflow: hidden;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+
+.merchants-myaccount ul li {
+	float: left;
+	width: 33%;
+	text-align: center;
+	border-right: 1px solid #eeeeee;
+}
+
+.merchants-myaccount ul li:LAST-CHILD {
+	border-right: 0;
+}
+
+.merchants-myaccount ul li img, .merchants-myaccount ul li div {
+	float: left;
+}
+
+.merchants-myaccount ul li img {
+	width: 25px;
+	height: 25px;
+	vertical-align: middle;
+	margin: 10px 3px 0 10px;
+}
+
+.merchants-myaccount ul li div {
+	width: 55%;
+}
+
+/* .merchants-myaccount .balance { */
+/* 	background: url("../../images/merchants/merchants_center_balance.png") */
+/* 		no-repeat; */
+/* 	background-size: 25px 25px; */
+/* 	background-position: left; */
+/* } */
+
+/* .merchants-myaccount .shopping-currency { */
+/* 	background: */
+/* 		url("../../images/merchants/merchants_center_shop_currency.png") */
+/* 		no-repeat; */
+/* 	background-size: 25px 25px; */
+/* 	background-position: left; */
+/* } */
+
+/* .merchants-myaccount .integral { */
+/* 	background: url("../../images/merchants/merchants_center_integral.png") */
+/* 		no-repeat; */
+/* 	background-size: 25px 25px; */
+/* 	background-position: left; */
+/* } */
+.merchants-myaccount ul li  h3 {
+	font-weight: normal;
+}
+
+.personal-menu {
+	background: #ffffff;
+	overflow: hidden;
+}
+
+.personal-menu li {
+	float: left;
+	width: 33%;
+	text-align: center;
+	padding: 10px 0;
+	border-right: 1px solid #eeeeee;
+	border-bottom: 1px solid #eeeeee;
+}
+
+.personal-menu li img {
+	width: 50px;
+	height: 50px;
+}
+
+.personal-menu li h5 {
+	padding-top: 5px;
+	font-weight: normal;
+	font-size: 14px;
+}
+
+.personal-menu li span {
+	color: #999999;
+	font-size: 12px;
+}
+
+.store-banner {
+	width: 100%;
+	margin: 10px 0;
+}
+
+.store-commission-statistics {
+	background: #ffffff;
+	overflow: hidden;
+	padding: 10px 0;
+	margin-bottom: 10px;
+}
+
+.store-commission-statistics ul li {
+	text-align: center;
+	float: left;
+	width: 25%;
+	padding: 10px 0;
+}
+
+.store-commission-statistics ul li strong {
+	color: #FB5430;
+	font-size: 14px;
+	display: block;
+}
+
+.store-commission-statistics ul li span {
+	font-size: 12px;
+}
+
+.store-p {
+	padding: 10px;
+	background: #ffffff;
+	text-align: center;
+}
+
+.store-p span {
+	color: #FF2F2F;
+}
+
+@MEDIA screen and (min-width:425px) {
+	.merchants-process img {
+		height: 45px;
+	}
+}

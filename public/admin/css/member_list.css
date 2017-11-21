@@ -1,0 +1,85 @@
+@CHARSET "UTF-8";
+
+.mytable {
+	border: 0;
+}
+
+.style0list tbody td {
+	vertical-align: middle;
+}
+
+.style0list  tbody tr {
+	border-bottom: 1px dashed #E3E3E3;
+}
+
+a {
+	cursor: pointer;
+}
+
+select {
+	height: 32px;
+}
+
+.head-portrait {
+	width: 60px;
+	height: 60px;
+	float: left;
+	padding-right: 10px;
+}
+
+.modal-body {
+	max-height: none;
+}
+
+.modal-infp-style {
+	width: 90%;
+	margin: 10px auto;
+}
+
+.modal-infp-style table {
+	width: 100%;
+}
+
+.modal-infp-style table tr td {
+	border: 1px solid #e6e6e6;
+	padding: 8px;
+}
+
+#balance {
+	margin-bottom: 0;
+}
+
+#point {
+	margin-bottom: 0;
+}
+
+#remark_point {
+	margin-bottom: 0;
+}
+
+#remark_balance {
+	margin-bottom: 0;
+}
+
+input[type="text"], input[type="password"], input.text, input.password {
+	margin-bottom: 0;
+}
+
+input[type="radio"], input[type="checkbox"] {
+	margin: 0px 5px 0;
+}
+
+label {
+	width: 20%;
+	float: left;
+	font-weight: normal;
+}
+
+.required {
+	color: red;
+	margin-right: 10px;
+}
+
+.modal-tab tr td:first-child {
+	text-align: right;
+}

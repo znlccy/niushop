@@ -1,0 +1,328 @@
+@CHARSET "UTF-8";
+/* 后台首页隐藏功能菜单	.ncsc-path */
+.tabmenu, .tabmenu_hr {
+	display: none;
+}
+
+.main {
+	margin: 0;
+}
+
+.home {
+	overflow: hidden;
+	color: #999;
+	margin-bottom: 20px;
+}
+
+.home article {
+	float: left;
+}
+
+.home article:FIRST-CHILD {
+	width: 40%;
+}
+
+.home article:LAST-CHILD {
+	width: 60%;
+}
+
+.home-shop, .home-info {
+	float: left;
+}
+
+.home-shop {
+	padding: 20px 30px 0px 40px;
+}
+
+.home-shop span {
+	margin-top: 5px;
+	display: block;
+	color: #0578c4;
+}
+
+.home-info {
+	width: 50%;
+}
+
+.home-info p {
+	margin: 8px 0;
+}
+
+.home-info p:FIRST-CHILD {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.home-info p:FIRST-CHILD span {
+	color: #333;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.home-info p:NTH-CHILD(2) span {
+	color: #666;
+}
+
+.last-login-time {
+	padding-top: 47px;
+}
+
+.level {
+	float: left;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.goods-prompt, .merchants-help, .sales, .operation-promote,
+	.sales-ranking, .charts {
+	border-top: 1px solid #e3e3e3;
+	width: 49%;
+	float: left;
+	border-right: 1px solid #e3e3e3;
+	height: 250px;
+}
+
+.merchants-help {
+	border-right: 0;
+}
+
+.goods-prompt h3, .merchants-help h3, .sales h3, .operation-promote h3,
+	.sales-ranking h3, .charts h3 {
+	color: #333;
+	background: #f7f7f7;
+	padding-left: 10px;
+	margin: 0;
+	font-size: 16px;
+}
+
+.goods-prompt h3 span, .sales h3 span, .operation-promote h3 span,
+	.sales-ranking h3 span {
+	padding-left: 10px;
+	font-size: 14px;
+	color: #999;
+}
+
+.subtitle {
+	padding: 15px 0;
+	clear: both;
+}
+
+.subtitle img {
+	padding-left: 15px;
+}
+
+.subtitle label {
+	font-weight: normal;
+	display: inline;
+	padding-left: 5px;
+	color: #999;
+}
+
+.goods-state, .operation-promote-state {
+	overflow: hidden;
+	text-align: center;
+}
+
+.goods-state ul, .merchants-use ul, .operation-promote-state ul {
+	margin: 0;
+}
+
+.goods-state ul li {
+	float: left;
+	width: 25%;
+	margin-top: 10px;
+	color: #333;
+	cursor: pointer;
+}
+
+.goods-state ul li h4 {
+	color: #10bbee;
+	font-size: 26px;
+}
+
+.merchants-use {
+	padding: 15px 0;
+	overflow: hidden;
+}
+
+.merchants-use ul li {
+	float: left;
+	width: 25%;
+	margin-left: 15px;
+	padding: 10px;
+	border: 1px solid #e6e6e6;
+	color: #10bbee;
+	box-shadow: 0 4px 10px #e6e6e6;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.sales, .sales-ranking {
+	border-right: 0;
+}
+
+.sales table, .sales-ranking table {
+	width: 100%;
+	text-align: center;
+	margin-top: 20px;
+	/* margin-left: 20px; */
+}
+
+.sales table tr td, .sales-ranking table tr td {
+	border-bottom: 1px solid #e3e3e3;
+	padding: 15px;
+}
+
+.sales table tr td span {
+	color: #ff8400;
+}
+
+.sales-ranking table tr td span {
+	background: #ccc;
+	border-radius: 2px;
+	border: 1px solid #e3e3e3;
+	padding: 5px;
+	color: #fff;
+	box-shadow: 0 6px 10px #e3e3e3;
+}
+
+.operation-promote, .sales-ranking {
+	height: 450px;
+}
+
+.operation-promote-state {
+	padding-top: 20px;
+}
+
+.operation-promote-state ul li {
+	float: left;
+	width: 46%;
+	border-radius: 6px;
+	margin-left: 12px;
+	padding-top: 10px;
+	margin-bottom: 10px;
+}
+
+.promote-img, .promote-h5 {
+	float: left;
+}
+
+.promote-img {
+	padding: 0 10px;
+}
+
+.promote-h5 {
+	color: #fff;
+	width: 70%;
+	font-size: 20px;
+}
+
+.promote-h5 span {
+	color: #FFFF00;
+	font-size: 14px;
+	margin-left: 10px;
+}
+
+.promote-p {
+	color: #fff;
+	padding: 10px;
+	text-align: left;
+	font-size: 12px;
+}
+
+.snapup {
+	background: #FF8C8C;
+}
+
+.time-limit {
+	background: #33B5CC;
+}
+
+.full_present {
+	background: #FF984C;
+}
+
+.preferential-suit {
+	background: #33CDA6;
+}
+
+.black {
+	color: #666 !important;
+}
+
+.recommended_booth {
+	background: #EDC230;
+}
+
+.kims_volume {
+	background: #7ACE52;
+}
+
+.frist {
+	background: #ff8c8c !important;
+}
+
+.second {
+	background: #ff984c !important;
+}
+
+.third {
+	background: #7ace52 !important;
+}
+
+.nother {
+	background: #333;
+}
+
+.charts-title {
+	font-family: "微软雅黑", "Helvetica Neue", Helvetica, Arial,
+		sans-serif !important;
+	font-size: 14px;
+	color: #FF984C;
+	margin-right: 10px;
+}
+
+.charts-title:hover {
+	cursor: pointer;
+}
+
+.charts-title-ordernum {
+	color: #999;
+	font-size: 12px;
+	margin-left: 10px;
+}
+
+.charts-title-ordernum i {
+	font-style: normal;
+	color: #10bbee;
+	font-size: 16px;
+	vertical-align: middle;
+}
+
+.charts {
+	height: 350px;
+	width: 49%;
+}
+
+.charts h3 span {
+	float: right;
+	margin-right: 20px;
+	font-size: 14px;
+}
+
+.charts h3 span i {
+	width: 12px;
+	display: inline-block;
+	height: 12px;
+	margin-right: 5px;
+	vertical-align: middle;
+	background: #2E7ED9;
+}
+
+#orderCharts, #focusCharts {
+	min-width: 400px;
+	height: 310px;
+	width: 487px;
+}

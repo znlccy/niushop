@@ -1,0 +1,66 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+{/block}
+{block name="main"}
+<div class="mb10">
+	<div class="tiphelp-info"><strong>提示：</strong><br>
+	此公告在手机端首页显示。<br/>
+	</div>
+</div>
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>用户通知:</dt>
+		<dd>
+			<textarea rows="2" id="notice_message" class="textarea input-common" maxlength="50">{$info.notice_message}</textarea>
+<!-- 			<p style="margin-top:-20px;"> -->
+<!-- 				<br> <span style="color: orange;">此公告在手机端首页显示。</span> -->
+<!-- 			</p> -->
+			<p class="hint" style="display:none;color:red;">不可为空！</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>是否启用:</dt>
+		<dd>
+			<p>
+				<input id="is_enable" type="checkbox" class="checkbox" {if condition="$info.is_enable==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">提交</button></dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	var notice_message = $("#notice_message").val();
+	var is_enable = 0;
+	if($("#is_enable").is(":checked")){
+		is_enable = 1;
+	}
+	if (notice_message == '') {
+		$(".hint").show();
+		$("#notice_message").focus();
+		return false;
+	} else {
+		$(".hint").hide();
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/updatenotice')}",
+		data:{
+			'notice_message' : notice_message,
+			'is_enable' : is_enable
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/config/updatenotice')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

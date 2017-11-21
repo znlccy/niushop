@@ -1,0 +1,99 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+.alert {
+     height: auto; 
+	color:#C09853;
+}
+h6{
+	margin:0;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="main-content" id="mainContent">
+<div class="alert mt10 top-alert" style="clear:both;">
+	<ul class="mt5">
+		<li>当前客服仅适用于以下两种链接</li>
+		<li>1.美洽(链接地址：<a href="http://www.meiqia.com" target="_brank">www.meiqia.com</a>;使用教程：<a href="http://www.niushop.com.cn/document.html?class_id=20&dir_id=63&id=122" target="_blank" >http://www.niushop.com.cn/document.html?class_id=20&dir_id=63&id=122</a>)</li>
+		<li>2.KF5(链接地址：<a href="http://www.kf5.com" target="_brank">www.kf5.com</a>;使用教程：<a href="http://www.niushop.com.cn/document.html?class_id=20&dir_id=63&id=123" target="_blank">http://www.niushop.com.cn/document.html?class_id=20&dir_id=63&id=123</a>)</li>
+	</ul>
+</div>
+</div>
+<input type="hidden" id="withdraw_id" value="{$list['id']}">
+<div class="set-style">
+	<dl>
+		<dt>客服链接:</dt>
+		<dd>
+			<input id="service_addr" type="text" value="{$list['value']['service_addr']}" />
+<!-- 			<p class="hint">提现金额将不小于此值才能提现</p> -->
+		</dd>
+	</dl>
+	
+	<!-- <dl>
+		<dt>提现手续费比例:</dt>
+		<dd>
+			<input id="poundage" type="number" min="0.00" step="0.01"  value="{$list['value']['withdraw_poundage']}" />&nbsp;%<span class="withdraw_rule" id="verification_poundage">提现手续费不能为空</span>
+			<p class="hint">为0表示不收手续费</p>
+		</dd>
+	</dl> -->
+	
+<!-- 	<dl> -->
+<!-- 		<dt>是否启用</dt> -->
+<!-- 		<dd> -->
+<!-- 			<div class="controls"> -->
+<!-- 				<label class="radio inline"><input type="radio" name="enable" value="1" checked="checked" id="enableYes">启用</label>  -->
+<!-- 				<label class="radio inline"><input type="radio" name="enable" value="0" checked="checked" id="enableNo">禁用</label> -->
+<!-- 				<input type="hidden" id="is_open" value="{$list['is_use']}"> -->
+<!-- 			</div> -->
+<!-- 			<p class="hint">是否启用提现设置</p> -->
+<!-- 		</dd> -->
+<!-- 	</dl> -->
+	<button class="edit_button" onclick="setMemberwithdrawAjax();">提交</button>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+	$(".close").click(function(){
+		$(".ns-warm-prompt").hide();
+	})
+
+	function setMemberwithdrawAjax() {
+		
+		var service_addr = $("#service_addr").val();
+		
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/config/customservice')}",
+				data : {
+					'service_addr' : service_addr
+					
+				},
+				success : function(data) {
+					//alert(JSON.stringify(data));
+					if (data['code'] > 0) {
+						showMessage('success',"提交成功");
+					} else {
+						showMessage('error',"提交失败");
+					}
+				}
+			});
+		
+	}
+	window.onload=function(){
+		var is_open = $("#is_open").val();
+		if(is_open == ''){
+			is_open = 0;
+		}
+		if(parseInt(is_open) == 0){
+			$("#enableNo").prop("checked","checked");
+		}else{
+			$("#enableYes").prop("checked","checked");
+		}
+	}
+</script>
+{/block}

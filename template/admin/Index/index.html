@@ -1,0 +1,214 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/dashboard.css">
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/index.css">
+<script src="ADMIN_JS/highcharts.js"></script>
+<script src="ADMIN_JS/exporting.js"></script>
+<script src="ADMIN_JS/index.js"></script>
+<script src="ADMIN_JS/jquery.timers.js"></script>
+<!-- ********************【脚本统一写在index.js中】******************** -->
+{/block}
+{block name="main"}
+<header class="home">
+	<article>
+		<div class="home-shop">
+			<img src="__STATIC__/images/niushop_home.png" />
+			<span><a href="{:__URL('ADMIN_MAIN/config/webconfig')}">网站设置</a></span>
+		</div>
+		<div class="home-info">
+			<p><span class="js-user-name">{$user_name}</span></p>
+			<p>管理权限：<span>管理员</span></p>
+			<p>网站名称：<span>{$title_name}</span></p>
+		</div>
+	</article>
+	<article>
+		<div>
+		<p class="last-login-time">最后登录时间：<span>{$user_info['last_login_time']|getTimeStampTurnTime}</span></p>
+		<p class="last-login-ip">最后登录IP：<span>{$user_info['last_login_ip']}</span></p>
+		</div>
+	</article>
+	<article style="width:300px; margin-top: 45px; margin-left: 50px">
+		<div>
+		<p class="last-login-version">软件版本：<span>{$niu_version}</span></p>
+		<p class="last-login-version">更新时间：<span>{$niu_ver_date}</span></p>
+		</div>
+	</article>
+</header>
+<div class="goods-prompt">
+	<h3>店铺及商品提示<span>您需要关注的店铺信息以及待处理事项</span></h3>
+	<div class="subtitle">
+		<img src="__STATIC__/images/green_giftbag.png" /><label>店铺商品发布情况：<span class="goods_all_count">0/不限</span></label>
+		<img src="__STATIC__/images/orange_picture.png" /><label>图片空间使用情况：<span>不限</span></label>
+	</div>
+	<div class="goods-state">
+		<ul>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/goods/goodslist','state=1')}'"><h4 class="goods_sale_count">0</h4>出售中</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/goods/goodslist','state=0')}'"><h4 class="goods_audit_count">0</h4>仓库中</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/saleservice/consultlist?type=to_reply')}';"><h4 class="goods_consult_count">0</h4>待回复咨询</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/member/usercommissionwithdrawlist')}';"><h4 class="member_balance_withdraw">0</h4>会员提现审核</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/goods/goodslist','stock_warning=1')}'">
+			<h4 class="stock_early_warning">0</h4>库存预警</li>
+		</ul>
+	</div>
+</div>
+
+<div class="merchants-help">
+	<h3>商家帮助及平台联系方式</h3>
+	<div class="subtitle">
+		<img src="__STATIC__/images/green_phone.png" /><label>电话：<span id="user_tel">{$web_phone}</span></label>
+		<img src="__STATIC__/images/orange_email.png" /><label>邮箱：<span id="user_email">{$web_email}</span></label>
+	</div>
+	<div class="merchants-use">
+		<ul>
+			<li><a href="{:__URL('ADMIN_MAIN/goods/goodslist')}">商品管理</a></li>
+			<li><a href="{:__URL('ADMIN_MAIN/promotion/coupontypelist')}">促销方式</a></li>
+			<li><a href="{:__URL('ADMIN_MAIN/order/orderlist')}">订单及售后</a></li>
+		</ul>
+	</div>
+</div>
+
+<div class="goods-prompt">
+	<h3>
+		交易提示<span>您需要立即处理的交易订单</span>
+	</h3>
+	<div class="subtitle">
+		<img src="__STATIC__/images/green_list.png" /><label>近期售出：<span>交易中的订单</span></label>
+		<img src="__STATIC__/images/orange_shield.png" /><label>维权投诉：<span>收到维权投诉</span></label>
+	</div>
+	<div class="goods-state">
+		<ul>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/order/orderlist?status=0')}';"><h4 class="daifukuan">0</h4>待付款</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/order/orderlist?status=1')}';"><h4 class="daifahuo">0</h4>待发货</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/order/orderlist?status=2')}';"><h4 class="yifahuo">0</h4>已发货</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/order/orderlist?status=3')}';"><h4 class="yishouhuo">0</h4>已收货</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/order/orderlist?status=4')}';"><h4 class="yiwancheng">0</h4>已完成</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/order/orderlist?status=5')}';"><h4 class="yiguanbi">0</h4>已关闭</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/order/orderlist?status=-1')}';"><h4 class="tuikuanzhong">0</h4>退款中</li>
+			<li onclick="location.href='{:__URL('ADMIN_MAIN/order/orderlist?status=1')}';" style="display: none;"><h4 class="yituikuan">0</h4>已退款</li>
+		</ul>
+	</div>
+</div>
+
+<div class="sales">
+	<h3>
+		销售情况统计<span>按周期统计商家店铺的订单量和订单金额</span>
+	</h3>
+	<table>
+		<tr>
+			<td>项目</td>
+			<td>订单量（件）</td>
+			<td>订单金额（元）</td>
+		</tr>
+		<tr>
+			<td>昨日销量</td>
+			<td><span class="yesterday_goods">0</span></td>
+			<td><span class="yesterday_money">0</span></td>
+		</tr>
+		<tr>
+			<td>本月销量</td>
+			<td><span class="month_goods">0</span></td>
+			<td><span class="month_money">0</span></td>
+		</tr>
+	</table>
+</div>
+
+<div class="operation-promote">
+	<h3>
+		店铺运营推广<span>合理参见促销活动可以有效提供商品销量</span>
+	</h3>
+	<div class="operation-promote-state">
+		<ul>
+			<li class="snapup"><img
+				src="__STATIC__/images/promoote_snapup.png" class="promote-img" />
+				<h5 class="promote-h5">
+					抢购活动<span>已开通</span>
+				</h5>
+				<p class="promote-p">参与平台发起的抢购活动提搞商品成交量及店铺浏览量</p>
+			</li>
+			<li class=time-limit><img
+				src="__STATIC__/images/promoote_snapup.png" class="promote-img" />
+				<h5 class="promote-h5">
+					限时折扣<span>已开通</span>
+				</h5>
+				<p class="promote-p">在规定时间段内对店铺中所选商品进行打折促销活动</p>
+			</li>
+			<li class=full_present><img
+				src="__STATIC__/images/promoote_snapup.png" class="promote-img" />
+				<h5 class="promote-h5">
+					满即送<span>已开通</span>
+				</h5>
+				<p class="promote-p">商家自定义满即送标准与规则，促进购买转化率</p>
+			</li>
+			<li class=preferential-suit><img
+				src="__STATIC__/images/promoote_snapup.png" class="promote-img" />
+				<h5 class="promote-h5">
+					优惠套装<span>未开通</span>
+				</h5>
+				<p class="promote-p">商品优惠套装，多重搭配更多实惠、商家必备营销方式</p>
+			</li>
+			<li class=recommended_booth><img
+				src="__STATIC__/images/promoote_snapup.png" class="promote-img" />
+				<h5 class="promote-h5">
+					推荐展位<span>未开通</span>
+				</h5>
+				<p class="promote-p">选择商品参与平台发布的主题活动，审核后集中展示</p>
+			</li>
+			<li class=kims_volume><img
+				src="__STATIC__/images/promoote_snapup.png" class="promote-img" />
+				<h5 class="promote-h5">
+					代金券<span>已开通</span>
+				</h5>
+				<p class="promote-p">自定义代金卷使用规则并由平台统一展示供买家领取</p>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<div class="sales-ranking">
+	<h3>
+		单品销售排名<span>按周期统计商家店铺的订单量和订单金额</span>
+	</h3>
+	<table>
+		<tr>
+			<td>排行</td>
+			<td style="text-align:left;">商品信息</td>
+			<td>销量</td>
+		</tr>
+		{foreach name="goods_list" item="goods_info"}
+		<tr>
+			<td>
+			{if condition="$key eq 0 "}
+				<span class="frist">
+			{elseif condition="$key eq 1"/}
+				<span class="second">
+			{elseif condition="$key eq 2"/}
+				<span class="third">
+			{else /}
+				<span>
+			{/if}
+				{$key+1}</span></td>
+			<td title="{$goods_info.goods_name}" style="text-align:left;">
+			<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods_info['goods_id'])}" target="_blank">
+			<?php
+			echo strlen($goods_info["goods_name"])>20 ? mb_substr($goods_info["goods_name"],0,20,'utf-8')."...":$goods_info["goods_name"];
+			?></a>
+			</td>
+			<td>{$goods_info.real_sales}</td>
+		</tr>
+	{/foreach}
+	</table>
+</div>
+
+<div class="charts">
+	<h3>
+		订单总数统计<span><i></i>订单数量</span>
+	</h3>
+	<div id="orderCharts"></div>
+</div>
+<div class="charts" style="border-right: 0;">
+	<h3>
+		关注人数统计<span><i></i>关注人数</span>
+	</h3>
+	<div id="focusCharts"></div>
+</div>
+{/block}

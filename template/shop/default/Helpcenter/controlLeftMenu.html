@@ -1,0 +1,42 @@
+<div class="breadcrumb clearfix" style="margin: -5px 10px 10px auto;">
+	<a href="{:__URL('SHOP_MAIN')}" class="index">{:lang('home_page')}</a>
+	<span class="crumbs-arrow">&gt;</span>
+	<span class="last">{:lang('shop_help_center')}</span>
+</div>
+<!-- 左半部分内容 -->
+<div class="fl">
+	<div class="store-category">
+		<h3 class="left-title bg-color">
+			<a href="javascript:;">{:lang('shop_help_center')}</a>
+		</h3>
+		<div class="left-content tree">
+			<ul>
+				<input type="hidden" value="{$class_id}" id="article" />
+				{foreach name="platform_help_class" id="class_vo"}
+				<li>
+					<h4>
+						<a href="javascript:;" title="{$class_vo.class_name}" class="tree-first">{$class_vo.class_name}</a>
+						<span><i class="icon-plus-sign icon-minus-sign"></i></span>
+					</h4>
+					{if condition="$class_vo['class_id'] eq $class_id"}
+					<ul id="r{$class_id}" style="display: block;">
+					{else/}
+					<ul id="r{$class_id}" style="display: none;">
+					{/if}
+						{foreach name="platform_help_document" id="document_vo"}
+						{if condition="$document_vo['class_id'] eq $class_vo['class_id']"}
+						<li>
+							{if condition="$document_vo['id'] eq $document_id"}
+							<a href="{:__URL('SHOP_MAIN/helpcenter/index','id='.$document_vo['id'].'&class_id='.$document_vo['class_id'])}" class="curr" target="_self" name="ducoment" title="{$document_vo.title}">{$document_vo.title}</a>
+							{else /}
+							<a href="{:__URL('SHOP_MAIN/helpcenter/index','id='.$document_vo['id'].'&class_id='.$document_vo['class_id'])}" target="_self" name="ducoment" title="{$document_vo.title}">{$document_vo.title}</a>
+							{/if}
+						</li>
+						{/if}
+						{/foreach}
+					</ul>
+				</li>{/foreach}
+			</ul>
+		</div>
+	</div>
+</div>

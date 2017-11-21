@@ -1,0 +1,153 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>是否允许注册会员</dt>
+		<dd>
+			<div class="controls">
+				{if condition="$register_and_visit['is_register'] eq 1"}
+					<label class="label-radio"><input type="radio" name="is_register" value="1" checked="checked">启用</label>
+					<label class="label-radio"><input type="radio" name="is_register" value="0">禁用</label>
+				{else /}
+					<label class="label-radio"><input type="radio" name="is_register" value="1">启用</label>
+					<label class="label-radio"><input type="radio" name="is_register" value="0" checked="checked">禁用</label>
+				{/if}
+			</div>
+			<p class="hint">设置允许游客注册成为站点会员</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>是否允许注册</dt>
+		<dd>
+			<div class="controls">
+				<label class="label-radio"><input type="checkbox" name="register_info_validate" value="plain">普通注册</label>
+				<label class="label-radio"><input type="checkbox" name="register_info_validate" value="email">邮箱注册</label>
+				<label class="label-radio"><input type="checkbox" name="register_info_validate" value="mobile">手机注册</label>
+			</div>
+			<p class="hint">注册时是否需要填写邮箱及手机，填写后如配置邮件及短信，则需要进行验证后方能注册成功</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>用户名保留关键字:</dt>
+		<dd>
+			<textarea rows="2" id="name_keyword" class="textarea input-common" maxlength="300">{$register_and_visit["name_keyword"]}</textarea>
+			<p class="hint">用户在注册用户名不可使用这些关键字。多个关键字之间以英文“,”分隔开，如“admin,username”</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>密码最小长度:</dt>
+		<dd>
+			<input id="pwd_len" type="number" min="0" step="1" value="{$register_and_visit['pwd_len']}" class="input-common"/>
+			<p class="hint">新用户注册时密码最小长度，0或不填为不限制</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>强制密码复杂度</dt>
+		<dd>
+			<div class="controls">
+				<label class="label-radio"><input type="checkbox" name="pwd_complexity" value="number">数字</label>
+				<label class="label-radio"><input type="checkbox" name="pwd_complexity" value="letter">小写字母</label>
+				<label class="label-radio"><input type="checkbox" name="pwd_complexity" value="upper_case">大写字母</label>
+				<label class="label-radio"><input type="checkbox" name="pwd_complexity" value="symbol">符号</label>
+			</div>
+			<p class="hint">新用户注册时密码中必须存在所选字符类型，不选择为无限制</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>微信端会员注册方式</dt>
+		<dd>
+			<div class="controls">
+				{if condition="$register_and_visit['is_requiretel'] eq 1"}
+					<label class="radio inline"><input type="radio" name="is_requiretel" value="1" checked="checked">非自动</label>
+					<p class="hint">用户首次打开微信端商城,，不会自动注册为会员，需要进行普通会员注册或者登录会员账号与微信进行绑定，一般应用于电脑端与微信端会员账号统一管理。</p>
+					<label class="radio inline"><input type="radio" name="is_requiretel" value="0">自动</label>
+					<p class="hint">用户首次打开微信端商城,，会自动注册为会员，本微信会员与电脑端会员是两个会员账号。好处是可以自动完成会员注册。一般应用于只在微信端运营的商家。</p>
+				{else /}
+					<label class="radio inline"><input type="radio" name="is_requiretel" value="1">非自动</label>
+					<p class="hint">用户首次打开微信端商城,，不会自动注册为会员，需要进行普通会员注册或者登录会员账号与微信进行绑定，一般应用于电脑端与微信端会员账号统一管理。</p>
+					<label class="radio inline"><input type="radio" name="is_requiretel" value="0" checked="checked">自动</label>
+					<p class="hint">用户首次打开微信端商城,，会自动注册为会员，本微信会员与电脑端会员是两个会员账号。好处是可以自动完成会员注册。一般应用于只在微信端运营的商家。</p>
+				{/if}
+			</div>
+			
+		</dd>
+	</dl>
+	<dl style="display:none;">
+		<dt>注册服务条款内容:</dt>
+		<dd>
+			<textarea rows="2" id="terms_of_service" class="textarea input-common" maxlength="50">{$register_and_visit["terms_of_service"]}</textarea>
+			<p class="hint">新用户注册时显示网站服务条款内容</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">提交</button></dd>
+	</dl>
+</div>
+<script type="text/javascript">
+window.onload=function(){
+	var register_info = "{$register_and_visit['register_info']}";
+	var pwd_complexity = "{$register_and_visit['pwd_complexity']}";
+	register_info = register_info.split(',');
+	pwd_complexity = pwd_complexity.split(',');
+	for(var i = 0; i < register_info.length;i++){
+		$('[name="register_info_validate"][value="'+register_info[i]+'"]').prop("checked", true);
+	}
+	for(var i = 0; i < pwd_complexity.length;i++){
+		$('[name="pwd_complexity"][value="'+pwd_complexity[i]+'"]').prop("checked", true);
+	}
+};
+
+function setConfigAjax(){
+	var is_register = $('[name="is_register"]:checked').val();
+	var is_requiretel = $('[name="is_requiretel"]:checked').val();
+	var register_info = '';
+	$('[name="register_info_validate"]:checked').each(function(){
+		register_info += $(this).val() + ',';
+	})
+	
+	var name_keyword = $('#name_keyword').val();
+	name_keyword = name_keyword.replace('，',',').replace("\n",'');
+	
+	var pwd_len = $('#pwd_len').val();
+	
+	var pwd_complexity = '';
+	$('[name="pwd_complexity"]:checked').each(function(){
+		pwd_complexity += $(this).val() + ',';
+	})
+	var terms_of_service = $('#terms_of_service').val();
+	
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/registerandvisit')}",
+		data : {
+			"is_register" : is_register,
+			"register_info": register_info,
+			"name_keyword" : name_keyword,
+			"pwd_len" : pwd_len,
+			"pwd_complexity" : pwd_complexity,
+			'is_requiretel' : is_requiretel,
+			"terms_of_service" : terms_of_service
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showMessage('success', data["message"], "{:__URL('ADMIN_MAIN/config/registerandvisit')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

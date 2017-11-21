@@ -1,0 +1,239 @@
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code,
+	form, fieldset, legend, input, button, textarea, p, blockquote, th, td
+	{
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-size: 12px;
+	font-family: "microsoft yahei", 'Arial', 'Verdana', 'Helvetica',
+		sans-serif;
+	color: #333;
+	overflow: hidden;
+	overflow-y: auto;
+}
+
+td, th, caption {
+	font-size: 15px;
+}
+
+form {
+	display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: normal;
+	font-size: 14px;
+}
+
+address, caption, cite, code, dfn, em, th, var {
+	font-style: normal;
+	font-weight: normal;
+}
+
+img {
+	border: none;
+	vertical-align: middle;
+}
+
+ol, ul, li {
+	list-style: none;
+}
+
+input {
+	font-family: "microsoft yahei", 'Arial', 'Verdana', 'Helvetica',
+		sans-serif;
+}
+
+.clearfix {
+	clear: both;
+	*zoom: 1;
+}
+
+.ellipsis {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.nb {
+	width: 1200px;
+	margin: 0 auto;
+}
+
+.greybg {
+	background-color: #fafafa;
+}
+
+body {
+	background-color: #fafafa;
+}
+
+.red {
+	color: #e40101;
+}
+
+.tip {
+	color: #aeadad;
+	font-size: 12px;
+}
+
+input[type="submit"], input[type="button"] {
+	cursor: pointer;
+}
+
+input {
+	outline: none;
+}
+
+.fl {
+	float: left;
+}
+
+.vivi-blue, .lnk {
+	color: #3893ee;
+}
+
+.mask {
+	background-color: #000;
+	opacity: .4;
+	filter: alpha(opacity = 40);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+#mask {
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	opacity: 0.6;
+	-webkit-opacity: 0.6;
+	-moz-opacity: 0.6;
+	filter: alpha(opacity = 30);
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 99999;
+	display: none;
+}
+
+/*万鱼未知*/
+.modbox {
+	width: 750px;
+	height: 420;
+	padding: 10px 20px 20px 20px;
+	position: fixed;
+	left: 50%;
+	margin-left: -305px;
+	top: 50%;
+	margin-top: -210px;
+	background-color: #fff;
+	border: 5px solid #dcdcdc;
+	z-index: 999999;
+	display: none;
+}
+
+.modbox h3 {
+	color: #505050;
+	font-size: 14px;
+	border-bottom: 1px solid #bfbfbf;
+	padding-bottom: 5px;
+}
+
+.modbox h3 i.close-modbox {
+	display: block;
+	float: right;
+	background: url(../../images/payment_orders/x.png) no-repeat;
+	width: 12px;
+	height: 12px;
+	cursor: pointer;
+}
+
+i.icon-check-zf {
+	display: none;
+	width: 17px;
+	height: 17px;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	z-index: 99;
+	background: url(../../images/payment_orders/icon-zf-check.png) no-repeat;
+}
+
+i.icon-check-zf {
+	display: none;
+	width: 17px;
+	height: 17px;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	z-index: 99;
+	background: url(../../images/payment_orders/icon-zf-check.png) no-repeat;
+}
+
+.selected i.icon-check-zf {
+	display: block;
+}
+
+.ico-login {
+	position: absolute;
+	left: 95%;
+	top: 16px;
+}
+
+.i-err {
+	color: #e22;
+}
+
+.i-suc i, .i-err i, .i-tip i {
+	display: inline-block;
+	width: 17px;
+	height: 17px;
+	vertical-align: middle;
+	background: url(../images/ico.png) 999px 999px no-repeat;
+}
+
+.i-suc i {
+	background-position: 0px -17px;
+}
+
+.i-err i {
+	background-position: -17px 0px;
+}
+
+.i-tip i {
+	background-position: 0px 0px;
+}
+
+.setprice input {
+	width: 50px;
+	padding: 2px;
+	vertical-align: middle;
+}
+
+.setprice input[type='button'] {
+	background-color: #f1f1f1;
+	border: solid 1px #ddd;
+	padding: 3px;
+	font-size: 12px;
+}
+
+.unedit, input.unedit, .edit-user-infor ul li input[type='text'].unedit
+	{
+	border: none;
+	background: transparent;
+}
+
+.input, input.input {
+	border-radius: 3px;
+	padding: 7px;
+	border: solid 1px #C9C9C9;
+}

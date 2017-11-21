@@ -1,0 +1,133 @@
+@CHARSET "UTF-8";
+.body-gray {
+    background: #eee;
+}
+.step-process {
+    background: #f7f7f7;
+    border-bottom: 1px dashed #ccc;
+	margin-top: 45px;
+}
+.step-process ul {
+  list-style: none;
+    margin: 20px auto;
+    width: 96%;
+    overflow: hidden;
+}
+.clear:after {
+    content: ' ';
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.step-process li {
+    float: left;
+    margin-top: 20px;
+}
+.step-process .name {
+    margin: 0;
+    color: #999;
+    font-size: 10px;
+    text-align: center;
+}
+.step-process .current .name {
+    color: #f37872;
+}
+.step-process .step01 .name {
+    text-align: left;
+}
+.step-process .number {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 50%;
+    background: #ccc;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+.step-process .current .number, .step-process .current .prcess-line {
+    background: #f37872;
+}
+.step-process .prcess-line-r {
+    margin-left: -5px;
+}
+.step-process .prcess-line {
+    display: inline-block;
+    height: 2px;
+    width: 60px;
+    background: #ccc;
+    vertical-align: middle;
+}
+.step-process .step03 .name {
+    text-align: right;
+}
+/* 申请股东 */
+.apply{
+	background-color: #f7f7f7;
+    overflow: hidden;
+    text-align: center;
+    padding: 5px 10px;
+}
+.apply h4{
+	height: 30px;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #333;
+    font-weight: 200;
+}
+.apply hr{
+	    width: 92%;
+    margin: auto;
+	border: solid #dddddd;
+    border-width: 1px 0 0;
+    clear: both;
+	    height: 0;
+}
+.apply p{
+    font-size: 14px;
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 11px;
+}
+/* 申请区域代理 */
+.apply_type{
+	height: 60px;
+    line-height: 60px;
+    text-align: center;
+    font-size: 14px;
+}
+.apply_type select{
+	    width: 60%;
+    padding: 5px;
+}
+/* 审核中 */
+.frog {
+    margin: 70px 20px 0 20px;
+    text-align: center;
+    color: #999;
+    font-size: 15px;
+}
+.frog img{width: 107px;display: block;margin: 40px auto 10px;}
+.a_button{    width: 54%;
+    height: 36px;
+    display: inherit;
+    margin: auto;
+    background: #ff6e6e;
+    text-align: center;
+    line-height: 36px;
+    color: #fff;
+    border-radius: 4px;
+    margin-top: 15px;
+	font-size: 15px;
+}
+/* weui样式重写 */
+.main_content {
+    margin-top: 60px;
+}
+.weui_cell_ft {
+    text-align: right;
+    color: #e62f10;
+}

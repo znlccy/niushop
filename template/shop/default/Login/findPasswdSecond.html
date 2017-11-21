@@ -1,0 +1,356 @@
+{extend name="shop/default/Login/base"}
+{block name="main"}
+<div class="header w990">
+	<div class="logo-info">
+		<a href="{:__URL('SHOP_MAIN')}" class="web-logo-a"><img alt="" src="{:__IMG($web_info['logo'])}" class="weblogo"/></a>
+			<span class="findpw">忘记密码</span>
+	</div>
+</div> 
+<div class="w990"> 
+
+    <div id="find-pw" class="find-pw2">
+    <div class="find-con">
+      <div id="sflex04" class="stepflex">
+        <dl class="first done">
+          <dt class="s-num">1</dt>
+          <dd class="s-text"> 填写账户名 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="normal doing">
+          <dt class="s-num">2</dt>
+          <dd class="s-text"> 验证身份 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="normal">
+          <dt class="s-num">3</dt>
+          <dd class="s-text"> 设置新密码 <s></s> <b></b> </dd>
+        </dl>
+        <dl class="last">
+          <dt class="s-num">&nbsp;</dt>
+          <dd class="s-text"> 完成 <s></s> <b></b> </dd>
+        </dl>
+      </div>
+      <div id="find-box" class="uc-box">
+      <form action="{:__URL('SHOP_MAIN/login/findpasswdThird')}" method="post" id="fpForm" name="fpForm"> 
+          <div class="find-pwd-con">
+            <input type="hidden" name="act" value="to_reset_password" />
+            <div id="error_container"></div>
+            <div class="item">
+              <label>请选择验证身份方式：</label>
+              <select id="validate_type" name="validate_type">
+                {volist name="notify_list" id="vo"}
+                    {if condition="$vo.is_use eq 1"}
+                     <option class="validate_type_obj" value="{$vo.key}" val="">{$vo.notify_name}</option>
+                    {/if}
+                 {/volist}
+               </select>
+            </div>
+       
+       {if condition="$user_list.user_tel neq ''"}       
+       <div id="show_MOBILEMESSAGE" style="display: none">   
+ 
+            <div class="item v_mobile_phone v_item">
+               <label>手机号：{$user_list.user_tel}</label>
+               <span id="l_mobile_phone"></span>
+            </div>
+            <div id="c_mobile_code" class="item v_mobile_phone v_item">
+               <label>请输入手机短信验证码：</label>
+               <input type="text" id="mobile_code" name="mobile_code" class="text text-te2" value="" />
+               <input id="zphone" type="button" value="获取手机验证码"  bvalue='获取手机验证码' class="code">
+               <span  id="code_mobile"></span>
+            </div>
+      </div> 
+      
+      {else/}
+       <div id="show_MOBILEMESSAGE" style="display: none">  
+            <div class="item v_mobile_phone v_item">
+               <label>该账户没有设置手机号</label>
+            </div>  
+       </div> 
+      {/if}        
+     {if condition="$user_list.user_email neq ''"}       
+       <div id="show_EMAILMESSAGE" style="display: none">  
+          
+            <div class="item v_email v_item" >
+              <label>邮箱地址：{$user_list.user_email}</label>
+              <span id="l_email"></span> 
+            </div>
+            
+            <div id="c_email" class="item v_email v_item" >
+              <label>请输入邮箱验证码：</label>
+              <input type="text" id="email_code" name="email_code" class="text text-te2" value="" />
+              <input id="zemail" type="button" value="获取邮箱验证码"  bvalue='获取邮箱验证码' class="code">
+               <span  id="code_email"></span>
+            </div>
+        </div> 
+     {else/} 
+      <div id="show_EMAILMESSAGE" style="display: none">   
+           <div class="item v_email v_item" >
+              <label>该账户没有设置邮箱地址</label>
+            </div>
+       </div>     
+     {/if}   
+        
+          <input type="hidden" name="user_name" value="{$username}" />  
+      <!--    <input type="hidden" name="" value="" id="v_send_param"/>   -->
+          <div class="item">
+             <input type="button" name="button" id="btn_submit" class="btn_next" value="提交" />
+          </div> 
+             
+          </div>
+         </form> 
+      </div>
+    </div>
+    <script type="text/javascript">
+
+
+  //手机倒计时函数
+  function updateEndTime() {
+  	var zphone=$('#zphone').val();
+  	zphone=zphone.replace('秒','');
+  	if(Number(zphone)==0){
+  		$('#zphone').val($('#zphone').attr('bvalue'));
+  		$('#zphone').removeAttr('disabled',true);
+  		return false;
+  	}else{
+  		$('#zphone').val((Number(zphone)-1)+"秒");	
+  	}
+  	
+  	setTimeout("updateEndTime()", 1000);
+  }  
+  //邮箱倒计时函数
+ function email_updateEndTime() {
+  	var zemail=$('#zemail').val();
+  	zemail=zemail.replace('秒','');
+  	if(Number(zemail)==0){
+  		$('#zemail').val($('#zemail').attr('bvalue'));
+  		$('#zemail').removeAttr('disabled',true);
+  		return false;
+  	}else{
+  		$('#zemail').val((Number(zemail)-1)+"秒");	
+  	}
+  	
+  	setTimeout("email_updateEndTime()", 1000);
+  }  
+  
+  
+		function show_validate_type(validate_type_obj){
+				var type = $(validate_type_obj).val();
+				/* 	var value = $("#validate_type_"+type).attr("val");
+				$("#l_"+type).html(value);
+				$(".v_item").hide();
+				$(".v_"+type).show(); */
+				$("[id^='show_'").hide();
+				$("#show_"+type).show();
+			} 
+			
+/* 			function send_email_code(emailCodeObj, sendButton){
+				// 发送邮件
+				var url = 'validate.php';
+				$.post(url, {
+					act: 'send_email_code'
+				}, function(result) {
+					if (result == 'ok') {
+						//倒计时
+						countdown(sendButton);
+					} else {
+						alert(result);
+					}
+				}, 'text');
+			}
+			
+			function send_mobile_code(mobileCodeObj, sendButton) {
+				// 发送邮件
+				var url = 'validate.php';
+				$.post(url, {
+					act: 'send_mobile_code'
+				}, function(result) {
+					if (result == 'ok') {
+						//倒计时
+						countdown(sendButton);
+					} else {
+						alert(result);
+					}
+				}, 'text');
+			}
+			 */
+		   function send_email_code() {
+					var email = "{$user_list.user_email}";
+					$.ajax({
+			 			type:"post",
+			 		    url:"{:__URL('SHOP_MAIN/login/forgotvalidation')}",
+			 		    data:{
+			 		    	'type':'email',
+			 		    	'send_param':email
+			 		    },
+			 		    async : true,
+			 		    dataType:'json',
+			 		    success:function(data){
+			 		    	//alert(JSON.stringify(data));
+			 		    	if (data["code"]==0) {
+			 		    	   //倒计时
+			 		    	   $('#zemail').val(120);
+	        				   $('#zemail').attr('disabled',true);
+	        				   email_updateEndTime();
+	        				//   $("#v_send_param").val(data["param"]);
+			 				}else {
+			 					layer.msg("发送验证码失败,错误码:"+data["message"]);
+			 					return false;
+			 				}
+			 		    }
+			 		});
+			} 
+			 
+			 
+			 
+			function send_mobile_code() {
+					var mobile = "{$user_list.user_tel}";
+			 		$.ajax({
+			 			type:"post",
+			 		    url:"{:__URL('SHOP_MAIN/login/forgotvalidation')}",
+			 		    data:{
+			 		    	'type':'sms',
+			 		    	'send_param':mobile
+			 		    },
+			 		    async : true,
+			 		    dataType:'json',
+			 		    success:function(data){
+			 		    	if (data["code"]==0) {
+			 		    	   //倒计时
+				        		$('#zphone').val(120);
+				        		$('#zphone').attr('disabled',true);
+				        		updateEndTime();
+				        	//	$("#v_send_param").val(data["param"]);
+			 				}else {
+			 					layer.msg("发送验证码失败,错误码:"+data["message"]);
+			 					return false;
+			 				}
+			 		    }
+			 		}); 
+			}
+			$().ready(function(){
+				
+				show_validate_type($("#validate_type"));
+				
+		/* 		var validator = $("#fpForm").validate({
+				    debug: false,
+				    rules: {
+				    	mobile_code: {
+				            required: true
+				        },
+				        email_code: {
+				            required: true
+				        }
+				    },
+				    messages: {
+				    	mobile_code: {
+				            required: "请输入手机短信验证码"
+				        },
+				        email_code: {
+				            required: "请输入邮箱验证码"
+				        }
+				    },
+				    errorPlacement: function(error, element) {
+				        error.appendTo(element.parent());  
+				    }
+				});*/
+				
+				$("#validate_type").change(function(){
+					show_validate_type($(this));
+				});
+				
+				$("#zphone").click(function(){
+					send_mobile_code($("#mobile_code"), $(this));
+				});
+				
+				$("#zemail").click(function(){
+					send_email_code($("#email_code"), $(this));
+				});  
+				
+				$("#btn_submit").click(function(){
+					var type = $("#validate_type").val();
+					//var v_send_param = $("#v_send_param").val();
+				 	if(type=='MOBILEMESSAGE'){
+						var mobile_param = $("#mobile_code").val();
+						if(mobile_param == ''){
+							$("#code_mobile").addClass("error").text("请输入手机验证码");
+							return false;
+						}
+						
+						$.ajax({
+				 			type:"post",
+				 		    url:"{:__URL('SHOP_MAIN/login/check_code')}",
+				 		    data:{
+				 		    	'send_param':mobile_param
+				 		    },
+				 		    async : true,
+				 		    dataType:'json',
+				 		    success:function(data){
+				 		    	//alert(JSON.stringify(data)); 
+				 		    	if(data['code']==1){
+									$("#code_mobile").addClass("error").text("手机验证码错误");
+									return false;
+								}else{
+								
+									$("#fpForm").submit();
+									
+								}
+				 		    }
+				 		});
+
+					}
+					if(type=='EMAILMESSAGE'){
+						var email_param = $("#email_code").val();
+						if(email_param == ''){
+							$("#code_email").addClass("error").text("请输入邮箱验证码");
+							return false;
+						}
+						
+						$.ajax({
+				 			type:"post",
+				 		    url:"{:__URL('SHOP_MAIN/login/check_code')}",
+				 		    data:{
+				 		    	'send_param':email_param
+				 		    },
+				 		    async : true,
+				 		    dataType:'json',
+				 		    success:function(data){
+				 		    	//alert(JSON.stringify(data)); 
+				 		    	if(data['code']==1){
+				 		    		$("#code_email").addClass("error").text("邮箱验证码错误");
+									return false;
+								}else{
+									
+									$("#fpForm").submit();
+									
+								}
+				 		    }
+				 		});
+						
+					} 
+				
+					
+				/* 	if(!validator.form()){
+				        return;
+				    }
+					
+					$("#fpForm").submit();
+					 */
+				});
+				
+			});
+			</script> 
+  </div>
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+  
+</div>
+{/block}

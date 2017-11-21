@@ -1,0 +1,87 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/extend/addaddons')}';">添加插件</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 10%;">
+		<col style="width: 11%;">
+		<col style="width: 25%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th>名称</th>
+			<th>标识</th>
+			<th>描述</th>
+			<th>状态</th>
+			<th>作者</th>
+			<th>版本</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+<input type="hidden" id="id" value="{$id}">
+{/block}
+{block name="script"}
+<script type="text/javascript">
+LoadingInfo_A();
+//备注：后期需要分页的话，将_A去除，后台对应的返回分页数据即可，2017年7月22日 10:07:33 王永杰
+function LoadingInfo_A(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/extend/pluginList')}",
+		data : { "id" : {$id} },
+		success : function(data) {
+			var html = '';
+			if (data.length > 0) {
+				for (var i = 0; i < data.length; i++) {
+					var status = '';
+					var operation = '';
+					switch(parseInt(data[i]['status'])){
+						case -1:
+							status = '损坏';
+							operation = '';
+							break;
+						case 0:
+							status = '禁用';
+							operation = '<a href="'+__URL('ADMIN_MAIN/extend/pluginconfig?addons_id={$id}&plugin_id='+ data[i]['id'])+'">设置</a>&nbsp;<a href="'+__URL('ADMIN_MAIN/extend/enableplugin?addons_id={$id}&plugin_id='+ data[i]['id'])+'">启用</a>&nbsp;<a href="'+__URL('ADMIN_MAIN/extend/uninstallplugin?addons_id={$id}&plugin_id='+ data[i]['id'])+'" >卸载</a>';
+							break;
+						case 1:
+							status = '启用';
+							operation = '<a href="'+__URL('ADMIN_MAIN/extend/pluginconfig?addons_id={$id}&plugin_id='+ data[i]['id'])+'">设置</a>&nbsp;<a href="'+__URL('ADMIN_MAIN/extend/disableplugin?addons_id={$id}&plugin_id='+ data[i]['id'])+'">禁用</a>&nbsp;<a href="'+__URL('ADMIN_MAIN/extend/uninstallplugin?addons_id={$id}&plugin_id='+ data[i]['id'])+'" >卸载</a>';
+							break;
+						case undefined:
+							operation = '<a href="'+__URL('ADMIN_MAIN/extend/installplugin?id={$id}&plugin_name='+ data[i]['name'])+'">安装</a>';
+							status = '未安装';
+							break;
+					}
+					html += '<tr>';
+					html += '<td class="tal">'+ data[i]['title'] +'</td>';
+					html += '<td class="tal">'+ data[i]['name'] +'</td>';
+					html += '<td class="tal">'+ data[i]['desc'] +'</td>';
+					html += '<td class="tal">'+ status +'</td>';
+					html += '<td class="tal">'+ data[i]['author'] +'</td>';
+					html += '<td class="tal">'+ data[i]['version'] +'</td>';
+					html += '<td>'+ operation +'</td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="7">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".table-class tbody").html(html);
+// 			initPageData(data["page_count"],data['data'].length,data['total_count']);
+// 			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

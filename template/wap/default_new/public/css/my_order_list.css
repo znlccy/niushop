@@ -1,0 +1,111 @@
+.list-myorder li {
+	border-bottom: 1px solid #ccc;
+}
+.list-myorder .div-button {
+	border-top: 0;
+}
+.cf-container {
+	max-width: 640px;
+	height: 2.26rem;
+	top: 0;
+	width: 100%;
+	z-index: 6;
+	background: #fff;
+	overflow: hidden;
+	font-size: 14px;
+	border-bottom: 1px solid #E2E2E2;
+	/*全屏显示更改样式*/
+	max-width: 640px;
+    margin: auto;
+}
+.cf-container .cf-content {
+	position: relative;
+	color: #333;
+	text-align: center;
+	top: 0;
+	white-space: nowrap;
+	z-index: 5;
+	-webkit-overflow-scrolling: touch;
+	margin-left: 0.1rem;
+	margin-right: 0.1rem;
+}
+.cf-container .cf-tab-item {
+	display: inline;
+	margin-left: 0px;
+	padding: 0px;
+	line-height: 32px;
+	text-align: center;
+}
+.cf-container .cf-tab-item.select a {
+	border-bottom: 2px solid #FF6600;
+	padding-bottom: 0px;
+	color: #F15050;
+}
+.cf-container .cur-cf-tab {
+	border-bottom: 2px solid #ff2741;
+	color: #ff2741;
+	height: .21rem;
+	display: inline-block;
+	position: relative
+}
+.cf-tab-item a {
+	padding-right: 3px;
+	padding-left: 3px;
+	color: #707070;
+	font-size: 14px;
+	display: block;
+	width: 15%;
+	float: left;
+}
+.cf-tab-item:last-child a {
+	width: 24%;
+}
+.myorder-none>.icon-none {
+	margin: auto;
+}
+.myorder-none>span {
+	display: block;
+	text-align: center;
+	line-height: 30px;
+}
+.myorder .tabs-content>.content {
+	padding: 0;
+	overflow: hidden;
+	min-height: 500px;
+}
+.myorder .tabs-content>.content .myorder-none {
+	margin-top: 24%;
+}
+.myorder-none>span.none_01 {
+	color: #939393;
+	font-size: 16px;
+	line-height: 24px;
+}
+.myorder-none>span.none_02 {
+	color: #CACACA;
+	font-size: 12px;
+	margin-bottom: 11px;
+}
+.myorder-none>span.none_03 a {
+	color: #5A5A5A;
+	display: block;
+	border: 1px solid #DBDBDB;
+	width: 97px;
+	margin: auto;
+	border-radius: 5px;
+	padding: 3px 0px;
+}
+.myorder-none .icon-none {
+	display: block;
+	width: 70px;
+	height: 80px;
+	background: url(../images/distribution2.png) no-repeat;
+	background-size: 100%;
+	margin-top: 20%;
+}
+.list-myorder:last-child {
+	/*margin-bottom: 50px;*/
+}
+.tabs-content {
+	margin-top: 55px;
+}

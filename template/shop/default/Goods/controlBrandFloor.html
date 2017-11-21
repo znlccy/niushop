@@ -1,0 +1,36 @@
+<div class="brand-floor ">
+	{if condition="$total_count eq 0"}
+	<div class="tip-box" style="position: static;">
+		<i class="tip-icon"></i>
+		<div class="tip-text">{:lang('no_result_you_want')}……</div>
+	</div>
+	{else /}
+	<ul>
+		{volist name="list" id="new"}
+		<li>
+			<a href="{:__URL('SHOP_MAIN/goods/goodslist','brand_id='.$new['brand_id'])}">
+			<div class="brand_gg_img">
+			{if condition="$new.brand_ads eq ''"}
+				<img src="__TEMP__/{$style}/public/images/default_ads.png"/>
+			{else/}
+				<img src="{:__IMG($new.brand_ads)}" />
+			{/if}
+			</div>
+			</a>
+			<div class="foot_sale">
+				<div class="brand_logo_img">
+					{if condition="$new.brand_pic eq ''"}
+					<img src="__TEMP__/{$style}/public/images/default_pic.png" />
+					{else/}
+					<img src="{:__IMG($new.brand_pic)}" />
+					{/if}
+				</div>
+				<div class="brand_logo_name">
+					<a href="{:__URL('SHOP_MAIN/goods/goodslist','brand_id='.$new['brand_id'])}" target="_blank" title="{$new.brand_name}">{$new.brand_name}</a>
+				</div>
+			</div>
+		</li>
+		{/volist}
+	</ul>
+	{/if}
+</div>

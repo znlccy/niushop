@@ -1,0 +1,38 @@
+ 		<!-- 提示 -->
+ 		<div class="alert">
+	      <h4>{:lang('member_operation_prompt')}：</h4>
+	      <ul>
+	        <li>1. {:lang('member_wait_and_refund')}。</li>
+	      </ul>
+	    </div>
+	    
+	    
+          <h3>{:lang('member_apply_or_complain')}。</h3>
+          <dl>
+          	<dt>{:lang('member_treatment_mode')}：</dt>
+          	<dd>
+          	{if condition="$detail['refund_type'] eq 1"}
+			      {:lang('member_refund_goods')}
+			      {elseif condition="$detail['refund_type'] eq 2" /}
+			      {:lang('member_refund_goods_and_money')}
+			{/if}
+			</dd>
+          </dl>
+          
+          <dl>
+            <dt>{:lang('member_refund_reason')}：</dt>
+            <dd>{$detail['refund_reason']}
+			</dd>
+          </dl>
+          <dl>
+            <dt>{:lang('member_refund_amount')}：</dt>
+            <dd>{$detail['refund_require_money']} {:lang('element')}
+				{if condition="$refund_balance>0"}
+				<span>（{:lang("member_refund_balance_auto")}<strong style="color:#ff4000;">{$refund_balance}</strong>{:lang('element')}）</span>
+				{/if}
+			</dd>
+          </dl>
+  
+          <div class="bottom">
+            <a href="javascript:history.go(-1);" class="main-btn main-btn-large">{:lang('member_return_list')}>></a>
+          </div>

@@ -1,0 +1,111 @@
+{extend name="wap/default/base" /} {block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/common-v4.4.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_address.css">
+<style>
+.addr-box {padding-top: 0px;text-align: center;}
+.addr-tip {font-size: 14px;color: #8f8f8f;margin-top: 10px;}
+.btn-save {margin-top: 40px;}
+.div-simply{display: inline-block; width: 100%; padding: 5px; border-bottom: 1px solid #e2e2e2;}
+.address.side-nav li {margin-top: 10px;margin-bottom: 5px;}
+</style>
+{/block} {block name="main"}
+
+<section class="head">
+	<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('my_account_list')}</div>
+</section>
+
+<ul class="side-nav address" id="ul" style="background: #eee; padding: 0">
+	{foreach name="account_list" item="vo"}
+	{if condition="$vo.is_default eq '1'"}
+	<li id="{$vo.id}" class="current" style=" background: #fff; padding: 0; ">
+	{else /}
+	<li id="{$vo.id}" style=" background: #fff; padding: 0; ">
+	{/if}
+		<div style="background: url('__TEMP__/{$style}/public/images/border_order_top.png'); height: 2px"></div>
+		<div class="div-simply">
+			<span class="payStatus">{:lang('member_full_name')}：</span> 
+			<span class="payStatus"><span class="name">{$vo.realname}&nbsp;&nbsp;</span></span>
+			<div style="display: inline-block; float: right;">
+				<a href="{:__URL('APP_MAIN/member/updateaccount?shop_id='.$shop_id.'&id='.$vo['id'])}" style="display: inline-block; float: right;">【{:lang('member_modify')}】</a> 
+				{if condition="count($account_list) neq 1"}
+				<a href="javascript:void(0);" onclick="account_delete({$vo.id});" style="display: inline-block;">【{:lang('goods_delete')}】</a>
+				{else/}
+				<a href="javascript:void(0);" onclick="account_delete({$vo.id});" style="display: none; float: right;">【{:lang('goods_delete')}】</a>
+				{/if}
+			</div>
+		</div>
+ 		 
+		<a href="javascript:void(0)" id="mo" onclick='checkAccount({$vo.id},this)'>
+			<div class="div-simply">
+				<span class="payStatus">{:lang('member_phone_number')}：</span> <span class="payStatus"><span>{$vo.mobile}</span></span>
+			</div> 
+			<div class="div-simply">
+				<span class="payStatus">{:lang('member_account_type')}：</span> <span class="payStatus"><span>{$vo.bank_type}</span></span>
+			</div>
+		
+			<div class="div-simply" >
+				<span class="payStatus">{:lang('member_bank_account')}：</span> <span class="payStatus"><span>{$vo.account_number}</span></span>
+			</div>
+			<div class="div-simply" >
+					<span class="payStatus">{:lang('member_sub_branch_information')}：</span>
+					<span>{$vo.branch_bank_name}</span>
+					<span class="payStatus" style="float: right; line-height: 20px;margin-right: 15px;">
+						<i class="icon-success"></i>
+					</span>
+			</div>
+		</a>
+	</li> 
+	{/foreach}
+</ul>
+{if condition = "count($account_list) eq 0"}
+<!-- <img src="__TEMP__/{$style}/public/images/adds.png" style="margin: 0 auto; display: block; margin-top: 10px; height: 100px;"> -->
+	
+<img src="__TEMP__/{$style}/public/images/member_none_account.png" style="margin: 0 auto; display: block; margin-top: 10px;">
+<div class="addr-box" style="display: block;">
+	<span class="iconfont address-icon"></span>
+	<p class="addr-tip">{:lang('you_have_not_added_your_account_yet_add_one')}!</p>
+</div>
+{/if}
+<button class="btn-save" onclick="window.location.href='{:__URL('APP_MAIN/member/addaccount?shop_id='.$shop_id)}';">{:lang('new_account')}</button>
+
+<input type="hidden" value="{$shop_id}" id="shop_id"/>
+{/block} {block name="bottom"}{/block}
+{block name="javascript"}
+<script type="text/javascript">
+	function checkAccount(id,obj){
+       var shop_id=$("#shop_id").val();
+		$.ajax({
+			url: "{:__URL('APP_MAIN/member/checkaccount')}",
+			data: { "id": id },
+			type: "post",
+			success: function (res) {
+				showBox(res.message);
+				if (res["code"] > 0) {
+					$(".side-nav.address").children("li").removeClass("current");
+					$(obj).parent().parent("li").addClass("current");
+					if({$flag}==0){
+						window.location.href=__URL("APP_MAIN/member/towithdraw?shop_id="+shop_id);
+					}
+					if({$flag}==2){
+						window.location.href=__URL("APP_MAIN/distribution/towithdraw?shop_id="+shop_id);
+					}
+				}
+			}
+		})
+	}
+	function account_delete(id){
+		$.ajax({
+			url: "{:__URL('APP_MAIN/member/delaccount')}",
+			data: { "id": id },
+			type: "post",
+			success: function (res) {
+				showBox(res.message);
+				 if (res.code == 1) {
+					window.location.reload();
+				}
+			}
+		})
+	}
+</script>
+{/block}

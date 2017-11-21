@@ -1,0 +1,22 @@
+@charset "utf-8";
+/* CSS Document */
+
+.MCM-M{margin:0 20px;}
+/*guid help*/
+.mod-title{clear:both;font-weight:500;line-height:28px;overflow:hidden;}
+.mod-title .con h1{float:left;}
+.mod-title .style0h1-02{overflow:hidden;border-bottom:1px solid #e8e8e8;}
+.mod-title .style0h1-02 .a-btn{margin:0 10px 0 0;padding:0;background:none;border:0;height:35px;line-height:35px;}
+.mod-title .style0h1-02 h1{float:left;height:35px;line-height:35px;font-size:15px;font-weight:bold;}
+
+.step01,
+.step02,
+.step03,
+.step04,
+.step05{clear:both;margin:25px 0 0 0;}
+.stepnumber{float:left;margin:0 20px 0 0;font-size:16px;color:#de533c;font-weight:bold;}
+.stepcontent{overflow:hidden;}
+.stepcontent p{margin:0 0 8px 0;}
+.stepcontent .title{font-size:16px;color:#333;}
+.stepcontent .detail-text{font-size:12px;color:#666;}
+.stepcontent .detail-text a{margin:0 0 0 5px;}

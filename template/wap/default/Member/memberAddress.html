@@ -1,0 +1,126 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/common-v4.4.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_address.css">
+<style>
+.addr-box {
+	padding-top: 0px;
+	text-align: center;
+}
+
+.addr-tip {
+	font-size: 14px;
+	color: #8f8f8f;
+	margin-top: 10px;
+}
+
+.btn-save {
+	margin-top: 40px;
+}
+</style>
+{/block}
+{block name="main"}
+<input type="hidden" id="ref_url" value="{$pre_url}">
+<input type="hidden" value="{$flag}" id="hidden_flag" />
+<section class="head">
+	{if $flag==1}
+	<a class="head_back" id="backoutapp" href="{:__URL('APP_MAIN/member/index')}"><i class="icon-back"></i></a>
+	{else}
+	<a class="head_back" id="backoutapp"  href="{:__URL('APP_MAIN/order/paymentorder')}"><i class="icon-back"></i></a>
+	{/if}
+	<div class="head-title">{:lang('my_delivery_address')}</div>
+</section>
+<ul class="side-nav address" id="ul" style="background: #eee; padding: 0">
+	{foreach name="list.data" item="address" key="k"}
+	{if condition="$address.is_default eq '1'"}
+	<li id="{$address.id}" class="current" style="margin-bottom: 5px; background: #fff; padding: 0; margin-top: 10px;">
+	{else /}
+	<li id="{$address.id}" style="margin-bottom: 5px; margin-top: 5px; background: #fff; padding: 0; margin-top: 10px;">
+	{/if}
+	<div style="background: url('__TEMP__/{$style}/public/images/border_order_top.png'); height: 2px"></div>
+		<div class="div-simply" style="display: inline-block; width: 100%; padding: 5px; border-bottom: 1px solid #e2e2e2;">
+			<span class="payStatus">{:lang('member_receiving_information')}：</span>
+			<span class="payStatus"><span class="name">{$address.consigner}&nbsp;&nbsp;</span></span>
+			<div style="display: inline-block; float: right;">
+				<a href="{:__URL('APP_MAIN/member/updatememberaddress?id='.$address['id'].'&flag='.$flag)}" style="display: inline-block; float: right;">【{:lang('member_modify')}】</a>
+				{if condition="count($list) gt 1"}
+					<a href="javascript:void(0);" onclick="address_delete({$address.id},{$address.is_default});" style="display: inline-block; float: right;">【{:lang('goods_delete')}】</a>
+				{/if}
+			</div>
+		</div>
+		<div class="div-simply" style="display: inline-block; width: 100%; padding: 5px;border-bottom: 1px solid #e2e2e2;" onclick='selectAddress({$address.id},this)'>
+			<span class="payStatus">{:lang('member_phone_number')}：</span>
+			<span class="payStatus"><span class="mobile">{$address.mobile}</span></span>
+		</div>
+		<a href="javascript:void(0)" class="classnone" style="padding: 5px;" id="mo" onclick='selectAddress({$address.id},this)'>
+			<span class="payStatus">{:lang('member_detailed_address')}：</span>
+			<span class="address">{$address.address_info}&nbsp;{$address.address}</span>
+			<span class="payStatus" style="float: right; line-height: 20px;"><i class="icon-success"></i></span>
+		</a>
+	</li>{/foreach}
+</ul>
+{if condition = "count($list.data) eq 0"}
+<img src="__TEMP__/{$style}/public/images/member_none_address.png" style="margin: 0 auto; display: block; margin-top: 10px;">
+<div class="addr-box">
+	<p class="addr-tip">{:lang('you_have_not_added_your_shipping_address_yet_add_one')}!</p>
+</div>
+{/if}
+<button class="btn-save" onclick="window.location.href='{:__URL('APP_MAIN/Member/addMemberAddress?flag='.$flag)}';">{:lang('member_new_delivery_address')}</button>
+{/block}
+{block name="bottom"}{/block}
+{block name="javascript"}
+<script type="text/javascript">
+function selectAddress(id,obj){
+	var ref_url = '{$url}';//$("#ref_url").val();
+	var flag = "{$flag}";
+	$.ajax({
+		url: "{:__URL('APP_MAIN/member/updateaddressdefault')}",
+		data: { "id": id },
+		type: "post",
+		success: function (res) {
+			if (res["code"] > 0) {
+				$(".side-nav li").removeClass("current");
+				$(obj).parent().addClass("current");
+				//选择银行的时候也用到了，但是单店版没有
+				if(flag == "1"){
+					return;
+				}
+				if(ref_url == 'cart'){
+					window.location.href = __URL("APP_MAIN/order/paymentorder");
+				}else{
+					window.location.reload();
+				}
+			}else{
+				showBox(res["message"]);
+			}
+		}
+	})
+}
+function address_delete(id,is_default){
+	if(is_default == 1){
+		showBox("{:lang('the_default_address_cannot_be_deleted')}");
+		return;
+	}
+	$.ajax({
+		url: "{:__URL('APP_MAIN/member/memberaddressdelete')}",
+		data: { "id": id },
+		type: "post",
+		success: function (res) {
+			//alert(JSON.stringify(res));
+			if (res["code"] == 1) {
+				window.location.href=window.location.href;
+				showBox("{:lang('member_delete_successfully')}!");
+			} else {
+				showBox(res["outmessage"]);
+			}
+		}
+	})
+}
+$("#backoutapp").click(function (){
+    var json ={
+    		"center" : "1",
+        }
+    window.webkit.messageHandlers.center.postMessage(json);
+})
+</script>
+{/block}

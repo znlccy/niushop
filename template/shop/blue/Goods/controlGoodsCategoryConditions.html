@@ -1,0 +1,268 @@
+<script src="__TEMP__/{$style}/public/js/goodsCategoryConditions/conditions.js"></script>
+<!-- <form action="" method="post" name="theForm"> -->
+	<!--筛选条件-->
+	<div class="search-wrap" id="attr-list-ul" style="border-top: none;">
+		<!--已选条件-->
+		{if condition="$brand_name!='' || $min_price!=''|| count($attr_array) gt 0  || count($spec_array) gt 0  " }
+		<dl class="selected-attr-dl" style="border-bottom: none;">
+			<dt>{:lang('goods_selected_condition')}：</dt>
+			<dd class="moredd">
+				<a href="{:__URL('SHOP_MAIN/goods/goodslist','category_id='.$category_id)}">{:lang('goods_revoke_all')}</a>
+			</dd>
+			<dd>
+				<ul class="selected-attr">
+					<!-- 以选择的筛选属性、品牌、价格 -->
+					{if condition="$brand_name!='' "}
+					<li><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_brand)}" >{:lang('goods_brand')}：<b class="color">{$brand_name}</b><i>×</i></a></li>
+					{/if}
+					{if condition="$max_price!='' "}
+					<li><a href="{:__URL('SHOP_MAIN/goods/goodslist',$url_parameter_not_price)}" >{:lang('goods_price')}：<b class="color">{$min_price}-{$max_price}</b><i>×</i></a></li>
+					{/if}
+					<!-- 取消属性 -->
+					{foreach name="attr_array" item="attr_item_vo"}
+						<li><a onclick="removeAttr(this);"data-attr-value="{$attr_item_vo[0]}"data-attr-value-name="{$attr_item_vo[1]}" data-attr-value-id="{$attr_item_vo[2]}">{$attr_item_vo[0]}：<b class="color">{$attr_item_vo[1]}</b><i>×</i></a></li>
+					{/foreach}
+					<!-- 取消规格 -->
+					{foreach name="spec_array" item="spec_item_vo"}
+						<li><a onclick="removeSpec(this);"data-spec_id="{$spec_item_vo[0]}"data-spec_value_id="{$spec_item_vo[1]}">{$spec_item_vo[2]}：<b class="color">{$spec_item_vo[3]}</b><i>×</i></a></li>
+					{/foreach}
+				</ul>
+			</dd>
+		</dl>
+		{/if}
+		<!--品牌-->
+		{if condition="$brand_name==''&& $category_count>0  && count($category_brands) gt 0"}
+		<dl id="attr-group-dl-brand">
+			<dt style="line-height:40px;">{:lang('goods_brand')}：</dt>
+			<dd class="moredd">
+				<label id="brand-more"></label>
+				<label>
+					<a href="javascript:void(0)" class="multiple" onclick="showDuoXuan('#attr-group-dl-brand');">
+					<font class="duo-b">+</font> {:lang('goods_multiselect')}
+					</a>
+				</label>
+			</dd>
+			<dd>
+			{if condition = "count($category_brands) > 9"}
+			<dd class="moredd  showover" >
+			{else /}
+			<dd class="moredd hide showover" >
+			{/if}
+				<label>
+					<a href="javascript:void(0)" class="multiple" onclick="showOverflow(this);">
+					<font class="duo-b"></font> {:lang('goods_more')}
+					</a>
+				</label>
+			</dd>	
+			<dd class="moredd hide hideover">
+				<label>
+					<a href="javascript:void(0)" class="multiple" onclick="hideOverflow(this);">
+					<font class="duo-b"></font> {:lang('goods_stop')}
+					</a>
+				</label>
+			</dd>
+				 <!-- <div id="brand-sobox" style="display:block;">
+					<input id="brand-sobox-input" placeholder="可搜索拼音、汉字查找品牌" type="text"
+						onkeyup="getBrand_By_Name(this.value);">
+				</div>
+				<div id="brand-zimu" class="clearfix" style="display:block;">
+					<span class="span"> <a href="javascript:void(0);"
+						onmouseover="getBrand_By_Zimu(this,'')" id="brand-zimu-all">所有品牌</a>
+						<b></b>
+					</span> <span> <a href="javascript:void(0);"
+						onmouseover="getBrand_By_Zimu(this,'G')">G</a> <b></b>
+					</span> <span> <a href="javascript:void(0);"
+						onmouseover="getBrand_By_Zimu(this,'L')">L</a> <b></b>
+					</span>
+				</div> --> 
+				<div id="brand-abox-father">
+					<ul id="brand-abox" class="brand-abox-imgul" style="overflow: hidden;">
+						<!--品牌选中状态为brand-seled样式-->
+						{foreach name="category_brands" item="brand" key="k"}
+						<li class="brand {if condition='$k >= 9'} overli hide{/if}" title="{$brand.brand_name}" data-brand-id="{$brand.brand_id}" data-brand-name="{$brand.brand_name}">
+							<a href="javascript:;" onclick="selectBrand(this,{$brand.brand_id},'{$brand.brand_name}')">
+							{$brand.brand_name}
+							<span class="color">{$brand.brand_name}</span> <i></i>
+						</a></li>
+						{/foreach}
+					</ul>
+				</div>
+				<div class="duoxuan-btnbox">
+					<!--当没有选中任何品牌时，确定按钮为禁用状态disabled;当选中品牌后，确定按钮添加select-button-sumbit样式-->
+					<a id="button-brand"></a>
+					<a class="select-button disabled js-brand-select-button" onclick="brandMoreSearch(this);">{:lang('goods_determine')}</a>
+					<a href="javascript:hiddenDuoXuan('#attr-group-dl-brand',this)" class="select-button">{:lang('goods_cancel')}</a>
+				</div>
+			</dd>
+		</dl>
+		{/if}
+		
+				<!-- 规格筛选 start-->
+		{if condition="count($goods_spec_array) gt 0 "}
+		{foreach name="goods_spec_array" item="vo" key="key"}
+		{if condition="$vo.is_screen eq 1 and $vo.spec_name neq ''"}
+			<dl id="attr-group-dl-brand">
+				<dt style="line-height:40px;">{$vo.spec_name}：</dt>
+				{if condition = "count($vo['values']) >9"}
+				<dd class="moredd  showover" >
+				{else /}
+				<dd class="moredd hide showover" >
+				{/if}
+				<label>
+					<a href="javascript:void(0)" class="multiple" onclick="showOverflow(this);">
+					<font class="duo-b"></font> {:lang('goods_more')}
+					</a>
+				</label>
+				</dd>
+				
+				<dd class="moredd hide hideover">
+				<label>
+					<a href="javascript:void(0)" class="multiple" onclick="hideOverflow(this);">
+					<font class="duo-b"></font> {:lang('goods_stop')}
+					</a>
+				</label>
+				</dd>
+				
+				<dd>
+					 <!-- <div id="brand-sobox" style="display:block;">
+						<input id="brand-sobox-input" placeholder="可搜索拼音、汉字查找品牌" type="text"
+							onkeyup="getBrand_By_Name(this.value);">
+					</div>
+					<div id="brand-zimu" class="clearfix" style="display:block;">
+						<span class="span"> <a href="javascript:void(0);"
+							onmouseover="getBrand_By_Zimu(this,'')" id="brand-zimu-all">所有品牌</a>
+							<b></b>
+						</span> <span> <a href="javascript:void(0);"
+							onmouseover="getBrand_By_Zimu(this,'G')">G</a> <b></b>
+						</span> <span> <a href="javascript:void(0);"
+							onmouseover="getBrand_By_Zimu(this,'L')">L</a> <b></b>
+						</span>
+					</div> --> 
+					<div id="brand-abox-father">
+						<ul class="brand-abox-imgul" style="overflow: hidden;">
+							<!--品牌选中状态为brand-seled样式-->
+							{foreach name="vo.values" item="value" key="k"}
+							<li class="brand {if condition='$k >= 9'} overli hide{/if}   spec_condition" title="{$value.spec_value_name}" data-spec = "spec{$key}" data-spec_value_id="{$value.spec_value_id}" data-spec_id="{$value.spec_id}" onclick="specSelect(this);"/>
+								<a href="javascript:;" >
+								{$value.spec_value_name}
+								<span class="color">{$value.spec_value_name}</span> <i></i>
+							</a>
+							</li>
+							
+							{/foreach}
+						</ul>
+					</div>
+					<!-- <div class="duoxuan-btnbox">
+						当没有选中任何品牌时，确定按钮为禁用状态disabled;当选中品牌后，确定按钮添加select-button-sumbit样式
+						<a id="button-brand"></a>
+						<a class="select-button disabled js-brand-select-button" onclick="brandMoreSearch(this);">确定</a>
+						<a href="javascript:hiddenDuoXuan('#attr-group-dl-brand',this)" class="select-button">取消</a>
+					</div> -->
+				</dd>
+			</dl>
+			{/if}
+		{/foreach}
+		{/if}
+		<!-- 规格筛选 end-->
+		<!-- 属性筛选 start -->
+		{if condition="count($attr_or_spec) gt 0 "}
+		{foreach name="attr_or_spec" item="vo" key="key"}
+		{if condition="$vo.type neq 1 and $vo.value neq ''"}
+			{if condition="$vo.is_search eq '1'"}
+			<dl id="attr-group-dl-brand">
+				<dt style="line-height:40px;">{$vo.attr_value_name}：</dt>
+				{if condition = "count($vo['value_items']) >9"}
+				<dd class="moredd  showover" >
+				{else /}
+				<dd class="moredd hide showover" >
+				{/if}
+				<label>
+					<a href="javascript:void(0)" class="multiple" onclick="showOverflow(this);">
+					<font class="duo-b"></font> {:lang('goods_more')}
+					</a>
+				</label>
+				</dd>
+				
+				<dd class="moredd hide hideover">
+				<label>
+					<a href="javascript:void(0)" class="multiple" onclick="hideOverflow(this);">
+					<font class="duo-b"></font> {:lang('goods_stop')}
+					</a>
+				</label>
+				</dd>
+				
+				<dd>
+					 <!-- <div id="brand-sobox" style="display:block;">
+						<input id="brand-sobox-input" placeholder="可搜索拼音、汉字查找品牌" type="text"
+							onkeyup="getBrand_By_Name(this.value);">
+					</div>
+					<div id="brand-zimu" class="clearfix" style="display:block;">
+						<span class="span"> <a href="javascript:void(0);"
+							onmouseover="getBrand_By_Zimu(this,'')" id="brand-zimu-all">所有品牌</a>
+							<b></b>
+						</span> <span> <a href="javascript:void(0);"
+							onmouseover="getBrand_By_Zimu(this,'G')">G</a> <b></b>
+						</span> <span> <a href="javascript:void(0);"
+							onmouseover="getBrand_By_Zimu(this,'L')">L</a> <b></b>
+						</span>
+					</div> --> 
+					<div id="brand-abox-father">
+						<ul class="brand-abox-imgul" style="overflow: hidden;">
+							<!--品牌选中状态为brand-seled样式-->
+							{foreach name="vo.value_items" item="value" key="k"}
+							<li class="brand {if condition='$k >= 9'} overli hide{/if}" title="{$value}" data-attr = "attr{$key}" data-attr_value_id ="{$vo.attr_value_id}" data-attr-value="{$vo.attr_value_name}" data-attr-value-name="{$value}" onclick="attrSelect(this);">
+								<a href="javascript:;" >
+								{$value}
+								<span class="color">{$value}</span> <i></i>
+							</a>
+							</li>
+							
+							{/foreach}
+						</ul>
+					</div>
+					<!-- <div class="duoxuan-btnbox">
+						当没有选中任何品牌时，确定按钮为禁用状态disabled;当选中品牌后，确定按钮添加select-button-sumbit样式
+						<a id="button-brand"></a>
+						<a class="select-button disabled js-brand-select-button" onclick="brandMoreSearch(this);">确定</a>
+						<a href="javascript:hiddenDuoXuan('#attr-group-dl-brand',this)" class="select-button">取消</a>
+					</div> -->
+				</dd>
+			</dl>
+			{/if}
+		{/if}
+		{/foreach}
+		{/if}
+		<!--价格-->
+		{if condition="$max_price=='' && $category_count>0 "}
+		<dl>
+			<dt>{:lang('goods_price')}：</dt>
+			<dd class="moredd">&nbsp;</dd>
+			<dd>
+				<ul>
+					{foreach name="$category_price_grades" item="price_grades" key="k"}
+					{if condition="$price_grades[1] != 0"}
+					<li><a href="{:__URL('SHOP_MAIN/goods/goodslist?'.$url_parameter.'&min_price='.$price_grades[0].'&max_price='.$price_grades[1].$attr_url)}">{$price_grades[0]}&nbsp;-&nbsp;{$price_grades[1]}</a></li>
+					{/if}
+					{/foreach}
+					<li>
+						<input name="price_min" id="min_price" class="input-txt" type="number">
+						<i></i>
+						<input name="price_max" id="max_price" class="input-txt" type="number">
+						<a class="select-button" href="javascript:searchConditions();">{:lang('goods_determine')}</a>
+					</li>
+				</ul>
+			</dd>
+		</dl>
+		{/if}
+		<input type="hidden" id="hidden_category_id" value="{$category_id}"/>
+		<input type="hidden" id="hidden_brand_id" value="{$brand_id}"/>
+		<input type="hidden" id="hidden_brand_name" value="{$brand_name}"/>
+		<input type="hidden" id="hidden_min_price" value="{$min_price}"/>
+		<input type="hidden" id="hidden_max_price" value="{$max_price}"/>
+		<input type="hidden" id="hidden_url_parameter" value="{$url_parameter}"/>
+	</div>
+	<div class="blank15"></div>
+	<!-- <div id="attr-group-more" class="attr-group-more" style="margin-left: 569px;">
+		<a id="attr-group-more-text" href="javascript:void(0);" onclick="Show_More_Attrgroup();">更多选项</a>
+	</div> -->
+<!-- </form> -->

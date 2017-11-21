@@ -1,0 +1,417 @@
+{extend name="shop/blue/Login/base"}
+{block name="main"}
+<div class="header w990">
+	<div class="logo-info">
+		<a href="{:__URL('SHOP_MAIN')}" class="web-logo-a"><img alt="logi" src="{:__IMG($web_info['logo'])}" style="margin-top:5px;" class="weblogo"/></a>
+	</div>
+</div>
+
+<div class="w990">
+	<div id="find-pw">
+		<div class="find-con">
+			<div id="find-box" class="uc-box">
+				<div class="find-pwd-con">
+					<!-- <form action="SHOP_MAIN/login/findpasswd2" method="post" id="fpForm" name="fpForm"> -->
+					<input type="hidden" name="action" value="check_username" />
+					<div id="error_container"></div>
+					<div class="item">
+						<label style="margin-left:-15px;">{:lang('authentication_method')}</label>
+						<label for="wayback1" class="wayback"><input type="radio" name="wayback" id="wayback1" checked="chcked">{:lang('mobile_verification')}</label>
+						<label for="wayback2" class="wayback"><input type="radio" name="wayback" id="wayback2">{:lang('mailbox_validation')}</label>
+					</div>
+					<div id="mobile-box">
+						<div class="item">
+							<label>{:lang('cell_phone_number')}</label>
+							<input name="mobile" id="mobile" type="text" tabindex="1" placeholder="{:lang('enter_registered_mobile_number')}" class="text" />
+							<span id="mobileyz"></span>
+							<input type="hidden" value="{:lang('existence')}" id="isset_mobile"/>
+						</div>
+						{if condition = "$login_verify_code['pc'] == 1"}
+						<div class="item">
+							<label>{:lang('member_verification_code')}</label>
+							<input type="text" id="captcha-mobile" name="captcha" tabindex="2" placeholder="{:lang('please_enter_verification_code')}" autocomplete="off" class="text text-te" />
+							<label class="img" style="margin-left: 5px">
+								<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" alt="captcha" style="vertical-align: middle; cursor: pointer; height: 35px;" />
+							</label>
+							<span id="captcha-mobile-yz"></span>
+						</div>
+						{/if}
+						<div class="item v_mobile_phone v_item">
+							<label style="margin-left: -70px;">{:lang('member_enter_mobile_verification_code')}</label>
+							<input type="text" id="mobile-code" name="mobile-code" class="text text-te2" />
+							<input type="button" value="{:lang('member_get_mobile_verification_code')}" class="code sendcode" />
+							<span id="mobile-code-yz"></span>
+						</div>
+						<div class="item v_mobile_phone v_item">
+							<label style="margin-left: -28px;">{:lang('set_new_password')}</label>
+							<input type="password" id="mobile-pass" name="mobile-pass" class="text" />
+							<span  id="mobile-pass-yz"></span>
+						</div>
+						<div id="c_mobile_code" class="item v_mobile_phone v_item">
+							<label style="margin-left: -28px;">{:lang('confirm_new_password')}</label>
+							<input type="password" id="mobile-new-pass" name="mobile-new-pass" class="text" />
+							<span  id="mobile-new-pass-yz"></span>
+						</div>
+					</div>
+					<div id="email-box" style="display: none;">
+						<div class="item">
+							<label style="margin-left: 13px;">{:lang('mailbox')}</label>
+							<input name="email" id="email" type="text" tabindex="1" placeholder="{:lang('enter_registered_email_account')}" class="text" />
+							<span id="emailyz"></span>
+							<input type="hidden" value="{:lang('existence')}" id="isset_email"/>
+						</div>
+						{if condition = "$login_verify_code['pc'] == 1"}
+						<div class="item">
+							<label>{:lang('member_verification_code')}</label>
+							<input type="text" id="captcha-email" name="captcha" tabindex="2" placeholder="{:lang('please_enter_verification_code')}" autocomplete="off" class="text text-te" />
+							<label class="img" style="margin-left: 5px">
+								<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" alt="captcha" style="vertical-align: middle; cursor: pointer; height: 35px;" />
+							</label>
+							<span id="captcha-email-yz"></span>
+						</div>
+						{/if}
+						<div id="c_mobile_code" class="item v_mobile_phone v_item">
+							<label style="margin-left: -70px;">{:lang('member_enter_mailbox_verification_code')}</label>
+							<input type="text" id="email-code" name="eamil_code" class="text text-te2" />
+							<input id="sendcode" type="button" value="{:lang('member_gets_mailbox_validation_codet')}" class="code sendcode" />
+							<span id="email-code-yz"></span>
+						</div>
+						<div id="c_mobile_code" class="item v_mobile_phone v_item">
+							<label style="margin-left: -28px;">{:lang('set_new_password')}</label>
+							<input type="password" id="email-pass" name="email-pass" class="text" />
+							<span  id="email-pass-yz"></span>
+						</div>
+						<div id="c_mobile_code" class="item v_mobile_phone v_item">
+							<label style="margin-left: -28px;">{:lang('confirm_new_password')}</label>
+							<input type="password" id="email-new-pass" name="email-new-pass" class="text" />
+							<span id="email-new-pass-yz"></span>
+						</div>
+					</div>
+					<div class="item">
+						<label></label>
+						<input type="button" id="btn_submit" class="btn_next" value="{:lang('immediate_authentication')}" />
+						<input type="hidden" name="act" value="check_username" />
+					</div>
+					<div class="item">
+						<h2 class="find_pw_tit">
+							<span>{:lang('forget_your_account_name')}<a href="{:__URL('SHOP_MAIN/login/register')}" title="{:lang('register_immediately')}" style="color:#0689e1;">{:lang('re_registration')}&gt;&gt;</a></span>
+						</h2>
+					</div>
+				<!--</form> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	//点击切换方式
+	$("#wayback1").click(function(){
+		$("#mobile-box").show();
+		$("#email-box").hide();
+	});
+	
+	$("#wayback2").click(function(){
+		$("#email-box").show();
+		$("#mobile-box").hide();
+	});
+	
+	//检测手机手机是否已注册
+	$("#mobile").change(function(){
+		var mobile = $("#mobile").val();
+		$.ajax({
+			type: "get",
+			url: "{:__URL('SHOP_MAIN/login/findpasswd')}",
+			data: { "username" : mobile },
+			success: function(data){
+				//alert(JSON.stringify(data));
+				if(data){
+					$("#mobile").css("border","1px solid #ccc");
+					$("#mobileyz").hide();
+				}else{
+					$("#mobile").css("border","1px solid red");
+					$("#mobileyz").addClass("error").text("{:lang('phone_numbe_not_registered')}").show();
+					$("#isset_mobile").attr("value","{:lang('non_existent')}");
+					return false;
+				}
+			} 
+		});
+	});
+	
+	//检测邮箱是否存在
+	$("#email").change(function(){
+		var email = $("#email").val();
+		$.ajax({
+			type: "get",
+			url: "{:__URL('SHOP_MAIN/login/findpasswd')}",
+			data: { "username" : email },
+			success: function(data){
+				//alert(JSON.stringify(data));
+				if(data){
+					$("#email").css("border","1px solid #ccc");
+					$("#emailyz").hide();
+				}else{
+					$("#email").css("border","1px solid red");
+					$("#emailyz").addClass("error").text("{:lang('mailbox_is_not_registered')}").show();
+					$("#isset_email").attr("value","{:lang('non_existent')}");
+					return false;
+				}
+			} 
+		});
+	});
+
+	//发送手机邮箱验证码
+	$(".sendcode").click(function(){
+		if($("#wayback1").is(":checked")){
+			var mobile = $("#mobile").val();
+			var vertification = $("#captcha-mobile").val();
+			var type ="sms";
+			//验证手机号格式是否正确
+			if(mobile.search(/^1(3|4|5|7|8)\d{9}$/) == -1){
+	 			$("#mobile").trigger("focus");
+	 			$('#mobile').css("border","1px solid red");
+				$("#mobileyz").css("color","red").text("{:lang('member_enter_correct_phone_format')}");
+				return false;
+			}
+		}else{
+			var mobile = $("#email").val();
+			var vertification = $("#captcha-email").val();
+			var type ="email";
+			//验证邮箱格式是否正确
+			if(mobile.search(/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/) == -1){
+				$("#email").trigger("focus");
+				$('#email').css("border","1px solid red");
+				$("#emailyz").css("color","red").text("{:lang('member_enter_correct_email_format')}");
+				return false;
+			}
+		}
+		//验证手机号邮箱是否已经注册
+		$.ajax({
+			type: "post",
+			url: "{:__URL('SHOP_MAIN/login/forgotvalidation')}",
+			data: {"type":type,"send_param":mobile,"vertification":vertification},
+			async: false,
+			success: function(data){
+
+				if (data['code'] == 0) {
+					if($("#wayback1").is(":checked")){
+						$("#mobileyz").css("color","red").text("{:lang('send_successfully')}");
+						$("#mobile").attr("disabled",true);
+					}else{
+						$("#emailyz").css("color","red").text("{:lang('send_errorfully')}");
+						$("#email").attr("disabled",true);
+					}
+					time();
+				}else{
+					layer.msg("请检查配置是否正确");
+					$(".verifyimg").attr("src","{:__URL('SHOP_MAIN/captcha')}");
+					return false;
+				}
+			}
+		});
+	});
+	
+});
+
+var wait=120;
+function time() {
+	if (wait == 0) {
+		if($("#wayback1").is(":checked")){
+			$(".sendcode").removeAttr("disabled");
+			$(".sendcode").val("{:lang('get_validation_code')}");
+		}else{
+			$(".sendcode").removeAttr("disabled");
+			$(".sendcode").val("{:lang('get_validation_code')}");
+		}
+		wait = 120;
+	} else { 
+		if($("#wayback1").is(":checked")){
+			$(".sendcode").attr("disabled", 'disabled');
+			$(".sendcode").val(wait+"s{:lang('post_resend')}");
+		}else{
+			$(".sendcode").attr("disabled", 'disabled');
+			$(".sendcode").val(wait+"s{:lang('post_resend')}");
+		}
+		wait--; 
+		setTimeout(function() {time()},1000)
+	}
+}
+
+$("#btn_submit").click(function(){
+	if($("#wayback1").is(":checked")){
+		//手机验证
+		var type = "mobile";
+		var mobile = $("#mobile").val();
+		var captcha_mobile = $("#captcha-mobile").val();
+		var mobile_code = $("#mobile-code").val();
+		var mobile_pass = $("#mobile-pass").val();
+		var mobile_new_pass = $("#mobile-new-pass").val();
+		
+		if(mobile.length==0){
+			$("#mobile").css("border-color","red");
+			$("#mobileyz").css("color","red").text("{:lang('enter_registered_mobile_number')}");
+			return false;
+		}else{
+			$("#mobile").css("border-color","#ccc");
+			$("#mobileyz").hide();
+		}
+		
+		{if condition = "$login_verify_code['pc'] == 1"}
+		if(captcha_mobile.length==0){
+			$("#captcha-mobile").css("border-color","red");
+			$("#captcha-mobile-yz").css("color","red").text("{:lang('please_enter_verification_code')}");
+			return false;
+		}else{
+			$("#captcha-mobile").css("border-color","#ccc");
+			$("#captcha-mobile-yz").hide();
+		}
+		{/if}
+		
+		var result = false;
+		if(mobile_code.length==0){
+			$("#mobile-code").css("border-color","red");
+			$("#mobile-code-yz").css("color","red").text("{:lang('member_enter_mobile_verification_code')}");
+			return false;
+		}else{
+			$.ajax({
+				type : "post",
+				url: "{:__URL('SHOP_MAIN/login/ckeck_find_password_code')}",
+				async : false,
+				data : {"send_param" : mobile_code},
+				success : function(data){
+					if(data['code']==0){
+						$("#mobile-code").css("border-color","#ccc");
+						$("#mobile-code-yz").hide();
+					}else{
+						$("#mobile-code").css("border-color","red");
+						$("#mobile-code-yz").css("color","red").text(data['message']);
+						result = true;
+					}
+					return result;
+				}
+			})
+		}
+		if(result){
+			return false;
+		}
+		if(mobile_pass.length<6){
+			$("#mobile-pass").css("border-color","red");
+			$("#mobile-pass-yz").css("color","red").text("{:lang('login_password_less')}");
+			return false;
+		}else{
+			$("#mobile-pass").css("border-color","#ccc");
+			$("#mobile-pass-yz").hide();
+		}
+		if(mobile_new_pass != mobile_pass){
+			$("#mobile-new-pass").css("border-color","red");
+			$("#mobile-new-pass-yz").css("color","red").text("{:lang('member_password_inconsistent')}");
+			return false;
+		}else{
+			$("#mobile-new-pass").css("border-color","#ccc");
+			$("#mobile-new-pass-yz").hide();
+		}
+		
+		$.ajax({
+			type : "post",
+			url: "{:__URL('SHOP_MAIN/login/setnewpasswordbyemailormobile')}",
+			data : {"userInfo":mobile,"password":mobile_pass,"type":"mobile"},
+			success : function(data){
+				if(data['code'] == 1){
+					location.href=__URL("SHOP_MAIN/login");
+				}else{
+					layer.msg(data['message']);
+					setTimeout(function(){
+						location.reload()
+					},2000);
+				}
+			}
+		});
+		
+	}else{
+		var type = "email";
+		var email = $("#email").val();
+		var captcha_email = $("#captcha-email").val();
+		var email_code = $("#email-code").val();
+		var email_pass = $("#email-pass").val();
+		var email_new_pass = $("#email-new-pass").val();
+		if(email.length==0){
+			$("#email").css("border-color","red");
+			$("#emailyz").css("color","red").text("{:lang('enter_your_registered_mailbox')}");
+			return false;
+		}else{
+			$("#email").css("border-color","#ccc");
+			$("#emailyz").hide();
+		}
+		{if condition = "$login_verify_code['pc'] == 1"}
+		if(captcha_email.length==0){
+			$("#captcha-email").css("border-color","red");
+			$("#captcha-email-yz").css("color","red").text("{:lang('please_enter_verification_code')}");
+			return false;
+		}else{
+			$("#captcha-email").css("border-color","#ccc");
+			$("#captcha-email-yz").hide();
+		}
+		{/if}
+		var result = false;
+		if(email_code.length==0){
+			$("#email-code").css("border-color","red");
+			$("#email-code-yz").css("color","red").text("{:lang('member_enter_mailbox_verification_code')}");
+			return false;
+		}else{
+			$.ajax({
+				type : "post",
+				url: "{:__URL('SHOP_MAIN/login/ckeck_find_password_code')}",
+				async : false,
+				data : {"send_param" : email_code},
+				success : function(data){
+					if(data['code']==0){
+						$("#email-code").css("border-color","#ccc");
+						$("#email-code-yz").hide();
+					}else{
+						$("#email-code").css("border-color","red");
+						$("#email-code-yz").css("color","red").text(data['message']);
+						result = true;
+					}
+					return result;
+				}
+			})
+		}
+		if(result){
+			return false;
+		}
+		if(email_pass.length<6){
+			$("#email-pass").css("border-color","red");
+			$("#email-pass-yz").css("color","red").text("{:lang('login_password_less')}");
+			return false;
+		}else{
+			$("#email-pass").css("border-color","#ccc");
+			$("#email-pass-yz").hide();
+		}
+		if(email_new_pass != email_pass){
+			$("#email-new-pass").css("border-color","red");
+			$("#email-new-pass-yz").css("color","red").text("{:lang('member_password_inconsistent')}");
+			return false;
+		}else{
+			$("#email-new-pass").css("border-color","#ccc");
+			$("#email-new-pass-yz").hide();
+		}
+		$.ajax({
+			type : "post",
+			url: "{:__URL('SHOP_MAIN/login/setnewpasswordbyemailormobile')}",
+			data : {"userInfo":email,"password":email_pass,"type":"email"},
+			success : function(data){
+				if(data['code'] == 1){
+					location.href=__URL("SHOP_MAIN/login");
+				}else{
+					layer.msg(data['message']);
+					setTimeout(function(){
+						location.reload()
+					},2000);
+				}
+			}
+		})
+	}
+})
+</script>
+{/block}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="renderer" content="webkit" />
+<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+<meta charset="UTF-8">
+<meta name="renderer" content="webkit"> 
+<title>{$title_before}{if condition="$title_before neq ''"}&nbsp;-&nbsp;{/if}{$title}{if condition="$seoconfig.seo_title neq ''"}&nbsp;-&nbsp;{$seoconfig.seo_title}{/if}</title>
+<meta name="keywords" content="{$seoconfig.seo_meta}" />
+<meta name="description" content="{$seoconfig.seo_desc}"/>
+<link rel="shortcut  icon" type="image/x-icon" href="__TEMP__/{$style}/public/images/favicon.ico" media="screen"/>
+<!--可共用-->
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_common.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_color_style.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/iconfont.css">
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/ns_bottom.css">
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/layer.css" id="layuicss-skinlayercss">
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.js"></script>
+<script src="__STATIC__/js/time_common.js" type="text/javascript"></script>
+<script type="text/javascript">
+var SHOPMAIN='SHOP_MAIN';//外置JS调用
+var APPMAIN='APP_MAIN';//外置JS调用
+var upload = "__UPLOAD__";//外置JS调用
+var TEMP_IMG = "__TEMP__/{$style}/public/images";
+var UPLOADCOMMON = 'UPLOAD_COMMON';//存放公共图片、网站logo、独立图片、没有任何关联的图片
+var STATIC = "__STATIC__";
+$(function(){
+	//一级菜单选中
+	$('#nav li a').removeClass('current');
+	var url = window.location.href;	
+	$("#nav li a").each(function(i,e){
+		var nav_url = $(e).attr("href")
+		if(url.indexOf(nav_url) != -1){
+			$("#nav li>a[href='{:__URL('SHOP_MAIN/'.$path_info)}']").addClass('current');
+		}
+	})
+})
+
+window.onload=function(){
+	$.footer();
+}
+</script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_cart.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/common.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_components.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.fly.min.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/layer.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.method.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/nav.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.cookie.js"></script>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/load_task.js" type="text/javascript"></script>
+<script src="__STATIC__/js/load_bottom.js" type="text/javascript"></script>
+{include file='shop/default/urlModel'/}
+<!-- 右侧购物车 -->
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+{/block}
+</head>
+<body>
+<input type="hidden" id="hidden_uid" value="{$uid}" />
+<!-- 头部广告 -->
+{block name="headAd"}
+{/block}
+
+<!-- 公共的顶部（部分界面不用，例如，商家入驻） -->
+{block name="commonTop"}
+	{include file='shop/default/controlTop'/}
+{/block}
+
+<!-- 头部，菜单栏、搜索、导航栏 -->
+{block name="head"}
+	{include file='shop/default/controlHeadSerach'/}
+{/block}
+
+<!--头部商品分类 start-->
+{block name="headGoodType"}
+	{include file='shop/default/controlHeadGoodType'/}
+{/block}
+<!--头部商品分类 end-->
+
+<!-- 右侧固定购物车 -->
+{block name="RightSideBar"}
+	{include file='shop/default/controlRightSidebar'/}
+{/block}
+<!-- 内容 -->
+{block name="main"}{/block}
+
+<!-- 底部 -->
+{block name="bottom"}
+{include file='shop/default/controlBottomLinkHelp'/}
+{include file='shop/default/controlBottom'/}
+{/block}
+
+{block name="javascript"}
+<!-- 添加js文件 -->
+{/block}
+
+{if condition="$uid eq ''"}
+	{include file='shop/default/controlLogin'/}
+{/if}
+
+{include file='shop/default/baidu_js_push'/}
+{if condition="$default_client"}
+<div style="position:fixed;right:0;bottom:10%;z-index:999999;" onclick="locationWap()" id="go_mobile">
+	<img src="__TEMP__/{$style}/public/images/go_mobile.png"/>
+</div>
+<script>
+$(function(){
+	checkTerminal()
+});
+window.onresize = function(){
+	checkTerminal();
+}
+function checkTerminal(){
+	if ((navigator.userAgent.match(/(iPhone|iPod|Android|ios|iPad)/i)) && window.screen.availWidth<768){
+		//跳到手机端
+		$("#go_mobile").show();
+	}else{
+		$("#go_mobile").hide();
+	}
+}
+//跳转到wap端
+function locationWap(){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('SHOP_MAIN/index/deleteClientCookie')}",
+		success : function(data){
+			location.href= __URL("SHOP_MAIN");
+		}
+	})
+}
+</script>
+{/if}
+</body>
+</html>

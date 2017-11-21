@@ -1,0 +1,209 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
+<style  type="text/css">
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd input[type="text"].w70{
+	width:70px;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 120px;
+	height: 100px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	margin: 0 0 10px;
+	border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 120px;
+	max-height: 100px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+
+.set-style dl dd p{
+	margin-bottom:0;
+}
+
+.table-div  table tr td{
+	    border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+.goodlist-table tr td{
+	    border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+.form-horizontal .control-group {
+    margin-bottom: 0px;
+}
+.form-horizontal .controls {
+    margin-left: 20px; 
+}
+.help-inline{
+	    height: 30px;
+    	line-height: 30px;
+}
+input[type="radio"]{
+	margin-top:6px;
+}
+.controls table tr td input[type="radio"]{
+	margin:0px;
+}
+</style>
+ {/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>赠品名称:</dt>
+		<dd><input type="text" id="gift_name" maxlength="10"></dd>
+	</dl>
+	<dl>
+		<dt>赠品有效期:</dt>
+		<dd>
+			<input class="input-medium" type="text" id="start_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<span class="mlr5">-</span> 
+			<input class="input-medium" size="15"type="text" id="end_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+		</dd>
+	</dl>
+	<dl>
+		<dt>领取有效期:</dt>
+			<dd><input class="input-mini w70" type="text" id="days"><span class="help-inline">天</span></dd>
+	</dl>
+	<dl>
+		<dt>领取限制:</dt>
+		<dd>
+			<input class="input-mini w70" type="text" id="max_num"><span class="help-inline">次/人</span>
+			<p class="hint">（0表示不限领取次数）</p>
+		</dd>
+	</dl>
+	{include file="admin/Promotion/selectGoods" /}
+	<button class="edit_button" onclick="addGift();">提交</button>
+</div>
+
+<script>
+$(function(){
+	$('.type_dl dd').hide();
+	$("#some_pro").show();
+	LoadingInfo();
+});
+
+	//保存
+	function addGift(){
+		var gift_name = $("#gift_name").val();
+		var start_time = $("#start_time").val();
+		var end_time = $("#end_time").val();
+		var days = $("#days").val();
+		var max_num = $("#max_num").val();
+		var obj = $(".select-two table input[type=checkbox][name='sub']");
+		var goods_id_array = '';
+		obj.each(function(i){
+			goods_id_array += ','+obj.eq(i).val();
+		});
+		goods_id_array = goods_id_array.substring(1);
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/addgift')}",
+			data : {
+				'gift_name' : gift_name,
+				'start_time' : start_time,
+				'end_time' : end_time,
+				'days' : days,
+				'max_num' : max_num,
+				'goods_id_array' : goods_id_array,
+			},
+			async : true,
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success',  data["message"], " {:__URL('ADMIN_MAIN/promotion/giftlist')}");
+				}else{
+					showMessage('error', data["message"]);
+				}	
+			}
+		});
+	}
+</script>
+{/block}

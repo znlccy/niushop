@@ -1,0 +1,147 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+.config-box{
+	display:none;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>保存方式：</dt>
+		<dd>
+			<select id="type" onchange="selectConfig();">
+				<option value="1">本地</option>
+				<option value="2">七牛</option>
+			</select>
+		</dd>
+	</dl>
+		<div class="config-box config-data2">
+		<div class="alert alert-info mt10" style="height:auto;color: #3a87ad;">
+			<ul class="mt5">
+				<li>七牛云构建了基于容器的计算平台，并基于容器平台构建了功能丰富且开放性的智能媒体云平台。</li>
+				<li>您只需考虑怎么处理数据，而无需考虑数据的规模和系统性能。</li>
+			</ul>
+		</div>
+		<dl>
+			<dt>Accesskey：</dt>
+			<dd>
+				<input id="Accesskey" type="text"  value="{$config_data['data']['qiniu']['Accesskey']}" class="input-common" />
+				<p class="hint">用于签名的公钥</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>Secretkey：</dt>
+			<dd>
+				<input id="Secretkey" type="text" value="{$config_data['data']['qiniu']['Secretkey']}" class="input-common" />
+				<p class="hint">用于签名的私钥</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>Bucket：</dt>
+			<dd>
+				<input id="Bucket" type="text"  value="{$config_data['data']['qiniu']['Bucket']}" class="input-common" />
+				<p class="hint">请保证bucket为可公共读取的</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>Url：</dt>
+			<dd>
+				<input id="QiniuUrl" type="text"  value="{$config_data['data']['qiniu']['QiniuUrl']}" class="input-common" />
+				<p class="hint">七牛支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com</p>
+			</dd>
+		</dl>	
+		<dl>
+		<dt></dt>
+		<dd><button class="edit_button"  onclick="setQiniuConfigAjax();">保存</button></dd>
+		</dl>	
+	</div>
+	
+</div>
+<script>
+var flag = false;
+$(function(){
+	$("#type").val(parseInt("{$config_data['type']}"));
+	selectConfig();
+})
+function setUploadConfig(){
+	var type = $("#type").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/copyrightinfo')}",
+		async : true,
+		data : {
+			"type" : upload_type
+		},
+		success : function(data){
+			if(data['code'] > 0)
+				{
+					showMessage('success', data["message"]);
+					location.href=__URL("ADMIN_MAIN/config/uploadtype");
+				}else{
+					showMessage('error', data["message"]);
+				}
+		}
+	})
+}
+/**
+ * 保存保存数据
+ */
+function setQiniuConfigAjax(){
+	var Accesskey = $("#Accesskey").val();
+	var Secretkey = $("#Secretkey").val();
+	var Bucket = $("#Bucket").val();
+	var QiniuUrl = $("#QiniuUrl").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/setQiniuConfig')}",
+		async : true,
+		data : {
+			"Accesskey" : Accesskey,
+			'Secretkey' : Secretkey,
+			"Bucket" : Bucket,
+			"QiniuUrl" : QiniuUrl
+		},
+		success : function(data){
+			if(data['code'] > 0)
+				{
+					showMessage('success', data["message"]);
+					location.href=__URL("ADMIN_MAIN/config/uploadtype");
+				}else{
+					showMessage('error', data["message"]);
+				}
+		}
+	})
+}
+	
+function selectConfig(){
+	var type = $("#type").val();
+	$(".config-box").hide();
+	$(".config-data"+type).show();
+	if(flag){
+		$.ajax({
+			type:"post",
+			url : "{:__URL('ADMIN_MAIN/config/setUploadType')}",
+			async : true,
+			data : {
+				"type" : type
+			},
+			success : function(data){
+				if(data['code'] > 0){
+					showTip(data.message,"success");
+				}else{
+					showTip(data.message,"error");
+				}
+			}
+		})
+	}else{
+		flag = true;
+	}
+}
+</script>
+{/block}

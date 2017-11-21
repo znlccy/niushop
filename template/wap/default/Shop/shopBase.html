@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<title>{$platform_shopname}</title>
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/pre_foot.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/pro-detail.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/showbox.css">
+<link rel="stylesheet" href="__TEMP__/{$style}/public/css/layer.css" id="layuicss-skinlayercss">
+<script src="__TEMP__/{$style}/public/js/showBox.js"></script>
+<script src="__TEMP__/{$style}/public/js/jquery.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/layer.js"></script>
+<script type="text/javascript">
+	var CSS = "__TEMP__/{$style}/public/css";
+	var APPMAIN='{:__URL('APP_MAIN')}';	
+	//页面底部选中
+	function bottomActive(event){
+		clearButton();
+		if(event == "#bottom_home"){
+			$("#bottom_home").find("img").attr("src","__TEMP__/{$style}/public/images/home_check.png");
+		}else if(event == "#bottom_classify"){
+			$("#bottom_group").find("img").attr("src","__TEMP__/{$style}/public/images/classify_check.png");
+		}else if(event == "#bottom_cart"){
+			$("#bottom_cart").find("img").attr("src","__TEMP__/{$style}/public/images/cart_check.png");
+		}else if(event == "#bottom_member"){
+			$("#bottom_member").find("img").attr("src","__TEMP__/{$style}/public/images/user_check.png");
+		}
+	}
+	function clearButton(){
+		$("#bottom_home").find("img").attr("src","__TEMP__/{$style}/public/images/home_uncheck.png");
+		$("#bottom_group").find("img").attr("src","__TEMP__/{$style}/public/images/classify_uncheck.png");
+		$("#bottom_cart").find("img").attr("src","__TEMP__/{$style}/public/images/cart_uncheck.png");
+		$("#bottom_member").find("img").attr("src","__TEMP__/{$style}/public/images/user_uncheck.png");
+	}
+
+	//显示加载遮罩层
+	function showLoadMaskLayer(){
+		$(".mask-layer-loading").fadeIn(300);
+	}
+	
+	//隐藏加载遮罩层
+	function hiddenLoadMaskLayer(){
+		$(".mask-layer-loading").fadeOut(300);
+	}
+
+	$(function(){
+		$("#buttom_home").find("img").attr("src","__TEMP__/{$style}/public/images/home_check.png");
+		showLoadMaskLayer();
+	})
+	$(document).ready(function(){
+		hiddenLoadMaskLayer();
+		//编写代码
+	})
+</script>
+<style>
+body .sub-nav.nav-b5 dd i {
+	margin: 3px auto 5px auto;
+}
+
+body .fixed.bottom {
+	bottom: 0;
+}
+.mask-layer-loading{
+	position: fixed;
+    width: 100%;
+    height: 100%;
+    /* background: rgba(0,0,0,0.5); */
+    z-index: 999999;
+    top: 0;
+    left: 0;
+    text-align: center;
+	display: none;
+}
+.mask-layer-loading i,.mask-layer-loading img{
+	text-align: center;
+	color:#ffffff;
+	font-size:50px;
+	position: relative;
+	top:50%;
+}
+.sub-nav.nav-b5 dd{
+	width:25%;
+}
+</style>
+{block name="resources"}
+<!-- 添加样式文件 -->
+{/block}
+</head>
+
+<body class="body-gray">
+	{block name="goodsHead"}
+	<!-- <section class="head">
+		<a class="head_back" onclick="window.history.go(-1)"
+			href="javascript:void(0)"><i class="icon-back"></i></a>
+		<div class="head-title">{$platform_shopname}</div>
+	</section> -->
+	{/block}
+	<div class="motify" style="display: none;"><div class="motify-inner">{:lang('pop_up_prompt')}</div></div>
+	{block name="main"} {/block}
+	{block name="bottom"}
+	<div class="fixed bottom">
+		<div class="distribution-tip" id="distribution-tip" style="display: none;"></div>
+		<dl class="sub-nav nav-b5">
+			<dd id="buttom_home">
+				<a href="{:__URL('APP_MAIN/shop/index?shop_id='.$shop_id)}">
+					<div class="nav-b5-relative">
+						<img src="__TEMP__/{$style}/public/images/home_uncheck.png"/>
+						<span>{:lang('home_page')}</span>
+						<!--<i class="fa fa-home fa-2x"></i> -->
+					</div>
+				</a>
+			</dd>
+			<dd id="buttom_group">
+				<a href="{:__URL('APP_MAIN/goods/goodsgrouplist?shop_id='.$shop_id)}">
+					<div class="nav-b5-relative">
+						<img src="__TEMP__/{$style}/public/images/classify_uncheck.png"/>
+						<span>{:lang('goods_group')}</span>
+					</div>
+				</a>
+			</dd>
+			<dd id="bottom_cart" >
+				<a href="{:__URL('APP_MAIN/goods/cart?shop_id='.$shop_id)}">
+					<div class="nav-b5-relative">
+						<img src="__TEMP__/{$style}/public/images/cart_uncheck.png"/>
+						<span>{:lang('goods_cart')}</span>
+					</div>
+				</a>
+			</dd>
+			<dd id="bottom_member" >
+				<a href="{:__URL('APP_MAIN/member/index?shop_id='.$shop_id)}">
+					<div class="nav-b5-relative">
+						<img src="__TEMP__/{$style}/public/images/user_uncheck.png"/>
+						<span>{:lang('member_member_center')}</span>
+					</div>
+				</a>
+			</dd>
+		</dl>
+	</div>
+	{/block}
+	<!-- 加载弹出层 -->
+	<div class="mask-layer-loading">
+		<img src="__TEMP__/{$style}/public/images/mask_load.gif"/>
+		<!-- <i class="fa fa-spinner fa-pulse"></i> -->
+	</div>
+	{block name="javascript"}{/block}
+</body>
+</html>

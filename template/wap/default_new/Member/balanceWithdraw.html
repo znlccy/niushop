@@ -1,0 +1,85 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_balance.css">
+<style type="text/css">
+.ns-table td {
+	width: 100%;
+}
+
+.ns-lf {
+	float: left;
+}
+
+.ns-rg {
+	color: red;
+	font-size: 14px;
+	float: right;
+}
+
+.ns-rg-time {
+	font-size: 14px;
+	float: right
+}
+.account-option{
+	 width:100%;
+	 height:40px;
+	 /* background: linear-gradient(#FE4445, #FF8458); */
+}
+.account-option ul li{
+	float:right;
+	text-align: center;
+	line-height: 40px;
+	font-size: 16px;
+	color: #fff;
+	width:50%;
+	background:#f86126;
+}
+</style>
+<script type="text/javascript">
+window.onerror = function() {
+	return true;
+}
+</script>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="head_back" href="javascript:window.history.go(-1)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('cash_register')} </div>
+</section>
+{/block}
+{block name="main"}
+<div id="main" class="detail-main">
+	<div class="my-account">
+		
+	</div>
+	{if condition="count($withdraws) neq 0 "}
+	<table class="ns-table">
+		{volist name="withdraws.data" id="vo"}
+		<tr align="center">
+			<td style="padding-bottom: 0.2rem; font-size: 16px;"><span
+				class="ns-lf" style="color: #444;">{$vo['bank_name']}({$vo['status']})</span> <span
+				class="ns-rg">{$vo['cash']}</span></td>
+			<td style="padding-top: 0.2rem; font-size: 14px; color: #888;">
+				<span class="ns-lf">{$vo['account_number']}</span> <span class="ns-rg-time">{$vo['ask_for_date'] | getTimeStampTurnTime}</span>
+			</td>
+		</tr>
+		{/volist}
+	</table>
+	{else/}
+	<div>
+		<div class="emptyFrame">
+			<i class="user_money"></i><span>{:lang('you_don_not_have_a_balance_record_yet')}！</span>
+		</div>
+	</div>
+	{/if}
+</div>
+<script type="text/javascript">
+$("#head_back").click(function (){
+    var json ={
+            "center" : "2"
+        }
+    window.webkit.messageHandlers.center.postMessage(json);
+})
+</script>
+{/block}
+{block name="bottom"}{/block}

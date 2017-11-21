@@ -1,0 +1,15 @@
+@charset "utf-8";
+/* CSS Document */
+body{margin:0;padding:0;}
+a,
+a:hover{text-decoration:none;}
+h2{margin:0;}
+/*list*/
+.main_title{background:#fff;position:fixed;z-index:99;top:0;left:0;width:100%;height:38px;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.main_title h2{text-align:center;color:#999;font-size:18px;line-height:38px;font-weight:bold}
+.main_title .go-back{position:absolute;color:#fff;background:#999;border-radius:12px;font-size:1.4rem;display:block;width:24px;height:24px;text-align:center;line-height:20px;top:7px;left:8px}
+.main_title .shopping-cart{float:right;color:#999;line-height:38px;margin-right:8px;font-size:18px;}
+
+img{width:100%;height:auto;}
+.main{margin-top:39px;}
+

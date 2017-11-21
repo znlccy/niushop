@@ -1,0 +1,235 @@
+{extend name="wap/default/base" /}
+{block name="goodsHead"}{/block}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_index.css">
+<style>
+.head{
+	border-bottom:0;
+}
+.panel.memberhead{
+	background:url(__TEMP__/{$style}/public/images/shoptop.png);
+	background-size:100% 100%; 
+}
+.member{
+	    width: 64%;
+    float: right;
+    margin-top: 26px;
+	color:#fff;
+}
+.img{
+	width:100%;
+    margin: 5px 0;
+}
+.code{
+    background: #fff;
+	overflow: hidden;
+}
+.rec{
+	height: 17px;
+    /* margin: 5px 10px; */
+    padding: 10px 20px;
+	border-bottom: 1px solid #E2E1E1;
+	line-height:17px;
+}
+
+.module-icon.memberCoupon {
+    background:url(__TEMP__/{$style}/public/images/Coupon.png) no-repeat;
+	width: 22px;
+    height: 22px;
+	float: left;
+    margin-top: 9px;
+	    margin-right: 10px;
+    display: inline-block;
+	background-size:100% 100%;
+}
+.member-info{
+	background: rgba(255,79,79, 0.8);
+	float:left;
+	width:33%;
+	color: #fff;
+	text-align: center;
+	line-height:41px;
+}
+.vertical-bar{
+	border-left: 1px solid rgba(250,250,250,0.6);
+	height: 32px;
+	vertical-align: middle;
+	display: inline-block;
+	margin-top:5px;
+}
+.namer{
+    position: absolute;
+    left: 103px;
+    top: 30px;
+}
+.signin{
+	position: absolute;
+    left: 170px;
+    top: 61px;
+    border-radius: 3px;
+    font-size: 10px;
+    line-height: 14px;
+    padding: 1px 5px;
+}
+.no{
+	color: yellow;
+	border: 1px solid yellow;
+}
+.yes{
+	color: #fff;
+	border: 1px solid #fff;
+}
+.last a{
+	position: relative;
+}
+.tips{
+	width: 16px;
+	height: 16px;
+	background: #fff;
+	border:1px solid #F93F40; 
+	border-radius: 50%;
+	font-size: 6px;
+	line-height: 16px;
+	text-align: center;
+	color: #F93F40;
+	position: absolute;
+	z-index: 10;
+	right: -10px;
+	top: -6px;
+}
+</style>
+  {/block}
+{block name="main" }
+<!--  <section class="head" style="background:#222;">
+		<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)" style="width:60px;"><i class="icon-back" style="color:#fff;margin-right:10px;"></i><span style="font-size:15px;color:#fff;">返回</span></a>
+		<div class="head-title" style="color:#fff;">店铺中心</div>
+	</section> -->
+<div class="panel memberhead">
+	<div class="member_head">
+		<a href="{:__URL('APP_MAIN/member/personaldata?shop_id='.$shop_id)}">
+			<p style="float:left;margin: 20px 0 20px 20px;position:relative;">
+				<i>
+				{eq name="member_img" value="0"}
+					<img src="__TEMP__/{$style}/public/images/member_default.png"/>
+				{else/}
+					<img src="{:__IMG($member_img)}" />
+				{/eq}
+				</i>
+			</p>
+			<p class="member" style="text-align:left;margin-right: 20px;margin-top: 40px;">
+				<img src="__TEMP__/{$style}/public/images/edit.png" style="float:right;width:20px; margin: 0 10px 0 0;">
+				<span class="namer" style="font-size:14px;"><!-- 会员名： -->{$member_info["user_info"]['nick_name']}</span>
+				<span style="font-size:14px;position: absolute;font-size: 12px;top: 60px;left: 103px;">{$member_info['level_name']}</span>
+			</p>
+		</a>
+		{if condition="$integralconfig['sign_integral'] eq 1"}
+		{if condition="$isSign eq 0"}
+		<span class="signin no" onclick="signIn();">{:lang('sign_in')}</span>
+		{else /}
+		<span class="signin yes">{:lang('signed_in')}</span>
+		{/if}
+		{/if}
+		<div style="overflow: hidden;width: 100%;">
+			<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$shop_id)}" class="member-info" style="width:49.5%;">
+				<span >{:lang('member_balance')}&nbsp;</span><span >{$member_info['balance']}</span>
+			</a>
+			<!-- <a href='APP_MAIN/member/coinwater?shop_id={$shop_id}' class="member-info" >
+				<span >购物币&nbsp;</span><span >{1$member_info['coin']}</span>
+			</a> -->
+			<i class="vertical-bar"></i>
+			<a href='{:__URL('APP_MAIN/member/integralwater?shop_id='.$shop_id)}' class="member-info" style="float:right;width:49.5%;"><span >{:lang('goods_integral')}&nbsp;</span><span >{$member_info['point']}</span></a>
+		 </div>
+	</div>
+</div>
+<div class="control">
+	<div class="control_l">
+		<span class="control_l_content">{:lang('all_orders')}</span>
+	</div>
+	<div class="control_r"><a href="{:__URL('APP_MAIN/order/myorderlist?shop_id='.$shop_id)}" class="right_href">{:lang('member_view_all_orders')}</a></div>
+</div>
+
+<div class="panel member-nav" >
+	<ul class="fu clear" >
+		<li class="last" >
+			<a href="{:__URL('APP_MAIN/order/myorderlist?status=0&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/pay.png">
+				{if condition="$unpaidOrder neq 0"}
+					<div class="tips">{$unpaidOrder}</div>
+				{/if}
+				<p>{:lang('member_pending_payment')}</p>
+			</a>
+		</li>
+		<li class="last">
+			<a href="{:__URL('APP_MAIN/order/myorderlist?status=1&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/send.png">
+				{if condition="$shipmentPendingOrder neq 0"}
+				<div class="tips">{$shipmentPendingOrder}</div>
+				{/if}
+				<p>{:lang('member_shipment_pending')}</p>
+			</a>
+		</li>
+		<li class="last">
+			<a href="{:__URL('APP_MAIN/order/myorderlist?status=2&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/recieve.png">
+				{if condition="$goodsNotReceivedOrder neq 0"}
+				<div class="tips">{$goodsNotReceivedOrder}</div>
+				{/if}
+				<p>{:lang('member_goods_received')}</p>
+			</a>
+		</li>
+		<li class="last">
+			<a href="{:__URL('APP_MAIN/order/myorderlist?status=3&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/recieved.png">
+				<p>{:lang('member_received_goods')}</p>
+			</a>
+		</li>
+		<li class="last">
+			<a href="{:__URL('APP_MAIN/order/myorderlist?status=4&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/reback.png"/>
+				{if condition="$refundOrder neq 0"}
+				<div class="tips">{$refundOrder}</div>
+				{/if}
+				<p>{:lang('refund_after_sale')}</p>
+			</a>
+		</li>
+	</ul>
+</div>
+
+<div class='member_list'>
+{volist name="menu_arr" id="arr_item" }
+	<ul>
+		{volist name="arr_item" id="vo" }
+		<li>
+			<a href="{:__URL('APP_MAIN/'.$vo['url'])}">
+				<i class=" module-icon {$vo.class}" ></i>
+				<span >{$vo.title}</span>
+				<span class='jiantou'></span>
+			</a>
+		</li>
+		{/volist} 
+	</ul>
+{/volist}
+</div>
+
+<!--distribution contact us end-->
+<script type="text/javascript">
+$(function(){
+	bottomActive('#bottom_member');
+	//$("#wchat_binding").css("display":"none;");
+})	
+function signIn(){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('APP_MAIN/member/signIn')}",
+		data : {
+			"sign" : true
+		},
+		success : function(data){
+			if(data['code']>0){
+				$(".signin").not(":hidden").removeClass("no").addClass("yes").text("已签到");
+			}
+		}
+	})
+}
+</script>
+{/block}

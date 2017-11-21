@@ -1,0 +1,131 @@
+{extend name="adminblue/base" /}
+{block name="main"}
+{if condition="$type == 'qq'"}
+<div class="set-style">
+	<dl>
+		<dt>APP_ID:</dt>
+		<dd><input id="APP_KEY" type="text" value="{$qq_config['value']['APP_KEY']}" class="input-common" /></dd>
+	</dl>
+	<dl>
+		<dt>APP_KEY:</dt>
+		<dd><input id="APP_SECRET" type="text" value="{$qq_config['value']['APP_SECRET']}" class="input-common" /></dd>
+	</dl>
+	<dl>
+		<dt>是否启用:</dt>
+		<dd>
+			<input id="is_use" type="checkbox" class="checkbox" {if condition="$qq_config.is_use=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>申请域名:</dt>
+		<dd>
+			{$qq_config['value']['AUTHORIZE']}
+		</dd>
+	</dl>
+	<dl>
+		<dt>回调域名:</dt>
+		<dd>{$qq_config['value']['AUTHORIZE']}</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common" onclick="setConfigAjax();">提交</button></dd>
+	</dl>
+</div>
+<input type ="hidden" id="AUTHORIZE" value="{$qq_config['value']['AUTHORIZE']}">
+<input type ="hidden" id="CALLBACK" value="{$qq_config['value']['CALLBACK']}">
+<script>
+function setConfigAjax(){
+	var appkey = $("#APP_KEY").val();
+	var appsecret = $("#APP_SECRET").val();
+	var url = $("#AUTHORIZE").val();
+	var call_back_url = $("#CALLBACK").val();
+	var is_use = 0;
+	if($("#is_use").is(":checked")){
+		is_use = 1;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/loginqqconfig')}",
+		data:{
+			'appkey':appkey,
+			'appsecret':appsecret,
+			'url':url,
+			'call_back_url':call_back_url,
+			"is_use" : is_use
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/config/partylogin')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{else/}
+<div class="set-style">
+	<dl>
+		<dt>APP_KEY:</dt>
+		<dd><input id="APP_KEY" type="text" value="{$wchat_config['value']['APP_KEY']}" class="input-common" /></dd>
+	</dl>
+	<dl>
+		<dt>APP_SECRET:</dt>
+		<dd><input id="APP_SECRET" type="text" value="{$wchat_config['value']['APP_SECRET']}" class="input-common" /></dd>
+	</dl>
+	<dl>
+		<dt>是否启用:</dt>
+		<dd>
+			<input id="is_use" type="checkbox" class="checkbox" {if condition="$wchat_config.is_use=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>申请域名:</dt>
+		<dd>
+		{$wchat_config['value']['AUTHORIZE']}
+		<p style="color:#999999;">(申请<a href="https://open.weixin.qq.com/">微信开放平台</a> 网站应用,授权回调域:{php}echo $_SERVER['HTTP_HOST'];{/php})</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>回调域名:</dt>
+		<dd>{$wchat_config['value']['CALLBACK']}</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common" onclick="setConfigAjax();">提交</button></dd>
+	</dl>
+</div>
+<input type ="hidden" id="AUTHORIZE" value="{$wchat_config['value']['AUTHORIZE']}">
+<input type ="hidden" id="CALLBACK" value="{$wchat_config['value']['CALLBACK']}">
+<script>
+function setConfigAjax(){
+	var appkey = $("#APP_KEY").val();
+	var appsecret = $("#APP_SECRET").val();
+	var url = $("#AUTHORIZE").val();
+	var call_back_url = $("#CALLBACK").val();
+	var is_use = 0;
+	if($("#is_use").is(":checked")){
+		is_use = 1;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/loginweixinconfig')}",
+		data:{
+			'appkey':appkey,
+			'appsecret':appsecret,
+			'url':url,
+			'call_back_url':call_back_url,
+			"is_use" : is_use
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/config/partylogin')}");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/if}
+{/block}

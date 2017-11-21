@@ -1,0 +1,494 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}
+<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/album_list.css"/>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/plugin/jquery.searchableSelect.css"/>
+<script src="__STATIC__/js/BootstrapMenu.min.js"></script>
+<script src="ADMIN_JS/plugin/jquery.searchableSelect.js"></script>
+<style type="text/css">
+.album-intro {min-height: 52px;padding: 10px 0 10px 60px;border-bottom: 1px solid #e5e5e5;position: relative;z-index: 1;overflow: hidden;margin:0;}
+.album-intro .album-name {font-size: 14px;color: #0072D2;height: 20px;margin:2px 10px;}
+.album-intro .album-covers {line-height: 0;background-color: #FFF;text-align: center;vertical-align: middle;display: table-cell;width: 48px;height: 48px;border: solid 1px #e5e5e5;overflow: hidden;position: absolute;z-index: 1;top: 12px;left: 0;}
+.album-intro .album-info {font-size: 12px;color: #999;width: 75%;height: 32px;overflow: hidden;}
+.album-intro .album-covers img {max-width: 48px;max-height: 48px;margin-top: expression(48-this .height/ 2);}
+.search-form {color: #999;width: 100%;border-bottom: solid 1px #e5e5e5;}
+.search-form th {font-size: 12px;line-height: 22px;text-align: right;width: 50px;padding: 8px 8px 8px 0;font-weight: normal;}
+.search-form td {text-align: left;padding: 8px 0;}
+#albumList li dl dt .checkbox {position: absolute;z-index: 2;top: 15px;left: 15px;}
+#albumList li dl dt .editInput1 {font-size: 12px;font-weight: bold;line-height: 20px;color: #555;background-color: transparent;width: 140px;height: 20px;border: 0;position: absolute;z-index: 1;top: 180px;left: 15px;}
+#albumList li dl dt span {font-size: 12px;line-height: 16px;vertical-align: middle;text-align: center;width: 16px;height: 16px;position: absolute;z-index: 2;top: 182px;right: 10px;}
+#albumList li dl dd.buttons .upload-btn {width: 85px;height: 25px;display: inline-block;zoom: 1;margin:0;float:left;}
+.ncsc-picture-list li dl dd.buttons a {float:left;}
+#albumList li{height:294px;width:198.2px;}
+.upload-btn .input-file{left:0;}
+#albumList li dl{margin:0;}
+#albumList li dl dd.buttons{height:initial;left:19px;}
+.right-side-operation ul li{position: relative;}
+.modal-body{overflow: inherit;}
+.dropdown.bootstrapMenu{z-index:4000 !important;}
+</style>
+{/block}
+{block name="right_tab"}
+<li>
+	<a id="open_uploader"><i class="fa fa-cloud-upload"></i>上传图片</a>
+	<input type="file" id="fileupload" class="input-file" name="file_upload" multiple="multiple"/>
+	{include file="adminblue/System/uploadAlbumImg"/}
+</li>
+{/block}
+{block name="main"}
+<input type="hidden" id="album_id" value="{$album_id}" />
+<dl class="album-intro">
+	<dt class="album-name">{$album_name}</dt>
+	<dd class="album-covers">
+		<img src="ADMIN_IMG/album/album_cover_default.png" id="album_cover" >
+	</dd>
+	<dd class="album-info"></dd>
+</dl>
+<table class="search-form">
+	<tbody>
+		<tr>
+			<th style="width: 70px;">批量处理</th>
+			<td>
+				<a href="javascript:void(0);" onclick="checkAll()">全选</a>
+				<a href="javascript:void(0);" onclick="uncheckAll()">取消</a>
+				<a href="javascript:void(0);" onclick="switchAll()">反选</a>
+				<a href="javascript:void(0);" onclick="submit_form('del')">删除</a>
+				<a href="javascript:void(0);" onclick="submit_form('changealbum')">转移相册</a>
+			</td>
+			<th>排序方式</th>
+			<th>
+				<select id="is_use" onchange="LoadingInfo(1);" class="select-common">
+					<option value="0">全部</option>
+					<option value="1">未使用</option>
+				</select>
+			</th>
+		</tr>
+	</tbody>
+</table>
+<div class="ncsc-picture-list">
+	<div class="alert alert-info">
+		<strong>注：在使用‘替换上传’功能时，请保持图片的扩展名与被替换图片相同。</strong>
+	</div>
+	<ul id="albumList"></ul>
+</div>
+<input type="hidden" id="album_cover_id" value="{$album_cover}">
+<input type="hidden" value="UPLOAD" id="op"/>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<!-- 相册转移  -->
+<div class="modal fade hide" id="change_album_class" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>相册转移</h3>
+			</div>
+			<div class="modal-body">
+				<div class="dislog-style">
+					<input type="hidden" id="change_pic_id" />
+					<ul>
+						<li>
+							<span>选择相册：</span>
+							<select style="display: none;" id="change_album_id"></select>
+							<input type="text" id="selected_album_class" style="padding:0;margin:0;opacity: 0;position: absolute;"/>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="changeAlbumClass();">修改</button>
+				<button type="button" class="btn" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//当前可搜索的下拉选项框
+var curr_searchable_select = null;
+$(function(){
+
+	getAlbumClassListByAlbumPicture();
+	curr_searchable_select = $('#change_album_id').searchableSelect();
+	$(".searchable-select-input").live("keyup",function(){
+		if($(this).val().length>100){
+			showTip("查询限制在100个字符以内","warning");
+			return;
+		}
+		if($(this).attr("data-value") != $(this).val()){
+			$(this).attr("data-value",$(this).val());
+			getAlbumClassListByAlbumPicture($(".searchable-select-holder").text(),$(this).val());
+		}
+	});
+
+	//右键复制选择的相册
+	var menu = new BootstrapMenu('.searchable-select-holder', {
+		actions: [{
+		name: '复制',
+		onClick: function() {
+			var brand_name = $('#change_album_id option:selected').text();
+			$("#selected_album_class").val(brand_name);
+			var copy_content = document.getElementById('selected_album_class');
+			copy_content.select();
+			document.execCommand("Copy");
+			showTip("复制成功",'success');
+		}
+		}]
+	});
+
+});
+
+function LoadingInfo(page_index) {
+	var album_id = $("#album_id").val();
+	var album_cover = $("#album_cover_id").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/albumpicturelist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "album_id" : album_id, "is_use" : $("#is_use").val() },
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					if(album_cover == "" ){
+						if(i == 0) $("#album_cover").attr("src",__IMG(data["data"][i]["pic_cover"]));
+					}else if(data["data"][i]["pic_id"] == album_cover){
+						$("#album_cover").attr("src",__IMG(data["data"][i]["pic_cover"]));
+					}
+					if(i==0||i%8==0){
+						html += '<li style="opacity: 1;border-width:0 1px 1px 1px;"><dl><dt><div class="picture"><a href="javascript:void(0);"> <img id="img_'+data["data"][i]["pic_id"]+'" src="'+__IMG(data["data"][i]["pic_cover"])+'"></a></div>';
+					}else{
+						html += '<li style="opacity: 1;border-width:0 1px 1px 0;"><dl><dt><div class="picture"><a href="javascript:void(0);"> <img id="img_'+data["data"][i]["pic_id"]+'" src="'+__IMG(data["data"][i]["pic_cover"])+'"></a></div>';
+					}
+					html += '<input id="C'+data["data"][i]["pic_id"]+'" name="id[]" value="'+data["data"][i]["pic_id"]+'" type="checkbox" class="checkbox">';
+					html += '<input id="' + data["data"][i]["pic_id"] + '" class="editInput1" readonly="" ondblclick="$(this).unbind();_focus($(this));" value="'+data["data"][i]["pic_name"]+'" title="双击名称可以进行编辑" style="cursor:pointer;">';
+					html += '<span ondblclick="_focus($(this).prev());" title="双击名称可以进行编辑"><i class="icon-pencil"></i></span></dt><dd class="date"><p>上传时间：'
+							+ data["data"][i]["upload_time"]
+							+ '</p><p>原图尺寸：'
+							+ data["data"][i]["pic_size"]
+							+ '</p></dd>';
+					html += '<dd class="buttons"><a href="javascript:void(0);">';
+					html += '<input accept="image/*" type="file" name="file_upload" id="file_'+data["data"][i]["pic_id"]+'" class="input-file" size="1" data-pic_id = "'+data["data"][i]["pic_id"]+'" onchange="change_photo(this);" style="left:0;">';
+					html += '<div class="upload-button">替换上传</div></a>';
+					html += '<a href="javascript:;" nc_type="dialog" dialog_title="转移相册" uri="rfghfdg" onclick="changeAlbumClassBox('+ data["data"][i]["album_id"]
+						+ ','+ data["data"][i]["pic_id"]+ ')">转移相册</a> <a href="javascript:;" onclick="changeAlbumClassCover('
+							+ data["data"][i]["pic_id"]+ ')">设为封面</a> <a href="javascript:;" onclick="deletePicture('+data["data"][i]["pic_id"]+')" >删除图片</a> <a href="JavaScript:void(0);" onclick="JScopy('+data["data"][i]["pic_id"]+');" style="width:75px;">复制图片路径</a> <input type="text" style = "width:146px;margin-top: 10000px;border: 0px;" id="hidden_img_'+data["data"][i]["pic_id"]+'" value="'+__IMG(data["data"][i]["pic_cover"])+'"/></dd></dl></li>';
+				}
+			} else {
+				html += '暂无符合条件的数据记录';
+			}
+			$("#albumList").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//查询相册
+function getAlbumClassListByAlbumPicture(album_name,search_name) {
+	var page_index = 1;
+	var page_size = 20;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/getAlbumClassListByAlbumPicture')}",
+		data : { "page_index" : page_index, "page_size" : page_size, "album_name" : album_name, "search_name" : search_name },
+		success : function(res){
+			var html = "";
+			if(res.total_count>0){
+				for(var i=0;i<res['data'].length;i++){
+					html += '<option value="' + res['data'][i].album_id + '">' + res['data'][i].album_name + '</option>';
+				}
+			}else{
+				html += '<option value="-1">暂无相册</option>';
+			}
+			$("#change_album_id").html(html);
+			//更新搜索结果
+			$(".searchable-select-items .searchable-select-item").remove();
+			curr_searchable_select.buildItems();
+		}
+	});
+}
+
+//全选
+function checkAll() {
+	$('input[type="checkbox"]').each(function() {
+		$(this).attr('checked', true);
+	});
+}
+
+// 取消
+function uncheckAll() {
+	$('input[type="checkbox"]').each(function() {
+		$(this).attr('checked', false);
+	});
+}
+
+// 反选
+function switchAll() {
+	$('input[type="checkbox"]').each(function() {
+		$(this).attr('checked', !$(this).attr('checked'));
+	});
+}
+
+//批量操作
+function submit_form(type) {
+	var id = '';
+	$('input[type=checkbox]:checked').each(function() {
+		if (!isNaN($(this).val())) {
+			id = $(this).val() + "," + id;
+		}
+	});
+	if (id == '') {
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择图片"
+		});
+		return false;
+	} else {
+		id = id.substring(0, id.length - 1);
+	}
+	if (type == 'del') {
+		deletePicture(id);
+	}else if(type == "changealbum"){
+		var album_id = $("#album_id").val();
+		changeAlbumClassBox(album_id,id);
+	}
+}
+
+//删除图片
+function deletePicture(pic_id_array) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/system/deletepicture')}",
+					data : { "pic_id_array" : pic_id_array.toString() },
+					success : function(data) {
+						if (data['code'] > 0) {
+							$( "#dialog" ).dialog({
+								buttons: {
+									"确定": function() {
+										$(this).dialog('close');
+									}
+								},
+								contentText:data["message"],
+								time:3
+							});
+							LoadingInfo(getCurrentIndex(pic_id_array,'#albumList'));
+						}else{
+							$( "#dialog" ).dialog({
+								buttons: {
+									"确定,#e57373": function() {
+										$(this).dialog('close');
+									}
+								},
+								time:3,
+								contentText:"部分图片正在商品中使用，没有被删除"
+							});
+							LoadingInfo(getCurrentIndex(pic_id_array,'#albumList'));
+						}
+					}
+				})
+			},
+			"取消,#e57373":function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"您确定要删除已选中图片吗?<br/>提示：已使用图片将不会被删除!"
+	});
+}
+
+//图片上传
+function imgUpload(event) {
+	var fileid = "uploadImg";
+	var album_id = $("#album_id").val();
+	var data = {
+		"album_id" : album_id,
+		"type" : "1,2,3,4",
+		'file_path' : UPLOADGOODS
+	};
+	uploadFile(fileid,data,function(res){
+		if(res.code>0){
+			showTip(res.message,"success");
+			LoadingInfo(getCurrentIndex(album_id,'#albumList'));
+		}else{
+			showTip(res.error,"success");
+		}
+	});
+}
+
+/**
+ * 上传图片弹出框信息
+ */
+function addImgBox() {
+	if ($("#uploader").is(":hidden")) {
+		$("#uploader").show();
+	} else {
+		$("#uploader").hide();
+	}
+}
+
+//替换上传
+function change_photo(event){
+	var fileid = $(event).attr("id");
+	var pic_id = $(event).data("pic_id");
+	var album_id = Number($("#album_id").val());
+	var data = {
+		"album_id" : album_id,
+		"type" : "1,2,3,4",
+		"pic_id":pic_id,
+		'file_path' : UPLOADGOODS
+	};
+	uploadFile(fileid,data,function(res){
+		if(res.code>0){
+			LoadingInfo(getCurrentIndex(album_id,'#albumList'));
+			showTip(res.message,"success");
+		}else{
+			showTip(res.error,"success");
+		}
+	});
+}
+
+//控制图片名称input焦点可编辑
+function _focus(o){
+	var name;
+	obj = o;
+	name=obj.val();
+	obj.removeAttr("readonly");
+	obj.attr('class','editInput2');
+	obj.select();
+	obj.blur(function(){
+		if(name != obj.val()){
+			_save(this);
+		}else{
+			obj.attr('class','editInput1');
+			obj.attr('readonly','readonly');
+		}
+	});
+}
+
+function _save(obj){
+	var pic_id = obj.id;
+	var pic_name = obj.value;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/modifyalbumpicturename')}",
+		data : { "pic_id" : pic_id, "pic_name":pic_name },
+		success : function(data) {
+			if (data["code"] > 0) {
+				LoadingInfo(1);
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#e57373": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:data["message"],
+					time:3,
+				});
+			}else{
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#e57373": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:data["message"]
+				});
+			}
+		}
+	})
+}
+
+function changeAlbumClassBox(album_id,pic_id){
+	$('#change_album_class').modal('show');
+	$("#change_album_id").val(album_id);
+	$("#change_pic_id").val(pic_id);
+}
+
+function changeAlbumClass(){
+	var pic_id = $("#change_pic_id").val();
+	var album_id = $("#change_album_id").val();
+	if(pic_id == null || album_id == null || album_id == -1){
+		showTip("缺少数据","warning");
+		return;
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/modifyalbumpictureclass')}",
+		data : { "pic_id" : pic_id, "album_id":album_id },
+		success : function(data) {
+			if (data["code"] > 0) {
+				$('#change_album_class').modal('hide');
+				LoadingInfo(1);
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#66BB6A": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:data["message"],
+					time:3,
+				});
+			}else{
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#66BB6A": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:data["message"]
+				});
+			}
+		}
+	})
+}
+/**
+复制图片路径
+*/
+function JScopy(id){
+	var url = $("#img_"+id).attr('src');
+	$("#hidden_img_"+id).val(url); 
+	var iurl = document.getElementById('hidden_img_'+id);
+	iurl.select();
+	document.execCommand("Copy");
+	showTip("复制成功",'success');
+
+}
+function changeAlbumClassCover(pic_id){
+	var album_id = $("#album_id").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/modifyalbumclasscover')}",
+		data : { "pic_id" : pic_id, "album_id":album_id },
+		success : function(data) {
+			if (data["code"] > 0) {
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#66BB6A": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:data["message"],
+					time:3,
+				});
+			}else{
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#66BB6A": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:data["message"]
+				});
+			}
+		}
+	});
+}
+</script>
+{/block}

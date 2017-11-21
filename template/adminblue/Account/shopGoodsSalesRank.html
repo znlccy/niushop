@@ -1,0 +1,66 @@
+{extend name="adminblue/base" /}
+{block name="resources"}
+<style>
+.rank-box {}
+.rank-nav {font-size: 16px;height: 25px;line-height: 25px;border-left: 2px solid #0072D2;padding-left: 10px;color:#0072D2;}
+.rank-ul li {padding: 10px;margin-top: 15px;background-color: #ffffff;border: 1px solid #e5e5e5;border-left:0;border-right:0;transition:background 0.3s;cursor:pointer;}
+.rank-ul li:hover {background-color: #F9F9F9;}
+.rank-ul li table{width:100%}
+.rank-ul li table tr td {height: 34px;line-height: 34px;}
+.rank-ul li table tr td:nth-child(1) {width: 40px;text-align: center;}
+.rank-ul li table tr td:nth-child(2) {width: 400px;text-align: left;padding-left: 20px;font-size: 13px;max-width: 220px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+.rank-ul li table tr td:nth-child(3) {width: 160px;text-align: center;}
+.rank-img {height: 34px;}
+.first{color: #F44336;font-weight: bold;font-size: 19px;}
+.second{color:#FF9800;font-weight: bold;font-size: 17px;}
+.third{color:#03A9F4;font-weight: bold;font-size: 15px;}
+</style>
+{/block}
+{block name="main"}
+<div class="rank-box">
+	<h2 class="rank-nav">商品销售排行榜</h2>
+	<ul class="rank-ul">
+		{foreach $goods_list as $k=>$goods_info}
+		<li onclick="location.href='+__URL('ADMIN_MAIN/account/shopgoodsaccountlist?goods_id={$goods_info.goods_id})+';" title="{$goods_info.goods_name}">
+			<table>
+				<tr>
+					<td style="border-right: 1px solid #e5e5e5;">
+						{if condition="$k eq 0"}
+						<span class="first">{$k + 1}</span>
+						{elseif condition="$k eq 1"/}
+						<span class="second">{$k + 1}</span>
+						{elseif condition="$k eq 2"/}
+						<span class="third">{$k + 1}</span>
+						{else/}
+						<span>{$k + 1}</span>
+						{/if}
+					</td>
+					<td>{$goods_info.goods_name}</td>
+					<td>
+						{if condition="$k eq 0"}
+						<img class="rank-img" src="ADMIN_IMG/firat_sale.png" />
+						{elseif condition="$k eq 1"/}
+						<img class="rank-img" src="ADMIN_IMG/second_sale.png" />
+						{elseif condition="$k eq 2"/}
+						<img class="rank-img" src="ADMIN_IMG/third_sale.png" />
+						{/if}
+					</td>
+					<td>
+						{if condition="$k eq 0"}
+						<span class="first">{$goods_info.real_sales}</span>
+						{elseif condition="$k eq 1"/}
+						<span class="second">{$goods_info.real_sales}</span>
+						{elseif condition="$k eq 2"/}
+						<span class="third">{$goods_info.real_sales}</span>
+						{else/}
+						<span>{$goods_info.real_sales}</span>
+						{/if}
+					</td>
+				</tr>
+			</table>
+		</li>
+		{/foreach}
+	</ul>
+</div>
+{/block}
+{block name="script"}{/block}

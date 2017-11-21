@@ -1,0 +1,128 @@
+<style>
+.goods-list-ul-big{
+	
+}
+
+.control-goods-list-small li {
+    float: left;
+    width: 48.5%;
+    margin: 5px 0;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    padding-bottom: 10px;
+}
+.control-goods-list-small{
+	overflow: hidden;
+	padding-left:1.5%;
+	padding-right:1.5%;
+}
+.control-goods-list-big{
+	
+}
+.control-goods-list-small .control-thumbnail {
+    padding: 10px 0;
+}
+.control-thumbnail {
+    text-align: center;
+    color: #ffffff;
+    margin: 0;
+}
+.control-goods-list-small .control-goods-name {
+    font-weight: normal;
+    text-indent: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;	
+}
+.control-goods-list-small .control-goods-price {
+    margin-right: 5px;
+}
+.control-goods-list-big .control-goods-price, .control-goods-list-small .control-goods-price {
+    margin: 5px 0 0 0;
+    height: 26px;
+    line-height: 26px;
+}
+.control-goods-list-small .control-goods-price em {
+    width: 100px;
+    text-indent: 5px;
+    font-size: 12px;
+}
+.control-goods-list-big .control-goods-price em, .control-goods-list-small .control-goods-price em {
+    font-style: normal;
+    color: #ff6600;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 200px;
+    display: inline-block;
+}
+.control-goods-buy-style {
+    border: 0;
+    float: right;
+    background: url(../img/goods_buy_style.png) no-repeat;
+    height: 26px;
+    width: 30px;
+}
+.control-goods-list-big .control-thumbnail {
+    padding: 10px 0;
+    font-size: 24px;
+}
+.control-goods-list-big .control-goods-name {
+    font-weight: bold;
+    margin: 5px 0;	
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;	
+}
+.control-goods-list-big .control-goods-info {
+    font-size: 12px;
+    color: #666666;
+    margin: 5px 0;
+}
+.control-goods-list-big li {
+    padding: 10px;
+    border: 1px solid #e5e5e5;
+    margin: 0 0 10px 0;
+    background: #ffffff;
+}
+.control-goods-list-small li:NTH-CHILD(even) {
+    float: right;
+}
+.control-goods-list-small .control-thumbnail img{
+	height:200px;
+}
+.control-goods-list-big .control-thumbnail img{
+	height:120px;
+}
+
+</style>
+
+<div class="category-goods-list">
+<div {if condition="$custom_template_v.style_data.goods_list_type eq 1"}class="control-goods-list-small" {else /}class="control-goods-list-big"{/if}>
+	
+	<ul>
+		{foreach $custom_template_v['goods_list'] as $t=>$m}
+		<li>
+			<div class="control-thumbnail"><img src="__UPLOAD__/{$m['pic_cover_small']}"/></div>
+			{if condition="$custom_template_v['style_data']['goods_show_goods_name'] eq 1"}
+			<h5 class="control-goods-name">{$m["goods_name"]}</h5>
+			{/if}
+<!-- 			{if condition="$custom_template_v['style_data']['goods_show_goods_info'] eq 1"}
+			<div class="control-goods-info">{$m["introduction"]}</div>
+			{/if} -->
+			{if condition="$custom_template_v['style_data']['goods_show_goods_price'] eq 1"}
+			<div class="control-goods-price">
+				<em>￥{$m["promotion_price"]}</em>
+				<button class="control-goods-buy-style"></button>
+			</div>
+			{/if}
+		</li>
+		{/foreach}
+		
+	</ul>
+</div>
+
+
+</div>
+	

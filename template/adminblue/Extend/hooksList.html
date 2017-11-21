@@ -1,0 +1,86 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/extend/addhooks')}';">添加钩子</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 20%;">
+		<col style="width: 50%;">
+		<col style="width: 15%;">
+		<col style="width: 15%">
+	</colgroup>
+	<thead>
+		<tr align="left">
+			<th>名称</th>
+			<th>描述</th>
+			<th>类型</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/extend/hookslist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			var html = '';
+			if (data['data'].length > 0) {
+				for (var i = 0; i < data['data'].length; i++) {
+					var type = '';
+					if(data['data'][i]['type'] == 1){
+						type = '视图';
+					}else{
+						type = '控制器';
+					}
+					html += '<tr>';
+					html += '<td>'+ data['data'][i]['name'] +'</td>';
+					html += '<td>'+ data['data'][i]['description'] +'</td>';
+					html += '<td>'+ type +'</td>';
+					html += '<td><a href="'+__URL('ADMIN_MAIN/extend/updatehooks?id='+data['data'][i]['id'])+'" style="margin-left:0;">修改</a>&nbsp;<a href="javascript:;" onclick="deleteHooks('+ data['data'][i]['id'] +')">删除</a></td>';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><th colspan="4">暂无符合条件的数据记录</th></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function deleteHooks(id){
+	$("#dialog").dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/extend/deleteHooks')}",
+					data : { "id" : id },
+					success : function(data) {
+						if (data["code"] > 0) {
+							showMessage('success', "删除成功","{:__URL('ADMIN_MAIN/extend/hookslist')}");
+						}else{
+							showMessage('error', "删除失败");
+						}
+					}
+				});
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+</script>
+{/block}

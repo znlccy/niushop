@@ -1,0 +1,136 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+    <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_common.css">
+    <style>
+.coupon-price {
+    position: absolute;
+    top: 35%;
+    left: 10%;
+    font-size: 25px;
+    color: #EB1606;
+}
+.coupon-lose{
+    position: absolute;
+    top: 67%;
+    left: 10%;
+    font-size: 14px;
+}
+.due-img{
+	    display: block;
+    position: absolute;
+    top: 40%;
+    bottom: 10%;
+    left: 50%;
+    right: 22%;
+    background: url(__TEMP__/{$style}/public/images/stamp-due.png) no-repeat;
+    background-size: auto 100%;
+}
+.com_content li {
+    width: 100%;
+    position: relative;
+    float: left;
+    margin-top: 10px;
+	background: #fff;
+    padding: 5px;
+	list-style: none;
+}
+.title{
+	font-weight:bold;
+	color:#707070;
+	font-size: 1rem;
+}
+.clearfloat{
+	content: '';
+    display: inline-block;
+    clear: both;
+    width: 100%;
+}
+ul{
+	
+}
+	</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+		<a class="head_back" id="backoutapp" onclick="window.history.go(-1)" href="javascript:void(0)"><i class="icon-back"></i></a>
+		<div class="head-title">{:lang('member_my_coupon')}</div>
+	</section>
+{/block}
+
+{block name="main"}
+ 
+  <div class="cf-container" data-reactid="2">
+   		<div class="cf-edge" data-reactid="3"></div>
+		<ul class="cf-content" data-reactid="4">
+   			<li class="cf-tab-item select" data-index="1" data-reactid="7"><a href="javascript:getMemberCounponList(1);">{:lang('unused')}</a></li>
+			<li class="cf-tab-item" data-index="1" data-reactid="7"><a href="javascript:getMemberCounponList(2);">{:lang('used')}</a></li>
+			<li class="cf-tab-item" data-index="1" data-reactid="7"><a href="javascript:getMemberCounponList(3);">{:lang('expire')}</a></li>
+			
+    	</ul>
+	</div>
+  
+    <div class="com_content">
+    	
+    </div>
+<script type="text/javascript">
+	$(function(){
+		$('.cf-container .cf-tab-item').click(function(){
+       		$('.cf-container .cf-tab-item').removeClass('select');
+       		$(this).addClass('select');
+       	})
+		getMemberCounponList(1);
+	})
+	function getMemberCounponList(type){
+		$.ajax({
+			type:'post',
+			async:true,
+			url:'{:__URL('APP_MAIN/member/membercoupon')}',
+			data:{'type':type },
+			dataType:'json',
+			success:function(data){
+				var listhtml='<div class="com_content"><ul id="not_use">';
+				if(data.length>0){
+					$('.null_default').hide();
+					for(var i=0;i<data.length;i++){
+						var money = data[i]['money'] != null ? data[i]['money'] : "";
+						var coupon_code = data[i]['coupon_code'] != null ? data[i]['coupon_code'] : "";
+						var coupon_name = data[i]['coupon_name'] != null ? data[i]['coupon_name'] : "";
+						var start_time = data[i]['start_time'] != null ? data[i]['start_time'] : "";
+						var end_time = data[i]['end_time'] != null ? data[i]['end_time'] : "";
+						if(type==1){
+							listhtml+='<li><div class="clearfloat"><span class="title" style="float:left;">'+coupon_name+'</span><span style="float:right;">'+coupon_code+'</span></div><a class="not_use" href="javascript:;">';
+						}else{
+							listhtml+='<li><div class="clearfloat"><span class="title" style="float:left;">'+coupon_name+'</span><span style="float:right;">'+coupon_code+'</span></div><a class="already-use" href="javascript:;">';
+						}
+						
+						listhtml+='<div class="p-r">';
+						listhtml+='<div class="active-msg"><img src="__TEMP__/{$style}/public/images/coupon_member.png" style="width:100%;"/><div class="coupon-price" style="">￥'+money+'</div>';
+						listhtml+='<div class="coupon-lose"><span>'+start_time+'</span>{:lang('until')}<span>'+end_time+'</span></div>';
+						listhtml+='</div></div>';
+						if(type==2){
+							listhtml+='<span class="uneless-img"></span></a></li>';	
+						}else if(type==3){
+							listhtml+='<span class="due-img"></span></a></li>';
+						}else{
+							listhtml+='</div></a></li>';
+						}
+					}
+					listhtml+='</ul></div>';
+				}else{
+					listhtml='<div class="null_default"><i class="icon-nocontent-youhuiquan"></i><span class="nulltext">{:lang("you_do_not_have_any_coupons_yet")}！</span></div>';
+				}
+				
+				$('.com_content').html(listhtml);
+			}
+		})
+	}
+    $("#backoutapp").click(function (){
+        var json ={
+        		"center" : "1",
+            }
+        window.webkit.messageHandlers.center.postMessage(json);
+    })
+</script>
+
+{/block}
+{block name="bottom"}{/block}

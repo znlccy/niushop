@@ -1,0 +1,413 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/material_managedialog.js"></script>
+
+<link rel="stylesheet" type="text/css"  href="__STATIC__/loading/msgbox.css" />
+
+<script type="text/javascript" src="__STATIC__/loading/msgbox.js"></script>
+<style>
+.dt_color{
+	background-color: #999;
+	color: #FFF;
+}
+.div_line{
+	max-height: 250px; 
+	overflow-y:auto; 
+	line-height: 22px;
+}
+/*在线更新*/
+.atricle-content{
+    position: relative;
+}
+.atricle-content .prompt_information{
+    color: orange;
+	padding-left: 10px;
+	margin-top:20px;
+	margin-left:20px;
+	margin-bottom:8px;
+	border-left:3px solid orange;
+}
+.atricle-content .upgrade_information{
+    color: #44B346;
+    line-height: 36px;
+    font-size: 13px;
+    margin: 0 20px;
+}
+.atricle-content .update_content{
+	margin: 0 20px 15px 20px;
+	border: 1px solid #E1E1E1;
+
+}
+.atricle-content .update_content .update_information{
+	width: 100%;
+	overflow:hidden;
+	border-bottom: 1px solid #E1E1E1;
+}
+.atricle-content .update_content .duty
+{
+	width: 10%;
+	height: 40px;
+	display: inline-block;
+	float: left;
+}
+.atricle-content .update_content .update_information .information{
+	width: 30%;
+	line-height: 40px;
+	display: inline-block;
+	float: left;
+}
+.atricle-content .update_content .update_information .update_instructions{
+	width: 90%;
+}
+.atricle-content .update_content .title{
+	width: 100px;
+	display: inline-block;
+	float: left;
+	line-height: 40px;
+}
+.atricle-content .update_content .update_information .data-content{
+	display: inline-block;
+	float: left;
+	line-height: 25px;
+    margin-top: 8px;
+    max-height: 350px;
+    overflow-y: scroll;
+    width: 75%;
+    padding-right: 10px;
+}
+.atricle-content .update_content .update_information .data-content::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+}
+.atricle-content .update_content .update_information .data-content::-webkit-scrollbar-thumb {
+    background-color: #0072D2;
+}
+.atricle-content .update_content .update_information .data-content::-webkit-scrollbar-track {
+    background-color: #fff;
+}
+.atricle-content .update_content .update_information .upgrade_file{
+	display: inline-block;
+	float: left;
+	line-height: 25px;
+    margin-top: 8px;
+}
+.upPatch{
+	background: #0072D2;
+    padding: 5px 10px;
+    color: #ffffff;
+    border: 0;
+	margin:0 0 0 20px;
+}
+</style>
+{/block}
+{block name="main"}
+<input type="hidden" id="upgrade_typeid" />
+<div class="ns-main">
+	<div class="atricle-content">
+		<div class="prompt_information"> 
+			本次更新为{$upgradeDetail['patch_no']}版本更新，建议您在更新前，备份相关的程序及数据信息，更新失败系统将会自动还原到升级前的版本。
+		</div>
+		<div id="start_update_info" style="display: none;">
+			<div class="upgrade_information">
+				<img id="up_loding" src="ADMIN_IMG/762.gif" alt="" style="width:15px; margin-right: 5px;"><span id="upgrade_info">系统正在更新中，更新过程中请不要关闭此页面！</span>
+				<label id="upgrade_back"></label>
+			</div>
+		</div>
+		<div class="update_content">
+			<div class="update_information">
+				<div class="duty"></div>
+				<div class="information">
+					<div class="title">更新名称：</div>{$upgradeDetail['patch_name']}
+				</div>
+				<div class="information">
+					<div class="title">更新包编号：</div>{$upgradeDetail['patch_release']}
+				</div>
+				<div class="information">
+					<div class="title">版本号：</div>{$upgradeDetail['patch_no']}
+				</div>
+			</div>
+			<div class="update_information">
+				<div class="duty"></div>
+				<div class="update_instructions">
+					<div class="title">更新说明：</div>
+					<div class="data-content">
+						{$upgradeDetail['patch_log']}
+					</div>
+				</div>
+			</div>
+			<div class="update_information" style="border-bottom: none;">
+				<div class="duty"></div>
+				<div class="update_instructions">
+					<div class="title">升级文件：</div>
+					<div id="upgrade_file_log" class="data-content">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		<button class="upPatch" onclick="upPatch();">点击进行更新</button>
+	</div>
+</div>
+<input type="hidden" id="download_url" value="{$upgradeDetail['patch_download_url']}"/>
+<input type="hidden" id="version_no" value="{$upgradeDetail['patch_no']}"/>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$table_name_list={$tablenamelist};
+/**
+ * 执行成功
+ */
+function message_true($message){
+	$("#upgrade_info").text($message);
+	$("#up_loding").attr("display", "block");
+	$("#upgrade_info").css("color","#468847");
+}
+/**
+ * 执行失败
+ */
+function message_error($message){
+	$("#up_loding").css("display", "none");
+	$("#upgrade_info").text($message);
+	$("#upgrade_info").css("color","red");
+}
+/**
+ * 升级成功
+ */
+function message_success(){
+	$("#up_loding").css("display", "none");
+	$("#upgrade_info").text("升级成功!");
+	$("#upgrade_info").css("color","#468847");
+}
+//升级
+function upPatch(){
+	$(".upPatch").attr("disabled","disabled").css("background","#989898");
+	$("#start_update_info").css('display','block');
+	message_true("正在备份数据库，请您耐心等待，备份过程中请不要关闭此页面！");
+	ajax_ids($table_name_list);
+}
+
+function ajax_ids(_tables){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/dbdatabase/exportdatabase')}",
+		data : { "tables" : _tables },
+		dataType : "json",
+		success : function(data) {
+			if(data.status ==1 && data.message=="初始化成功"){
+				backup(data.tab);
+				ZENG.msgbox.show(data.message, 4, 3000);
+				return;
+			} else{
+				ZENG.msgbox.show(data.message, 5);
+			}
+			
+		}
+	})
+}
+
+//备份数据库
+function backup(tab,status) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/dbdatabase/exportdatabase')}",
+		data : { "id" : tab.id, "start" : tab.start },
+		dataType : "json",
+		success : function(data) {
+			ZENG.msgbox.show("正在备份数据库，请不要关闭窗口", 6);
+			if (data.status == 1) {
+				if (!$.isPlainObject(data.tab)) {
+					ZENG.msgbox.show(data.message, 5);
+					return;
+				}else{
+					ZENG.msgbox.show("正在处理"+data.tab.table+' ...', 6);
+				}
+				backup(data.tab, tab.id != data.tab.id);
+			} else {
+				if(data.status == -1){
+					ZENG.msgbox.show(data.message, 5);
+				}else{
+					ZENG.msgbox.show("备份完成", 4, 3000);
+					message_true("数据库备份完成！");
+					downloadzip();
+				}
+			}
+		}
+	})
+}
+/**
+ * 下载压缩包
+ */
+function downloadzip(){
+	message_true("正在下载升级文件，请您耐心等待，下载过程中请不要关闭此页面！");
+	$download_url=$("#download_url").val();
+	$version_no=$("#version_no").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/upgradeonline/downloadPatchZip')}",
+		data : {
+			"download_url" : $download_url,
+			"version_no" : $version_no
+		},
+		dataType : "json",
+		success : function(data) {
+			if(data.upgrade_code==0){
+				message_true("文件下载成功!");
+				$download_file_path=data.download_file_path; 
+				$download_zip_path=data.download_zip_path; 
+				$download_update_file=data.download_update_file; 
+				$download_back_file=data.download_back_file;
+				unzipFile($download_file_path, $download_zip_path, $download_update_file, $download_back_file, $version_no);
+			}else{
+				message_error(data.upgrade_message);
+			}
+		}
+	});
+}
+/**
+ * 解压更新包
+ */
+function unzipFile($download_file_path, $download_zip_path, $download_update_file, $download_back_file, $version_no){
+	message_true("正在解压更新包，请您耐心等待，解压过程中请不要关闭此页面！");
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/upgradeonline/unzipPatchfile')}",
+		data : {
+			"download_zip_path" : $download_zip_path,
+			"download_file_path" : $download_file_path,
+			"download_update_file" : $download_update_file
+		},
+		dataType : "json",
+		success : function(data) {
+			if(data.upgrade_code==0){
+				message_true("文件解压成功!");
+				$file_start_path=data.file_start_path;
+				detectUpdateFilePermission($file_start_path, $download_back_file, $download_update_file, $version_no);
+			}else{
+				message_error(data.upgrade_message);
+			}
+		}
+	});
+}
+/**
+ * 检验需要升级的文件的权限
+ */
+function detectUpdateFilePermission($file_start_path, $download_back_file, $download_update_file, $version_no){
+	message_true("正在验证更新包文件权限，请您耐心等待，验证过程中请不要关闭此页面！");
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/upgradeonline/detectUpdateFilePermission')}",
+		data : {
+			"file_start_path" : $file_start_path
+		},
+		dataType : "json",
+		success : function(data) {
+			if(data.upgrade_code==0){
+				message_true("权限符合更新要求，可以正常更新！");
+				$deal_file_array=data.deal_file_array;
+				updateFileBackUp($deal_file_array, $download_back_file, $file_start_path, $download_update_file, $version_no);
+			}else{
+				message_error(data.upgrade_message+"请检查以下要升级文件的权限是否都符合要求!");
+			}
+			$deal_file_array=data.deal_file_array;
+			$deal_file_json=JSON.parse($deal_file_array);
+			$i=0;
+			$html="";
+			for($i=0;$i<$deal_file_json.length; $i++){
+				$ver=$i+1;
+				$html=$html+$ver+"."+$deal_file_json[$i]+"<br>";
+			}
+			$("#upgrade_file_log").html($html);
+		}
+	});
+}
+/**
+ * 文件备份
+ */
+function updateFileBackUp($deal_file_array, $download_back_file, $file_start_path, $download_update_file, $version_no){
+	message_true("正在备份升级文件，请您耐心等待，备份过程中请不要关闭此页面！");
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/upgradeonline/filebackup')}",
+		data : {
+			"deal_file_array" : $deal_file_array,
+			"download_back_file" : $download_back_file
+		},
+		dataType : "json",
+		success : function(data) {
+			if(data.upgrade_code==0){
+				message_true("文件备份成功！");
+				updateFileCover($deal_file_array, $file_start_path, $download_update_file, $version_no, $download_back_file);
+			}else{
+				message_error(data.upgrade_message);
+			}
+		}
+	});
+}
+/**
+ * 文件升级
+ */
+function updateFileCover($deal_file_array, $file_start_path, $download_update_file, $version_no, $download_back_file){
+	message_true("系统正在升级中，请您耐心等待，升级过程中请不要关闭此页面！");
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/upgradeonline/updatefilecover')}",
+		data : {
+			"deal_file_array" : $deal_file_array,
+			"file_start_path" : $file_start_path
+		},
+		dataType : "json",
+		success : function(data) {
+			if(data.upgrade_code==0){
+				message_true("文件升级成功！");
+				updateSql($download_update_file, $version_no, $download_back_file);
+			}else{
+				message_error(data.upgrade_message);
+				upgradeRegain($download_back_file);
+			}
+		}
+	});
+}
+function updateSql($download_update_file, $version_no, $download_back_file){
+	message_true("正在升级数据库, 升级过程中请不要关闭此页面！");
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/upgradeonline/updateSql')}",
+		data : {
+			"download_update_file" : $download_update_file,
+			"version_no" : $version_no,
+		},
+		dataType : "json",
+		success : function(data) {
+			if(data.upgrade_code==0){
+				message_success();
+				showMessage('success', "升级成功！","{:__URL('ADMIN_MAIN/upgrade/onlineupdate')}");
+			}else{
+				message_error(data.upgrade_message);
+				upgradeRegain($download_back_file);
+			}
+		}
+	});
+}
+/**
+ * 文件恢复
+ */
+function upgradeRegain($download_back_file){
+	$("#upgrade_back").text("本次升级失败，正在还原上个版本，请不要关闭窗口");
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/upgradeonline/upgraderegain')}",
+		data : {
+			"download_back_file" : $download_back_file
+		},
+		dataType : "json",
+		success : function(data) {
+			if(data.upgrade_code==0){
+				$("#upgrade_back").text("本次升级失败，已还原原先版本，请将升级错误信息反馈给官方！");
+			}else{
+				$("#upgrade_back").text("版本还原信息："+data.upgrade_message);
+			}
+		}
+	});
+}
+</script>
+{/block}

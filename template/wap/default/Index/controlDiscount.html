@@ -1,0 +1,95 @@
+<style type="text/css">
+.group-list{overflow: hidden;}
+.group-list-box .group-list li:nth-child(2n+1) {margin-left: 0;}
+.group-list-box{width:100%;margin:0 auto;float: none;overflow-y: hidden;}
+.group-list-box .group-list li{width:49%;float:left;margin-left:1%;padding:0;margin-bottom: 3px;}
+.brand-info .brand-info-left .b-price p{color:#f23030;font-weight:bold;font-size:12px;}
+.buyer{font-size:12px;}
+.group-list-box .group-list li .brand-name {text-align:left;margin-left: 8px;}
+</style>
+<div class="controltype" >
+	<!-- <img src="__TEMP__/{$style}/public/images/limit_top.png"/> -->
+	<!-- <span class="control_l_content"><a href="APP_MAIN/index/discount" style="color:#6927FF;">限时折扣</a></span> -->
+	<a href="{:__URL('APP_MAIN/index/discount')}" style="color:#6927FF;"><img src="__TEMP__/{$style}/public/images/navimg/display_discount.png"></a>
+</div>
+<div class="group-list-box">
+	<ul class="group-list">
+	{volist name="discount_list" id="vo"}
+		<li>
+			<!-- <span class="brand-name">{$vo.goods_name}</span> -->
+			<div class="p-img">
+				<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$vo['goods_id'])}" title="{$vo.goods_name}">
+					<img src="{:__IMG($vo['picture']['pic_cover_small'])}" style="width:100%;height:auto;"onerror="this.src='__TEMP__/{$style}/public/images/goods_img_empty.png'">
+					<div class="brand-time" >
+						<i></i>
+						<span class="settime" starttime="{$vo.start_time | getTimeStampTurnTime}" endtime="{$vo.end_time | getTimeStampTurnTime}" ></span>
+					</div>
+				</a>
+				 <!-- <div class="p_discount">{$vo.discount}折</div> -->
+			</div>
+			
+			<div class="brand-name">
+				<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$vo['goods_id'])}" title="{$vo.goods_name}">{$vo.goods_name}</a>
+			</div>
+			
+			<div class="brand-info" style="height:initial;">
+				<div class="brand-info-left" style="float:none;">
+					<span class="b-price" style="float:left;margin:5px 8px;">
+						<p>￥{$vo.promotion_price}</p>
+					</span>
+					<em></em>
+					<span class="buyer" style="float:right;line-height:31px;">
+						<s style="margin-right: 10px;">
+						{if condition="$vo['market_price'] > 0"}
+							￥{$vo.market_price}
+						{/if}
+						</s>
+					</span>
+				</div>
+				<!-- <div class="brand-info-right" style="clear:both; margin-bottom: 8px;">
+				<a class="main-btn" href="APP_MAIN/goods/goodsDetail?id={$vo.goods_id}">马上抢</a>
+				</div> -->
+			</div>
+		</li>
+	{/volist}
+	</ul>
+	<input type="hidden" id="ms_time" value="{$ms_time}"/>
+</div>
+
+<script type="text/javascript">
+$().ready(function() {
+	countDown();
+});
+
+function countDown(){
+	$(".settime").each(function(i) {
+		var self = $(this);
+		var end_date = this.getAttribute("endTime"); //结束时间字符串
+		if(end_date != undefined && end_date != ''){
+			var end_time = new Date(end_date.replace(/-/g,'/')).getTime();//月份是实际月份-1
+			var sys_second = (end_time-$("#ms_time").val())/1000;
+			if(sys_second>1){
+				sys_second -= 1;
+				var day = Math.floor((sys_second / 3600) / 24);
+				var hour = Math.floor((sys_second / 3600) % 24);
+				var minute = Math.floor((sys_second / 60) % 60);
+				var second = Math.floor(sys_second % 60);
+				self.html(day + "{:lang('days')}" + ( hour<10 ? "0" + hour : hour ) + "{:lang('hours')}" + (minute<10?"0"+minute:minute) + "{:lang('minutes')}" + (second<10?"0"+second:second) + "{:lang('second')}");
+			}
+			var timer = setInterval(function(){
+				if (sys_second > 1) {
+					sys_second -= 1;
+					var day = Math.floor((sys_second / 3600) / 24);
+					var hour = Math.floor((sys_second / 3600) % 24);
+					var minute = Math.floor((sys_second / 60) % 60);
+					var second = Math.floor(sys_second % 60);
+					self.html(day + "{:lang('days')}" + (hour<10?"0"+hour:hour) + "{:lang('hours')}" + (minute<10?"0"+minute:minute) + "{:lang('minutes')}" + (second<10?"0"+second:second) + "{:lang('second')}"); 
+				} else { 
+					self.html("{:lang('activity_over')}！");
+					clearInterval(timer);
+				}
+			}, 1000);
+		}
+	});
+}
+</script>

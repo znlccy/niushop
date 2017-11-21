@@ -1,0 +1,45 @@
+<style>
+.brand-list-box{
+	width: 100%;
+	background:#fff;
+	padding: 10px 0;
+}
+.brand-list-box .controltype{
+	width: 90%;
+	padding: 0 5%;
+	vertical-align: bottom;
+}
+.brand-list-box .controltype span.title{
+	font-size: 17px;
+	color:#484848;
+	font-weight: normal;
+}
+.brand-list-box .controltype span.more{
+	color: #FF4E00;
+	float: right;
+	font-size: 12px;
+}
+.brand-list-box .controltype span.more a{
+	color: #FF4E00;
+	font-size: 12px;
+}
+</style>
+<div class="brand-list-box">
+	<div class="controltype" >
+		<span class="title">品牌推荐</span>
+		<span class="more"><a href="{:__URL('APP_MAIN/goods/brandlist')}">查看更多</a></span>
+	</div>
+	<section class="members_goodspic" style="background:#fff;border-bottom:none;">
+		<ul>
+		{foreach name="list" item="category_second" key = "k"}
+			<li class="gooditem" style="margin:0;width:33.3%;height: 90px;line-height: 90px;">
+				<div class="info" style="padding-left:0;text-align: center;">
+					<a href="{:__URL('APP_MAIN/goods/goodslist?brand_id='.$category_second['brand_id'])}">
+						<img src="{:__IMG($category_second.brand_pic)}" alt="{$category_second.brand_name}" style="max-width: 100%;max-height: 100%;vertical-align: middle;"onerror="this.src='__TEMP__/{$style}/public/images/default/default_shop_logo.png'">
+					</a>
+				</div>
+			</li>
+		{/foreach}
+		</ul>
+	</section>
+</div>

@@ -1,0 +1,273 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style type="text/css">
+.dislog-style {
+	width: 80%;
+	margin: 40px auto;
+}
+
+.modal.fade {
+	top: 50%;
+}
+
+.dislog-style ul {
+	width: 100%;
+}
+
+.dislog-style ul li span {
+	display: inline-block;
+	width: 60px;
+	text-align: center;
+	height: 40px;
+	line-height: 31px;
+}
+
+.dislog-style ul li input {
+	width: 200px;
+}
+#albumList{
+	/* border-top:1px solid #E3E3E3; */
+	overflow:hidden;
+}
+
+.input-file{
+	position: absolute;
+	top: -10px !important;
+	right: 9px !important;
+	height: 26px !important;
+	width: 94px !important;
+	filter: alpha(opacity : 0) !important; 
+	opacity: 0 !important;
+	line-height:auto;
+}
+.qrcode_button{
+	background-color:#51a351;
+	border:none;
+	margin-top:15px;
+	width:100%;
+	color:#FFF;
+	padding: 5px 10px;
+}
+.check{
+	position: absolute;
+	/* bottom: 45px; */
+	bottom:0px;
+	width: 100%;
+	height: 100%;
+	right: -1px;
+	background-color: rgba(0,0,0,0.8);
+	display:none;
+}
+.check div{
+	width:60%;
+	height:30px;
+	margin-left:20%;
+	border:1px solid #fff;
+	margin-top:10%;
+	text-align:center;
+	/* background:#00C1FF; */
+}
+.check div:hover{
+	background: #00C1FF;
+	border:1px solid #00C1FF;
+}
+.check div span{
+	font-size:15px;
+	color:#fff;
+	line-height:30px;
+}
+
+
+</style>
+{/block}
+{block name="right_tab"}
+<li onclick="load_url();" ><a class="nscs-table-handle_green"><i class="fa fa-plus-circle"></i>&nbsp;添加自定义模板</a></li>
+
+{/block}{block name="main"}
+
+<div id="pictureIndex" class="ncsc-picture-folder">
+	<div class="ncsc-album">
+		<div style="clear:both;"></div>
+		<ul id="albumList" >
+		{foreach name="template_list" item="info"}
+			{if condition="($key+2)%4 ==0 "} 
+				<li  style="opacity: 1;height:auto;position:relative;width:19%;margin-right:1%;margin-top:10px;margin-bottom:10px;"  onmouseover="checkShowThis(this);"  onmouseout="checkHideThis(this);" >			
+			{else /} 
+				<li  style="opacity: 1;height:auto;position:relative;width:19%;margin-right:1%;margin-top:10px;margin-bottom:10px;" onmouseover="checkShowThis(this);"  onmouseout="checkHideThis(this);" >
+			{/if}
+			<!-- <img src="__UPLOAD__/{$info.template_url}" onclick="checkShowThis(this);"/> --> 
+			{if condition="$info.is_check == 1 "} 
+				<!-- <p style="color: #000;">/NiuFrameWork/{$info.template_url}</p> -->
+					{if condition='file_exists("$info[template_url]")'}
+					<img src="{:__IMG($info.template_url)}" style="border:1px solid #00C0FF;"/>
+					{else /}
+					<img src="__STATIC__/images/qrcode_bg/template_bg_img.png" style="border:1px solid #00C0FF;"/>
+					{/if}
+			{else /} 
+					{if condition='file_exists("$info[template_url]")'}
+					<img src="{:__IMG($info.template_url)}" style="border:1px solid #eee;"/>
+					{else /}
+					<img src="__STATIC__/images/qrcode_bg/template_bg_img.png" style="border:1px solid #eee;"/>
+					{/if}
+			{/if}	
+			<div class="check" >
+			{if condition="$info.is_check == 1 "} 
+				<!-- <div style="margin-top:60%;cursor:pointer;" onclick="deleteWeixinQrcodeTemplateValid({$info.id})">
+					<span>删除</span>
+				</div> -->
+				<div onclick="modifyWeixinQrcode({$info.id})" style="margin-top:60%;cursor:pointer;">
+					<span>编辑</span>
+				</div>
+				{else /} 
+				<div style="margin-top:50%;cursor:pointer;" onclick="modifyWeixinQrcodeTemplateValid({$info.id})">
+					<span >设为默认</span>
+				</div>
+				<div onclick="deleteWeixinQrcodeTemplateValid({$info.id})" style="cursor:pointer;">
+					<span>删除</span>
+				</div>
+				<div onclick="modifyWeixinQrcode({$info.id})" style="cursor:pointer;">
+					<span>编辑</span>
+				</div>
+				{/if}	
+				
+			</div>						
+			<!--<div style="width:185px;height:328px;background:#181806;position:absolute;"></div> -->
+			<input type="hidden" class="id"value="{$info.id}"/>
+			<input type="hidden" class="background"value="{$info.background}"/>
+			<input type="hidden" class="nick_font_color"value="{$info.nick_font_color}"/>
+			<input type="hidden" class="nick_font_size"value="{$info.nick_font_size}"/>
+			<input type="hidden" class="is_logo_show"value="{$info.is_logo_show}"/>
+			<input type="hidden" class="header_left"value="{$info.header_left}"/>
+			<input type="hidden" class="header_top"value="{$info.header_top}"/>
+			<input type="hidden" class="name_left"value="{$info.name_left}"/>
+			<input type="hidden" class="name_top"value="{$info.name_top}"/>
+			<input type="hidden" class="logo_left"value="{$info.logo_left}"/>
+			<input type="hidden" class="logo_top"value="{$info.logo_top}"/>
+			<input type="hidden" class="code_left"value="{$info.code_left}"/>
+			<input type="hidden" class="code_top"value="{$info.code_top}"/>
+			<div>
+				{if condition="$info.is_check == 1 "} 
+					<img src="ADMIN_IMG/check_qrcode1.png"class="qrcode_img" style="position:absolute;top:0px;left:1px;"/>
+				{else /} 
+					<img src="ADMIN_IMG/check_qrcode1.png" class="qrcode_img"style="position:absolute;top:0px;leftt:1px;display:none;"/>
+				{/if}
+			</div>
+		    </li>
+		{/foreach}
+		</ul>
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+
+<script type="text/javascript">
+function checkShowThis(event){
+	$(".qrcode_button").hide();
+	$(".check").hide();
+	$(event).find(".qrcode_button").show();
+	$(event).find(".check").show();
+}
+function checkHideThis(event){
+	$(event).find(".qrcode_button").hide();
+	$(event).find(".check").hide();
+}
+/**
+ * 上传配置
+ */
+function save(event){
+	/* var id = $(event).parent().parent().children(".id").val(); */
+	var background = $(event).parent().parent().children(".background").val();
+	var nick_font_color = $(event).parent().parent().children(".nick_font_color").val();
+	var nick_font_size = $(event).parent().parent().children(".nick_font_size").val();
+	var is_logo_show = $(event).parent().parent().children(".is_logo_show").val();
+	
+	var header_left = $(event).parent().parent().children(".header_left").val();
+	var header_top = $(event).parent().parent().children(".header_top").val();
+	var name_left = $(event).parent().parent().children(".name_left").val();
+	var name_top = $(event).parent().parent().children(".name_top").val();
+	var logo_left =$(event).parent().parent().children(".logo_left").val();
+	var logo_top = $(event).parent().parent().children(".logo_top").val();
+	var code_left = $(event).parent().parent().children(".code_left").val();
+	var code_top = $(event).parent().parent().children(".code_top").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/wchat/qrcode')}",
+		data : {
+			'background' : background,
+			'nick_font_color' : nick_font_color,
+			'nick_font_size' : nick_font_size,
+			'is_logo_show' : is_logo_show,
+			'header_left' : header_left,
+			'header_top' : header_top,
+			'name_left' : name_left,
+			'name_top' : name_top,
+			'logo_left' : logo_left,
+			'logo_top' : logo_top,
+			'code_left' : code_left,
+			'code_top' : code_top
+		},
+		async : true,
+		success : function(data) {
+			 if(data['code'] > 0){
+				 showMessage('success', data['message'], "{:__URL('ADMIN_MAIN/wchat/weixinqrcodetemplate')}");
+			 }else{
+				 showMessage('error', data['message']);
+			 }
+		}
+	})
+	
+}
+/**
+ * 设置店铺的模板为默认
+ */
+function modifyWeixinQrcodeTemplateValid(id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/wchat/modifyweixinqrcodetemplatevalid')}",
+		data : {
+			'id' : id
+		},
+		async : true,
+		success : function(data) {
+			location.reload();
+			if(data['code'] > 0){
+				 showMessage('success', data['message'], "{:__URL('ADMIN_MAIN/wchat/weixinqrcodetemplate')}");				 
+			 }else{
+				 showMessage('error', data['message']);
+			 } 
+		}
+	})
+}
+
+function deleteWeixinQrcodeTemplateValid(id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/wchat/deleteweixinqrcodetemplatevalid')}",
+		data : {
+			'id' : id
+		},
+		async : true,
+		success : function(data) {
+			if(data['code'] > 0){
+				 showMessage('success', data['message'], "{:__URL('ADMIN_MAIN/wchat/weixinqrcodetemplate')}");				 
+			 }else{
+				 showMessage('error', data['message']);
+			 } 
+		}
+	})
+}
+function updateQrcodeCheck(id){
+	
+}
+
+function load_url(){
+	window.location.href="{:__URL('ADMIN_MAIN/wchat/qrcode')}";
+}
+
+function modifyWeixinQrcode(id){
+	window.location.href=__URL('ADMIN_MAIN/wchat/qrcode?id=' + id);
+}
+</script>
+
+{/block}

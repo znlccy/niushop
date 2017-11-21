@@ -1,0 +1,244 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<style  type="text/css">
+.set-style{
+	width:100%;
+}
+.set-style dl{
+	width:100%;
+	font-size: 0;
+	/* line-height: 20px; */
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: dotted 1px #E6E6E6;
+	overflow: hidden;
+}
+.set-style dl dt{
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 19%;
+	padding: 10px 1% 10px 0;
+	margin: 0;
+	font-weight:normal;
+}
+.set-style dl dd{
+	
+	font-size: 12px;
+	line-height: 32px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 78%;
+	padding: 10px 0 10px 0;
+}
+.set-style dl dd input[type="text"]{
+	font: 12px/20px Arial;
+	color: #777;
+	background-color: #FFF;
+	vertical-align: top;
+	display: inline-block;
+	height:24px;
+	line-height:24px;
+	padding: 4px;
+	border: 1px solid #CCC;
+	outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.set-style dl dd textarea{
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+	width: 400px;
+	margin:0;
+}
+.hint{
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+.set-style dl dd p img{
+	border: medium none;
+	vertical-align: middle;
+}
+.class-logo{
+	background-color: #FFF;
+	position: relative;
+	z-index: 1;
+}
+.class-logo p{
+	width: 200px;
+	height: 60px;
+	line-height: 0;
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	*display: block;
+	overflow: hidden;
+	    margin: 0 0 10px;
+		border: dashed 1px #E6E6E6;
+}
+.class-logo p img{
+	max-width: 200px;
+	max-height: 60px;
+	border: medium none;
+	vertical-align: middle;
+	margin-top: expression(60-this.height/2);
+	*margin-top: expression(30-this.height/2);
+}
+.edit_button{
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:30px;
+	padding-right:30px;
+	background-color:#51A351;
+	color:#FFF;
+	margin:20px auto;
+	border:none;
+	display:block;
+}
+.error{
+	font-size: 12px;
+    line-height: 16px;
+    color: red;
+    margin-top: 10px;
+	display:none;
+}
+.set-style dl dd p{
+	margin-bottom:0;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>图片:</dt>
+		<dd>
+			<div class="class-logo"><p><img id="imgLogo"src="" ></p></div>
+			<div class="ncsc-upload-btn"> 
+			    <a href="javascript:void(0);"><span>
+			          <input hidefocus="true" size="1" class="input-file" name="file_upload" id="uploadImg" nc_type="change_store_label" type="file" onchange="imgUpload(this);">
+			        <input type="hidden"id="Logo"value=""/></span><p><i class="icon-upload-alt"></i>上传图片</p>
+			    </a> 
+			</div>
+			<p class="hint"><br><span style="color:orange;">建议使用宽100像素-高100像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>链接地址:</dt>
+		<dd>
+			<p><input name="UserCode" id="link_url" type="text"> </p>
+			<p class="error">请输入链接地址</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>类型:</dt>
+		<dd>
+			<p><select id="type"><option value="0">pc端</option><option value="1">手机端</option></select></p>
+			<p class="error">请选择类型</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>背景色:</dt>
+		<dd>
+			<p><input name="UserCode" id="background" type="color"></p>
+			<p class="error">请选择类型</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序:</dt>
+		<dd>
+			<p><input name="UserCode" id="sort" type="text"></p>
+			<p class="error">请输入序号</p>
+		</dd>
+	</dl>
+	
+	<button class="edit_button" onclick="addShopAdAjax();">提交</button>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>	
+	/**
+	*模块输入信息验证
+	*/
+	function verify( ad_image,link_url){
+		if(ad_image == ''){
+			$("#ad_image").parent().next().show();
+			return flase;
+		}else{
+			$(".error").hide();
+		}
+		if(link_url == ''){
+			$("#link_url").parent().next().show();
+			return flase;
+		}else{
+			$(".error").hide();
+		}
+	}
+	/**
+	*添加模块
+	*/
+	function addShopAdAjax() {
+		var ad_image = $("#Logo").val();
+		var link_url = $("#link_url").val();
+		var type = $("#type").val();
+		var sort = $("#sort").val();
+		var background = $("#background").val();
+		verify(ad_image, link_url);
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/config/addshopad')}",
+			data : {
+				'ad_image' : ad_image,
+				'link_url' : link_url,
+				'type' : type,
+				'sort' : sort,
+				'background' : background,
+			},
+			async : true,
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', "店铺广告添加成功","{:__URL('ADMIN_MAIN/config/shopadlist')}");
+				}else{
+					showMessage('error', "店铺广告添加失败");
+				}
+			}
+		});
+	}
+	/**
+	 *图片上传
+	 */
+	function imgUpload(event) {
+		var fileid = $(event).attr("id");
+		var data = { 'file_path' : UPLOADADV };
+		uploadFile(fileid,data,function(res){
+			if(res.code){
+				$("#imgLogo").attr("src",__IMG(res.data));
+				$("#Logo").val(res.data);
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		});
+	}
+</script>
+{/block}

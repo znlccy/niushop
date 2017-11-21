@@ -1,0 +1,69 @@
+{extend name="wap/default_new/base" /} {block name="resources"}
+<link rel="stylesheet" type="text/css"
+	href="__TEMP__/{$style}/public/css/member_address.css">
+<style>
+body{
+	background-color:#FFF;
+}
+.qrcode_bg img{
+	margin-left:15px;
+}
+.shop-text{
+	margin-left:15px;
+	color:#333;
+	font-size:15px;
+}
+.shop-text li{
+	height:25px;
+	line-height:25px;
+}
+.shop-align{
+	display:inline-block;
+	width:80px;
+	
+}
+</style>	
+{/block} {block name="goodsHead"}
+<section class="head">
+	<a class="head_back" id="backoutapp" onclick="window.history.go(-1)"
+		href="javascript:void(0)"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('two_dimensional_store_code')}</div>
+</section>
+{/block} {block name="main"}
+<img class="shop-qrcode" src="{:__URL('APP_MAIN/member/showshopqecode?shop_id='.$shop_id)}" style="width:100%;margin-top:45px;"/>
+
+{include file='wap/default_new/share'/}
+
+{/block}
+{block name="bottom"}{/block} 
+ {block name="javascript"}
+<script type="text/javascript">
+$(function(){
+	//$(".shop-qrcode").height($(window).height()-45);
+	$.ajax({
+		type:"post",
+		data : {"shop_id" : "{$shop_id}" , "flag" : "qrcode_shop"},
+		url : "{:__URL('APP_MAIN/member/getsharecontents')}",
+		success : function(data){
+			/* alert($("#appId").val());
+			alert($("#jsTimesTamp").val());
+			alert($("#jsNonceStr").val());
+			alert($("#jsSignature").val()); */
+			//document.write(data.share_img);
+			/* $("#share_title").val(data['share_title']);
+			$("#share_desc").val(data['share_contents']);
+			$("#share_url").val(data['share_url']);
+			$("#share_img_url").val(data['share_img']);\ */
+			{include file='wap/default_new/shareContents'/}
+
+		}
+	});
+});
+$("#backoutapp").click(function (){
+    var json ={
+    		"center" : "1",
+        }
+    window.webkit.messageHandlers.center.postMessage(json);
+})
+</script>
+{/block}

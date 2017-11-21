@@ -1,0 +1,89 @@
+{extend name="adminblue/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>钩子名称:</dt>
+		<dd>
+			<p><input id="name" type="text" value="{$info['name']}" class="input-common"></p>
+			<p class="error">请输入钩子名称</p>
+			<p class="hint">需要在程序中先添加钩子，否则无效</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>钩子描述:</dt>
+		<dd>
+			<p><textarea id="desc" class="input-common">{$info['description']}</textarea></p>
+			<p class="hint">钩子的描述信息</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>钩子类型:</dt>
+		<dd>
+			<p>
+				<select id="type" class="select-common">
+					<option value="1" {eq name="info['type']" value="1"}selected{/eq}>视图</option>
+					<option value="2" {eq name="info['type']" value="2"}selected{/eq}>控制器</option>
+				</select>
+			</p>
+			<p class="hint">区分钩子的主要用途</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>挂载的插件排序:</dt>
+		<dd>
+		{notempty name="info['addons']"}
+			{foreach name="info['addons']" item="v"}
+				<div>{$v}</div>
+			{/foreach}
+		{else}
+			<p>暂无插件，无法进行排序</p>
+		{/notempty}
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="save()">确定</button></dd>
+	</dl>
+</div>
+<script>
+//添加广告位
+function save() {
+	var name = $("#name").val();
+	var desc = $("#desc").val();
+	var type = $("#type").val();
+	var addons = '';
+	if(verify(name)){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/extend/updateHooks')}",
+			data : {
+				'id' : {$info['id']},
+				'name' : name,
+				'desc' : desc,
+				'type' : type,
+				'addons' : addons,
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', "保存成功","{:__URL('ADMIN_MAIN/extend/hookslist')}");
+				}else{
+					showMessage('error', "保存失败");
+				}
+			}
+		});
+	}
+}
+
+function verify(name){
+	if(name == ''){
+		$("#name").parent().next(".error").show();
+		$('#name').focus();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+</script>
+{/block}

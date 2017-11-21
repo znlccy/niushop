@@ -1,4 +1,4 @@
-# Niushop B2C 商城系统
+# Niushop
 
 [![OSSLab](https://img.shields.io/badge/OSSLab-开源软件实验室-blue.svg?style=flat)](http://osslab.online)
 [![mysql](https://img.shields.io/badge/mysql-5.0+-blue.svg)](https://www.mysql.com/)

@@ -942,9 +942,9 @@ function tpl_frame() {
 		<div class="container">
 			<div class="header" style="margin:15px auto;">
 				<ul class="nav nav-pills pull-right" role="tablist">
-					<li role="presentation" class="active"><a href="javascript:;">安装Niushop开源商城</a></li>
-					<li role="presentation"><a target = "_blank" href="http://www.niushop.com.cn">Niushop开源商城官网</a></li>
-					<li role="presentation"><a target = "_blank" href="http://www.niushop.com.cn/forummain.html">访问论坛</a></li>
+					<li role="presentation" class="active"><a href="javascript:;">开始安装</a></li>
+					<li role="presentation"><a target = "_blank" href="http://www.niushop.com.cn">官方网站</a></li>
+					<li role="presentation"><a target = "_blank" href="http://forum.osi.ltd">技术支持</a></li>
 				</ul>
 				<img src="?res=logo" />
 			</div>
@@ -973,10 +973,10 @@ function tpl_frame() {
 			</div>
 			<div class="footer" style="margin:15px auto;">
 				<div class="text-center">
-					<a  target = "_blank" href="http://www.niushop.com.cn">Niushop开源商城官网</a> &nbsp; &nbsp; <a  target = "_blank" href="http://www.niushop.com.cn/forummain.html">Niushop开源商城论坛</a> &nbsp; &nbsp; <a target = "_blank" href="http://www.niushop.com.cn/authorization.html">购买授权</a>
+					<a  target = "_blank" href="http://www.niushop.com.cn">官方网站</a> &nbsp; &nbsp; <a  target = "_blank" href="http://forum.osi.ltd">社区论坛</a> &nbsp; &nbsp; <a target = "_blank" href="http://forum.osi.ltd">技术支持</a>
 				</div>
 				<div class="text-center">
-					Powered by <a   target = "_blank" href="http://www.niushop.com.cn"><b>Niushop开源商城</b></a> niu_version &copy; 2015-2025 <a target = "_blank" href="http://www.niushop.com.cn">www.niushop.com.cn</a>
+				Copyright &copy; 2015-2025 <a target = "_blank" href="http://www.niushop.com.cn">NIUSHOP开源商城 版权所有 保留一切权利</a>
 				</div>
 			</div>
 		</div>

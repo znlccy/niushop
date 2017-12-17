@@ -63,7 +63,7 @@ $(function(){
 			$(this).show().parents('.business-box').siblings('.reply-box').toggle();
 		});
 	});
-	$('.business-box').mouseleave(function(){		
+	$('.business-box').mouseleave(function(){
 		if ($(this).siblings('.reply-box').css("display") == "none"){
 			$(this).find(".btn-reply").hide();
 			}
@@ -124,5 +124,3 @@ function packageView(a){
 }
 packageView('.tab-content1');
 packageView('.tab-content2');
-
-

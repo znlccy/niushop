@@ -122,181 +122,172 @@
 <!-- logo栏小广告  -->
 {include file='shop/blue/controlHeadSearchAdv' ap_id='1052'/}
 <script type="text/javascript">
-	$(document).ready(function() {
-		// 搜索框提示显示
-		$('.NS-SEARCH-BOX .NS-SEARCH-BOX-KEYWORD').focus(function() {
-			$(".NS-SEARCH-BOX .NS-SEARCH-BOX-HELPER").show();
-		});
-		// 搜索框提示隐藏
-		$(".NS-SEARCH-BOX-HELPER .close").on('click',function() {
-			$(".NS-SEARCH-BOX .NS-SEARCH-BOX-HELPER").hide();
-		});
-		// 清除记录
-		$(".NS-SEARCH-BOX-HELPER .clear").click(function() {
-			var url = '/search/clear-record.html';
-			$.post(
-				url,
-				{},
-				function(result) {
-					if (result.code == 0) {
-						$(".history-results .active").empty();
-					} else {
-					}
-				},
-				'json');
-		});
+$(document).ready(function() {
+	// 搜索框提示显示
+	$('.NS-SEARCH-BOX .NS-SEARCH-BOX-KEYWORD').focus(function() {
+		$(".NS-SEARCH-BOX .NS-SEARCH-BOX-HELPER").show();
 	});
-	function search_box_remove(key) {
-		var url = '/search/delete-record.html';
-		$.post(url, {
-			data : key
-		}, function(result) {
-			if (result.code == 0) {
-				$("#" + key).css("display", "none");
-			} else {
+	// 搜索框提示隐藏
+	$(".NS-SEARCH-BOX-HELPER .close").on('click',function() {
+		$(".NS-SEARCH-BOX .NS-SEARCH-BOX-HELPER").hide();
+	});
+	// 清除记录
+	$(".NS-SEARCH-BOX-HELPER .clear").click(function() {
+		var url = '/search/clear-record.html';
+		$.post(
+			url,
+			{},
+			function(result) {
+				if (result.code == 0) {
+					$(".history-results .active").empty();
+				} else {
+				}
+			},
+			'json');
+	});
+});
+function search_box_remove(key) {
+	var url = '/search/delete-record.html';
+	$.post(url, {
+		data : key
+	}, function(result) {
+		if (result.code == 0) {
+			$("#" + key).css("display", "none");
+		} else {
 
-			}
-		}, 'json');
+		}
+	}, 'json');
+}
+$(document).on("click", function(e) {
+	var target = $(e.target);
+	if (target.closest(".NS-SEARCH-BOX").length == 0) {
+		$('.NS-SEARCH-BOX-HELPER').hide();
 	}
-	$(document).on("click", function(e) {
-		var target = $(e.target);
-		if (target.closest(".NS-SEARCH-BOX").length == 0) {
-			$('.NS-SEARCH-BOX-HELPER').hide();
-		}
-	})
-	// 鼠标移上时显示
-	$(".header-right").hover(
-		function(){
-			refreshShopCartBlue();
-			$(".cart-box-mask-layer").show();
-			$(".header .header-right a.my-cart span.right_border").css({
-				"transform" :"rotate(225deg)",
-				"marginTop" : "1px"
-			})
-		},
-		function(){
-			refreshShopCartBlue();
-			$(".cart-box-mask-layer").hide();
-			$(".header .header-right a.my-cart span.right_border").css({
-				"transform" : "rotate(45deg)",
-				"marginTop" : "-8px"
-			});
-		}
-	)
+})
+// 鼠标移上时显示
+$(".header-right").hover(
+	function(){
+		refreshShopCartBlue();
+		$(".cart-box-mask-layer").show();
+		$(".header .header-right a.my-cart span.right_border").css({
+			"transform" :"rotate(225deg)",
+			"marginTop" : "1px"
+		})
+	},
+	function(){
+		refreshShopCartBlue();
+		$(".cart-box-mask-layer").hide();
+		$(".header .header-right a.my-cart span.right_border").css({
+			"transform" : "rotate(45deg)",
+			"marginTop" : "-8px"
+		});
+	}
+)
 </script>
 <script type="text/javascript">
-	//固定搜索
-	$(document).ready(function() {
-		$(".NS-SEARCH-BOX .NS-SEARCH-BOX-SUBMIT").click(function() {
-			var keyword_obj = $(this).parents(".NS-SEARCH-BOX").find(".NS-SEARCH-BOX-KEYWORD");
-			var keywords = keyword_obj.val();
-			if ($.trim(keywords).length == 0 || $.trim(keywords) == "{:lang('please_input_keywords')}") {
-				keywords = keyword_obj.attr("data-searchwords");
-			}
-			
-			$(keyword_obj).val(keywords);
-			if(keywords==null)
-			{
-				keywords = "";
-			}
-
-			if($.cookie("searchRecord") != undefined){
-				var arr = eval($.cookie("searchRecord"));				
-			}else{
-				var arr = new Array();
-			}
-			if(arr.length >0 ){
-				if($.inArray(keywords,arr)< 0){
-					arr.push(keywords);
-				}
-			}else{
-				arr.push(keywords);
-			}
-			$.cookie("searchRecord",JSON.stringify(arr));
-
-			if ($(".search-li.curr").attr('num') == 0) {
-				window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
-			}else{
-				window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
-			}
-		});
-	});
-	//浮动搜索
-	$(document).ready(function() {
-		$(".NS-SEARCH-BOX-TOP .NS-SEARCH-BOX-SUBMIT-TOP").click(function() {
-			var keyword_obj = $(this).parents(".NS-SEARCH-BOX-TOP").find(".NS-SEARCH-BOX-KEYWORD");
-			var keywords = $(keyword_obj).val();
-			if ($.trim(keywords).length == 0
-					|| $.trim(keywords) == "{:lang('please_input_keywords')}") {
-				keywords = $(keyword_obj).attr("data-searchwords");
-			}
-
-			if($.cookie("searchRecord") != undefined){
-				var arr = eval($.cookie("searchRecord"));				
-			}else{
-				var arr = new Array();
-			}
-			if(arr.length >0 ){
-				if($.inArray(keywords,arr)< 0){
-					arr.push(keywords);
-				}
-			}else{
-				arr.push(keywords);
-			}
-			$.cookie("searchRecord",JSON.stringify(arr));
-
-			$(keyword_obj).val(keywords);
-			if ($(".search-li-top.curr").attr('num') == 0) {
-				window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
-			}else{
-				window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
-			}
-		});
-	});
-	
-	
-	
-	  
-	
-	
-	
-	//回车键搜索
-	$('.NS-SEARCH-BOX-KEYWORD').bind('keypress', function (event) {
-		if (event.keyCode == 13) { 
-			var keyword_obj = $(this).parents(".NS-SEARCH-BOX").find(".NS-SEARCH-BOX-KEYWORD");
-			var keywords = keyword_obj.val();
-			if ($.trim(keywords).length == 0 || $.trim(keywords) == "{:lang('please_input_keywords')}") {
-				keywords = keyword_obj.attr("data-searchwords");
-			}
-			
-			$(keyword_obj).val(keywords);
-			if(keywords==null)
-			{
-				keywords = "";
-			}
-	
-			if($.cookie("searchRecord") != undefined){
-				var arr = eval($.cookie("searchRecord"));				
-			}else{
-				var arr = new Array();
-			}
-			if(arr.length >0 ){
-				if($.inArray(keywords,arr)< 0){
-					arr.push(keywords);
-				}
-			}else{
-				arr.push(keywords);
-			}
-			$.cookie("searchRecord",JSON.stringify(arr));
-	
-			if ($(".search-li.curr").attr('num') == 0) {
-				window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
-			}else{
-				window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
-			}
+//固定搜索
+$(document).ready(function() {
+	$(".NS-SEARCH-BOX .NS-SEARCH-BOX-SUBMIT").click(function() {
+		var keyword_obj = $(this).parents(".NS-SEARCH-BOX").find(".NS-SEARCH-BOX-KEYWORD");
+		var keywords = keyword_obj.val();
+		if ($.trim(keywords).length == 0 || $.trim(keywords) == "{:lang('please_input_keywords')}") {
+			keywords = keyword_obj.attr("data-searchwords");
 		}
-	})
-	
-	
-	
+		keywords = keywords.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+		$(keyword_obj).val(keywords);
+		if(keywords==null)
+		{
+			keywords = "";
+		}
+
+		if($.cookie("searchRecord") != undefined){
+			var arr = eval($.cookie("searchRecord"));
+		}else{
+			var arr = new Array();
+		}
+		if(arr.length >0 ){
+			if($.inArray(keywords,arr)< 0){
+				arr.push(keywords);
+			}
+		}else{
+			arr.push(keywords);
+		}
+		$.cookie("searchRecord",JSON.stringify(arr));
+
+		if ($(".search-li.curr").attr('num') == 0) {
+			window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
+		}else{
+			window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
+		}
+	});
+});
+//浮动搜索
+$(document).ready(function() {
+	$(".NS-SEARCH-BOX-TOP .NS-SEARCH-BOX-SUBMIT-TOP").click(function() {
+		var keyword_obj = $(this).parents(".NS-SEARCH-BOX-TOP").find(".NS-SEARCH-BOX-KEYWORD");
+		var keywords = $(keyword_obj).val();
+		if ($.trim(keywords).length == 0
+				|| $.trim(keywords) == "{:lang('please_input_keywords')}") {
+			keywords = $(keyword_obj).attr("data-searchwords");
+		}
+		keywords = keywords.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+		if($.cookie("searchRecord") != undefined){
+			var arr = eval($.cookie("searchRecord"));
+		}else{
+			var arr = new Array();
+		}
+		if(arr.length >0 ){
+			if($.inArray(keywords,arr)< 0){
+				arr.push(keywords);
+			}
+		}else{
+			arr.push(keywords);
+		}
+		$.cookie("searchRecord",JSON.stringify(arr));
+
+		$(keyword_obj).val(keywords);
+		if ($(".search-li-top.curr").attr('num') == 0) {
+			window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
+		}else{
+			window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
+		}
+	});
+});
+
+//回车键搜索
+$('.NS-SEARCH-BOX-KEYWORD').bind('keypress', function (event) {
+	if (event.keyCode == 13) { 
+		var keyword_obj = $(this).parents(".NS-SEARCH-BOX").find(".NS-SEARCH-BOX-KEYWORD");
+		var keywords = keyword_obj.val();
+		if ($.trim(keywords).length == 0 || $.trim(keywords) == "{:lang('please_input_keywords')}") {
+			keywords = keyword_obj.attr("data-searchwords");
+		}
+		
+		$(keyword_obj).val(keywords);
+		if(keywords==null)
+		{
+			keywords = "";
+		}
+
+		if($.cookie("searchRecord") != undefined){
+			var arr = eval($.cookie("searchRecord"));
+		}else{
+			var arr = new Array();
+		}
+		if(arr.length >0 ){
+			if($.inArray(keywords,arr)< 0){
+				arr.push(keywords);
+			}
+		}else{
+			arr.push(keywords);
+		}
+		$.cookie("searchRecord",JSON.stringify(arr));
+
+		if ($(".search-li.curr").attr('num') == 0) {
+			window.location.href = __URL('SHOP_MAIN/goods/goodslist?keyword='+keywords);
+		}else{
+			window.location.href = __URL('SHOP_MAIN/shop/shopstreet?shopname='+keywords);
+		}
+	}
+})
 </script>

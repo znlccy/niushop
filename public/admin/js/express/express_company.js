@@ -120,6 +120,6 @@ function DelExpressCompany(co_id){
 				$(this).dialog('close');
 			}
 		},
-		contentText:"是否删除物流公司？",
+		contentText:"删除物流公司，将同时删除该物流公司下的运费模板与打印模板，是否删除物流公司？",
 	});
 }

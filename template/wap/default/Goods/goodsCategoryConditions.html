@@ -71,10 +71,12 @@
 				{else/}
 				<div class="condition_name" is_open = "0"><span>价格</span></div>
 				{/if}
-				<div class="condition_value">
+				<div class="condition_value" data-screen-type="price">
 					<a href="javascript:;" class="selected all">全部<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
 					{foreach name="$category_price_grades" item="price_grades" key="k"}
+						{if condition="$price_grades[1] != 0"}
 						<a href="javascript:;" data-min-price="{$price_grades[0]}" data-max-price="{$price_grades[1]}">￥{$price_grades[0]}&nbsp;-&nbsp;￥{$price_grades[1]}<img src="__TEMP__/{$style}/public/images/pro_span4.png" alt=""></a>
+						{/if}
 					{/foreach}
 				</div>
 			</li>

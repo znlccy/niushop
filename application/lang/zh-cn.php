@@ -99,6 +99,7 @@ return [
      'no_article'                     => '暂无文章',
      'home_page'                      => '首页',
      'article_center'                 => '文章中心',
+     'article_list'                   => '文章列表',
     //index
      'friendship_link'                => '友情链接',
      'welcome_login'                  => '欢迎登录',
@@ -1378,7 +1379,21 @@ return [
     //首页楼层
     'floor_more'                                                          => '更多',
     'goods_manjian'                                                       => '满减',
-    'no_notice'                                                           => '暂无公告'
+    'no_notice'                                                           => '暂无公告',
+    
+    'view_details'                                                        => '查看详情',
+    'virtual_orders'                                                      => '虚拟订单',
+    'view_virtual_code'                                                   => '查看虚拟码',
+    'virtual_goods'                                                       => '虚拟商品',
+    'virtual_code'                                                        => '虚拟码',
+    'virtual_goods_name'                                                  => '虚拟商品名称',
+    'expiration_time'                                                     => '过期时间',
+    'order_user_phone_tip'                                                => '请填写手机号码，方便卖家与您联系',
+    'regular_orders'                                                      => '普通订单',
+    'order_user_phone_instruction'                                        => '您本次购买的虚拟商品不需要收货地址，请填写手机号码，方便卖家与您联系',
+    'virtual_goods_orders_are_consumed_by_virtual_code'                   => '虚拟商品订单凭虚拟码消费',
+    'contact_information'                                                 => '联系方式'
+    
      ];
 
 

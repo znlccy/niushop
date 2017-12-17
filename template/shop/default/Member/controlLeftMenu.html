@@ -38,7 +38,10 @@
       </div>
       <div class="func func2 clearfix">
         <p class="title"><i></i><span>{:lang('member_trading_center')}</span></p>
-        <a href="{:__URL('SHOP_MAIN/member/orderlist')}"  class="item "><span>{:lang('member_my_order')}</span><i></i></a> 
+        <a href="{:__URL('SHOP_MAIN/member/orderlist')}"  class="item "><span>{:lang('member_my_order')}</span><i></i></a>
+        {if condition="$is_open_virtual_goods"}
+        <a href="{:__URL('SHOP_MAIN/member/virtualorderlist')}"  class="item "><span>{:lang('virtual_orders')}</span><i></i></a>
+        {/if} 
         <a href="{:__URL('SHOP_MAIN/member/backlist')}"   class="item "><span>{:lang('refund_return_maintenance')}</span><i></i></a> 
         <a href="{:__URL('SHOP_MAIN/member/goodsevaluationlist')}"   class="item "><span>{:lang('commodity_evaluation_drying_list')}</span><i></i></a> 
         <a href="{:__URL('SHOP_MAIN/member/goodscollectionlist')}" class="item "><span>{:lang('member_merchandise_collection')}</span><i></i></a> 

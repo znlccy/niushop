@@ -25,16 +25,37 @@
 		</dd>
 	</dl>
 	<dl>
+		<dt>实物类别：</dt>
+		<dd>
+			<label class="radio inline normal"><input type="radio" name="goods_type" value="1" checked="checked">实物商品</label>
+			<label class="radio inline normal"><input type="radio" name="goods_type" value="0">虚拟商品</label>
+		</dd>
+	</dl>
+	<dl class="js-virtual-goods-type-block">
+		<dt><i class="required">*</i>虚拟商品类型：</dt>
+		<dd>
+			<div class="controls brand-controls">
+				<select id="virtual_goods_type_id">
+					<option value="0">请选择虚拟商品类型</option>
+					{foreach name="virtual_goods_type_list" item="virtual_goods_type"}
+					<option value="{$virtual_goods_type.virtual_goods_type_id}">{$virtual_goods_type.virtual_goods_type_name}</option>
+					{/foreach}
+					
+				</select>
+			</div>
+		</dd>
+	</dl>
+	<dl>
 		<dt><i class="required">*</i>商品名称：</dt>
 		<dd>
-			<input class="productname" type="text" id="txtProductTitle" placeholder="请输入商品名称，不能超过60个字" oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("商品名称不能超过60个字符").show();}'/>
+			<input class="productname" type="text" id="txtProductTitle" placeholder="请输入商品名称，不能超过60个字" oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("商品名称不能超过60个字符").show();}else{$(this).next().hide();}'/>
 			<span class="help-inline">请填写商品名称</span>
 		</dd>
 	</dl>
 	<dl>
 		<dt>商品促销语：</dt>
 		<dd>
-			<input class="productname" type="text" id="txtIntroduction" placeholder="请输入促销语，不能超过60个字符" oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("促销语不能超过60个字符").show();}'/>
+			<input class="productname" type="text" id="txtIntroduction" placeholder="请输入促销语，不能超过60个字符" oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("促销语不能超过60个字符").show();}else{$(this).next().hide();}'/>
 			<span class="help-inline">商品促销语输入不正确</span>
 		</dd>
 	</dl>
@@ -47,11 +68,12 @@
 	</dl>
 	<dl style="overflow: inherit;">
 		<dt>商品品牌：</dt>
-		<dd>
+		<dd class="js-brand-block">
 			<div class="controls brand-controls">
 				<select id="brand_id" style="display: none;"><option value="0">请选择商品品牌</option></select>
 				<input type="text" id="selected_brand_name" style="padding:0;margin:0;opacity: 0;position: absolute;"/>
 			</div>
+			<p class="hint">可输入品牌名或品牌首字母来搜索品牌</p>
 		</dd>
 	</dl>
 	<dl>
@@ -113,6 +135,18 @@
 		<dd>
 			<input type="text" id="txtProductCodeA" placeholder="请输入商家编码" />
 			<span class="help-inline">请输入商家编码，不能超过40个字符</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>生产日期：</dt>
+		<dd>
+			<input type="text" id="production_date" onclick="WdatePicker()">
+		</dd>
+	</dl>
+	<dl>
+		<dt>保质期：</dt>
+		<dd>
+			<input type="text" id="shelf_life" maxlength="45">
 		</dd>
 	</dl>
 	<dl>

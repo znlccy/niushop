@@ -1,0 +1,104 @@
+{extend name="shop/default/Member/base" /}
+{block name="resources"}
+<!-- 添加css、字体文件文件 -->
+<script src="__TEMP__/{$style}/public/js/order.js"></script>
+<style type="text/css">
+.nav_active{background:#E6E6E6; color:#FFF;}
+.tip-box{position: static;margin-top: 100px;}
+</style>
+{/block}
+{block name="main"}
+<div class="user-right">
+	<div class="box">
+		<div class="tabmenu">
+			<ul class="tab">
+				<li class="active"><a href="javascript:void(0);" >{:lang('virtual_orders')}</a> </li>
+			</ul>
+		</div>
+		<div id="J_Remide" class="remide-box">
+			<h3>{:lang('my_trading_reminder')}：</h3>
+			<ul>
+				<li {if condition="$status eq 'all'"} class="nav_active" {/if} va="all"><a href="{:__URL('SHOP_MAIN/member/virtualorderlist?status=all')}" >{:lang('whole')}(<span class="num" id="all">{$statusNum['all']}</span>)</a></li>
+				<li {if condition="$status eq '0'"} class="nav_active" {/if} va="0"><a href="{:__URL('SHOP_MAIN/member/virtualorderlist?status=0')}">{:lang('member_pending_payment')}(<span class="num" id="wait_pay">{$statusNum['wait_pay']}</span>)</a></li>
+				<li {if condition="$status eq '5'"} class="nav_active" {/if} va="5"><a href="{:__URL('SHOP_MAIN/member/virtualorderlist?status=5')}">{:lang('member_pending_evaluation')}(<span class="num" id="wait_evaluate">{$statusNum['wait_evaluate']}</span>)</a></li>
+			</ul>
+		</div>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="bought-table">
+			<thead>
+				<tr class="col-name">
+					<th width="25%" style="border-left: 1px solid #E6E6E6;">{:lang('baby')}</th>
+					<th width="20%">{:lang('member_attribute')}</th>
+					<th width="10%">{:lang('member_unit_price')}</th>
+					<th width="5%">{:lang('goods_number')}</th>
+					<th width="10%">{:lang('member_total_order_amount')}</th>
+					<th width="10%">{:lang('status')}</th>
+					<th width="10%" style="border-right: 1px solid #E6E6E6;">{:lang('goods_operation')}</th>
+				</tr>
+			</thead>
+			<tbody id="list_content" class="close-order">
+				{if condition="count($orderList) neq 0"}
+				{volist name="orderList" id="order"}
+					<tr class="order-hd">
+						<td colspan="8">
+							<span class="no"><label> {:lang('member_order_number')}：<span class="order-num"><a href="javascript:void(0);" class="main-color">{$order.order_no}</a></span> </label></span>
+							<span class="deal-time">&nbsp;&nbsp;{:lang('member_closing_time')}：<span>{$order.create_time | getTimeStampTurnTime}</span></span>
+						</td>
+					</tr>
+					{volist name="order['order_item_list']" id="order_item" key="k"}
+					<tr class="order-bd">
+						<td align="center" class="baobei no-border-right order_goods_info">
+							<div class="goods_desc last">
+								<a class="pic" href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$order_item['goods_id'])}" title="{:lang('member_view_baby_details')}" target="_blank">
+									<img src="{:__IMG($order_item['picture']['pic_cover_micro'])}" alt="" width="50" height="50">
+								</a>
+								<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$order_item['goods_id'])}" title="{:lang('member_view_baby_details')}" target="_blank">
+									<div class="goods_name">{$order_item.goods_name}</div>
+								</a>
+							</div> 
+						</td>
+						<td align="center" class="baobei no-border-right order_goods_attr"><div class="goods_desc goods_desc_t last" style="line-height:50px;">{$order_item.sku_name} </div></td>
+						<td align="center" class="baobei no-border-right order_goods_info" style="padding:0px;"><div class="goods_desc price  last" style="padding-left:0px; line-height:50px;"> ￥{$order_item.price} </div></td>
+						<td align="center" class="baobei no-border-right order_goods_info" style="padding:0px;"><div class="goods_desc  last" style="padding-left:0px;line-height:50px;"> {$order_item.num} </div> </td>
+						{if condition="$k eq 1"}
+							<td rowspan="{$order.order_item_list|count}" align="center" class="amount no-border-right"><p class="post-type"><strong>￥{$order.order_money}</strong></p></td>
+							<td rowspan="{$order.order_item_list|count}" align="center" class="trade-status no-border-right">
+								<div>{$order.status_name}</div>
+								<a href="{:__URL('SHOP_MAIN/member/virtualorderdetail','orderid='.$order['order_id'])}" class="main-color">{:lang('member_order_details')}</a><br/>
+							</td>
+							<td rowspan="{$order.order_item_list|count}" align="center" class="other">
+								{if condition="$order.member_operation neq ''"}
+								{volist name="order['member_operation']" id="operation"}
+								<a href="javascript:void(0)" class="on_money" style="background-color:#FF9149;border: 1px solid  #FF9149;" onclick="operation('{$operation.no}',{$order.order_id})">{$operation.name}</a>
+								{/volist}
+								{/if}
+								{if condition="$order.order_status eq 3 OR $order.order_status eq 4"}
+									{if condition="$order.is_evaluate eq 0"}
+									<a href="{:__URL('SHOP_MAIN/member/reviewcommodity','orderid='.$order_item['order_id'])}" class="on_money" style="background-color:#FF9149;border: 1px solid  #FF9149;">{:lang('member_i_want_evaluate')}</a>
+									{elseif condition="$order.is_evaluate eq 1"}
+									<a href="{:__URL('SHOP_MAIN/member/reviewagain','orderid='.$order_item['order_id'])}" class="on_money" style="background-color:#FF9149;border: 1px solid  #FF9149;">{:lang('goods_additional_evaluation')}</a>
+									{/if}
+								{/if}
+							</td>
+						{/if}
+					</tr>
+					{/volist}
+				{/volist}
+				{else/}
+				<tr>
+					<td colspan="8" align="center">
+						<div class="tip-box">
+							<i class="tip-icon"></i>
+							<div class="tip-text">Sorry！{:lang('member_no_order_want')}……</div>
+						</div>
+					</td>
+				</tr>
+			{/if}
+		</tbody>
+	</table>
+	{include file='shop/default/controlCommonPage'/}
+	</div>
+</div>
+{/block}
+{block name="javascript"}
+{include file='shop/default/openDialog'/}
+{/block}

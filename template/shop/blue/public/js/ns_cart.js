@@ -272,7 +272,7 @@
 									$.ajax({
 										url : __URL(SHOPMAIN + "/member/ordercreatesession"),
 										type : "post",
-										data : { "tag" : "buy_now", "sku_id" : sku_id , "num" : $("#num").val() },
+										data : { "tag" : "buy_now", "sku_id" : sku_id , "num" : $("#num").val(), "goods_type" : $("#hidden_goods_type").val() },
 										success : function(res){
 											if(res > 0){
 												location.href= __URL(SHOPMAIN + "/member/paymentorder");

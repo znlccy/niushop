@@ -17,6 +17,7 @@ namespace app\admin\controller;
 
 use data\service\Address;
 use data\service\Address as AddressService;
+use data\service\Config;
 use data\service\Express;
 use data\service\Express as ExpressService;
 use data\service\Order\OrderGoods;
@@ -24,8 +25,6 @@ use data\service\Order\OrderStatus;
 use data\service\Order as OrderService;
 use data\service\Pay\AliPay;
 use data\service\Pay\WeiXinPay;
-use data\service\Config;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 /**
  * 订单控制器
@@ -56,6 +55,7 @@ class Order extends BaseController
             $order_status = request()->post('order_status', '');
             $receiver_mobile = request()->post('receiver_mobile', '');
             $payment_type = request()->post('payment_type', 1);
+            $condition['order_type'] = 1; // 订单类型
             $condition['is_deleted'] = 0; // 未删除订单
             if ($start_date != 0 && $end_date != 0) {
                 $condition["create_time"] = [
@@ -147,10 +147,89 @@ class Order extends BaseController
             $this->assign('child_menu_list', $child_menu_list);
             // 获取物流公司
             $express = new ExpressService();
-//             $where = array("is_enabled" => 1);
             $expressList = $express->expressCompanyQuery();
             $this->assign('expressList', $expressList);
             return view($this->style . "Order/orderList");
+        }
+    }
+
+    /**
+     * 虚拟订单列表
+     */
+    public function virtualOrderList()
+    {
+        if (request()->isAjax()) {
+            $page_index = request()->post('page_index', 1);
+            $page_size = request()->post('page_size', PAGESIZE);
+            $start_date = request()->post('start_date') == "" ? 0 : getTimeTurnTimeStamp(request()->post('start_date'));
+            $end_date = request()->post('end_date') == "" ? 0 : getTimeTurnTimeStamp(request()->post('end_date'));
+            $order_no = request()->post('order_no', '');
+            $order_status = request()->post('order_status', '');
+            $receiver_mobile = request()->post('receiver_mobile', '');
+            $payment_type = request()->post('payment_type', 1);
+            $condition['order_type'] = 2; // 订单类型
+            $condition['is_deleted'] = 0; // 未删除订单
+            if ($start_date != 0 && $end_date != 0) {
+                $condition["create_time"] = [
+                    [
+                        ">",
+                        $start_date
+                    ],
+                    [
+                        "<",
+                        $end_date
+                    ]
+                ];
+            } elseif ($start_date != 0 && $end_date == 0) {
+                $condition["create_time"] = [
+                    [
+                        ">",
+                        $start_date
+                    ]
+                ];
+            } elseif ($start_date == 0 && $end_date != 0) {
+                $condition["create_time"] = [
+                    [
+                        "<",
+                        $end_date
+                    ]
+                ];
+            }
+            if ($order_status != '') {
+                $condition['order_status'] = $order_status;
+            }
+            if (! empty($payment_type)) {
+                $condition['payment_type'] = $payment_type;
+            }
+            if (! empty($order_no)) {
+                $condition['order_no'] = $order_no;
+            }
+            if (! empty($receiver_mobile)) {
+                $condition['receiver_mobile'] = $receiver_mobile;
+            }
+            $condition['shop_id'] = $this->instance_id;
+            $order_service = new OrderService();
+            $list = $order_service->getOrderList($page_index, $page_size, $condition, 'create_time desc');
+            return $list;
+        } else {
+            $status = request()->get('status', '');
+            $this->assign("status", $status);
+            $all_status = OrderStatus::getVirtualOrderCommonStatus();
+            $child_menu_list = array();
+            $child_menu_list[] = array(
+                'url' => "order/virtualorderlist",
+                'menu_name' => '全部',
+                "active" => $status == '' ? 1 : 0
+            );
+            foreach ($all_status as $k => $v) {
+                $child_menu_list[] = array(
+                    'url' => "order/virtualorderlist?status=" . $v['status_id'],
+                    'menu_name' => $v['status_name'],
+                    "active" => $status == $v['status_id'] ? 1 : 0
+                );
+            }
+            $this->assign('child_menu_list', $child_menu_list);
+            return view($this->style . "Order/virtualOrderList");
         }
     }
 
@@ -169,7 +248,8 @@ class Order extends BaseController
     /**
      * 功能说明：获取打印出货单预览信息
      */
-    public function getOrderInvoiceView(){
+    public function getOrderInvoiceView()
+    {
         $shop_id = $this->instance_id;
         // 获取值
         $orderIdArray = request()->get('ids', '');
@@ -179,7 +259,7 @@ class Order extends BaseController
         // 返回信息
         return $goods_express_list;
     }
-    
+
     /**
      * 功能说明：获取打印订单项预览信息
      */
@@ -227,60 +307,60 @@ class Order extends BaseController
      *
      * @return Ambigous <\think\response\View, \think\response\$this, \think\response\View>
      */
-//     public function printExpressPreview()
-//     {
-//         $order_service = new OrderService();
-//         $address_service = new AddressService();
-        
-//         $order_ids = request()->get('order_ids', '');
-//         $ShopName = request()->get('ShopName', '');
-//         $co_id = request()->get('co_id', '');
-        
-//         $shop_id = $this->instance_id;
-//         $order_str = explode(",", $order_ids);
-//         $order_array = array();
-//         foreach ($order_str as $order_id) {
-//             $detail = array();
-//             $detail = $order_service->getOrderDetail($order_id);
-//             if (empty($detail)) {
-//                 $this->error("没有获取到订单信息");
-//             }
-//             // $detail['address'] = $address_service->getAddress($detail['receiver_province'], $detail['receiver_city'], $detail['receiver_district']);
-//             $order_array[] = $detail;
-//         }
-//         $express_server = new ExpressService();
-//         // 物流模板信息
-//         $express_shipping = $express_server->getExpressShipping($co_id);
-//         // 物流打印信息
-//         $express_shipping_item = $express_server->getExpressShippingItems($express_shipping["sid"]);
-//         $receive_address = $order_service->getShopReturnSet($shop_id);
-//         $this->assign("order_print", $order_array);
-//         $this->assign("ShopName", $ShopName);
-//         $this->assign("express_ship", $express_shipping);
-//         $this->assign("express_item_list", $express_shipping_item);
-//         $this->assign("receive_address", $receive_address);
-//         return view($this->style . 'Order/printExpressPreview');
-//     }
+    // public function printExpressPreview()
+    // {
+    // $order_service = new OrderService();
+    // $address_service = new AddressService();
     
-    public function printExpressPreview(){
+    // $order_ids = request()->get('order_ids', '');
+    // $ShopName = request()->get('ShopName', '');
+    // $co_id = request()->get('co_id', '');
+    
+    // $shop_id = $this->instance_id;
+    // $order_str = explode(",", $order_ids);
+    // $order_array = array();
+    // foreach ($order_str as $order_id) {
+    // $detail = array();
+    // $detail = $order_service->getOrderDetail($order_id);
+    // if (empty($detail)) {
+    // $this->error("没有获取到订单信息");
+    // }
+    // // $detail['address'] = $address_service->getAddress($detail['receiver_province'], $detail['receiver_city'], $detail['receiver_district']);
+    // $order_array[] = $detail;
+    // }
+    // $express_server = new ExpressService();
+    // // 物流模板信息
+    // $express_shipping = $express_server->getExpressShipping($co_id);
+    // // 物流打印信息
+    // $express_shipping_item = $express_server->getExpressShippingItems($express_shipping["sid"]);
+    // $receive_address = $order_service->getShopReturnSet($shop_id);
+    // $this->assign("order_print", $order_array);
+    // $this->assign("ShopName", $ShopName);
+    // $this->assign("express_ship", $express_shipping);
+    // $this->assign("express_item_list", $express_shipping_item);
+    // $this->assign("receive_address", $receive_address);
+    // return view($this->style . 'Order/printExpressPreview');
+    // }
+    public function printExpressPreview()
+    {
         $print_order_ids = request()->get('print_order_ids', '');
         
         $express_server = new ExpressService();
         $order_service = new OrderService();
         $address_service = new AddressService();
         
-        $print_order_id_array = explode(";",$print_order_ids);
-        if(!empty($print_order_id_array) && count($print_order_id_array) > 0){
+        $print_order_id_array = explode(";", $print_order_ids);
+        if (! empty($print_order_id_array) && count($print_order_id_array) > 0) {
             $order_list = "";
-            foreach($print_order_id_array as $print_order_id){
-                $print_order_list  = explode(":",$print_order_id);
-                $detail = $order_service->getOrderDetail($print_order_list[0]);//获取订单详情
+            foreach ($print_order_id_array as $print_order_id) {
+                $print_order_list = explode(":", $print_order_id);
+                $detail = $order_service->getOrderDetail($print_order_list[0]); // 获取订单详情
                 $detail['address'] = $address_service->getAddress($detail['receiver_province'], $detail['receiver_city'], $detail['receiver_district']);
-                $express_id_list= explode(",",$print_order_list[1]);//获取订单下包裹数
+                $express_id_list = explode(",", $print_order_list[1]); // 获取订单下包裹数
                 $express_shipping_list = array();
-                foreach($express_id_list as $co_id){
-                    $express_shipping = $express_server->getExpressShipping($co_id);// 物流模板信息
-                    $express_shipping["express_shipping_item"] = $express_shipping_item = $express_server->getExpressShippingItems($express_shipping["sid"]);//物流打印信息
+                foreach ($express_id_list as $co_id) {
+                    $express_shipping = $express_server->getExpressShipping($co_id); // 物流模板信息
+                    $express_shipping["express_shipping_item"] = $express_shipping_item = $express_server->getExpressShippingItems($express_shipping["sid"]); // 物流打印信息
                     $express_shipping_list[] = $express_shipping;
                 }
                 $detail["express_id_list"] = $express_shipping_list;
@@ -288,10 +368,11 @@ class Order extends BaseController
             }
         }
         $receive_address = $order_service->getShopReturnSet($this->instance_id);
-        $this->assign("receive_address",$receive_address);
-        $this->assign("order_print",$order_list);
+        $this->assign("receive_address", $receive_address);
+        $this->assign("order_print", $order_list);
         return view($this->style . 'Order/printExpressPreview');
-    }    
+    }
+
     /**
      * 订单详情
      *
@@ -318,7 +399,62 @@ class Order extends BaseController
             $detail['operation'] = $operation_array;
         }
         $this->assign("order", $detail);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "order/orderlist",
+                    'menu_name' => "订单列表",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Order/orderDetail");
+    }
+
+    /**
+     * 虚拟订单详情
+     *
+     * @return Ambigous <\think\response\View, \think\response\$this, \think\response\View>
+     */
+    public function virtualOrderDetail()
+    {
+        $order_id = request()->get('order_id', 0);
+        if ($order_id == 0) {
+            $this->error("没有获取到订单信息");
+        }
+        $order_service = new OrderService();
+        $detail = $order_service->getOrderDetail($order_id);
+        if (empty($detail)) {
+            $this->error("没有获取到订单信息");
+        }
+        if (! empty($detail['operation'])) {
+            $operation_array = $detail['operation'];
+            foreach ($operation_array as $k => $v) {
+                if ($v["no"] == 'logistics') {
+                    unset($operation_array[$k]);
+                }
+            }
+            $detail['operation'] = $operation_array;
+        }
+        $this->assign("order", $detail);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "order/virtualorderlist",
+                    'menu_name' => "虚拟订单",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
+        return view($this->style . "Order/virtualOrderDetail");
     }
 
     /**
@@ -834,7 +970,8 @@ class Order extends BaseController
         $receiver_city = request()->post('seleAreaThird', '');
         $receiver_district = request()->post('seleAreaFouth', '');
         $receiver_address = request()->post('address_detail', '');
-        $res = $order_service->updateOrderReceiveDetail($order_id, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name);
+        $fixed_telephone = request()->post("fixed_telephone", "");
+        $res = $order_service->updateOrderReceiveDetail($order_id, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $fixed_telephone);
         return $res;
     }
 
@@ -948,6 +1085,14 @@ class Order extends BaseController
             array(
                 'goods_info',
                 '商品信息'
+            ),
+            array(
+                'buyer_message',
+                '买家留言'
+            ),
+            array(
+                'seller_memo',
+                '卖家备注'
             )
         );
         $start_date = request()->get('start_date') == "" ? 0 : getTimeTurnTimeStamp(request()->get('start_date'));
@@ -959,8 +1104,11 @@ class Order extends BaseController
         $payment_type = request()->get('payment_type', '');
         $order_ids = request()->get("order_ids", "");
         
-        if($order_ids != ""){
-            $condition["order_id"] = ["in", $order_ids];
+        if ($order_ids != "") {
+            $condition["order_id"] = [
+                "in",
+                $order_ids
+            ];
         }
         
         if ($start_date != 0 && $end_date != 0) {
@@ -1019,12 +1167,13 @@ class Order extends BaseController
             $condition['receiver_mobile'] = $receiver_mobile;
         }
         $condition['shop_id'] = $this->instance_id;
+        $condition['order_type'] = 1; // 普通订单
         $order_service = new OrderService();
         $list = $order_service->getOrderList(1, 0, $condition, 'create_time desc');
         $list = $list["data"];
         foreach ($list as $k => $v) {
             $list[$k]["create_date"] = getTimeStampTurnTime($v["create_time"]); // 创建时间
-            $list[$k]["receiver_info"] = $v["receiver_name"] . "  " . $v["receiver_mobile"] . "  " . $v["receiver_province_name"] . $v["receiver_city_name"] . $v["receiver_district_name"] . $v["receiver_address"] . "  " . $v["receiver_zip"]; // 创建时间
+            $list[$k]["receiver_info"] = $v["receiver_name"] . "  " . $v["receiver_mobile"] . "  ".$v["fixed_telephone"]." " . $v["receiver_province_name"] . $v["receiver_city_name"] . $v["receiver_district_name"] . $v["receiver_address"] . "  " . $v["receiver_zip"]; // 创建时间
             if ($v['shipping_type'] == 1) {
                 $list[$k]["shipping_type_name"] = '商家配送';
             } elseif ($v['shipping_type'] == 2) {
@@ -1038,6 +1187,133 @@ class Order extends BaseController
                 $list[$k]["pay_status_name"] = '已付款';
             } elseif ($v['pay_status'] == 1) {
                 $list[$k]["pay_status_name"] = '支付中';
+            }
+            $goods_info = "";
+            foreach ($v["order_item_list"] as $t => $m) {
+                $goods_info .= "商品名称:" . $m["goods_name"] . "  规格:" . $m["sku_name"] . "  商品价格:" . $m["price"] . "  购买数量:" . $m["num"] . "  ";
+            }
+            $list[$k]["goods_info"] = $goods_info;
+        }
+        dataExcel($xlsName, $xlsCell, $list);
+    }
+
+    /**
+     * 订单数据excel导出
+     */
+    public function virtualOrderDataExcel()
+    {
+        $xlsName = "订单数据列表";
+        $xlsCell = array(
+            array(
+                'order_no',
+                '订单编号'
+            ),
+            array(
+                'create_date',
+                '日期'
+            ),
+            array(
+                'receiver_info',
+                '收货人信息'
+            ),
+            array(
+                'order_money',
+                '订单金额'
+            ),
+            array(
+                'pay_money',
+                '实际支付'
+            ),
+            array(
+                'pay_type_name',
+                '支付方式'
+            ),
+            array(
+                'pay_status_name',
+                '支付状态'
+            ),
+            array(
+                'goods_info',
+                '商品信息'
+            ),
+            array(
+                'buyer_message',
+                '买家留言'
+            ),
+            array(
+                'seller_memo',
+                '卖家备注'
+            )
+        );
+        $start_date = request()->get('start_date') == "" ? 0 : getTimeTurnTimeStamp(request()->get('start_date'));
+        $end_date = request()->get('end_date') == "" ? 0 : getTimeTurnTimeStamp(request()->get('end_date'));
+        $user_name = request()->get('user_name', '');
+        $order_no = request()->get('order_no', '');
+        $order_status = request()->get('order_status', '');
+        $receiver_mobile = request()->get('receiver_mobile', '');
+        $payment_type = request()->get('payment_type', '');
+        $order_ids = request()->get("order_ids", "");
+        
+        if ($order_ids != "") {
+            $condition["order_id"] = [
+                "in",
+                $order_ids
+            ];
+        }
+        
+        if ($start_date != 0 && $end_date != 0) {
+            $condition["create_time"] = [
+                [
+                    ">",
+                    $start_date
+                ],
+                [
+                    "<",
+                    $end_date
+                ]
+            ];
+        } elseif ($start_date != 0 && $end_date == 0) {
+            $condition["create_time"] = [
+                [
+                    ">",
+                    $start_date
+                ]
+            ];
+        } elseif ($start_date == 0 && $end_date != 0) {
+            $condition["create_time"] = [
+                [
+                    "<",
+                    $end_date
+                ]
+            ];
+        }
+        if ($order_status != '') {
+            $condition['order_status'] = $order_status;
+        }
+        if (! empty($payment_type)) {
+            $condition['payment_type'] = $payment_type;
+        }
+        if (! empty($user_name)) {
+            $condition['receiver_name'] = $user_name;
+        }
+        if (! empty($order_no)) {
+            $condition['order_no'] = $order_no;
+        }
+        if (! empty($receiver_mobile)) {
+            $condition['receiver_mobile'] = $receiver_mobile;
+        }
+        $condition['shop_id'] = $this->instance_id;
+        $condition['order_type'] = 2; // 虚拟订单
+        $order_service = new OrderService();
+        $list = $order_service->getOrderList(1, 0, $condition, 'create_time desc');
+        $list = $list["data"];
+        foreach ($list as $k => $v) {
+            $list[$k]["create_date"] = getTimeStampTurnTime($v["create_time"]); // 创建时间
+            $list[$k]["receiver_info"] = $v["user_name"] . "  " . $v["receiver_mobile"]; // 创建时间
+            if ($v['pay_status'] == 0) {
+                $list[$k]["pay_status_name"] = '待付款';
+            } elseif ($v['pay_status'] == 2) {
+                $list[$k]["pay_status_name"] = '已付款';
             }
             $goods_info = "";
             foreach ($v["order_item_list"] as $t => $m) {
@@ -1083,7 +1359,7 @@ class Order extends BaseController
     }
 
     /**
-     * 订单退款
+     * 订单退款（测试）
      */
     public function orderrefundtest()
     {
@@ -1093,7 +1369,7 @@ class Order extends BaseController
     }
 
     /**
-     * 支付宝退款
+     * 支付宝退款（测试）
      * 创建时间：2017年10月17日 10:26:05
      */
     public function aliPayRefundtest()
@@ -1177,54 +1453,111 @@ class Order extends BaseController
         }
         return "";
     }
+
     /**
      * 获取出货商品列表
      */
-    public function getShippingList(){
-        if (request()->isAjax()){
-            $order_ids = request()->post("order_ids","");
+    public function getShippingList()
+    {
+        if (request()->isAjax()) {
+            $order_ids = request()->post("order_ids", "");
             $order_goods = new OrderGoods();
-            $list = $order_goods -> getShippingList($order_ids);
+            $list = $order_goods->getShippingList($order_ids);
             return $list;
         }
     }
+
     /**
      * 出货单打印页面
      */
-    public function printpreviewOfInvoice(){
-        $order_ids = request()->get("order_ids","");
+    public function printpreviewOfInvoice()
+    {
+        $order_ids = request()->get("order_ids", "");
         $order_goods = new OrderGoods();
-        $list = $order_goods -> getShippingList($order_ids);
-        $this->assign("list",$list);
+        $list = $order_goods->getShippingList($order_ids);
+        $this->assign("list", $list);
         $webSiteInfo = $this->website->getWebSiteInfo();
-        if(empty($webSiteInfo["title"])){
+        if (empty($webSiteInfo["title"])) {
             $ShopName = "Niushop开源商城";
-        }else{
+        } else {
             $ShopName = $webSiteInfo["title"];
         }
         $this->assign("ShopName", $ShopName);
-        $this->assign("now_time",time());
-        return view($this->style. "Order/printpreviewOfInvoice");
+        $this->assign("now_time", time());
+        return view($this->style . "Order/printpreviewOfInvoice");
     }
+
     /**
      * 添加临时物流信息
      */
-    public function addTmpExpressInformation(){
+    public function addTmpExpressInformation()
+    {
         $order_goods = new OrderGoods();
         $print_order_arr = request()->post("print_order_arr", "");
-        $deliver_goods = request()->post("deliver_goods",0);
-        $print_order_arr = json_decode($print_order_arr,true);
-        $res = $order_goods ->addTmpExpressInformation($print_order_arr, $deliver_goods);
+        $deliver_goods = request()->post("deliver_goods", 0);
+        $print_order_arr = json_decode($print_order_arr, true);
+        $res = $order_goods->addTmpExpressInformation($print_order_arr, $deliver_goods);
         return $res;
     }
-    
+
     /**
      * 获取未发货的订单
      */
-    public function getNotshippedOrderList(){
-        $order_ids = request()->post("ids","");
+    public function getNotshippedOrderList()
+    {
+        $order_ids = request()->post("ids", "");
         $order = new OrderService();
-        $list = $order -> getNotshippedOrderByOrderId($order_ids);
+        $list = $order->getNotshippedOrderByOrderId($order_ids);
         return $list;
+    }
+
+    /**
+     * 打印订单
+     */
+    public function printOrder()
+    {
+        // 网站信息
+        $web_info = $webSiteInfo = $this->website->getWebSiteInfo();
+        $this->assign("web_info", $web_info);
+        $order_ids = request()->get("print_order_ids", "");
+        $order_service = new OrderService();
+        $condition = array(
+            "order_id" => array(
+                "in",
+                $order_ids
+            ),
+            "shop_id" => $this->instance_id,
+            'order_type' => 1
+        );
+        $list = $order_service->getOrderList(1, 0, $condition, '');
+        foreach ($list["data"] as $k => $v) {
+            $order_detail = $order_service->getOrderDetail($v["order_id"]);
+            $list["data"][$k]["goods_packet_list"] = $order_detail["goods_packet_list"];
+        }
+        $this->assign("order_list", $list['data']);
+        return view($this->style . "Order/printOrder");
+    }
+
+    /**
+     * 打印虚拟订单
+     */
+    public function printVirtualOrder()
+    {
+        // 网站信息
+        $web_info = $webSiteInfo = $this->website->getWebSiteInfo();
+        $this->assign("web_info", $web_info);
+        $order_ids = request()->get("print_order_ids", "");
+        $order_service = new OrderService();
+        $condition = array(
+            "order_id" => array(
+                "in",
+                $order_ids
+            ),
+            "shop_id" => $this->instance_id,
+            'order_type' => 2
+        );
+        $list = $order_service->getOrderList(1, 0, $condition, '');
+        $this->assign("order_list", $list['data']);
+        return view($this->style . "Order/printVirtualOrder");
     }
 }

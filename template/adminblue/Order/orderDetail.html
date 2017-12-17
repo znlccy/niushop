@@ -41,7 +41,7 @@
 					<tr>
 						<th>收货信息：</th>
 						<td>
-							<p>{$order['receiver_name']}，{$order['receiver_mobile']}，{$order['address']}&nbsp;{$order['receiver_address']}{if condition="$order['receiver_zip']!=''"}&nbsp;，{$order['receiver_zip']}{/if}</p>
+							<p>{$order['receiver_name']}，{$order['receiver_mobile']}，{notempty name="$order['fixed_telephone']"}{$order['fixed_telephone']}，{/notempty} {$order['address']}&nbsp;{if condition="$order['receiver_zip']!=''"}&nbsp;，{$order['receiver_zip']}{/if}</p>
 						</td>
 					</tr>
 					{/case}

@@ -1,0 +1,263 @@
+{extend name="shop/default/base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/payment_orders/payment_orders.css" />
+<link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/payment_orders/payment_orders_common.css" />
+<style>
+.result-box .yue {margin-top:20px;margin-left: 20px;position: relative;}
+.result-box .yue input[type=text] {width: 100px;height: 28px;border: 1px solid #ddd;margin-left: 10px;padding: 0 10px;display: none;}
+.account-number-info ul{border: 1px solid #e0e0e0;background-color: #fff;padding: 0 0 0px;}
+.account-number-info ul li{padding:10px 20px;}
+.account-number-info ul li label{vertical-align: middle;}
+.account-number-info ul li input{width: 100px;height: 25px;border: 1px solid #ddd;padding: 0 10px;vertical-align: middle;}
+.account-number-info p.tip{padding: 10px 0 0;color: #A9A9A9;}
+.result-box  ul li{padding:0px 25px 10px 16px;}
+</style>
+{/block}
+{block name="main"}
+<form>
+<div class="cart-box">
+	<div class="nb">
+		<div class="cart-step">
+			<ul>
+				<li class="cart1"><i></i>{:lang('goods_buy_now')}</li>
+				<li class="cart2 oncart2"><i></i>{:lang('goods_confirm_order')}</li>
+				<li class="cart3"><i></i>{:lang('goods_payment')}</li>
+				<li class="cart4"><i></i>{:lang('goods_successful_payment')}</li>
+			</ul>
+		</div>
+		<div class="account-number-info">
+			<div class="cart-title">
+				<h3>
+					<span>账号信息<i style="font-weight: normal;font-size: 12px;color: #3893ee;">(请仔细填写手机号，以保证虚拟码发到您的手机)</i></span>
+				</h3>
+			</div>
+			
+			<ul>
+				<li>
+					<label>手机号码：</label>
+					<input type="text" value="{$user_telephone}" id="user_telephone" />
+					<p class="tip">
+						<span>注意：<b style="font-weight:normal;color: #FF6633;">虚拟商品订单凭虚拟码消费</b></span>
+					</p>
+					<p class="tip">
+						<span>说明：<b style="font-weight:normal;color: #FF6633;">您本次购买的商品不需要收货地址，请正确填写手机号码，确保及时获取“虚拟码”</b></span>
+					</p>
+				</li>
+			</ul>
+		</div>
+		<div class="goods-infor">
+			<div class="cart-title">
+				<h3>
+					<span>{:lang('goods_commodity_information')}</span>
+				</h3>
+			</div>
+			<div class="goods-table">
+				<div class="goods-thead">
+					<div class="col col1">{:lang('member_commodity')}</div>
+					<div class="col col3">{:lang('member_unit_price')}</div>
+					<div class="col col4">{:lang('goods_number')}</div>
+					<div class="col col5">{:lang('goods_subtotal')}</div>
+				</div>
+				<div class="goods-tbody">
+					{foreach name="list" item="cart_info" key="k"}
+					<div class="goodinfo" data-goods-id="{$cart_info.goods_id}" data-goods-name="{$cart_info.goods_name}" data-sku-name="{$cart_info.sku_name}" data-sku-id="{$cart_info.sku_id}" data-price="{$cart_info.price}" data-img-id="{$cart_info.picture_info.pic_id}">
+						<div class="col col1 goods-title-pic">
+							<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$cart_info['goods_id'])}" target="_blank">
+								<img src="{:__IMG($cart_info['picture_info']['pic_cover_small'])}" width="60" height="60">
+							</a>
+							<div class="goods-describ elli">
+								<p style="word-break: break-all; word-wrap:break-word;">
+									<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$cart_info['goods_id'])}" target="_blank">{$cart_info.goods_name}&nbsp;&nbsp;{$cart_info.sku_name}</a>
+								</p>
+							</div>
+						</div>
+						<div class="col col3 goods-price">￥{$cart_info.price}</div>
+						<div class="col col4 good-num">{$cart_info.num}</div>
+						<div class="col col5 orange-bold xiaoji" data-subtotal="{$cart_info.subtotal}" style="border-bottom-style: none;">￥{$cart_info.subtotal}</div>
+					</div>
+					{/foreach}
+				</div>
+				
+			</div>
+		</div>
+
+		<div class="style-zhifu">
+			<div class="cart-title">
+				<h3>
+					<span>{:lang('member_payment_method')}</span>
+				</h3>
+			</div>
+			{if condition="count($coupon_list)"}
+			<div class="zhifu-box">
+				{if condition="count($coupon_list)"}
+				<div class="yue">
+					<span>&nbsp;&nbsp;&nbsp;&nbsp;{:lang('member_coupons')}</span>
+					<select style="margin-left: 12px;padding: 0 10px;width: 250px;height: 25px;border:1px solid #ddd;" id="coupon">
+						<option value="0">{:lang('member_no_coupons')}</option>
+						{foreach name="coupon_list" item="coupon"}
+							<option data-money="{$coupon['money']}" value="{$coupon['coupon_id']}">{:lang('member_full')}{$coupon['at_least']}{:lang('member_reduce')}{$coupon['money']}{:lang('element')}&nbsp;-&nbsp;{$coupon['coupon_name']}</option>
+						{/foreach}
+					</select>
+				</div>
+				{/if}
+			</div>
+			{/if}
+			
+			<div class="zhifu-box">
+				<ul class="zfb" id="paylist">
+					<li>
+						<i class="icon-check-zf" style="display:block;"></i>
+						<a href="javascript:void(0);" data-select="0" class="selected">
+							<span>{:lang('member_online_payment')}</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+		{if condition="count($shop_config.order_invoice_content_list)"}
+		<div class="style-zhifu order-invoice">
+			<div class="cart-title">
+				<h3>
+					<span>{:lang('member_invoice_information')}</span>
+				</h3>
+			</div>
+			<div class="zhifu-box">
+				<div class="item">
+					<div class="label">
+						<ul class="zfb" id="is_invoice">
+							<li>
+								<i class="icon-check-zf" style="display: block;"></i>
+								<a href="javascript:void(0);" data-flag="not-need-invoice" class="selected">{:lang('member_no_invoice_required')}</a>
+							</li>
+							{if condition="count($shop_config.order_invoice_content_list)"}
+							<li>
+								<i class="icon-check-zf"></i>
+								<a href="javascript:void(0);" data-flag="need-invoice">{:lang('member_invoice_required')}</a>
+							</li>
+							{/if}
+						</ul>
+					</div>
+				</div>
+				
+				<div id="invoiceinfo" style="display: none;">
+				
+					<div class="item">
+						<span class="label fl" style="line-height: 50px;width:85px;text-align: right;">{:lang('member_invoice_header')}：</span>
+						<div class="fl">
+							<ul class="zfb" id="invoice_tite_list" style="margin: 0 10px 0 0;">
+								<li>
+									<a href="javascript:void(0);">
+										<input type="text" placeholder="{:lang('member_personal_or_company_invoice')}" maxlength="50" id="invoice-title" />
+									</a>
+								</li>
+							</ul>
+						</div>
+						<span style="line-height: 50px;color:#FF9800;font-weight:bold;">({:lang('member_collect')}{$shop_config.order_invoice_tax}%{:lang('member_invoice_tax_rate')})</span>
+					</div>
+					
+					<div class="item">
+						<span class="label fl" style="line-height: 50px;width:85px;text-align: right;">{:lang('member_taxpayer_identification_number')}：</span>
+						<div class="fl">
+							<ul class="zfb" style="margin: 0 10px 0 0;">
+								<li>
+									<a href="javascript:void(0);">
+										<input type="text" placeholder="{:lang('member_taxpayer_identification_number')}" maxlength="50" id="taxpayer-identification-number" />
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					
+					<div class="item">
+						<span class="label fl" style="line-height: 50px;width:85px;text-align: right;">{:lang('member_invoice_content')}：</span>
+						<div class="fl">
+							<ul class="zfb" id="invoice_con">
+								{foreach name="$shop_config.order_invoice_content_list" item="invoice" key="k"}
+								<li>
+									<i class="icon-check-zf"></i>
+									<a href="javascript:void(0);" title="{$invoice}">{$invoice}</a>
+								</li>
+								{/foreach}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{/if}
+		
+		<div class="fare-result">
+			<div class="cart-title">
+				<h3>
+					<span>{:lang('member_settlement_information')}</span>
+				</h3>
+			</div>
+			<div class="result-box">
+				{if condition="$shop_config['order_balance_pay']"}
+				<div class="yue">
+					<span><input type="checkbox" id="userbalance" disabled="disabled" style="display:none;">&nbsp;{:lang('member_use_balance')}</span>
+					<input type="text" maxlength="9" placeholder="0.00" data-max="{$member_account.balance}" id="account_balance" style="display:inline-block;" />
+					<span class="yeuse">（{:lang('member_my_balance')}：<b class="orange-bold">{$member_account.balance}</b>{:lang('element')}）</span>。<br> <br>
+				</div>
+				{/if}
+				<ul>
+					<li style="float:left;clear:none;">
+						<div style="width: 400px; float: left; font-size: 14px;">
+							<label class="list-name" for="leavemess">{:lang('member_leaving_message')}：</label>
+							<textarea id="leavemessage" maxlength="100" placeholder="{:lang('member_buyer_message')}"></textarea>
+						</div>
+					</li>
+					<li class="first" style="float:right;clear:none;">
+						<div class="calu-box">
+							<p class="slivergrey">
+								<span>{:lang('goods_total')}<b class="orange-bold js-goods-num">0</b>{:lang('member_kinds_of_goods')} {:lang('member_total')}：</span>
+								<span class="txtmoney">￥<b class="js-total-money">0.00</b></span>
+							</p>
+							<p class="slivergrey">
+								<span>{:lang('member_total_discount')}：</span>
+								<span class="txtmoney">￥<b id="discount_money">0.00</b></span>
+							</p>
+							{if condition="count($shop_config.order_invoice_content_list)"}
+							<p class="slivergrey">
+								<span>{:lang('member_invoice_tax')}：</span>
+								<span class="txtmoney">￥<b id="invoice_tax_money">0.00</b></span>
+							</p>
+							{/if}
+							{if condition="$shop_config['order_balance_pay']"}
+							<p class="slivergrey">
+								<span>{:lang('member_use_balance')}：</span>
+								<span class="txtmoney">￥<b id="use_balance">0.00</b></span>
+							</p>
+							{/if}
+						</div>
+					</li>
+					<li style="border: 1px solid #e4e4e4;">
+						<div class="rside">
+							<div class="lside">
+								<p>
+									<span class="slivergrey">{:lang('member_amount_payable')}：</span>
+									<span class="orange-bold big">￥<b id="realprice">0.00</b>
+										{if condition="$count_point_exchange "}<b>+{$count_point_exchange}{:lang('goods_integral')}</b>{/if}
+									</span>
+								</p>
+								<p class="vivi-blue">{:lang('member_pay_soon')}！</p>
+							</div>
+							<a href="javascript:void(0);" class="btn-jiesuan">{:lang('member_place_order')}</a>
+							<input type="hidden" id="hidden_discount_money" value="{$discount_money}" />
+							<input type="hidden" id="hidden_count_money" value="{$count_money}" />
+							<input type="hidden" id="count_point_exchange" value="{$count_point_exchange}"/>
+							<input type="hidden" id="goods_sku_list" value="{$goods_sku_list}" />
+							<input type="hidden" id="hidden_order_invoice_tax" value="{$shop_config.order_invoice_tax}"/>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+{/block}
+{block name="javascript"}
+<script src="__TEMP__/{$style}/public/js/payment_orders/payment_orders_virtual.js"></script>
+{/block}

@@ -1,0 +1,192 @@
+{extend name="wap/default_new/base" /}
+{block name="resources"}
+    <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/foundation.css">
+    
+    <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/common-v4.4.css">
+	<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/person-v4.4.css">
+	<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/my_order_list.css">
+    <script src="__TEMP__/{$style}/public/js/order.js"></script>
+    <style>.cf-tab-item a{width:33.33% !important;}</style>
+	<script type="text/javascript">window.onerror=function(){return true;}</script>
+	<script type="text/javascript">
+		var CONTROLLER = "APP_MAIN/orders";
+		var APP_MAIN = 'APP_MAIN';
+	</script>
+{/block}
+
+{block name="goodsHead"}{/block}
+{block name="main"}
+
+    <!--topbar end-->
+    <div class="main myorder">
+    <section class="head">
+    <a class="head_back" id="backoutapp" href="{:__URL('APP_MAIN/member/index')}"><i class="icon-back"></i></a>
+		<div class="head-title">{:lang('member_my_order')}</div>
+		<div class="cf-container" data-reactid="2">
+    		<div class="cf-edge" data-reactid="3"></div>
+			<ul class="cf-content" data-reactid="4">
+    			<li class="cf-tab-item" data-index="1" data-reactid="7" statusid="all"><a href="javascript:GetDataList('all',1);" >{:lang('whole')}</a></li>
+    			<li class="cf-tab-item" data-index="1" data-reactid="7" statusid="0"><a href="javascript:GetDataList(0);" >{:lang('member_pending_payment')}</a></li>
+				<li class="cf-tab-item" data-index="1" data-reactid="7" statusid="5"><a href="javascript:GetDataList(5);" >待评价</a></li>
+	    	</ul>
+		</div>
+	</section>
+
+		<div class="tabs-content">
+			<div class="content active" id="list_content" style="margin-top:30px;">
+			</div>
+		</div>
+        <div id="pay" style="display: none"></div>
+        
+        <input type="hidden" name="status_hidden" id="status_hidden" value="{$status}"/>
+        <input type="hidden" name="shop_id" id="shop_id" value="{$shop_id}"/>
+		<input type="hidden" id="page_count"><!-- 总页数 -->
+		<input type="hidden" id="page"><!-- 当前页数 -->
+		<input type="hidden" id="status" value="all">
+    </div>
+    <script>
+        $(function(){
+        	$('.cf-container .cf-tab-item').click(function(){
+        		$('.cf-container .cf-tab-item').removeClass('select');
+        		$(this).addClass('select');
+        	})
+        	var status_hidden=$('#status_hidden').val();
+        	GetDataList(status_hidden);
+        	$('.cf-container .cf-tab-item').each(function(){
+        		if($(this).attr("statusid") == status_hidden){
+        			$(this).addClass('select');
+        		}
+        	});
+        })
+        var is_load = false;//防止重复加载
+        function GetDataList(status,page){
+        	if(page == undefined || page == "") page = 1;
+        	$("#page").val(page);//设置当前页
+        	$("#status").val(status);//保存当前状态
+        	if(is_load){
+        		return false;
+        	}
+        	is_load = true;
+        	$.ajax({
+        		type:'post',
+        		data:{'status':status,'shop_id':$('#shop_id').val(),"page":page},
+        		dataType:'json',
+        		beforeSend:function(){
+        			showLoadMaskLayer();
+        		},
+        		success:function(data){
+        			$("#page_count").val(data['page_count']);//总页数
+        			if(page == 1){
+        				var datahtml="";
+        			}else if(page > 1){
+        				var datahtml = $('#list_content').html();
+        			}
+        			
+        			if(data['data'].length==0){
+        				datahtml+='<div class="myorder-none" ><i class="icon-none"></i><span class="none_01">{:lang("member_no_order_yet")}</span><span class="none_02">{:lang("member_go_and_see")}</span><span class="none_03"><a href="{:__URL('APP_MAIN/goods/goodslist')}">{:lang("member_look_around")}</a></span></div>';
+        			
+        			}else{
+        				for(var i=0;i<data['data'].length;i++){
+	        				var ordersitem=data['data'][i];
+	        				datahtml+='<div class="list-myorder">';
+	        				datahtml+='<div class="ordernumber" style="height:auto;overflow:hidden;line-height:22px;"><span class="order-num" style="font-size: 12px;">'+ordersitem['order_no']+'</span><span class="order-date" style="font-size: 12px;">'+timeStampTurnTime(ordersitem['create_time'])+'</span></div>';
+	        				datahtml+='<ul class="ul-product">';
+	        				
+	        				for(var j=0;j<ordersitem['order_item_list'].length;j++){
+	        					
+	        					var goodsitem=ordersitem['order_item_list'][j];
+	        					datahtml+='<li><a href="'+__URL('APP_MAIN/order/virtualorderdetail?orderId='+goodsitem['order_id'])+'">';
+	        					datahtml+='<span class="pic">';
+	        					
+	        					datahtml+='<img src="'+__IMG(goodsitem['picture']['pic_cover_micro'])+'"></span>';
+	        					datahtml+='<div class="text">';
+	        					datahtml+='<span class="pro-name" style="font-size: 12px;">'+goodsitem['goods_name']+'</span>';
+	        					
+	        					datahtml+='<div class="pro-pric" style="margin-top: 5px;"><span style="font-size: 12px;">{:lang("goods_price")}:</span><b style="font-size:12px;font-weight:normal;">￥'+goodsitem['price']+'</b></div>';
+	        					
+	        					datahtml+='<div class="pro-pric" style="margin-top: 0px;"><span style="font-size: 12px;">{:lang("specifications")}:</span><b style="font-size:12px;font-weight:normal;">'+goodsitem['sku_name']+'</b></div>';
+	        					datahtml+='<div class="pro-pric" style="margin-top: 5px;"><span style="font-size: 12px;">{:lang("goods_number")}:</span><b style="font-size:12px;font-weight:normal;">'+goodsitem['num']+'{:lang("goods_piece")}</b></div>';
+	        					datahtml+='</div></a>';
+	        					
+	        					datahtml+='<div class="" style="width:100%;float:left;color:#999999;margin-top: 5px;font-size: 12px;padding-top:5px;">';
+	        					if(goodsitem['shipping_status']!=0){
+	        						datahtml+='<div style="width:20%;float:left;">{:lang("consign")}</div>';
+	        					}
+	        					datahtml += '<div style="width:80%;float:right;text-align:right;">';
+	        					
+	        					if(ordersitem['payment_type']==4){
+	        						if(ordersitem['is_refund']==1 && goodsitem['refund_status']==0 && ordersitem['order_status']==2){
+		        						datahtml+='<input type="button" onclick="window.location.href=\''+__URL('APP_MAIN/Order/refundDetail?order_goods_id='+goodsitem['order_goods_id'])+'\'" style="-webkit-border-radius:3px;-moz-border-radius:3px;-o-border-radius:3px;border-radius:3px;border:1px solid #ccc;color:#333;background-color:white;font-size: 12px;padding:5px 10px 5px 10px;" value="{:lang("list_of_refund_return")}" />&nbsp;&nbsp;';
+	        						}
+	        					}else{
+	        						if(ordersitem['is_refund']==1 && goodsitem['refund_status']==0){
+		        						datahtml+='<input type="button" onclick="window.location.href=\''+__URL('APP_MAIN/Order/refundDetail?order_goods_id='+goodsitem['order_goods_id'])+'\'" style="-webkit-border-radius:3px;-moz-border-radius:3px;-o-border-radius:3px;border-radius:3px;border:1px solid #ccc;color:#333;background-color:white;font-size: 12px;padding:5px 10px 5px 10px;" value="{:lang("list_of_refund_return")}" />&nbsp;&nbsp;';
+		        					}
+	        					}
+	        					
+	        					if(goodsitem['refund_status']!=0){
+	        						datahtml+='<input type="button" onclick="window.location.href=\''+__URL('APP_MAIN/Order/refundDetail?order_goods_id='+goodsitem['order_goods_id'])+'\'" style="-webkit-border-radius:3px;-moz-border-radius:3px;-o-border-radius:3px;border-radius:3px;border:1px solid #ccc;color:#333;background-color:white;font-size: 12px;padding:5px 10px 5px 10px;" value="'+goodsitem['status_name']+'" />&nbsp;&nbsp;';
+	        					}
+	        					
+	        					if(ordersitem['order_status'] == 3 || ordersitem['order_status'] == 4){
+	        						if(ordersitem['is_evaluate'] == 0){
+	        							datahtml += '<a href="'+__URL('APP_MAIN/order/reviewcommodity?orderId='+goodsitem['order_id'])+'"><span style="padding:5px;color: #333;border: 1px solid #ccc;border-radius: 3px;">{:lang("member_i_want_evaluate")}</span></a>';
+	        						}else if(ordersitem['is_evaluate'] == 1){
+	        							datahtml += '<a href="'+__URL('APP_MAIN/order/reviewAgain?orderId='+goodsitem['order_id'])+'"><span style="padding:5px;color: #333;border: 1px solid #ccc;border-radius: 3px;">{:lang("goods_additional_evaluation")}</span></a>';
+	        						}
+	        						
+	        					}
+	        					datahtml+='</div>';
+	        					datahtml+='</div>';
+	        					
+	        					datahtml+='</li>';
+	        				}
+							datahtml+='</ul>';
+							datahtml+='<div class="totle">';
+							datahtml+='<span class="status">'+ordersitem['status_name']+'</span>';
+							datahtml+='<span class="price">￥'+ordersitem['order_money']+'</span>';
+							datahtml+='<span class="pric-lable">{:lang("total_price")}</span>';
+							datahtml+='<span class="prc-num"></span></div>';
+							datahtml+='<div class="div-button">';
+							if(ordersitem['member_operation']!=''){
+								for(var x=0;x<ordersitem['member_operation'].length;x++){
+									operationitem=ordersitem['member_operation'][x];
+									datahtml+='<a href="javascript:void(0)" class="button [radius round] red" style="background-color: '+operationitem['color']+';border: 1px solid '+operationitem['color']+';" onclick="operation(\''+operationitem['no']+'\','+ordersitem['order_id']+')">'+operationitem['name']+'</a>';
+								}
+							}
+							datahtml+='</div></div>';
+	        			}
+        			}
+        			is_load = false;
+        			$('#list_content').html(datahtml);
+        			hiddenLoadMaskLayer();
+        		}
+        	});
+        }
+        //app端返回值
+        $("#backoutapp").click(function (){
+            var json ={
+            		"center" : "1",
+                }
+            window.webkit.messageHandlers.center.postMessage(json);
+        })
+        //滑动到底部加载
+		$(window).scroll(function(){
+			var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+			var content_box_height = parseFloat($("#list_content").height());
+			if(totalheight - content_box_height >= 80){
+				if(!is_load){
+					var page = parseInt($("#page").val()) + 1;//页数
+					var total_page_count = $("#page_count").val(); // 总页数
+					var status = $('#status').val();
+					if(page > total_page_count){
+						return false;
+					}else{
+						GetDataList(status,page);
+					}
+				}
+			}
+		})
+    </script>
+{/block}
+{block name="bottom"}{/block}

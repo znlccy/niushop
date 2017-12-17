@@ -98,6 +98,19 @@ class Cms extends BaseController
         } else {
             $articleClassList = $article->getArticleClass();
             $this->assign('articleClassList', $articleClassList);
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "cms/articlelist",
+                        'menu_name' => "文章列表",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . 'Cms/addArticle');
         }
     }
@@ -119,6 +132,19 @@ class Cms extends BaseController
         $this->assign('article_id', $article_id);
         $this->assign('articleClassList', $articleClassList);
         $this->assign('ArticleDetail', $ArticleDetail);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "cms/articlelist",
+                    'menu_name' => "文章列表",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . 'Cms/updateArticle');
     }
 
@@ -377,6 +403,19 @@ class Cms extends BaseController
             $topic = $article->addTopic($instance_id, $title, $image, $content, $status);
             return AjaxReturn($topic);
         } else {
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "cms/topiclist",
+                        'menu_name' => "专题列表",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . 'Cms/addTopic');
         }
     }
@@ -404,6 +443,18 @@ class Cms extends BaseController
             $topic_id = request()->get('id', '');
             $info = $article->getTopicDetail($topic_id);
             $this->assign('info', $info);
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "cms/topiclist",
+                        'menu_name' => "专题列表",
+                        'active' => 1,
+                    )
+                )
+            );
             return view($this->style . 'Cms/updateTopic');
         }
     }

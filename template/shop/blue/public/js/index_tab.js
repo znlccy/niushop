@@ -27,8 +27,6 @@ $(function(){
 				$(this).closest($(this).parents(".brand")).find(".brand-list").stop().animate({'left':move+'px'},500);
 			})
 		}
-		
-		
 	})	
 })
 

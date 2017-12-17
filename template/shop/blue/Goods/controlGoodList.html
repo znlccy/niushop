@@ -102,7 +102,7 @@
 									{:lang('goods_select_district_or_county')}<i></i>
 								</div>
 							</div>
-							<div class="region-items" data-region-level="1"  style="display: block;"></div>
+							<div class="region-items" data-region-level="1" style="display: block;"></div>
 							<div class="region-items" data-region-level="2" style="display: none;"></div>
 							<div class="region-items" data-region-level="3" style="display: none;"></div>
 						</div>
@@ -296,12 +296,26 @@
 				<li class="list_price">{:lang('goods_market_value')}： <font class="market">￥{$goods.market_price}</font><br> {:lang('goods_shop_price')}： <font class="shop">￥{$goods.promotion_price}</font> <br></li>
 				<li class="action">
 					<a href="javascript:;" class="action-btn collet-btn  curr" onclick="collectionGoods({$goods.goods_id},'goods','{$goods.goods_name}',this,true)"> 
-					 {if condition="$goods.is_favorite>0"}{:lang('goods_collected')}
-					 {else/}
-					  {:lang('goods_collection')}
-					 {/if}
+					{if condition="$goods.is_favorite>0"}{:lang('goods_collected')}
+					{else/}
+					{:lang('goods_collection')}
+					{/if}
 					</a>
-					<a href="javascript:ShowGoodsAttribute({$goods.goods_id},'{$goods.goods_name}',{$goods.pic_id},this,{if condition='$goods.max_buy==0' }{$goods.stock}{else/}{$goods.max_buy}{/if},{$goods.state});" class="action-btn addcart-btn add-cart">{:lang('goods_add_cart')}</a>
+					{if condition="$goods['goods_type'] == 1 "}
+						
+						<!-- 实物商品 -->
+						{if condition="$goods['stock'] neq '0'"}
+						<a href="javascript:ShowGoodsAttribute({$goods.goods_id},'{$goods.goods_name}',{$goods.pic_id},this,{if condition='$goods.max_buy==0' }{$goods.stock}{else/}{$goods.max_buy}{/if},{$goods.state});" class="action-btn addcart-btn add-cart">{:lang('goods_add_cart')}</a>
+						{else/}
+						<a href="javascript:;" class="action-btn addcart-btn add-cart" style="background: #bbb;">{:lang('goods_add_cart')}</a>
+						{/if}
+					
+					{else/}
+						
+						<!-- 虚拟商品，没有加入购物车 -->
+						<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank" class="action-btn addcart-btn add-cart" title="{:lang('view_details')}">{:lang('view_details')}</a>
+						
+					{/if}
 				</li>
 			</ul>
 		{/foreach}
@@ -330,14 +344,24 @@
 						<div class="item-con-info">
 							<div class="fr" style="float: left;margin-right: 5px;">
 								<div class="item-add-cart">
-									{if condition="$goods['stock'] neq '0'"}
-										<a href="javascript:ShowGoodsAttribute({$goods.goods_id},'{$goods.goods_name}',{$goods.pic_id},this,{if condition='$goods.max_buy==0' }{$goods.stock}{else/}{$goods.max_buy}{/if},{$goods.state});" class="add-cart" title="{:lang('goods_add_cart')}"><i class="icon-cart"></i>{:lang('goods_add_cart')}</a>
-									{else /}
-										<a href="javascript:;" class="add-cart" title="{:lang('goods_add_cart')}"  style="background: #bbb;"><i class="icon-cart"></i>{:lang('goods_add_cart')}</a>
+									{if condition="$goods['goods_type'] == 1 "}
+									
+										<!-- 实物商品 -->
+										{if condition="$goods['stock'] neq '0'"}
+											<a href="javascript:ShowGoodsAttribute({$goods.goods_id},'{$goods.goods_name}',{$goods.pic_id},this,{if condition='$goods.max_buy==0' }{$goods.stock}{else/}{$goods.max_buy}{/if},{$goods.state});" class="add-cart" title="{:lang('goods_add_cart')}"><i class="icon-cart"></i>{:lang('goods_add_cart')}</a>
+										{else /}
+											<a href="javascript:;" class="add-cart" title="{:lang('goods_add_cart')}" style="background: #bbb;"><i class="icon-cart"></i>{:lang('goods_add_cart')}</a>
+										{/if}
+										{foreach name="goods['sku_list']" item="pro_skus" key="k"}
+										<input type="hidden" name="goods_sku{$goods.goods_id}" value="{$pro_skus.attr_value_items};" stock="{$pro_skus.stock}" {if condition = "$goods.promotion_info neq ''"} price="{$pro_skus.promote_price}" {else/} price="{$pro_skus.price}"{/if} skuid="{$pro_skus.sku_id}" skuname="{$pro_skus.sku_name}">
+										{/foreach}
+									
+									{else/}
+									
+										<!-- 虚拟商品，没有加入购物车 -->
+										<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goods['goods_id'])}" target="_blank" class="add-cart" title="{:lang('view_details')}">{:lang('view_details')}</a>
+										
 									{/if}
-									{foreach name="goods['sku_list']" item="pro_skus" key="k"}
-									<input type="hidden" name="goods_sku{$goods.goods_id}" value="{$pro_skus.attr_value_items};" stock="{$pro_skus.stock}" {if condition = "$goods.promotion_info neq ''"} price="{$pro_skus.promote_price}" {else/} price="{$pro_skus.price}"{/if} skuid="{$pro_skus.sku_id}" skuname="{$pro_skus.sku_name}">
-									{/foreach}
 								</div>
 							</div>
 							<div class="fl">

@@ -151,30 +151,49 @@
 								</div>
 							</div>
 							{/if}
-							{if condition="$goods_info.mansong_name neq '' || $goods_info.baoyou_name neq ''"}
-							<div class="shop-prom">
-								<div class="shop-prom-title">
-									<dt class="dt">{:lang('goods_shop_activities')}</dt>
-									{if condition="$goods_info.mansong_name neq ''"}
-									<dd><i class="i-activity-flag">{:lang('goods_manjian')}</i>{$goods_info.mansong_name}</dd>
-									{/if}
-									{if condition="$goods_info.baoyou_name neq ''"}
-									<dd><i class="i-activity-flag">{:lang('goods_free_shipping')}</i>{$goods_info.baoyou_name}</dd>
-									{/if}
-		<!-- 							<a class="more">更多活动<i></i></a> -->
+							{if condition="$goods_info.goods_type == 1"}
+							
+								<!-- 实物商品 -->
+								{if condition="$goods_info.mansong_name neq '' || $goods_info.baoyou_name neq ''"}
+								<div class="shop-prom">
+									<div class="shop-prom-title">
+										<dt class="dt">{:lang('goods_shop_activities')}</dt>
+										{if condition="$goods_info.mansong_name neq ''"}
+										<dd><i class="i-activity-flag">{:lang('goods_manjian')}</i>{$goods_info.mansong_name}</dd>
+										{/if}
+										{if condition="$goods_info.baoyou_name neq ''"}
+										<dd><i class="i-activity-flag">{:lang('goods_free_shipping')}</i>{$goods_info.baoyou_name}</dd>
+										{/if}
+			<!-- 							<a class="more">更多活动<i></i></a> -->
+									</div>
+			<!-- 						<div class="shop-prom-Box"> -->
+			<!-- 							<div class="floater"> -->
+			<!-- 								<div class="hd"> -->
+			<!-- 									<em class="title">本店活动</em> -->
+			<!-- 									<ul class="bd"> -->
+			<!-- 										<li><a href="" target="_blank" title="">{$goods_info.mansong_name}</a></li> -->
+			<!-- 									</ul> -->
+			<!-- 									<a class="more unmore">收起<i></i></a> -->
+			<!-- 								</div> -->
+			<!-- 							</div> -->
+			<!-- 						</div> -->
 								</div>
-		<!-- 						<div class="shop-prom-Box"> -->
-		<!-- 							<div class="floater"> -->
-		<!-- 								<div class="hd"> -->
-		<!-- 									<em class="title">本店活动</em> -->
-		<!-- 									<ul class="bd"> -->
-		<!-- 										<li><a href="" target="_blank" title="">{$goods_info.mansong_name}</a></li> -->
-		<!-- 									</ul> -->
-		<!-- 									<a class="more unmore">收起<i></i></a> -->
-		<!-- 								</div> -->
-		<!-- 							</div> -->
-		<!-- 						</div> -->
-							</div>
+								{/if}
+								
+							{else/}
+
+								<!-- 虚拟商品 -->
+								{if condition="$goods_info.mansong_name neq ''"}
+								<div class="shop-prom">
+									<div class="shop-prom-title">
+										<dt class="dt">{:lang('goods_shop_activities')}</dt>
+										{if condition="$goods_info.mansong_name neq ''"}
+										<dd><i class="i-activity-flag">{:lang('goods_manjian')}</i>{$goods_info.mansong_name}</dd>
+										{/if}
+									</div>
+								</div>
+								{/if}
+
 							{/if}
 						</div>
 						<!-- 优惠劵 -->
@@ -209,9 +228,9 @@
 						{/notempty}
 				</div>
 				{/notempty}
-						<!-- 在售的商品 _start -->
+				{if condition="$goods_info.goods_type == 1"}
 						<!-- 运费 -->
-						 <div class="freight">
+						<div class="freight">
 							<div class="dt">{:lang('goods_delivery_to')}</div>
 							<div class="dd">
 								<div class="post-age">
@@ -238,6 +257,7 @@
 								</div>
 							</div>
 						</div>
+				{/if}
 						<!-- 服务 -->
 						<div class="freight">
 							<div class="dt">服务</div>
@@ -349,6 +369,7 @@
 						
 								{if condition="$goods_info.state == 1"}
 									<div class="btn-buy">
+										<!-- 限购判断 -->
 										{if condition="$goods_purchase_restriction['code'] == 0"}
 										<a href="javascript:;" class="buy-goods purchase-restriction js-buy-now" data-tag="buy_now">
 										{else/}
@@ -364,17 +385,18 @@
 										</a>
 									</div>
 									
-									{if condition="$goods_purchase_restriction['code'] == 0"}
-									<div class="btn-buy"><a href="javascript:;" class="add-cart purchase-restriction" data-tag="to_cart"><i></i>{:lang('goods_add_cart')}</a></div>
-									{else/}
-									<div class="btn-buy"><a href="javascript:;" class="add-cart bg-color" data-tag="to_cart"><i></i>{:lang('goods_add_cart')}</a></div>
+									{if condition="$goods_info.goods_type == 1"}
+										{if condition="$goods_purchase_restriction['code'] == 0"}
+										<div class="btn-buy"><a href="javascript:;" class="add-cart purchase-restriction" data-tag="to_cart"><i></i>{:lang('goods_add_cart')}</a></div>
+										{else/}
+										<div class="btn-buy"><a href="javascript:;" class="add-cart bg-color" data-tag="to_cart"><i></i>{:lang('goods_add_cart')}</a></div>
+										{/if}
 									{/if}
 								{else/}
 									<div class="btn-buy"><a href="javascript:;" class="no-auth ">{:lang('goods_laid_off')}</a></div>
 								{/if}
 								{if condition="$goods_info.QRcode != ''"}
 								<div class="btn-phone">
-								<!-- APP_MAIN/Goods/goodsDetail?id={$goods_info.goods_id} -->
 									<a href="javascript:;" class="go-phone">
 		<!-- 								<span>手机购买</span> -->
 										<i></i>
@@ -390,9 +412,6 @@
 							</div>
 				<!-- 服务承诺 -->
 					</div>
-					<!-- 在售的商品 _end -->
-					<input type="hidden" id="hidden_shop_id" name="shop_id" />
-					<input type="hidden" id="hidden_cart_id" name="cart_id" />
 				</form>
 			</div>
 	<!-- 商品详细信息 _end-->
@@ -432,26 +451,6 @@
 							{:lang('goods_buy_now')}
 							{/if}
 						</a>
-<!-- 						<div class="right-side-con" >style="height: 442px;" -->
-<!-- 							<ul class="right-side-ul"> -->
-<!-- 								<li class="abs-active" data-index="1"> -->
-<!-- 									<i></i> -->
-<!-- 									<span>商品属性</span> -->
-<!-- 								</li> -->
-<!-- 								<li data-index="2"> -->
-<!-- 									<i></i> -->
-<!-- 									<span>商品详情</span> -->
-<!-- 								</li> -->
-<!-- 								<li data-index="3"> -->
-<!-- 									<i></i> -->
-<!-- 									<span>商品评价</span> -->
-<!-- 								</li> -->
-<!-- 								<li data-index="4"> -->
-<!-- 									<i></i> -->
-<!-- 									<span>购买咨询</span> -->
-<!-- 								</li> -->
-<!-- 							</ul> -->
-<!-- 						</div> -->
 					</div>
 				</div>
 				<div id="main_widget">
@@ -512,7 +511,6 @@
 	</div>
 </div>
 <input type="hidden" id="ms_time" value="{$ms_time}"/>
-<!-- <script type="text/javascript" src="__TEMP__/{$style}/public/js/countdown.js"></script> -->
 <script>
 $(function(){
 	countDown();

@@ -87,7 +87,6 @@ var STATIC = "__STATIC__";
 		$.ajax({
 			type : "post",
 			url : "{:__URL('APP_MAIN/Login/index')}",
-			async : true,
 			data : {
 				"username" : username,
 				"password" : password
@@ -95,7 +94,7 @@ var STATIC = "__STATIC__";
 			success : function(data) {
 				 if(data["code"] > 0 ){
 					 if(data["code"] == 1){
-						 setTimeout(function(){location.href = data['url']},1000);						 
+						 setTimeout(function(){location.href = data['url']},1000);
 					 }else{
 						 setTimeout(function(){location.href = "{:__URL('APP_MAIN/member/index')}"},1000);
 					 }
@@ -202,7 +201,6 @@ function check_mobile(){
 	$.ajax({
 		type : "post",
 		url : "{:__URL('APP_MAIN/Login/index')}",
-		async : true,
 		data : {
 			"mobile" : mobile,
 			"sms_captcha" : sms_captcha

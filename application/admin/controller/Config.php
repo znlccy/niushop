@@ -70,8 +70,10 @@ class Config extends BaseController
             $third_count = request()->post("third_count", ''); // 第三方统计
             $close_reason = request()->post("close_reason", ''); // 站点关闭原因
             $web_wechat_share_logo = request()->post("web_wechat_share_logo", ""); // 网站微信分享logo
+            $web_gov_record = request()->post("web_gov_record", ""); // 公安网备信息
+            $web_gov_record_url = request()->post("web_gov_record_url", ""); // 公安网备链接
             
-            $retval = $this->website->updateWebSite($title, $logo, $web_desc, $key_words, $web_icp, $web_style_pc, $web_style_admin, $visit_pattern, $web_qrcode, $web_url, $web_phone, $web_email, $web_qq, $web_weixin, $web_address, $web_status, $wap_status, $third_count, $close_reason, $web_popup_title, $web_wechat_share_logo);
+            $retval = $this->website->updateWebSite($title, $logo, $web_desc, $key_words, $web_icp, $web_style_pc, $web_style_admin, $visit_pattern, $web_qrcode, $web_url, $web_phone, $web_email, $web_qq, $web_weixin, $web_address, $web_status, $wap_status, $third_count, $close_reason, $web_popup_title, $web_wechat_share_logo, $web_gov_record, $web_gov_record_url);
             return AjaxReturn($retval);
         } else {
             
@@ -678,6 +680,21 @@ class Config extends BaseController
         } else {
             $shopNavTemplate = $shop->getShopNavigationTemplate(1);
             $this->assign("shopNavTemplate", $shopNavTemplate);
+            
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "config/shopnavigationlist",
+                        'menu_name' => "导航管理",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Config/addShopNavigation");
         }
     }
@@ -711,6 +728,21 @@ class Config extends BaseController
             $this->assign('data', $data);
             $shopNavTemplate = $shop->getShopNavigationTemplate(1);
             $this->assign("shopNavTemplate", $shopNavTemplate);
+            
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "config/shopnavigationlist",
+                        'menu_name' => "导航管理",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Config/updateShopNavigation");
         }
     }
@@ -791,6 +823,19 @@ class Config extends BaseController
             $res = $platform->addLink($link_title, $link_url, $link_pic, $link_sort, $is_blank, $is_show);
             return AjaxReturn($res);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "config/linklist",
+                    'menu_name' => "友情链接",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Config/addLink");
     }
 
@@ -817,6 +862,19 @@ class Config extends BaseController
         }
         $link_info = $platform->getLinkDetail($link_id);
         $this->assign('link_info', $link_info);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "config/linklist",
+                    'menu_name' => "友情链接",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Config/updateLink");
     }
 
@@ -1135,6 +1193,19 @@ class Config extends BaseController
             $res = $platform->addPlatformHelpClass(1, $class_name, 0, $sort);
             return AjaxReturn($res);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "config/helpclass",
+                    'menu_name' => "帮助类型",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . 'Config/addHelpClass');
     }
 
@@ -1207,7 +1278,35 @@ class Config extends BaseController
             $this->assign('document_detail', $document_detail);
             $help_class_list = $platform->getPlatformHelpClassList();
             $this->assign('help_class_list', $help_class_list['data']);
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "config/helpdocument",
+                        'menu_name' => "帮助内容",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . 'Config/updateDocument');
+        }
+    }
+
+    /**
+     * 修改帮助中心内容的标题与排序
+     */
+    public function updateHelpContentTitleAndSort()
+    {
+        if (request()->isAjax()) {
+            $platform = new Platform();
+            $id = request()->post('id', '');
+            $title = request()->post('title', '');
+            $sort = request()->post('sort', 0);
+            $retval = $platform->updatePlatformDocumentTitleAndSort($id, $title, $sort);
+            return AjaxReturn($retval);
         }
     }
 
@@ -1230,6 +1329,19 @@ class Config extends BaseController
         } else {
             $help_class_list = $platform->getPlatformHelpClassList();
             $this->assign('help_class_list', $help_class_list['data']);
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "config/helpdocument",
+                        'menu_name' => "帮助内容",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . 'Config/addDocument');
         }
     }
@@ -1745,25 +1857,26 @@ class Config extends BaseController
         $Config = new WebConfig();
         if (request()->isAjax()) {
             $shop_id = $this->instance_id;
-            $order_auto_delinery = request()->post("order_auto_delinery", '') ? request()->post("order_auto_delinery", '') : 0;
-            
-            $order_balance_pay = request()->post("order_balance_pay", '') ? request()->post("order_balance_pay", '') : 0;
-            $order_delivery_complete_time = request()->post("order_delivery_complete_time", '') ? request()->post("order_delivery_complete_time", '') : 0;
-            $order_show_buy_record = request()->post("order_show_buy_record", '') ? request()->post("order_show_buy_record", '') : 0;
-            $order_invoice_tax = request()->post("order_invoice_tax", '') ? request()->post("order_invoice_tax", '') : 0;
-            $order_invoice_content = request()->post("order_invoice_content", '') ? request()->post("order_invoice_content", '') : '';
-            $order_delivery_pay = request()->post("order_delivery_pay", '') ? request()->post("order_delivery_pay", '') : 0;
-            $order_buy_close_time = request()->post("order_buy_close_time", '') ? request()->post("order_buy_close_time", '') : 0;
-            $buyer_self_lifting = request()->post("buyer_self_lifting", '') ? request()->post("buyer_self_lifting", '') : 0;
+            $order_auto_delinery = request()->post("order_auto_delinery", 0);
+            $order_balance_pay = request()->post("order_balance_pay", 0);
+            $order_delivery_complete_time = request()->post("order_delivery_complete_time", 0);
+            $order_show_buy_record = request()->post("order_show_buy_record", 0);
+            $order_invoice_tax = request()->post("order_invoice_tax", 0);
+            $order_invoice_content = request()->post("order_invoice_content", '');
+            $order_delivery_pay = request()->post("order_delivery_pay", 0);
+            $order_buy_close_time = request()->post("order_buy_close_time", 0);
+            $buyer_self_lifting = request()->post("buyer_self_lifting", 0);
             $seller_dispatching = request()->post("seller_dispatching", '1');
             $is_logistics = request()->post("is_logistics", '1');
-            $shopping_back_points = request()->post("shopping_back_points", '') ? request()->post("shopping_back_points", '') : 0;
-            $retval = $Config->SetShopConfig($shop_id, $order_auto_delinery, $order_balance_pay, $order_delivery_complete_time, $order_show_buy_record, $order_invoice_tax, $order_invoice_content, $order_delivery_pay, $order_buy_close_time, $buyer_self_lifting, $seller_dispatching, $is_logistics, $shopping_back_points);
+            $shopping_back_points = request()->post("shopping_back_points", 0);
+            $is_open_virtual_goods = request()->post("is_open_virtual_goods", 0); // 是否开启虚拟商品
+            $retval = $Config->SetShopConfig($shop_id, $order_auto_delinery, $order_balance_pay, $order_delivery_complete_time, $order_show_buy_record, $order_invoice_tax, $order_invoice_content, $order_delivery_pay, $order_buy_close_time, $buyer_self_lifting, $seller_dispatching, $is_logistics, $shopping_back_points, $is_open_virtual_goods);
             return AjaxReturn($retval);
         } else {
             // 订单收货之后多长时间自动完成
             $shop_id = $this->instance_id;
             $shopSet = $Config->getShopConfig($shop_id);
+            
             $this->assign("shopSet", $shopSet);
             return view($this->style . "Config/shopSet");
         }
@@ -2411,6 +2524,19 @@ class Config extends BaseController
      */
     public function addHomeNotice()
     {
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "config/usernotice",
+                    'menu_name' => "首页公告",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Config/addHomeNotice");
     }
 
@@ -2427,6 +2553,19 @@ class Config extends BaseController
         } else {
             $this->assign("info", $info);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "config/usernotice",
+                    'menu_name' => "首页公告",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Config/updateHomeNotice");
     }
 
@@ -2508,6 +2647,19 @@ class Config extends BaseController
             $res = $webSite->addUrlRoute($rule, $route, $is_open, $route_model, $remark);
             return AjaxReturn($res);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "config/customPseudoStaticRule",
+                    'menu_name' => "伪静态路由设置",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Config/addRoutingRules");
     }
 
@@ -2534,6 +2686,19 @@ class Config extends BaseController
         } else {
             $this->assign("routeDetail", $routeDetail);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "config/customPseudoStaticRule",
+                    'menu_name' => "伪静态路由设置",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Config/updateRoutingRules");
     }
 
@@ -2562,5 +2727,18 @@ class Config extends BaseController
             $res = $webSite->delete_url_route($routeid);
             return AjaxReturn($res);
         }
+    }
+
+    /**
+     * 修改虚拟商品配置信息
+     * 开启后，显示虚拟商品相关的系统菜单
+     * 禁用后，隐藏虚拟商品相关的系统菜单
+     */
+    public function settingVirtualGoodsConfigInfo()
+    {
+        $config = new WebConfig();
+        $is_enabled = $config->settingVirtualGoodsConfigInfo($this->instance_id);
+    
+        return $is_enabled;
     }
 }

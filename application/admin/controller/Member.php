@@ -485,6 +485,19 @@ class Member extends BaseController
             $res = $member->addMemberLevel($this->instance_id, $level_name, $min_integral, $quota, $upgrade, $goods_discount, $desc, $relation);
             return AjaxReturn($res);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "member/memberlevellist",
+                    'menu_name' => "会员等级",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . 'Member/addMemberLevel');
     }
 
@@ -511,6 +524,19 @@ class Member extends BaseController
         $info = $member->getMemberLevelDetail($level_id);
         $info['goods_discount'] = $info['goods_discount'] * 100;
         $this->assign('info', $info);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "member/memberlevellist",
+                    'menu_name' => "会员等级",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . 'Member/updateMemberLevel');
     }
 

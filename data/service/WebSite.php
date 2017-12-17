@@ -71,7 +71,7 @@ class WebSite extends BaseService implements IWebSite
      * (non-PHPdoc)
      * @see \data\api\IWebsite::updateWebSite()
      */
-    function updateWebSite($title, $logo, $web_desc, $key_words, $web_icp, $web_style_pc, $web_style_admin, $visit_pattern, $web_qrcode, $web_url, $web_phone, $web_email, $web_qq, $web_weixin, $web_address, $web_status, $wap_status, $third_count, $close_reason, $web_popup_title = "", $web_wechat_share_logo)
+    function updateWebSite($title, $logo, $web_desc, $key_words, $web_icp, $web_style_pc, $web_style_admin, $visit_pattern, $web_qrcode, $web_url, $web_phone, $web_email, $web_qq, $web_weixin, $web_address, $web_status, $wap_status, $third_count, $close_reason, $web_popup_title = "", $web_wechat_share_logo, $web_gov_record, $web_gov_record_url)
     {
         $data = array(
             'title' => $title,
@@ -95,7 +95,9 @@ class WebSite extends BaseService implements IWebSite
             'close_reason' => $close_reason,
             'modify_time' => time(),
             'web_popup_title' => $web_popup_title,
-            'web_wechat_share_logo' => $web_wechat_share_logo
+            'web_wechat_share_logo' => $web_wechat_share_logo,
+            'web_gov_record' => $web_gov_record,  
+            'web_gov_record_url' => $web_gov_record_url
         );
         $this->website = new WebSiteModel();
         $res = $this->website->save($data, [

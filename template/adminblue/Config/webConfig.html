@@ -34,7 +34,7 @@
 		<dt>网站二维码:</dt>
 		<dd>
 			<p>
-				<img src="{:__IMG($qrcode_path)}" onerror="this.src=''">
+				<img src="{:__IMG($qrcode_path)}">
 			</p>
 			<!-- <p><img src="{$website.web_qrcode}"></p> -->
 		</dd>
@@ -51,7 +51,11 @@
 		<dd>
 			<div class="class-logo">
 				<p>
-					<img id="imglogo" src="{:__IMG($website.logo)}" onerror="this.src=''">
+					{if condition="$website.logo"}
+					<img id="imglogo" src="{:__IMG($website.logo)}">
+					{else/}
+					<img id="imglogo">
+					{/if}
 				</p>
 			</div>
 			<div class="upload-btn">
@@ -71,7 +75,11 @@
 		<dd>
 			<div class="class-logo">
 				<p>
-					<img id="imgweb_qrcode" src="{:__IMG($website.web_qrcode)}" onerror="this.src=''">
+					{if condition="$website.web_qrcode"}
+					<img id="imgweb_qrcode" src="{:__IMG($website.web_qrcode)}">
+					{else/}
+					<img id="imgweb_qrcode">
+					{/if}
 				</p>
 			</div>
 			<div class="upload-btn">
@@ -91,7 +99,11 @@
 		<dd>
 			<div class="class-logo">
 				<p>
-					<img id="imgwechat_share_logo" src="{:__IMG($website.web_wechat_share_logo)}" onerror="this.src=''">
+					{if condition="$website.web_wechat_share_logo"}
+					<img id="imgwechat_share_logo" src="{:__IMG($website.web_wechat_share_logo)}">
+					{else/}
+					<img id="imgwechat_share_logo">
+					{/if}
 				</p>
 			</div>
 			<div class="upload-btn">
@@ -148,10 +160,26 @@
 		</dd>
 	</dl>
 	<dl>
-		<dt>网站备案号:</dt>
+		<dt>网站ICP备案号:</dt>
 		<dd>
 			<p>
 				<input id="web_icp" type="text" value="{$website.web_icp}" class="input-common" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站公安备案：</dt>
+		<dd>
+			<p>
+				<input id="web_gov_record" type="text" value="{$website.web_gov_record}" class="input-common" maxlength="30"/>				
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站公安备案链接：</dt>
+		<dd>
+			<p>
+				<input id="web_gov_record_url" type="text" value="{$website.web_gov_record_url}" class="input-common" maxlength="200"/>		
 			</p>
 		</dd>
 	</dl>
@@ -285,6 +313,8 @@ function setConfigAjax() {
 	var close_reason = $("#close_reason").val();
 	var web_popup_title = $("#web_popup_title").val();
 	var web_wechat_share_logo = $("#wechat_share_logo").val();//网站微信分享logo
+	var web_gov_record = $("#web_gov_record").val();
+	var web_gov_record_url = $("#web_gov_record_url").val();
 	$.ajax({
 		type : "post",
 		url : "{:__URL('ADMIN_MAIN/config/webconfig')}",
@@ -309,7 +339,9 @@ function setConfigAjax() {
 			'third_count' : third_count,
 			'close_reason' : close_reason,
 			'web_popup_title' : web_popup_title,
-			'web_wechat_share_logo' : web_wechat_share_logo
+			'web_wechat_share_logo' : web_wechat_share_logo,
+			'web_gov_record' : web_gov_record,
+			'web_gov_record_url' : web_gov_record_url
 		},
 		success : function(data) {
 			if (data["code"] > 0) {

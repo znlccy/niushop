@@ -55,11 +55,13 @@ class GoodsGroup extends BaseService implements IGoodsGroup{
      */
     public function addOrEditGoodsGroup($group_id, $shop_id, $group_name, $pid, $is_visible, $sort, $group_pic)
     {
-    	if($pid == 0){
-    		$level = 1;
-    	}else{
-    		$level = $this->getGoodsGroupDetail($pid)['level'] + 1;
-    	}
+        $level = 1; //目前仅为一级 2017年11月24日19:27:07
+//         $parent_level = $this->getGoodsGroupDetail($pid);
+//     	if($pid == 0){
+//     		$level = 1;
+//     	}else{
+//     		$level = $parent_level['level'] + 1;
+//     	}
         $data = array(
         	'shop_id'		  => $shop_id,
             'group_name'   	  => $group_name,

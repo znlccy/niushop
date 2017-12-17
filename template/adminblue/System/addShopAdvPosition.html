@@ -31,6 +31,7 @@
 			<p>
 				<select id="ap_class" name="account" class="form-control m-b select-common">
 					<option value="0">图片</option>
+					<option value="4">代码</option>
 				</select>
 			</p>
 		</dd>
@@ -52,6 +53,7 @@
 			</p>
 		</dd>
 	</dl>
+	<div class="data-image">
 	<dl>
 		<dt><span style="color:red;margin-right:10px;">*</span>展示方式:</dt>
 		<dd>
@@ -97,6 +99,7 @@
 			<input id="ap_background_color" type="color" style="width:60px;height:25px;" class="input-common" />
 		</dd>
 	</dl>
+	</div>
 	<dl>
 		<dt></dt>
 		<dd><button class="btn-common btn-big" onclick="addShopAdvPositionAjax();">提交</button></dd>
@@ -138,6 +141,15 @@ $("#ap_keyword").change(function(){
 	})
 })
 
+//广告位类型
+$("#ap_class").change(function(){
+	if($(this).val() == 4){
+		$(".data-image").hide();
+	}else if($(this).val() == 0){
+		$(".data-image").show();
+	}
+})
+
 //添加广告位
 function addShopAdvPositionAjax() {
 	var ap_name = $("#ap_name").val();
@@ -155,7 +167,7 @@ function addShopAdvPositionAjax() {
 	var ap_background_color = $("#ap_background_color").val();
 	var type = $("input[type='radio'][name='type']:checked").val();
 	var ap_keyword = $("#ap_keyword").val();
-	if(verify(ap_name,ap_display,ap_width,ap_height)){
+	if(verify(ap_name,ap_display,ap_width,ap_height,ap_class)){
 		$.ajax({
 			type : "post",
 			url : "{:__URL('ADMIN_MAIN/system/addshopadvposition')}",
@@ -183,7 +195,7 @@ function addShopAdvPositionAjax() {
 	}
 }
 
-function verify(ap_name,ap_display,ap_width,ap_height){
+function verify(ap_name,ap_display,ap_width,ap_height,ap_class){
 	if(ap_name.length == 0){
 		$("#ap_name").parent().next(".error").show();
 		$("#ap_name").focus();
@@ -198,27 +210,27 @@ function verify(ap_name,ap_display,ap_width,ap_height){
 	}else{
 		$(".error").hide();
 	}
-	if(ap_display == undefined){
+	if(ap_display == undefined && ap_class == 0){
 		$("#ap_display").next(".error").show();
 		return false;
 	}else{
 		$(".error").hide();
 	}
-	if(ap_width.length == 0){
+	if(ap_width.length == 0 && ap_class == 0){
 		$("#ap_width").parent().next(".error").show();
 		$("#ap_width").focus();
 		return false;
 	}else{
 		$(".error").hide();
 	}
-	if(ap_height.length == 0){
+	if(ap_height.length == 0 && ap_class == 0){
 		$("#ap_height").parent().next(".error").show();
 		$("#ap_height").focus();
 		return false;
 	}else{
 		$(".error").hide();
 	}
-	if($("#Logo").val().length ==0){
+	if($("#Logo").val().length ==0 && ap_class == 0){
 		$("#Logo").parent().next(".error").show();
 		return false;
 	}else{

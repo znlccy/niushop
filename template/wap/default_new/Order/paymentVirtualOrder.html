@@ -1,0 +1,262 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/order.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/pro-detail.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/payment_order_new.css">
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/payment_order_popup.css">
+<style>
+#user_telephone{float:right;text-align: right;}
+</style>
+{/block}
+
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="{:__URL('APP_MAIN')}"><i class="icon-back"></i></a>
+	<div class="head-title">{:lang('order_settlement')}</div>
+</section>
+{/block}
+ 
+{block name="main"}
+<div class="h50"></div>
+
+<section class="order">
+	{foreach name="itemlist" item="list"}
+	<div class="order-goods-item clearfix" data-subtotal="{$list.subtotal}">
+		<div class="name-card block-item">
+			<a href="{:__URL('APP_MAIN/goods/goodsdetail?id='.$list['goods_id'])}" class="thumb">
+				<img src="{:__IMG($list['picture_info']['pic_cover_small'])}" alt="{$list.goods_name}" />
+			</a>
+			<div class="detail">
+				<div class="clearfix detail-row">
+					<div class="right-col">
+						<input type="hidden" name="goods_skuid" value="{$list.sku_id}" />
+						<input type="hidden" name="goods_point_exchange"/>
+						￥<span>{$list.price}
+						{if condition="$list.point_exchange_type==1 "}
+							{if condition=" $list.point_exchange>0"}
+								+{$list.point_exchange}{:lang('goods_integral')}
+							{/if}
+						{/if}
+						</span>
+					</div>
+					<div class="left-col">
+						<h3 style="font-weight: normal;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">
+							<a href="javascript:;">{$list.goods_name}</a>
+						</h3>
+					</div>
+				</div>
+				<div class="clearfix detail-row">
+					<div class="right-col">
+						<div class=" c-gray-darker">
+							×<span>{$list.num}</span>
+						</div>
+					</div>
+					<div class="left-col">
+						<p class="c-gray-darker" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{if condition="$list['sku_name'] neq '0'"}{$list.sku_name}{/if}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{/foreach}
+	
+	<div class="item-options" style="line-height: 30px;">
+		<label><span style="font-size:12px;color:#FF9800;font-weight:bold;">{:lang('order_user_phone_tip')}</span></label>
+	</div>
+	
+	<div class="item-options">
+		<label>{:lang('member_phone_number')}</label>
+		<input type="text" id="user_telephone" value="{$user_telephone}" placeholder="手机号码" />
+	</div>
+	
+	{if condition="count($coupon_list) >0"}
+	<div class="item-options" data-flag="use-coupon">
+		<label class="float_left">{:lang('member_coupons')}</label>
+		<span class="arrow-right color-gray">{:lang('member_no_coupons')}</span>
+	</div>
+	{/if}
+	
+	
+	<div class="item-options">
+		<label>{:lang('member_payment_method')}</label>
+		<span class="arrow-right color-gray">{:lang('member_online_payment')}</span>
+	</div>
+	
+	{if condition="$shop_config['order_balance_pay'] == 1"}
+	<div class="item-options">
+		<label>{:lang('member_use_balance')}<b class="account_balance">￥{$member_account.balance}</b></label>
+		<span>
+			{:lang('use')}<input type="text" id="account_balance" data-max="{$member_account.balance}" placeholder="0.00"/>{:lang('element')}
+		</span>
+	</div>
+	{/if}
+	
+	{if condition="count($shop_config.order_invoice_content_list)"}
+	<div class="item-options" data-flag="invoice" data-select="0">
+		<label>{:lang('member_invoice_information')}<span style="font-size:12px;color:#FF9800;font-weight:bold;"></span></label>
+		<span class="arrow-right color-gray">{:lang('member_no_invoice_required')}</span>
+	</div>
+	
+	<div class="item-options invoice">
+		<label><span style="font-size:12px;color:#FF9800;font-weight:bold;">{:lang('will_collect')}{$shop_config.order_invoice_tax}%{:lang('member_invoice_tax_rate')}</span></label>
+	</div>
+	
+	<div class="item-options invoice">
+		<label>{:lang('member_invoice_header')}</label>
+		<textarea id="invoice-title" maxlength="50" placeholder="{:lang('member_personal_or_company_invoice')}"></textarea>
+	</div>
+	
+	<div class="item-options invoice">
+		<label>{:lang('member_taxpayer_identification_number')}</label>
+		<textarea id="taxpayer-identification-number" maxlength="50" placeholder="{:lang('member_taxpayer_identification_number')}"></textarea>
+	</div>
+	
+	
+	<div class="item-options invoice" data-flag="invoice-content">
+		<label>{:lang('member_invoice_content')}</label>
+		<span class="arrow-right color-gray">{:lang('select_invoice_content')}</span>
+	</div>
+	{/if}
+	
+	<div class="item-options">
+		<label>{:lang('member_buyer_message')}</label>
+		<textarea id="leavemessage" placeholder="{:lang('leave_a_message_for_the_seller')}" maxlength="100"></textarea>
+	</div>
+	
+	<div class="order-list">
+		<h3>{:lang('member_settlement_information')}</h3>
+		<p>
+			<label>{:lang('goods_total')}<b class="orange-bold js-goods-num">1</b>{:lang('member_kinds_of_goods')}&nbsp;{:lang('member_total')}</label>
+			<span>￥<b class="js-total-money">0.00</b></span>
+		</p>
+		
+		<p>
+			<label>{:lang('member_total_discount')}</label>
+			<span>￥<b id="discount_money">0.00</b></span>
+		</p>
+		
+		
+		{if condition="count($shop_config.order_invoice_content_list)>0"}
+		<p>
+			<label>{:lang('member_invoice_tax')}：</label>
+			<span>￥<b id="invoice_tax_money">0.00</b></span>
+		</p>
+		{/if}
+		
+		
+		{if condition="$shop_config['order_balance_pay'] == 1"}
+		<p>
+			<label>{:lang('member_use_balance')}：</label>
+			<span>￥<b id="use_balance">0.00</b></span>
+		</p>
+		{/if}
+	</div>
+</section>
+
+<div class="footer" style="min-height: 86px;" id="bottom_copyright">
+	<div class="copyright">
+		<div class="ft-copyright">
+			<img src="__TEMP__/{$style}/public/images/logo_copy.png" id="copyright_logo_wap">
+			<a href="{:__URL('APP_MAIN')}" target="_blank" id="copyright_companyname"></a>
+		</div>
+	</div>
+</div>
+
+<div style="height: 50px"></div>
+<div class="order-total-pay bottom-fix">
+	<div class="pay-container clearfix">
+		<span class="c-gray-darker font-size-12">{:lang('member_amount_payable')}：</span>
+		<span class="font-size-16 theme-price-color">￥<b id="realprice">0.00</b></span>
+		{if condition="$count_point_exchange>0"}
+		<span class="font-size-16 theme-price-color" id="count-point">+{$count_point_exchange}{:lang('goods_integral')}</span>
+		{/if}
+		<button class="commit-bill-btn" onclick="submitOrder()">{:lang('member_place_order')}</button>
+		<input type="hidden" id="hidden_count_point_exchange" value="{$count_point_exchange}" />
+		<input type="hidden" id="hidden_goods_sku_list" value="{$goods_sku_list}"/>
+		<input type="hidden" id="hidden_discount_money" value="{$discount_money}" />
+		<input type="hidden" id="hidden_count_money" value="{$count_money}" />
+		<input type="hidden" id="count_point_exchange" value="{$count_point_exchange}"/>
+		<input type="hidden" id="goods_sku_list" value="{$goods_sku_list}" />
+		<input type="hidden" id="hidden_order_invoice_tax" value="{$shop_config.order_invoice_tax}"/>
+	</div>
+</div>
+
+<!----------------------------- 弹出层 ------------------------------>
+<div class="mask-layer"></div>
+
+{if condition="count($coupon_list)"}
+<!-- 选择优惠券弹出框 -->
+<div class="mask-layer-control" data-flag="use-coupon">
+	<div class="header">{:lang('choose_coupons')}<span class="close"></span></div>
+	<div class="list">
+		<ul>
+			<li class="item active">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_no_coupons')}</div>
+			</li>
+			{volist name="coupon_list" id="coupon"}
+			<li class="item" data-id="{$coupon['coupon_id']}" data-code="{$coupon['coupon_code']}" data-money="{$coupon['money']}">
+				<div class="check-img"></div>
+				<div>
+					<p class="font-size-12">{$coupon['coupon_name']}<em class="pull-right">{$coupon['money']}{:lang('element')}</em></p>
+					<p class="font-size-12 c-gray-darker">{:lang('member_full')}{$coupon['at_least']}{:lang('element')}{:lang('member_reduce')}{$coupon['money']}{:lang('element')}</p>
+				</div>
+			</li>
+			{/volist}
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+</div>
+<!-- 选择优惠券弹出框 -->
+{/if}
+
+<!-- 选择发票信息弹出框 -->
+<div class="mask-layer-control" data-flag="invoice">
+	<div class="header">{:lang('select_invoice')}<span class="close"></span></div>
+	<div class="list">
+		<ul>
+			<li class="item active" data-flag="0">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_no_invoice_required')}</div>
+			</li>
+			<li class="item" data-flag="1">
+				<div class="check-img"></div>
+				<div class="single">{:lang('member_invoice_required')}</div>
+			</li>
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+</div>
+<!-- 选择发票信息弹出框 -->
+
+{if condition="count($shop_config.order_invoice_content_list)"}
+<!-- 选择发票内容信息弹出框 -->
+<div class="mask-layer-control" data-flag="invoice-content">
+	<div class="header">{:lang('select_invoice_content')}<span class="close"></span></div>
+	<div class="list">
+		<ul>
+			{foreach name="$shop_config.order_invoice_content_list" item="invoice" key="k"}
+			<li class="item {if condition="$k==0"}active{/if}">
+				<div class="check-img"></div>
+				<div class="single">{$invoice}</div>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<div class="footer">
+		<button class="btn-green" style="margin: 0px;">{:lang('goods_determine')}</button>
+	</div>
+</div>
+<!-- 选择发票内容信息弹出框 -->
+{/if}
+<!----------------------------- 弹出层 ------------------------------>
+
+{/block}
+{block name="bottom"}{/block}
+{block name="javascript"}
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/payment_virtual_order.js"></script>
+{/block}

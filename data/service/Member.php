@@ -415,7 +415,25 @@ class Member extends User implements IMember
         
         return $member_info;
     }
-    
+
+    /**
+     * 获取用户的手机号
+     *
+     * @return unknown|string
+     */
+    public function getUserTelephone()
+    {
+        if (! empty($this->uid)) {
+            
+            $user = new UserModel();
+            $res = $user->getInfo([
+                'uid' => $this->uid
+            ], 'user_tel');
+            return $res['user_tel'];
+        } else {
+            return '';
+        }
+    }
     // public function getMemberId($nick_name){
     // $user_model = new UserModel();
     // if(!empty($nick_name)){

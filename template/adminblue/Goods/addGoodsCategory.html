@@ -133,6 +133,7 @@ function verify( category_name,short_name, keywords, sort, description){
 }
 
 //添加模块
+var flag = false;
 function addGoodsCategoryAjax() {
 	var category_name = $("#category_name").val();
 	var short_name = $("#short_name").val();
@@ -153,6 +154,8 @@ function addGoodsCategoryAjax() {
 		var attr_name = '';
 	}
 	if(verify(category_name,short_name, keywords, sort, description)){
+		if(flag) return;
+		flag = true;
 		$.ajax({
 			type : "post",
 			url : "{:__URL('ADMIN_MAIN/goods/addgoodscategory')}",
@@ -173,6 +176,7 @@ function addGoodsCategoryAjax() {
 					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/goods/goodscategorylist')}");
 				}else{
 					showMessage('error', data["message"]);
+					flag = false;
 				}
 			}
 		});

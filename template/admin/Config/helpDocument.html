@@ -125,7 +125,7 @@ function updateDocument(id,index,class_id){
 	}
 	$.ajax({
 		type:"post",
-		url:"{:__URL('ADMIN_MAIN/config/updatedocument')}",
+		url:"{:__URL('ADMIN_MAIN/config/updateHelpContentTitleAndSort')}",
 		data:{ 'id' : id, 'title':title,'sort':sort,"class_id":class_id},
 		success: function (data) {
 			var flag = "error";

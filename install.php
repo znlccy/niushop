@@ -944,7 +944,7 @@ function tpl_frame() {
 				<ul class="nav nav-pills pull-right" role="tablist">
 					<li role="presentation" class="active"><a href="javascript:;">开始安装</a></li>
 					<li role="presentation"><a target = "_blank" href="http://www.niushop.com.cn">官方网站</a></li>
-					<li role="presentation"><a target = "_blank" href="http://forum.osi.ltd">技术支持</a></li>
+					<li role="presentation"><a target = "_blank" href="http://www.niushop.com.cn/document.html?class_id=20">用户手册</a></li>
 				</ul>
 				<img src="?res=logo" />
 			</div>
@@ -973,10 +973,10 @@ function tpl_frame() {
 			</div>
 			<div class="footer" style="margin:15px auto;">
 				<div class="text-center">
-					<a  target = "_blank" href="http://www.niushop.com.cn">官方网站</a> &nbsp; &nbsp; <a  target = "_blank" href="http://forum.osi.ltd">社区论坛</a> &nbsp; &nbsp; <a target = "_blank" href="http://forum.osi.ltd">技术支持</a>
+					<a  target = "_blank" href="http://www.niushop.com.cn">官方网站</a> &nbsp; &nbsp; <a  target = "_blank" href="http://bbs.niushop.com.cn/forum.php">社区论坛</a> &nbsp; &nbsp; <a target = "_blank" href="http://www.niushop.com.cn/document.html">开发文档</a>
 				</div>
 				<div class="text-center">
-				Copyright &copy; 2015-2025 <a target = "_blank" href="http://www.niushop.com.cn">NIUSHOP开源商城 版权所有 保留一切权利</a>
+				Copyright &copy; 2015-2025 <a target = "_blank" href="http://www.niushop.com.cn">NIUSHOP开源商城</a>
 				</div>
 			</div>
 		</div>

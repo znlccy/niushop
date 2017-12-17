@@ -43,7 +43,7 @@
 .detail-info h1.goods-name { width: auto; min-height: 30px; line-height: 30px; color: #3C3C3C; font-size: 16px; overflow: hidden; font-weight: 700; padding-bottom: 4px;}
 .detail-info p.goods-brief { margin-bottom: 10px; font-size: 14px; }
 .detail-info p.end-time { padding: 10px 15px; color: #fff; font-size: 14px; }
-.goods-price { background: #F5F5F5;/*  margin-bottom: 10px; */ padding: 6px 0px; position: relative; z-index: 4;}
+.goods-price { background: #F5F5F5;/*  margin-bottom: 10px; */ padding: 6px 0 0; position: relative; z-index: 4;}
 .goods-price .price { color: #999; padding-left: 15px; }
 .goods-price .show-price { height: 35px; line-height: 35px; display: inline-block;}
 .goods-price .show-price .market-price { font-weight: normal; text-decoration: line-through; margin-left: 10px; margin-right: 50px; }

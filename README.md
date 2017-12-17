@@ -1,13 +1,11 @@
-# Niushop 商城系统
+<center>
+    <img src="https://raw.githubusercontent.com/OSI-LTD/niushop-b2c/master/niushop-b2c.png" alt="niushop-b2c">
+</center>
 
 [![OSSLab](https://img.shields.io/badge/OSSLab-开源软件实验室-blue.svg?style=flat)](http://osslab.online)
 [![mysql](https://img.shields.io/badge/mysql-5.0+-blue.svg)](https://www.mysql.com/)
 [![php](https://img.shields.io/badge/php-5.6+-blue.svg)](http://www.php.net/)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
-
-<center>
-    <img src="https://raw.githubusercontent.com/OSI-LTD/niushop-b2c/master/niushop-b2c.png" alt="niushop-b2c">
-</center>
 
 团队十年电商经验汇集巨献！
 

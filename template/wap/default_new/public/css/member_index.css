@@ -208,7 +208,7 @@ em, i {
 	vertical-align: middle;
 	width: auto;
 	height: auto;
-    display: block;
+	display: block;
 }
 
 .member_head p:last-child {
@@ -303,9 +303,13 @@ em, i {
 }
 
 .control>div.control_l .control_l_content {
-	font-size: 15px;
+	font-size: 14px;
 	margin-left: 5px;
-	font-weight: bold;
+/* 	font-weight: bold; */
+}
+
+.control>div.control_l .control_l_content.selected {
+	color: #FF4E00;
 }
 
 .control>div.control_r {
@@ -437,63 +441,95 @@ strong, b {
 
 .side-nav
 
+
  
+
 
 li
 
+
  
+
 
 a
 
 
+
+
 :not
 
+
  
+
 
 (
 .button
 
+
  
+
 
 ){
 display
 
 
+
+
 :
+
 
  
 
+
 block
+
+
 
 
 ;
 height
 
 
+
+
 :
 
+
  
+
 
 100%;
 float
 
 
+
+
 :
+
 
  
 
+
 right
+
+
 
 
 ;
 margin
 
 
+
+
 :
+
 
  
 
+
 auto
+
+
 
 
 ;

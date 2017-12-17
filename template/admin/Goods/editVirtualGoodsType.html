@@ -1,0 +1,134 @@
+{extend name="admin/base" /}
+{block name="resources"/}{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>虚拟商品类型名称：</dt>
+		<dd>
+			{if condition="$virtual_goods_type"}
+			<input id="virtual_goods_type_name" type="text" placeholder="请输入虚拟商品类型名称" class="input-common" value="{$virtual_goods_type.virtual_goods_type_name}"/>
+			{else/}
+			<input id="virtual_goods_type_name" type="text" placeholder="请输入虚拟商品类型名称" class="input-common"/>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>有效期/天：</dt>
+		<dd>
+			{if condition="$virtual_goods_type"}
+			<input id="validity_period" type="text" placeholder="请输入有效期/天(0表示不限制)" class="input-common" value="{$virtual_goods_type.validity_period}"/>
+			{else/}
+			<input id="validity_period" type="text" placeholder="请输入有效期/天(0表示不限制)" class="input-common"/>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>金额：</dt>
+		<dd>
+			{if condition="$virtual_goods_type"}
+			<input id="money" type="text" placeholder="请输入金额" class="input-common" value="{$virtual_goods_type.money}"/>
+			{else/}
+			<input id="money" type="text" placeholder="请输入金额" class="input-common"/>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>限制使用次数：</dt>
+		<dd>
+			{if condition="$virtual_goods_type"}
+			<input id="confine_use_number" type="text" placeholder="请输入限制使用次数(0表示不限制)" class="input-common" value="{$virtual_goods_type.confine_use_number}"/>
+			{else/}
+			<input id="confine_use_number" type="text" placeholder="请输入限制使用次数(0表示不限制)" class="input-common"/>
+			{/if}
+		</dd>
+	</dl>
+<!-- 	<dl>
+		<dt>接口地址：</dt>
+		<dd>
+			{if condition="$virtual_goods_type"}
+			<input id="interfaces" type="text" placeholder="请输入接口地址" class="input-common" value="{$virtual_goods_type.config_info}"/>
+			{else/}
+			<input id="interfaces" type="text" placeholder="请输入接口地址" class="input-common"/>
+			{/if}
+		</dd>
+	</dl> -->
+	<dl>
+		<dt>是否启用</dt>
+		<dd>
+			{if condition="$virtual_goods_type"}
+				{if condition="$virtual_goods_type.is_enabled == 1"}
+				<input id="is_enabled" type="checkbox" class="checkbox" checked="checked" />
+				{else/}
+				<input id="is_enabled" type="checkbox" class="checkbox" />
+				{/if}
+			{else/}
+			<input id="is_enabled" type="checkbox" class="checkbox" checked="checked" />
+			{/if}
+			<span style="color:orange;">（禁用后要查询关联的虚拟商品给予弹出确认提示框，确认后将商品下架）</span>
+		</dd>
+	</dl>
+	<button class="edit_button" onclick="save()">提交</button>
+</div>
+<input type="hidden" id="hidden_virtual_goods_type_id" value="{$virtual_goods_type_id}" />
+<script>
+function validation() {
+
+	if($("#virtual_goods_type_name").val().length == 0){
+		$("#virtual_goods_type_name").focus();
+		showTip("请输入虚拟商品类型名称","warning");
+		return false;
+	}
+	if($("#virtual_goods_type_name").val().length > 120){
+		$("#virtual_goods_type_name").focus();
+		showTip("虚拟商品类型名称长度超出限制","warning");
+		return false;
+	}
+	if(isNaN($("#money").val())){
+		showTip("请输入数字","warning");
+		$("#money").focus();
+		return false;
+	}
+	
+	if(isNaN($("#confine_use_number").val())){
+		showTip("请输入数字","warning");
+		$("#confine_use_number").focus();
+		return false;
+	}
+	
+	return true;
+}
+
+var flag = false;//防止重复提交
+function save() {
+	if (!validation()) return;
+	if(flag) return;
+	flag = true;
+	
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/editVirtualGoodsType')}",
+		data : {
+			"virtual_goods_type_id" : $("#hidden_virtual_goods_type_id").val(),
+			'virtual_goods_group_id' : 1,//关联虚拟商品分组id
+			"virtual_goods_type_name" : $("#virtual_goods_type_name").val(),
+			'validity_period' : $("#validity_period").val(),
+			//'config_info' : JSON.stringify(config_info),
+			'confine_use_number' : $("#confine_use_number").val(),
+			'money' : $("#money").val() ? $("#money").val() : "0",
+			'is_enabled' : $("#is_enabled").prop("checked") ? 1 : 0
+		},
+		success : function(res) {
+			if (res.code > 0) {
+				showTip(res.message,"success");
+				setTimeout(function(){
+					location.href = "{:__URL('ADMIN_MAIN/goods/virtualGoodsTypeList')}";
+				},1200);
+			} else {
+				flag = false;
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

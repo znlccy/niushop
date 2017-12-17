@@ -44,7 +44,7 @@
 					{case value="1"}
 					<tr>
 						<td align="right" bgcolor="#ffffff">{:lang('member_receiving_information')}：</td>
-							<td align="left" bgcolor="#ffffff">{$order['receiver_name']}，{$order['receiver_mobile']}，{$order['address']}{$order['receiver_address']}{if condition="$order['receiver_zip']!=''"}&nbsp;，{$order['receiver_zip']}{/if}</td>
+							<td align="left" bgcolor="#ffffff">{$order['receiver_name']}，{$order['receiver_mobile']}，{notempty name="$order['fixed_telephone']"}{$order['fixed_telephone']}，{/notempty} {$order['address']}{if condition="$order['receiver_zip']!=''"}&nbsp;，{$order['receiver_zip']}{/if}</td>
 					</tr>
 					{/case}
 					{case value="2"}

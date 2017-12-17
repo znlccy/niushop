@@ -10,15 +10,14 @@
 	<dl>
 		<dt>自动收货时间:</dt>
 		<dd>
-			<input id="order_auto_delinery" type="number" min="0.00" step="1.00" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" value="{$shopSet['order_auto_delinery']}" class="input-common" /> 
+			<input id="order_auto_delinery" type="number" min="0.00" step="1.00" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" value="{$shopSet['order_auto_delinery']}" class="input-common" />
 			<p class="hint">订单多长时间后自动收货，单位为/天(注：若为0，则默认14天自动收货)</p>
 		</dd>
 	</dl>
-	
 	<dl>
 		<dt>订单自动关闭时间:</dt>
 		<dd>
-			<input id="order_buy_close_time" type="number" min="0.00" step="1.00" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" value="{$shopSet['order_buy_close_time']}" class="input-common" /> 
+			<input id="order_buy_close_time" type="number" min="0.00" step="1.00" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" value="{$shopSet['order_buy_close_time']}" class="input-common" />
 			<p class="hint">订单开始后多长时间未付款自动关闭，单位为/分钟(注：不填写或0默认关闭时间为60分钟)</p>
 		</dd>
 	</dl>
@@ -33,13 +32,12 @@
 			<p class="hint">是否启用余额支付</p>
 		</dd>
 	</dl>
-	
 	<dl>
 		<dt>是否开启货到付款</dt>
 		<dd>
 			<div class="controls">
-				<label class="label-radio"><input type="radio" name="order_delivery_pay" value="1"  id="payResultYes" {if condition="$shopSet['order_delivery_pay'] eq 1"}checked="checked"{/if}>启用</label> 
-				<label class="label-radio"><input type="radio" name="order_delivery_pay" value="0"  id="payResultNo"  {if condition="$shopSet['order_delivery_pay'] eq 0"}checked="checked"{/if}>禁用</label>
+				<label class="label-radio"><input type="radio" name="order_delivery_pay" value="1" id="payResultYes" {if condition="$shopSet['order_delivery_pay'] eq 1"}checked="checked"{/if}>启用</label>
+				<label class="label-radio"><input type="radio" name="order_delivery_pay" value="0" id="payResultNo" {if condition="$shopSet['order_delivery_pay'] eq 0"}checked="checked"{/if}>禁用</label>
 			</div>
 			<p class="hint">是否支持货到付款</p>
 		</dd>
@@ -67,31 +65,29 @@
 		<dt>是否显示购买记录</dt>
 		<dd>
 			<div class="controls">
-				<label class="label-radio"><input type="radio" name="order_show_buy_record" value="1" checked="checked" id="purchaseRecordYes">启用</label> 
+				<label class="label-radio"><input type="radio" name="order_show_buy_record" value="1" checked="checked" id="purchaseRecordYes">启用</label>
 				<label class="label-radio"><input type="radio" name="order_show_buy_record" value="0" id="purchaseRecordNo">禁用</label>
 				<input type="hidden" id="or_open" value="{$shopSet['order_show_buy_record']}">
 			</div>
 			<p class="hint">是否显示购买记录</p>
 		</dd>
 	</dl>
-	
 	<dl>
 		<dt>是否开启买家自提</dt>
 		<dd>
 			<div class="controls">
-				<label class="label-radio"><input type="radio" name="buyer_self_lifting" value="1" checked="checked" id="sinceYes">启用</label> 
+				<label class="label-radio"><input type="radio" name="buyer_self_lifting" value="1" checked="checked" id="sinceYes">启用</label>
 				<label class="label-radio"><input type="radio" name="buyer_self_lifting" value="0" id="sinceNo">禁用</label>
 				<input type="hidden" id="is_start" value="{$shopSet['buyer_self_lifting']}">
 			</div>
 			<p class="hint">是否启用买家自提</p>
 		</dd>
 	</dl>
-	
 	<dl>
 		<dt>是否开启商家配送</dt>
 		<dd>
 			<div class="controls">
-				<label class="label-radio"><input type="radio" name="seller_dispatching" value="1" checked="checked" id="dispatchingYes">启用</label> 
+				<label class="label-radio"><input type="radio" name="seller_dispatching" value="1" checked="checked" id="dispatchingYes">启用</label>
 				<label class="label-radio"><input type="radio" name="seller_dispatching" value="0" id="dispatchingNo">禁用</label>
 				<input type="hidden" id="is_dispatching" value="{$shopSet['seller_dispatching']}">
 			</div>
@@ -102,11 +98,22 @@
 		<dt>是否允许选择物流</dt>
 		<dd>
 			<div class="controls">
-				<label class="label-radio"><input type="radio" name="is_logistics" value="1" checked="checked" id="logisticsYes">启用</label> 
+				<label class="label-radio"><input type="radio" name="is_logistics" value="1" checked="checked" id="logisticsYes">启用</label>
 				<label class="label-radio"><input type="radio" name="is_logistics" value="0" id="logisticsNo">禁用</label>
 				<input type="hidden" id="is_logistics" value="{$shopSet['is_logistics']}">
 			</div>
 			<p class="hint">是否允许用户选择物流</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否开启虚拟商品</dt>
+		<dd>
+			<div class="controls">
+				<label class="label-radio"><input type="radio" name="is_open_virtual_goods" value="1" id="open_virtual_goods">启用</label> 
+				<label class="label-radio"><input type="radio" name="is_open_virtual_goods" value="0" checked="checked" id="close_virtual_goods">禁用</label>
+				<input type="hidden" id="is_open_virtual_goods" value="{$shopSet['is_open_virtual_goods']}">
+			</div>
+			<p class="hint">是否开启虚拟商品</p>
 		</dd>
 	</dl>
 	<dl>
@@ -117,11 +124,11 @@
 					<option value="1" {if condition="$shopSet['shopping_back_points'] eq 1"}selected{/if}>&nbsp;&nbsp;订单已完成</option>
 					<option value="2" {if condition="$shopSet['shopping_back_points'] eq 2"}selected{/if}>&nbsp;&nbsp;已收货</option>
 					<option value="3" {if condition="$shopSet['shopping_back_points'] eq 3"}selected{/if}>&nbsp;&nbsp;支付完成</option>
-  				</select>
+				</select>
 			</p>
 			<p class="hint">购物返积分设置</p>
 		</dd>
-	</dl>	
+	</dl>
 	<dl>
 		<dt>发票税率:</dt>
 		<dd>
@@ -132,7 +139,7 @@
 	<dl>
 		<dt>发票内容:</dt>
 		<dd>
-			<textarea  rows="2" id="order_invoice_content" class="textarea input-common" maxlength="50">{$shopSet['order_invoice_content']}</textarea>
+			<textarea rows="2" id="order_invoice_content" class="textarea input-common" maxlength="50">{$shopSet['order_invoice_content']}</textarea>
 			<p class="hint">客户要求开发票时可以选择的内容，逗号分格代表一个选项，例如：办公用品,明细</p>
 		</dd>
 	</dl>
@@ -207,6 +214,17 @@ window.onload=function(){
 		$("#logisticsYes").prop("checked","checked");
 	}
 	
+	//是否开启虚拟商品
+	var is_open_virtual_goods = $("#is_open_virtual_goods").val();
+	if(is_open_virtual_goods == ""){
+		is_open_virtual_goods = 0;
+	}
+	if(parseInt(is_open_virtual_goods) == 0){
+		$("#close_virtual_goods").prop("checked","checked");
+	}else{
+		$("#open_virtual_goods").prop("checked","checked");
+	}
+	
 };
 
 function setConfigAjax(){
@@ -222,6 +240,7 @@ function setConfigAjax(){
 	var order_invoice_tax = $("#order_invoice_tax").val();
 	var order_invoice_content = $("#order_invoice_content").val();
 	var shopping_back_points = $("#shopping_back_points").val();
+	var is_open_virtual_goods = $("input[type='radio'][name='is_open_virtual_goods']:checked").val();//是否开启虚拟商品
 	if(validation){
 		$.ajax({
 			type:"post",
@@ -238,7 +257,8 @@ function setConfigAjax(){
 				"is_logistics" : is_logistics,
 				"order_invoice_tax" : order_invoice_tax,
 				"order_invoice_content" : order_invoice_content,
-				"shopping_back_points" : shopping_back_points
+				"shopping_back_points" : shopping_back_points,
+				"is_open_virtual_goods" : is_open_virtual_goods
 			},
 			success : function(data){
 				if(data['code'] > 0){

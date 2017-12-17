@@ -77,7 +77,7 @@ interface IOrder
      * @param unknown $goods_sku_list            
      * @param unknown $platform_money            
      */
-    function orderCreate($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $coin = 0);
+    function orderCreate($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $coin = 0, $fixed_telephone = "");
 
     /**
      * 订单物流发货
@@ -325,7 +325,6 @@ interface IOrder
     /**
      * 获取某种条件下订单数量
      *
-     * @param unknown $conditon            
      */
     function getOrderCount($condition);
 
@@ -608,7 +607,7 @@ interface IOrder
      * @param unknown $receiver_zip            
      * @param unknown $receiver_name            
      */
-    function updateOrderReceiveDetail($order_id, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name);
+    function updateOrderReceiveDetail($order_id, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name,$fixed_telephone);
 
     /**
      * 获取某个订单状态下订单数目

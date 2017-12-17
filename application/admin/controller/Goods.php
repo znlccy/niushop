@@ -25,6 +25,7 @@ use data\service\GoodsGroup as GoodsGroup;
 use data\service\Supplier;
 use Qiniu\json_decode;
 use think\Config;
+use data\service\VirtualGoods;
 
 /**
  * 商品控制器
@@ -304,66 +305,77 @@ class Goods extends BaseController
         ]);
         $this->assign("expressCompanyList", $expressCompanyList['data']);
         
+        //虚拟商品类型
+        $virtual_goods = new VirtualGoods();
+        $virtual_goods_type_list = $virtual_goods->getVirtualGoodsTypeList(1, 0);
+        $this->assign("virtual_goods_type_list", $virtual_goods_type_list['data']);
+        
         if ($goodsId > 0) {
+            if (! is_numeric($goodsId)) {
+                $this->error("参数错误");
+            }
             $this->assign("goodsid", $goodsId);
             $goods_info = $goods->getGoodsDetail($goodsId);
-            $goods_info['sku_list'] = json_encode($goods_info['sku_list']);
-            $goods_info['goods_group_list'] = json_encode($goods_info['goods_group_list']);
-            $goods_info['img_list'] = json_encode($goods_info['img_list']);
-            $goods_info['goods_attribute_list'] = json_encode($goods_info['goods_attribute_list']);
-            // 判断规格数组中图片路径是id还是路径
-            if (trim($goods_info['goods_spec_format']) != "") {
-                $album = new Album();
-                $goods_spec_array = json_decode($goods_info['goods_spec_format'], true);
-                foreach ($goods_spec_array as $k => $v) {
-                    foreach ($v["value"] as $t => $m) {
-                        if (is_numeric($m["spec_value_data"]) && $m["spec_show_type"] == 3) {
-                            $picture_detail = $album->getAlubmPictureDetail([
-                                "pic_id" => $m["spec_value_data"]
-                            ]);
-                            if (! empty($picture_detail)) {
-                                $goods_spec_array[$k]["value"][$t]["spec_value_data_src"] = $picture_detail["pic_cover_micro"];
-                            }
-                        } else 
-                            if (! is_numeric($m["spec_value_data"]) && $m["spec_show_type"] == 3) {
-                                $goods_spec_array[$k]["value"][$t]["spec_value_data_src"] = $m["spec_value_data"];
-                            }
+            if (! empty($goods_info)) {
+                $goods_info['sku_list'] = json_encode($goods_info['sku_list']);
+                $goods_info['goods_group_list'] = json_encode($goods_info['goods_group_list']);
+                $goods_info['img_list'] = json_encode($goods_info['img_list']);
+                $goods_info['goods_attribute_list'] = json_encode($goods_info['goods_attribute_list']);
+                // 判断规格数组中图片路径是id还是路径
+                if (trim($goods_info['goods_spec_format']) != "") {
+                    $album = new Album();
+                    $goods_spec_array = json_decode($goods_info['goods_spec_format'], true);
+                    foreach ($goods_spec_array as $k => $v) {
+                        foreach ($v["value"] as $t => $m) {
+                            if (is_numeric($m["spec_value_data"]) && $m["spec_show_type"] == 3) {
+                                $picture_detail = $album->getAlubmPictureDetail([
+                                    "pic_id" => $m["spec_value_data"]
+                                ]);
+                                if (! empty($picture_detail)) {
+                                    $goods_spec_array[$k]["value"][$t]["spec_value_data_src"] = $picture_detail["pic_cover_micro"];
+                                }
+                            } else 
+                                if (! is_numeric($m["spec_value_data"]) && $m["spec_show_type"] == 3) {
+                                    $goods_spec_array[$k]["value"][$t]["spec_value_data_src"] = $m["spec_value_data"];
+                                }
+                        }
                     }
+                    $goods_spec_format = json_encode($goods_spec_array, JSON_UNESCAPED_UNICODE);
+                    $goods_info['goods_spec_format'] = $goods_spec_format;
                 }
-                $goods_spec_format = json_encode($goods_spec_array, JSON_UNESCAPED_UNICODE);
-                $goods_info['goods_spec_format'] = $goods_spec_format;
-            }
-            $extent_sort = count($goods_info["extend_category"]);
-            $this->assign("extent_sort", $extent_sort);
-            if ($goods_info["group_id_array"] == "") {
-                $this->assign("edit_group_array", array());
+                $extent_sort = count($goods_info["extend_category"]);
+                $this->assign("extent_sort", $extent_sort);
+                if ($goods_info["group_id_array"] == "") {
+                    $this->assign("edit_group_array", array());
+                } else {
+                    $this->assign("edit_group_array", explode(",", $goods_info["group_id_array"]));
+                }
+                /**
+                 * 当前cookie中存的goodsid
+                 */
+                $update_goods_id = isset($_COOKIE["goods_update_goodsid"]) ? $_COOKIE["goods_update_goodsid"] : 0;
+                if ($update_goods_id == $goodsId) {
+                    // $category_name = str_replace(":", "&gt;", $_COOKIE["goods_category_name"]);
+                    $category_name = str_replace(":", "", $_COOKIE["goods_category_name"]);
+                    $goods_info["category_id"] = $_COOKIE["goods_category_id"];
+                    $goods_info["category_name"] = $category_name;
+                }
+                $goods_info['description'] = str_replace(PHP_EOL, '', $goods_info['description']);
+                $this->assign("goods_info", $goods_info);
+                // 规格数据转json
+                if (! empty($goods_info["sku_picture_array"])) {
+                    $sku_picture_array_str = json_encode($goods_info["sku_picture_array"]);
+                } else {
+                    $sku_picture_array_str = '';
+                }
+                $this->assign("sku_picture_array_str", $sku_picture_array_str);
+                
+                $brand_info = $goodsbrand->getGoodsBrandInfo($goods_info['brand_id'], 'brand_id,brand_name');
+                $goods_info['brand_info'] = $brand_info;
+                return view($this->style . "Goods/selectCategoryNextUpdate");
             } else {
-                $this->assign("edit_group_array", explode(",", $goods_info["group_id_array"]));
+                $this->error("商品不存在");
             }
-            /**
-             * 当前cookie中存的goodsid
-             */
-            $update_goods_id = isset($_COOKIE["goods_update_goodsid"]) ? $_COOKIE["goods_update_goodsid"] : 0;
-            if ($update_goods_id == $goodsId) {
-                // $category_name = str_replace(":", "&gt;", $_COOKIE["goods_category_name"]);
-                $category_name = str_replace(":", "", $_COOKIE["goods_category_name"]);
-                $goods_info["category_id"] = $_COOKIE["goods_category_id"];
-                $goods_info["category_name"] = $category_name;
-            }
-            $goods_info['description'] = str_replace(PHP_EOL, '', $goods_info['description']);
-            $this->assign("goods_info", $goods_info);
-            // 规格数据转json
-            if (! empty($goods_info["sku_picture_array"])) {
-                $sku_picture_array_str = json_encode($goods_info["sku_picture_array"]);
-            } else {
-                $sku_picture_array_str = '';
-            }
-            $this->assign("sku_picture_array_str", $sku_picture_array_str);
-            
-            $brand_info = $goodsbrand->getGoodsBrandInfo($goods_info['brand_id'], 'brand_id,brand_name');
-            $goods_info['brand_info'] = $brand_info;
-            
-            return view($this->style . "Goods/selectCategoryNextUpdate");
         } else {
             return view($this->style . 'Goods/selectCategoryNext');
         }
@@ -383,7 +395,7 @@ class Goods extends BaseController
         // 排除当前选中的品牌，然后模糊查询
         $condition = array(
             'shop_id' => $this->instance_id,
-            'brand_name' => array(
+            'brand_name|brand_initial' => array(
                 [
                     "like",
                     "%$search_name%"
@@ -516,6 +528,21 @@ class Goods extends BaseController
             $goodscategory = new GoodsCategory();
             $list = $goodscategory->getGoodsCategoryListByParentId(0);
             $this->assign('goods_category_list', $list);
+            
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "goods/goodsbrandlist",
+                        'menu_name' => "商品品牌",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Goods/addGoodsBrand");
         }
     }
@@ -570,6 +597,21 @@ class Goods extends BaseController
             $goodscategory = new GoodsCategory();
             $list = $goodscategory->getGoodsCategoryListByParentId(0);
             $this->assign('goods_category_list', $list);
+            
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "goods/goodsbrandlist",
+                        'menu_name' => "商品品牌",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Goods/editGoodsBrand");
         }
     }
@@ -621,6 +663,21 @@ class Goods extends BaseController
             $goods = new GoodsService();
             $goodsAttributeList = $goods->getAttributeServiceList(1, 0);
             $this->assign("goodsAttributeList", $goodsAttributeList['data']);
+            
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "goods/goodscategorylist",
+                        'menu_name' => "商品分类",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Goods/addGoodsCategory");
         }
     }
@@ -704,6 +761,21 @@ class Goods extends BaseController
             $goods = new GoodsService();
             $goodsAttributeList = $goods->getAttributeServiceList(1, 0);
             $this->assign("goodsAttributeList", $goodsAttributeList['data']);
+            
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "goods/goodscategorylist",
+                        'menu_name' => "商品分类",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Goods/updateGoodsCategory");
         }
     }
@@ -791,15 +863,65 @@ class Goods extends BaseController
             
             $shopId = $this->instance_id;
             $goodservice = new GoodsService();
-            $res = $goodservice->addOrEditGoods($product["goodsId"], // 商品Id
-$product["title"], // 商品标题
-$shopId, $product["categoryId"], // 商品类目
-$category_id_1 = 0, $category_id_2 = 0, $category_id_3 = 0, $product["supplierId"], $product["brandId"], $product["groupArray"], // 商品分组
-$goods_type = 1, $product["market_price"], $product["price"], // 商品现价
-$product["cost_price"], $product["point_exchange_type"], $product['integration_available_use'], $product['integration_available_give'], $is_member_discount = 0, $product["shipping_fee"], $product["shipping_fee_id"], $product["stock"], $product['max_buy'], $product['min_buy'], $product["minstock"], $product["base_good"], $product["base_sales"], $collects = 0, $star = 0, $evaluates = 0, $product["base_share"], $product["province_id"], $product["city_id"], $product["picture"], $product['key_words'], $product["introduction"], // 商品简介，促销语
-$product["description"], $product['qrcode'], // 商品二维码
-$product["code"], $product["display_stock"], $is_hot = 0, $is_recommend = 0, $is_new = 0, $sort = $product['sort'], $product["imageArray"], $product["skuArray"], $product["is_sale"], '', // $product["sku_img_array"]
-$product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spec_format'], $product['goods_weight'], $product['goods_volume'], $product['shipping_fee_type'], $product['categoryExtendId'], $product["sku_picture_vlaues"]);
+            $res = $goodservice->addOrEditGoods(
+                $product["goodsId"], // 商品Id
+                $product["title"], // 商品标题
+                $shopId, 
+                $product["categoryId"], // 商品类目
+                $category_id_1 = 0,
+                $category_id_2 = 0, 
+                $category_id_3 = 0, 
+                $product["supplierId"], 
+                $product["brandId"], 
+                $product["groupArray"], // 商品分组
+                $product['goods_type'], 
+                $product["market_price"], 
+                $product["price"], // 商品现价
+                $product["cost_price"], 
+                $product["point_exchange_type"], 
+                $product['integration_available_use'],
+                $product['integration_available_give'], 
+                $is_member_discount = 0, 
+                $product["shipping_fee"], 
+                $product["shipping_fee_id"], 
+                $product["stock"], 
+                $product['max_buy'], 
+                $product['min_buy'], 
+                $product["minstock"], 
+                $product["base_good"], 
+                $product["base_sales"], 
+                $collects = 0, 
+                $star = 0, 
+                $evaluates = 0, 
+                $product["base_share"], 
+                $product["province_id"],
+                $product["city_id"], 
+                $product["picture"], 
+                $product['key_words'], 
+                $product["introduction"], // 商品简介，促销语
+                $product["description"],
+                $product['qrcode'], // 商品二维码
+                $product["code"], 
+                $product["display_stock"], 
+                $is_hot = 0, 
+                $is_recommend = 0, 
+                $is_new = 0, 
+                $sort = $product['sort'], 
+                $product["imageArray"], 
+                $product["skuArray"], 
+                $product["is_sale"], '', // $product["sku_img_array"]
+                $product['goods_attribute_id'], 
+                $product['goods_attribute'], 
+                $product['goods_spec_format'], 
+                $product['goods_weight'], 
+                $product['goods_volume'], 
+                $product['shipping_fee_type'], 
+                $product['categoryExtendId'], 
+                $product["sku_picture_vlaues"], 
+                $product['virtual_goods_type_id'],
+                $product['production_date'], 
+                $product['shelf_life']
+            );
             
             // sku编码分组
             
@@ -877,6 +999,20 @@ $product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spe
             $result = $goodsgroup->addOrEditGoodsGroup(0, $shop_id, $group_name, $pid, $is_visible, $sort, $group_pic);
             return AjaxReturn($result);
         } else {
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "goods/goodsgrouplist",
+                        'menu_name' => "商品标签",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Goods/addGoodsGroup");
         }
     }
@@ -901,6 +1037,21 @@ $product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spe
             $group_id = request()->get('group_id', '');
             $result = $goodsgroup->getGoodsGroupDetail($group_id);
             $this->assign("data", $result);
+            
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "goods/goodsgrouplist",
+                        'menu_name' => "商品标签",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Goods/updateGoodsGroup");
         }
     }
@@ -976,7 +1127,10 @@ $product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spe
     {
         $page_index = request()->post("page_index", 1);
         $page_size = request()->post("page_size", PAGESIZE);
-        $condition = request()->post('condition') && request()->post('condition') != '' ? (" goods_name like  '%{request()->post('condition')}%'") : "";
+        $search_text = request()->post("search_text","");
+        $condition = array(
+            "goods_name" => ["like", "%$search_text%"]
+        );
         $goods_detail = new GoodsService();
         $result = $goods_detail->getSearchGoodsList($page_index, $page_size, $condition);
         return $result;
@@ -1063,6 +1217,19 @@ $product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spe
             $res = $goods->addGoodsSpecService($this->instance_id, $spec_name, $show_type, $is_visible, $sort, $spec_value_str, $attr_id, $is_screen);
             return AjaxReturn($res);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "goods/goodsspeclist",
+                    'menu_name' => "商品规格",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . 'Goods/addGoodsSpec');
     }
 
@@ -1088,6 +1255,19 @@ $product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spe
         }
         $detail = $goods->getGoodsSpecDetail($spec_id);
         $this->assign('info', $detail);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "goods/goodsspeclist",
+                    'menu_name' => "商品规格",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . 'Goods/updateGoodsSpec');
     }
 
@@ -1173,6 +1353,19 @@ $product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spe
             $goodsAttribute = $goods->addAttributeService($attr_name, $is_use, $spec_id_array, $sort, $value_string);
             return AjaxReturn($goodsAttribute);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "goods/attributelist",
+                    'menu_name' => "商品类型",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . 'Goods/addGoodsAttribute');
     }
 
@@ -1210,6 +1403,19 @@ $product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spe
         $goodsguige = $goods->getGoodsSpecList(1, 0, '', 'sort desc');
         $this->assign('goodsguige', $goodsguige);
         $this->assign('attr_id', $attr_id);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "goods/attributelist",
+                    'menu_name' => "商品类型",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . 'Goods/updateGoodsAttribute');
     }
 
@@ -1599,5 +1805,97 @@ $product['goods_attribute_id'], $product['goods_attribute'], $product['goods_spe
             $res = $goods->updateGoodsNameOrIntroduction($goods_id, $up_type, $up_content);
             return AjaxReturn($res);
         }
+    }
+
+    /**
+     * 虚拟商品类型列表
+     */
+    public function virtualGoodsTypeList()
+    {
+        if (request()->isAjax()) {
+            
+            $virtual_goods = new VirtualGoods();
+            $page_index = request()->post("page_index", 1);
+            $page_size = request()->post("page_size", PAGESIZE);
+            $search_name = request()->post("search_name", "");
+            $condition = array();
+            if (! empty($search_name)) {
+                $condition['virtual_goods_type_name'] = array(
+                    "like",
+                    "%$search_name%"
+                );
+            }
+            $res = $virtual_goods->getVirtualGoodsTypeList($page_index, $page_size, $condition);
+            return $res;
+        }
+        return view($this->style . 'Goods/virtualGoodsTypeList');
+    }
+
+    /**
+     * 编辑虚拟商品类型
+     */
+    public function editVirtualGoodsType()
+    {
+        $virtual_goods = new VirtualGoods();
+        $virtual_goods_type_id = request()->get("virtual_goods_type_id", 0);
+        if (request()->isAjax()) {
+            $virtual_goods_type_id = request()->post("virtual_goods_type_id", 0); // 虚拟商品类型id
+            $virtual_goods_group_id = request()->post("virtual_goods_group_id", ""); // 关联虚拟商品分组id
+            $virtual_goods_type_name = request()->post("virtual_goods_type_name", ""); // 虚拟商品类型名称
+            $validity_period = request()->post("validity_period", 0); // 有效期/天(0表示不限制)
+            $is_enabled = request()->post("is_enabled", 1); // 是否开启
+            $money = request()->post("money", ""); // 金额
+            $config_info = request()->post("config_info", ""); // 配置信息JSON（API接口，参数）
+            $confine_use_number = request()->post("confine_use_number", 0); // 限制使用次数
+            $res = $virtual_goods->editVirtualGoodsType($virtual_goods_type_id, $virtual_goods_group_id, $virtual_goods_type_name, $validity_period, $is_enabled, $money, $config_info, $confine_use_number);
+            return AjaxReturn($res);
+        }
+        $virtual_goods_type = $virtual_goods->getVirtualGoodsTypeById($virtual_goods_type_id);
+        if (! empty($virtual_goods_type)) {
+            $virtual_goods_type['config_info'] = json_decode($virtual_goods_type['config_info'], true);
+        }
+        $this->assign("virtual_goods_type", $virtual_goods_type);
+        $this->assign("virtual_goods_type_id", $virtual_goods_type_id);
+        
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "goods/virtualgoodstypelist",
+                    'menu_name' => "虚拟商品类型",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
+        
+        return view($this->style . "Goods/editVirtualGoodsType");
+    }
+
+    /**
+     * 删除虚拟商品类型
+     */
+    public function deleteVirtualGoodsType()
+    {
+        $virtual_goods = new VirtualGoods();
+        $virtual_goods_type_id = request()->post("virtual_goods_type_id", "");
+        $res = $virtual_goods->deleteVirtualGoodsType($virtual_goods_type_id);
+        return AjaxReturn($res);
+    }
+
+    /**
+     * 设置虚拟商品类型启用禁用
+     *
+     * @return boolean
+     */
+    public function setVirtualGoodsTypeIsEnabled()
+    {
+        $virtual_goods = new VirtualGoods();
+        $virtual_goods_type_id = request()->post("virtual_goods_type_id", "");
+        $is_enabled = request()->post("is_enabled", 1);
+        $res = $virtual_goods->setVirtualGoodsTypeIsEnabled($virtual_goods_type_id, $is_enabled);
+        return AjaxReturn($res);
     }
 }

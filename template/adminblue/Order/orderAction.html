@@ -63,7 +63,7 @@ textarea{width: 350px;}
 		</ul>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-primary" onclick="updPrice()" id="butSubmit" data-dismiss="modal" aria-hidden="true">保存</button>
+		<button class="btn btn-primary" onclick="updPrice()" id="butSubmit">保存</button>
 		<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
 	</div>
 </div>
@@ -180,8 +180,12 @@ textarea{width: 350px;}
 					<div class="col-lg-4"><input type="text" id="receiver_mobile" class="form-control" style="width:350px"></div>
 				</div>
 				<div class="form-group">
+					<div class="pick_title">收货人固定电话：</div>
+					<div class="col-lg-4"><input type="text" id="fixed_telephone" class="form-control" style="width:350px"></div>
+				</div>
+				<div class="form-group">
 					<div class="pick_title">收货人邮编：</div>
-					<div class="col-lg-4"><input type="text" id="receiver_zip" class="form-control" style="width:350px"></div>
+					<div class="col-lg-4"><input type="text" id="receiver_zip" class="form-control" style="width:350px" maxlength="6" onkeyup="this.value=this.value.replace(/\D/g,'')"></div>
 				</div>
 				<div class="form-group" style="width:100%;overflow:hidden;margin-bottom: 15px;">
 					<div class="pick_title"><span class="required">*</span>收货地址：</div>
@@ -356,6 +360,7 @@ function orderDelivery(order_id){
 	});
 }
 
+var flag = false;
 function orderDeliverySubmit(){
 	var order_id = $("#delivery_order_id").val();
 	var order_goods_id_array = '';
@@ -385,7 +390,10 @@ function orderDeliverySubmit(){
 			return false;
 		}
 	}
-	
+	if(flag){
+		return;
+	}
+	flag = true;
 	$.ajax({
 		type : "post",
 		url : "{:__URL('ADMIN_MAIN/order/orderdelivery')}",
@@ -396,6 +404,7 @@ function orderDeliverySubmit(){
 				showMessage('success', data["message"],window.location.reload());
 			} else {
 				showMessage('error', data["message"]);
+				flag = false;
 			}
 		}
 	});
@@ -614,6 +623,10 @@ function updPrice(){
 			order_goods_id_adjust_array += ';'+$(this).attr('id')+','+$(this).val();
 		}
 	});
+	if(parseFloat($("#changeTotal").text()).toFixed(2) == 0.00){
+		showTip("实收款最小0.01元","warning");
+		return;
+	}
 	$.ajax({
 		type: "post",
 		url: "{:__URL('ADMIN_MAIN/order/orderadjustmoney')}",
@@ -623,6 +636,7 @@ function updPrice(){
 		success: function (data) {
 		if (data["code"] > 0) {
 				showMessage('success', data["message"],window.location.reload());
+				$("#edit-price").modal("hide");
 			}else{
 				showMessage('error', data["message"]);
 			}
@@ -697,6 +711,7 @@ function update_address(order_id){
 		success : function(data){
 			$("#receiver_name").val(data['receiver_name']);
 			$("#receiver_mobile").val(data['receiver_mobile']);
+			$("#fixed_telephone").val(data['fixed_telephone']);
 			$("#receiver_zip").val(data['receiver_zip']);
 			var provinceid = data['receiver_province'] > 0 ? data['receiver_province'] : -1;
 			var cityid = data['receiver_city'] > 0 ? data['receiver_city'] : -1;
@@ -725,20 +740,33 @@ function updateAddressSubmit(){
 	var seleAreaFouth = $("#seleAreaFouth").val();
 	var address_detail = $("#address_detail").val();
 	var order_id = $("#update_address_id").val();
+	var fixed_telephone = $("#fixed_telephone").val();
 	if(receiver_name == ''){
 		showTip("请填写收货人姓名",'warning');
 		$("#receiver_name").focus();
 		return false;
 	}
+
 	if(!(/^1(3|4|5|7|8)\d{9}$/.test(receiver_mobile))){
 		showTip("请填写正确格式的手机号",'warning')
 		$("#receiver_mobile").focus();
 		return false;
 	}
+
+	if(fixed_telephone.length > 0){
+		var pattern=/(^[0-9]{3,4}\-[0-9]{3,8}$)|(^[0-9]{3,8}$)|(^\([0-9]{3,4}\)[0-9]{3,8}$)|(^0{0,1}13[0-9]{9}$)/; 
+		if(!pattern.test(fixed_telephone)) { 
+			showTip("请输入正确的固定电话",'warning');
+			$("#fixed_telephone").focus();
+			return false; 
+		} 
+	}
+
 	if(seleAreaNext == '-1'){
 		showTip("请选择省",'warning');
 		return false;
 	}
+
 	if(seleAreaThird == '-1'){
 		showTip("请选择市",'warning');
 		return false;
@@ -766,7 +794,8 @@ function updateAddressSubmit(){
 			"seleAreaNext" : seleAreaNext,
 			"seleAreaThird" : seleAreaThird,
 			"seleAreaFouth" : seleAreaFouth,
-			"address_detail" : address_detail
+			"address_detail" : address_detail,
+			"fixed_telephone" : fixed_telephone
 		},
 		success : function(data){
 			if (data > 0) {

@@ -1,0 +1,354 @@
+<style>
+.modal-body{max-height:none;}
+.editprice-input{width:100px;}
+textarea{width: 350px;}
+</style>
+<!-- 模态框（Modal） -->
+<div id="edit-price" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 650px;overflow: overlay;">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-right: 10px;">×</button>
+		<h3>修改价格</h3>
+	</div>
+	<div class="modal-body">
+		<table class="table table-striped table-main table-order-header">
+			<colgroup>
+				<col style="width: 40%;">
+				<col style="width: 20%;">
+				<col style="width: 25%;">
+			</colgroup>
+			<tbody>
+				<tr>
+					<td>商品信息</td>
+					<td>商品清单</td>
+					<td>
+						<div class="editprice-tiptxt">涨价或减价<i class="icon-tip"></i>
+							<p class="text-tip">-表示减价<i class="icon-down-pic"></i></p>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="table table-bordered table-order-list">
+			<colgroup>
+				<col style="width: 40%;">
+				<col style="width: 20%;">
+				<col style="width: 25%;">
+			</colgroup>
+			<tbody id="OrderCommodity"></tbody>
+		</table>
+		<ul class="edit-price-amountpay">
+			<li>
+				<span class="amountpay-label">商品总价：</span>
+				<span class="amountpay-price" id="goodsmoney"></span>元&nbsp;&nbsp;&nbsp;
+				<span class="amountpay-label">商品优惠：</span>
+				<span class="amountpay-price" id="discountmoney"></span>元
+			</li>
+			<li>
+				<div>
+					实收款： <span class="amountpay-price reality-price" id="changeTotal"></span>元
+					<input type="hidden" id="hiedchangeTotal" />
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" onclick="updPrice()" id="butSubmit">保存</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+	</div>
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="Memobox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:700px;left:45%;top:30%;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>备注信息</h3>
+			</div>
+			<div class="set-style">
+				<dl>
+					<dt><span class="required">*</span>备注:</dt>
+					<dd>
+						<p>
+							<textarea rows="3" cols="20" id="memo"></textarea>
+						</p>
+						<p class="error">请输入备注</p>
+					</dd>
+				</dl>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" onclick="addMemoAjax()">保存</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+function operation(operation_type, order_id){
+	if(operation_type == 'pay'){
+		orderOffLinePay(order_id);//线下支付
+	}else if(operation_type == 'complete'){
+		orderComplete(order_id);//交易完成
+	}else if(operation_type == 'close'){
+		orderClose(order_id);//交易关闭
+	}else if(operation_type == 'adjust_price'){
+		modifyPrice(order_id);//修改价格
+	}else if(operation_type == 'seller_memo'){
+		orderSellerMemo(order_id);//备注
+	}else if(operation_type == 'delete_order'){
+		delete_order(order_id);//删除订单
+	}
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+function orderOffLinePay(order_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/order/orderofflinepay')}",
+					data : {'order_id':order_id},
+					success : function(data) {
+						if (data["code"] > 0) {
+							showMessage('success', data["message"],window.location.reload());
+						}else{
+							showMessage('error', data["message"]);
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定线下支付吗？",
+	});
+}
+
+function orderComplete(order_id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/order/ordercomplete')}",
+		data : {'order_id':order_id},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],window.location.reload());
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+function orderClose(order_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/order/orderclose')}",
+				data : {"order_id" : order_id},
+				success : function(data) {
+					if(data["code"] > 0 ){
+						LoadingInfo(1);
+						showMessage('success', data["message"],window.location.reload());
+					}
+				}
+			})
+			$(this).dialog('close');
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定关闭订单吗？",
+	});
+}
+
+//修改价格
+function modifyPrice(order_id){
+	$("#butSubmit").val(order_id);
+	var str = "";
+	var Total = 0.00;
+	var Count = 0;
+	$.ajax({
+		type: "post",
+		url: "{:__URL('ADMIN_MAIN/order/getordergoods')}",
+		data: { "order_id": order_id },
+		dataType: "json",
+		async: false,
+		success: function (jsonData) {
+			var Subtotal = 0.0;
+			var order_info = jsonData[1];
+			jsonData = jsonData[0];
+			for (var i = 0 ; i < jsonData.length; i++) {
+				Price = (jsonData[i].price * 1);
+				Count = (jsonData[i].num * 1);
+				Subtotal = parseFloat(Price) * parseInt(Count);//单商品总价
+				Total += parseFloat(Subtotal * 1);
+				str += "<tr>";
+				str += "<td>";
+				str += "<div class='product-img'><img src='"+__IMG(jsonData[i]['picture_info']['pic_cover_micro']) + "'></div>";
+				str += "<div class='product-infor'>";
+				//原总金额
+				var item_now_money = parseFloat(jsonData[i].price*jsonData[i].num)+parseFloat(jsonData[i].adjust_money);
+				str += "<input type='hidden' id='total"+jsonData[i].order_goods_id+"' value='"+item_now_money*(item_now_money/parseFloat(jsonData[i].goods_money))+"'>";
+				str += "<a class='name' href="+__URL('APP_MAIN?id='+jsonData[i].goods_id)+" target='_blank'>" + jsonData[i].goods_name + "</a>";
+				str += "<p class='specification'><span>规格:" + jsonData[i].sku_name + "</span></p>";
+				str += "<div class='div-flag-style'>";
+				str += "</div>";
+				str += "</div>";
+				str += "</td>";
+				str += "<td>";
+				str += "<div class='cell'><span name='Commoditymark' count='" + jsonData[i].num + "' id='" + jsonData[i].goods_id + "' dir='" + jsonData[i].price + "' value='" + jsonData[i].price + "'>￥" + jsonData[i].price + "</span></div>";
+				str += "<div class='cell' id='Count" + jsonData[i].goods_id + "' value='" + jsonData[i].num + "'>" + jsonData[i].num + "件</div>";
+				str += "</td>";
+				str += "<td>";
+				str += "<div class='editprice-discount'><input  type='hidden' id='productPrice" + jsonData[i].order_goods_id + "' value='" + jsonData[i].price + "'><input type='hidden' id='count" + jsonData[i].goods_id + "' value='" + jsonData[i].num + "'>";
+				str += "<div class='editprice-minus'><input name='caculatePrice'  onchange=\"caculatePrice()\" id='" + jsonData[i].order_goods_id + "' value='"+jsonData[i].adjust_money+"'  class='editprice-input price' type='number'  placeholder='0'  /></div>";
+				str += "</td>"; 
+				if (i == 0) {
+					str += "<input type='hidden' id='hidorderNumber' value='" + jsonData[i].order_id + "'>";
+					str += "<input type='hidden' id='goodsmoneyhidden' value=''>";
+				}
+				str += "</tr>";
+				$("#OrderCommodity").html(str);
+				$("#goodsmoney").html(order_info.goods_money);
+				$("#goodsmoneyhidden").val(Total);
+				var discount_money =order_info.point_money*1.00+order_info.coupon_money*1.00+order_info.user_money*1.00+order_info.promotion_money*1.00;
+				$("#discountmoney").html(discount_money);
+				$("#changeTotal").html(order_info.pay_money);
+				$("#hiedchangeTotal").html(Total);
+			}
+			$('#edit-price').modal('show');
+		}
+	});
+}
+
+//重新计算
+function caculatePrice(){
+	//调整金额
+	var price = 0.00;
+	$("input[name = 'caculatePrice']").each(function(i){
+		if(0 == i){
+			price = parseFloat($(this).val());
+		}else{
+			price = parseFloat($(this).val()) + parseFloat(price);
+		}
+	});
+	var goods_money  = $("#goodsmoneyhidden").val();
+	new_goods_money = (parseFloat(price)+parseFloat(goods_money)).toFixed(2);
+	if(new_goods_money <0){
+		$(".price").val(-goods_money);
+		caculatePrice();
+	}
+	$("#goodsmoney").html(new_goods_money); 
+	// 获取优惠金额
+	var discountmoney = $("#discountmoney").html();
+	//计算实收款
+	new_hiedchangeTotal = (parseFloat(new_goods_money)-parseFloat(discountmoney)).toFixed(2);
+	$("#changeTotal").html(new_hiedchangeTotal);
+}
+
+//保存修改的价格
+function updPrice(){
+	var order_id = $("#hidorderNumber").val();
+	var order_goods_id_adjust_array = '';
+	var shipping_fee = 0;//运费0
+	$("input[name = 'caculatePrice']").each(function(i){
+		if(0 == i){
+			order_goods_id_adjust_array = $(this).attr('id')+','+$(this).val();
+		}else{
+			order_goods_id_adjust_array += ';'+$(this).attr('id')+','+$(this).val();
+		}
+	});
+	if(parseFloat($("#changeTotal").text()).toFixed(2) == 0.00){
+		showTip("实收款最小0.01元","warning");
+		return;
+	}
+	$.ajax({
+		type: "post",
+		url: "{:__URL('ADMIN_MAIN/order/orderadjustmoney')}",
+		data: { "order_id": order_id, "order_goods_id_adjust_array":order_goods_id_adjust_array, "shipping_fee":shipping_fee},
+		dataType: "json",
+		async: false,
+		success: function (data) {
+		if (data["code"] > 0) {
+				showMessage('success', data["message"],window.location.reload());
+				$("#edit-price").modal("hide");
+			}else{
+				showMessage('error', data["message"]);
+			}
+		}
+	});
+}
+
+//查看订单备注
+function orderSellerMemo(order_id){
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/order/getordersellermemo')}",
+		data : { "order_id" : order_id },
+		success : function(res){
+			$("#order_id").val(order_id);
+			$("#memo").val(res);
+			$("#Memobox").modal("show");
+		}
+	});
+}
+
+//修改备注
+function addMemoAjax(){
+	var order_id = $("#order_id").val();
+	var memo = $("#memo").val();
+	if(memo == ''){
+		$(".error").css("display","block");
+		return false;
+	}
+	$.ajax({
+		url: "{:__URL('ADMIN_MAIN/order/addmemo')}",
+		data: { "order_id": order_id,"memo":memo },
+		type : "post",
+		success: function(data) {
+			if (data.code > 0) {
+				showMessage('success','保存成功');
+				location.reload();
+			}else{
+				showMessage('error','保存失败');
+			}
+		}
+	});
+}
+
+//删除订单
+function delete_order(order_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/order/deleteOrder')}",
+				data : {"order_id" : order_id.toString()},
+				success : function(data) {
+					if(data["code"] > 0 ){
+						LoadingInfo(1);
+						showMessage('success', data["message"],window.location.reload());
+					}
+				}
+			})
+			$(this).dialog('close');
+			},
+			"取消,#e57373": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要删除订单吗？",
+	});
+}
+</script>

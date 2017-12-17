@@ -95,6 +95,19 @@ class Promotion extends BaseController
             $retval = $coupon->addCouponType($coupon_name, $money, $count, $max_fetch, $at_least, $need_user_level, $range_type, $start_time, $end_time, $is_show, $goods_list);
             return AjaxReturn($retval);
         } else {
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "promotion/coupontypelist",
+                        'menu_name' => "优惠券",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . "Promotion/addCouponType");
         }
     }
@@ -130,6 +143,21 @@ class Promotion extends BaseController
             }
             $coupon_type_data['goods_id_array'] = $goods_id_array;
             $this->assign("coupon_type_info", $coupon_type_data);
+            
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "promotion/coupontypelist",
+                        'menu_name' => "优惠券",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
+            
             return view($this->style . "Promotion/updateCouponType");
         }
     }
@@ -346,6 +374,19 @@ class Promotion extends BaseController
             $res = $mansong->addPromotionMansong($mansong_name, $start_time, $end_time, $shop_id, '', $type, $range_type, $rule, $goods_id_array);
             return AjaxReturn($res);
         } else {
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "promotion/mansonglist",
+                        'menu_name' => "满减送",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . "Promotion/addMansong");
         }
     }
@@ -382,6 +423,19 @@ class Promotion extends BaseController
             $this->assign('coupon_type_list', $coupon_type_list);
             $this->assign('gift_list', $gift_list);
             $this->assign('mansong_info', $info);
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "promotion/mansonglist",
+                        'menu_name' => "满减送",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . "Promotion/updateMansong");
         }
     }
@@ -464,6 +518,19 @@ class Promotion extends BaseController
             $retval = $discount->addPromotiondiscount($discount_name, $start_time, $end_time, $remark, $goods_id_array);
             return AjaxReturn($retval);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "promotion/getdiscountlist",
+                    'menu_name' => "限时折扣",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Promotion/addDiscount");
     }
 
@@ -491,6 +558,19 @@ class Promotion extends BaseController
         }
         $info['goods_id_array'] = $goods_id_array;
         $this->assign("info", $info);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "promotion/getdiscountlist",
+                    'menu_name' => "限时折扣",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Promotion/updateDiscount");
     }
 

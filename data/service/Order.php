@@ -151,6 +151,9 @@ class Order extends BaseService implements IOrder
             }
         }
         $detail["goods_packet_list"] = $goods_packet_list;
+        $virtual_goods = new VirtualGoods();
+        $virtual_goods_list = $virtual_goods->getVirtualGoodsListByOrderNo($detail['order_no']);
+        $detail['virtual_goods_list'] = $virtual_goods_list;
         return $detail;
         // TODO Auto-generated method stub
     }
@@ -261,10 +264,15 @@ class Order extends BaseService implements IOrder
                 $order_list['data'][$k]['order_from_tag'] = $order_from['tag'];
                 $order_list['data'][$k]['pay_type_name'] = OrderStatus::getPayType($v['payment_type']);
                 // 根据订单类型判断订单相关操作
-                if ($order_list['data'][$k]['payment_type'] == 6 || $order_list['data'][$k]['shipping_type'] == 2) {
-                    $order_status = OrderStatus::getSinceOrderStatus();
+                if ($order_list['data'][$k]['order_type'] == 1) {
+                    if ($order_list['data'][$k]['payment_type'] == 6 || $order_list['data'][$k]['shipping_type'] == 2) {
+                        $order_status = OrderStatus::getSinceOrderStatus();
+                    } else {
+                        $order_status = OrderStatus::getOrderCommonStatus();
+                    }
                 } else {
-                    $order_status = OrderStatus::getOrderCommonStatus();
+                    // 虚拟订单
+                    $order_status = OrderStatus::getVirtualOrderCommonStatus();
                 }
                 
                 // 查询订单操作
@@ -283,10 +291,11 @@ class Order extends BaseService implements IOrder
     }
 
     /*
+     * 订单创建（实物商品）
      * (non-PHPdoc)
      * @see \data\api\IOrder::orderCreate()
      */
-    public function orderCreate($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $coin = 0)
+    public function orderCreate($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $coin = 0, $fixed_telephone = "")
     {
         $order = new OrderBusiness();
         if ($pay_type == 4) {
@@ -297,7 +306,7 @@ class Order extends BaseService implements IOrder
                 return ORDER_CASH_DELIVERY;
             }
         }
-        $retval = $order->orderCreate($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $coin);
+        $retval = $order->orderCreate($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $coin, $fixed_telephone);
         runhook("Notify", "orderCreate", array(
             "order_id" => $retval
         ));
@@ -331,6 +340,44 @@ class Order extends BaseService implements IOrder
         
         return $retval;
         // TODO Auto-generated method stub
+    }
+
+    /*
+     * 订单创建（虚拟商品）
+     * (non-PHPdoc)
+     * @see \data\api\IOrder::orderCreate()
+     */
+    public function orderCreateVirtual($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $user_telephone, $coin = 0)
+    {
+        $order = new OrderBusiness();
+        $retval = $order->orderCreateVirtual($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $user_telephone, $coin);
+        runhook("Notify", "orderCreate", array(
+            "order_id" => $retval
+        ));
+        // 针对特殊订单执行支付处理
+        if ($retval > 0) {
+            hook('orderCreateSuccess', [
+                'order_id' => $retval
+            ]);
+            $order_model = new NsOrderModel();
+            $order_info = $order_model->getInfo([
+                'order_id' => $retval
+            ], '*');
+            if (! empty($order_info)) {
+                if ($order_info['user_platform_money'] != 0) {
+                    if ($order_info['pay_money'] == 0) {
+                        $this->orderOnLinePay($out_trade_no, 5);
+                    }
+                } else {
+                    
+                    if ($order_info['pay_money'] == 0) {
+                        $this->orderOnLinePay($out_trade_no, 1); // 默认微信支付
+                    }
+                }
+            }
+        }
+        
+        return $retval;
     }
 
     /**
@@ -2275,7 +2322,7 @@ class Order extends BaseService implements IOrder
         $order = new NsOrderModel();
         $res = $order->getInfo([
             'order_id' => $order_id
-        ], "order_id,receiver_mobile,receiver_province,receiver_city,receiver_district,receiver_address,receiver_zip,receiver_name", '');
+        ], "order_id,receiver_mobile,receiver_province,receiver_city,receiver_district,receiver_address,receiver_zip,receiver_name,fixed_telephone", '');
         return $res;
     }
 
@@ -2291,7 +2338,7 @@ class Order extends BaseService implements IOrder
      * @param unknown $receiver_zip            
      * @param unknown $receiver_name            
      */
-    public function updateOrderReceiveDetail($order_id, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name)
+    public function updateOrderReceiveDetail($order_id, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $fixed_telephone ="")
     {
         $order = new NsOrderModel();
         $data = array(
@@ -2301,7 +2348,8 @@ class Order extends BaseService implements IOrder
             'receiver_district' => $receiver_district,
             'receiver_address' => $receiver_address,
             'receiver_zip' => $receiver_zip,
-            'receiver_name' => $receiver_name
+            'receiver_name' => $receiver_name,
+            'fixed_telephone' => $fixed_telephone
         );
         $retval = $order->save($data, [
             'order_id' => $order_id

@@ -24,7 +24,7 @@
 function savePage(index){
 	var json = { page_index : index, show_number : $("#showNumber").val(), url :  window.location.href };
 	$.cookie('page_cookie',JSON.stringify(json),{ path: '/' });
-// 	console.log(json);
+ 	//console.log(json);
 }
 
 $(function() {
@@ -56,11 +56,11 @@ $(function() {
 			json.page_index = 1;
 			json.show_number = {$pagesize};
 			json.url = history_url;
-// 			console.log("如果页面发生了跳转，还原操作");
+ 			//console.log("如果页面发生了跳转，还原操作");
 			$.cookie('page_cookie',JSON.stringify(json),{ path: '/' });
 		}
 
-// 		console.log($.cookie('page_cookie'));
+ 		//console.log($.cookie('page_cookie'));
 		$("#showNumber").val(json.show_number);
 		if(json.page_index != 1) jumpNumber = json.page_index;
 		LoadingInfo(json.page_index);//通过此方法调用分页类
@@ -71,9 +71,8 @@ $(function() {
 		//当前页面没有分页，进行还原操作
 		$.cookie('page_cookie',JSON.stringify(history_json),{ path: '/' });
 // 		console.log(e);
-// 		console.log("当前页面没有分页，进行还原操作");
-// 		console.log($.cookie('page_cookie'));
-		
+ 		//console.log("当前页面没有分页，进行还原操作");
+ 		//console.log($.cookie('page_cookie'));
 	}
 	
 	//首页

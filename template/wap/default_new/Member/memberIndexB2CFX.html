@@ -3,147 +3,142 @@
 {block name="resources"}
 <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_index.css">
 <style>
-.head{
-	border-bottom:0;
-}
-.panel.memberhead{
-	background:url(__TEMP__/{$style}/public/images/shoptop.png);
-	background-size:100% 100%; 
-}
-.member{
-	    width: 64%;
-    float: right;
-    margin-top: 26px;
-	color:#fff;
-}
-.img{
-	width:100%;
-    margin: 5px 0;
-}
-.code{
-    background: #fff;
-	overflow: hidden;
-}
-.rec{
-	height: 17px;
-    /* margin: 5px 10px; */
-    padding: 10px 20px;
-	border-bottom: 1px solid #E2E1E1;
-	line-height:17px;
-}
-
-.module-icon.memberCoupon {
-    background:url(__TEMP__/{$style}/public/images/Coupon.png) no-repeat;
-	width: 22px;
-    height: 22px;
-	float: left;
-    margin-top: 9px;
-	    margin-right: 10px;
-    display: inline-block;
-	background-size:100% 100%;
-}
-.member-info{
-	background: rgba(255,79,79, 0.8);
-	float:left;
-	width:33%;
-	color: #fff;
-	text-align: center;
-	line-height:41px;
-}
-.vertical-bar{
-	border-left: 1px solid rgba(250,250,250,0.6);
-	height: 32px;
-	vertical-align: middle;
-	display: inline-block;
-	margin-top:5px;
-}
-.namer{
-   	position: absolute;
-    left: 103px;
-    top: 30px;
-}
-.signin{
-	position: absolute;
-    left: 100px;
-    top: 55px;
-    border-radius: 3px;
-    font-size: 10px;
-    line-height: 14px;
-    padding: 1px 5px;
-}
-.no{
-	color: yellow;
-	border: 1px solid yellow;
-}
-.yes{
-	color: #fff;
-	border: 1px solid #fff;
-}
+.head{border-bottom:0;}
+.member{width: 64%;float: right;margin-top: 26px;color:#fff;}
+.img{width:100%;margin: 5px 0;}
+.code{background: #fff;overflow: hidden;}
+.rec{height: 17px;padding: 10px 20px;border-bottom: 1px solid #f1f1f1;line-height:17px;}
+.module-icon.memberCoupon {background:url(__TEMP__/{$style}/public/images/Coupon.png) no-repeat;width: 22px;height: 22px;float: left;margin-top: 9px;margin-right: 10px;display: inline-block;background-size:100% 100%;}
+.member-info{background: rgba(255,79,79, 0.8);float:left;width:33%;color: #fff;text-align: center;line-height:41px;}
+.vertical-bar{border-left: 1px solid rgba(250,250,250,0.6);height: 32px;vertical-align: middle;display: inline-block;margin-top:5px;}
+.namer{position: absolute;left: 103px;top: 30px;}
+.no{color: #FF4E00!important;background: yellow!important;}
+.yes{color: #fff;border: 1px solid #fff;}
+.last a{position: relative;}
+.tips{width: 16px;height: 16px;background: #F93F40;border:1px solid #F93F40;border-radius: 50%;font-size: 6px;line-height: 16px;text-align: center;color: #fff;position: absolute;z-index: 10;right: -10px;top: -6px;}
+.member_foot{width: 100%;height: 20px;background: url("__TEMP__/{$style}/public/images/member_foot.png") center no-repeat;background-size: 100% 20px;}
 </style>
-  {/block}
-{block name="main" }
-<!--  <section class="head" style="background:#222;">
-		<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)" style="width:60px;"><i class="icon-back" style="color:#fff;margin-right:10px;"></i><span style="font-size:15px;color:#fff;">返回</span></a>
-		<div class="head-title" style="color:#fff;">店铺中心</div>
-	</section> -->
+{/block}
+{block name="main"}
 <div class="panel memberhead">
 	<div class="member_head">
 		<a href="{:__URL('APP_MAIN/member/personaldata?shop_id='.$shop_id)}">
-			<p style="float:left;margin: 20px 0 20px 20px;position:relative;">
-				<i>
+			<p style="margin: 20px 0 10px 0;position:relative;">
+				<i class="face_img">
 				{eq name="member_img" value="0"}
-					<img src="__TEMP__/{$style}/public/images/member_default.png"/>
+					<img src="__TEMP__/{$style}/public/images/member_default.png" />
 				{else/}
-					<img src="{:__IMG($member_img)}" />
+					<img src="__UPLOAD__/{$member_img}"  onerror="this.src='__TEMP__/{$style}/public/images/member_default.png'"/>
 				{/eq}
 				</i>
-			</p>
-			<p class="member" style="text-align:left;margin-right: 20px;margin-top: 40px;">
-				<img src="__TEMP__/{$style}/public/images/edit.png" style="float:right;width:20px; margin: 0 10px 0 0;">
-				<span class="namer" style="font-size:14px;"><!-- 会员名： -->{$member_info["user_info"]['nick_name']}</span>
+				<span class="account_management">账户管理<i class="data-go"></i></span>
 			</p>
 		</a>
-		{if condition="$isSign eq 0"}
-		<span class="signin no" onclick="signIn();">{:lang('sign_in')}</span>
-		{else /}
-		<span class="signin yes">{:lang('signed_in')}</span>
-		{/if}
-		<div style="overflow: hidden;width: 100%;">
-			<a href='{:__URL('APP_MAIN/member/balancewater?shop_id='.$shop_id)}' class="member-info" style="width:49.5%;">
-				<span >{:lang('member_balance')}&nbsp;</span><span >{$member_info['balance']}</span>
-			</a>
-			<!-- <a href='APP_MAIN/member/coinwater?shop_id={$shop_id}' class="member-info" >
-				<span >购物币&nbsp;</span><span >{1$member_info['coin']}</span>
-			</a> -->
-			<i class="vertical-bar"></i>
-			<a href='{:__URL('APP_MAIN/member/integralwater?shop_id='.$shop_id)}' class="member-info" style="float:right;width:49.5%;"><span >{:lang('goods_integral')}&nbsp;</span><span >{$member_info['point']}</span></a>
-		 </div>
+		<p class="info-content-top">
+			<span>{:lang('member_balance')}</span>
+			<span>{$member_info["user_info"]['nick_name']}</span>
+			<span>{:lang('goods_integral')}</span>
+		</p>
+		<p class="info-content-bottom">
+			<a href="{:__URL('APP_MAIN/member/balancewater?shop_id='.$shop_id)}"><span>{$member_info['balance']}</span></a>
+			{if condition="$integralconfig['sign_integral'] eq 1"}
+				{if condition="$isSign eq 0"}
+					<span onclick="signIn();"><mark class="level no">{:lang('sign_in')}</mark></span>
+				{else /}
+					<span ><mark class="level">{:lang('signed_in')}</mark></span>
+				{/if}
+			{else/}
+				<span></span>
+			{/if}
+			<a href="{:__URL('APP_MAIN/member/integralwater?shop_id='.$shop_id)}"><span>{$member_info['point']}</span></a>
+		</p>
 	</div>
+	<div class="member_foot"></div>
 </div>
+<div class="code">
+	<a href="{:__URL('APP_MAIN/'.$promoter_center)}">
+		<div class="rec" style="position: relative;">
+			<span>{:lang('promotion_center')}</span>
+			<span class="jiantou"></span>
+		</div>
+	</a>
+	
+	{if condition="$promoter_info != null"}
+	<a href="{:__URL('APP_MAIN/distribution/teamlist?promoter_id='.$promoter_info['promoter_id'])}">
+		<div style="width:49%;float:left;padding:10px 0;">
+			<img src="__TEMP__/{$style}/public/images/team.png" style="width:45px;height:45px; margin: 0 8px 0 20px;float:left;"/>
+			<span>
+				<span>{$counts}人</span>
+				<br/>
+				<span style="font-size:12px;color: #7B7B7B;">{:lang('my_corporate')}</span>
+			</span>
+		</div>
+	</a>
+	<a href="{:__URL('APP_MAIN/distribution/usershopcommission?shop_id='.$shop_id)}">
+		<div style="width:50%;float:right;padding:10px 0;">
+			<img src="__TEMP__/{$style}/public/images/yongjin.png" style="width:45px;height:45px; margin: 0 8px 0 17px;float:left;"/>
+			<span>
+				<span>{$commission_cash}</span>
+				<br/>
+				<span style="font-size:12px;color: #7B7B7B">{:lang('my_commission')}</span>
+			</span>
+		</div>
+	</a>
+	{else/}
+		{if condition="$apply_promoter_menu !=null"}
+		<div class='member_list' style='margin-bottom:0;'>
+			<ul style="margin-top:0;">
+				<li>
+					<a href="{:__URL('APP_MAIN/'.$apply_promoter_menu['url'])}">
+						<i class=" module-icon {$apply_promoter_menu.class}" ></i>
+						<span >{$apply_promoter_menu.title}</span>
+						<span class='jiantou'></span>
+					</a>
+				</li> 
+			</ul>
+		</div>
+		{/if}
+	{/if}
+</div>
+
 <div class="control">
 	<div class="control_l">
-		<span class="control_l_content">{:lang('all_orders')}</span>
+		{if condition="$is_open_virtual_goods"}
+		<span class="control_l_content selected" data-flag="regular-orders">{:lang('regular_orders')}</span>
+		<span class="control_l_content" data-flag="virtual-orders">{:lang('virtual_orders')}</span>
+		{else/}
+		<span class="control_l_content selected" data-flag="regular-orders">{:lang('all_orders')}</span>
+		{/if}
 	</div>
 	<div class="control_r"><a href="{:__URL('APP_MAIN/order/myorderlist?shop_id='.$shop_id)}" class="right_href">{:lang('member_view_all_orders')}</a></div>
 </div>
 
-<div class="panel member-nav" >
+<div class="panel member-nav js-regular-orders">
 	<ul class="fu clear" >
 		<li class="last" >
-			<a href="{:__URL('APP_MAIN/order/myorderlist?shop_id='.$shop_id)}">
+			<a href="{:__URL('APP_MAIN/order/myorderlist?status=0&shop_id='.$shop_id)}">
 				<img src="__TEMP__/{$style}/public/images/pay.png">
+				{if condition="$unpaidOrder neq 0"}
+					<div class="tips">{$unpaidOrder}</div>
+				{/if}
 				<p>{:lang('member_pending_payment')}</p>
 			</a>
 		</li>
 		<li class="last">
 			<a href="{:__URL('APP_MAIN/order/myorderlist?status=1&shop_id='.$shop_id)}">
 				<img src="__TEMP__/{$style}/public/images/send.png">
+				{if condition="$shipmentPendingOrder neq 0"}
+				<div class="tips">{$shipmentPendingOrder}</div>
+				{/if}
 				<p>{:lang('member_shipment_pending')}</p>
 			</a>
 		</li>
 		<li class="last">
 			<a href="{:__URL('APP_MAIN/order/myorderlist?status=2&shop_id='.$shop_id)}">
 				<img src="__TEMP__/{$style}/public/images/recieve.png">
+				{if condition="$goodsNotReceivedOrder neq 0"}
+				<div class="tips">{$goodsNotReceivedOrder}</div>
+				{/if}
 				<p>{:lang('member_goods_received')}</p>
 			</a>
 		</li>
@@ -156,70 +151,44 @@
 		<li class="last">
 			<a href="{:__URL('APP_MAIN/order/myorderlist?status=4&shop_id='.$shop_id)}">
 				<img src="__TEMP__/{$style}/public/images/reback.png"/>
+				{if condition="$refundOrder neq 0"}
+				<div class="tips">{$refundOrder}</div>
+				{/if}
 				<p>{:lang('refund_after_sale')}</p>
 			</a>
 		</li>
 	</ul>
 </div>
 
-
-<div>
-<!-- {$index_adv['adv_url']} -->
-	<a href="{:__URL('APP_MAIN/'.$promoter_center}">
-		<img src="{:__IMG($index_adv['adv_image'])}" class="img">
-	</a>
+{if condition="$is_open_virtual_goods"}
+<div class="panel member-nav js-virtual-orders" style="display:none;">
+	<ul class="fu clear" style="background: #ffffff;">
+		<li class="last" >
+			<a href="{:__URL('APP_MAIN/order/myvirtualorderlist?status=0&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/pay.png">
+				{if condition="$unpaidOrder neq 0"}
+					<div class="tips">{$unpaidOrder}</div>
+				{/if}
+				<p>{:lang('member_pending_payment')}</p>
+			</a>
+		</li>
+		<li class="last">
+			<a href="{:__URL('APP_MAIN/order/myvirtualorderlist?status=5&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/recieved.png">
+				{if condition="$virtual_wait_evaluate neq 0"}
+					<div class="tips">{$virtual_wait_evaluate}</div>
+				{/if}
+				<p>{:lang('member_pending_evaluation')}</p>
+			</a>
+		</li>
+	</ul>
 </div>
-<div class="code">
-	<a href="{:__URL('APP_MAIN/'.$promoter_center}">
-		<div class="rec" style="position: relative;">
-			<span>{:lang('promotion_center')}</span>
-			<span class="jiantou"></span>
-		</div>
-	</a>
-	
-	{if condition="$promoter_info != null"}
-	<a href="{:__URL('APP_MAIN/distribution/teamlist?promoter_id='.$promoter_info['promoter_id']}">
-		<div style="width:49%;float:left;padding-top:10px;border-right: 1px solid #E2E1E1;">
-			<img src="__TEMP__/{$style}/public/images/team.png" style="width:37px;height:33px; margin: 8px 8px 8px 20px;float:left;"/>
-			<span>
-				<span>{$counts}人</span>
-				<br/>
-				<span style="font-size:12px;">{:lang('my_corporate')}</span>
-			</span>
-		</div>
-	</a>
-	<a href="{:__URL('APP_MAIN/distribution/usershopcommission?shop_id='.$shop_id}">
-		<div style="width:50%;float:right;padding-top:10px;">
-			<img src="__TEMP__/{$style}/public/images/yongjin.png" style="width:37px;height:33px; margin: 8px 8px 8px 17px;float:left;"/>
-			<span>
-				<span>{$commission_cash}</span>
-				<br/>
-				<span style="font-size:12px;">{:lang('my_commission')}</span>
-			</span>
-		</div>
-	</a>
-	{else/}
-		{if condition="$apply_promoter_menu !=null"}
-		<div class='member_list' style='margin-bottom:0;'>
-			<ul style="margin-top:0;">
-				<li>
-					<a href="{__URL('APP_MAIN/'.$apply_promoter_menu['url'])}">
-						<i class=" module-icon {$apply_promoter_menu.class}" ></i>
-						<span >{$apply_promoter_menu.title}</span>
-						<span class='jiantou'></span>
-					</a>
-				</li> 
-			</ul>
-		</div>
-		{/if}
-	{/if}
-</div>
-
+{/if}
 
 <div class='member_list'>
 {volist name="menu_arr" id="arr_item" }
 	<ul>
-		{volist name="arr_item" id="vo" }
+		{volist name="arr_item" id="vo"}
 		<li>
 			<a href="{:__URL('APP_MAIN/'.$vo['url'])}">
 				<i class=" module-icon {$vo.class}" ></i>
@@ -227,12 +196,10 @@
 				<span class='jiantou'></span>
 			</a>
 		</li>
-		{/volist} 
+		{/volist}
 	</ul>
 {/volist}
 </div>
-
-<!--distribution contact us end-->
 <script type="text/javascript">
 $(function(){
 	bottomActive('#bottom_member');
@@ -240,10 +207,8 @@ $(function(){
 function signIn(){
 	$.ajax({
 		type : "post",
-		url : "APP_MAIN/member/signIn",
-		data : {
-			"sign" : true
-		},
+		url : "{:__URL('APP_MAIN/member/signIn')}",
+		data : { "sign" : true },
 		success : function(data){
 			if(data['code']>0){
 				location.reload();

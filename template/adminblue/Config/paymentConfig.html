@@ -29,9 +29,9 @@
 				<span class="table-desc">{$pay_obj.desc}</span> 
 			</td>
 			{if condition="$pay_obj.is_use eq 1"}
-			<td style="text-align: center;line-height:59px;"><a href="javascript:;" class="pay-start" status =1 onclick="set_status('{$pay_obj.key}', this)"><img src="__ROOT__/public/admin/images/start.png" /></a></td>
+			<td style="text-align: center;line-height:59px;"><a href="javascript:;" class="pay-start" status =1 onclick="set_status('{$pay_obj.key}', this)"><img src="ADMIN_IMG/checked.png" alt="" width="18"/></a></td>
 			{else/}
-			<td style="text-align: center;line-height:59px;"><a href="javascript:;" class="pay-close" status =0 onclick="set_status('{$pay_obj.key}', this)"><img src="__ROOT__/public/admin/images/close.png" /></a></td>
+			<td style="text-align: center;line-height:59px;"><a href="javascript:;" class="pay-close" status =0 onclick="set_status('{$pay_obj.key}', this)"><img src="ADMIN_IMG/un_checked.png" alt="" width="18"/></a></td>
 			{/if}
 			<td style="text-align: center;line-height:59px;">
 			{if condition="$pay_obj.key eq 'WPAY'"}
@@ -64,10 +64,10 @@ function set_status(type,event){
 			if (data["code"] > 0) {
 				if(status == 1){
 					$(event).attr('status', 0);
-					$(event).find('img').attr('src', '__ROOT__/public/admin/images/close.png');
+					$(event).find('img').attr('src', 'ADMIN_IMG/un_checked.png');
 				}else{
 					$(event).attr('status', 1);
-					$(event).find('img').attr('src', '__ROOT__/public/admin/images/start.png');
+					$(event).find('img').attr('src', 'ADMIN_IMG/checked.png');
 				}
 				showMessage('success', data["message"]);
 			}else{

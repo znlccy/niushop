@@ -119,7 +119,9 @@ class Task extends Controller
         } else {
             $bottom_info['copyright_meta'] = '';
         }
-        
+        $bottom_info['web_gov_record'] = $web_site_info["web_gov_record"];
+        $bottom_info['web_gov_record_url'] = $web_site_info["web_gov_record_url"];
+                
         $result["bottom_info"] = $bottom_info;
         $result["default_logo"] = "/blue/img/logo.png";
         return $result;

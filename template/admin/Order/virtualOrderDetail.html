@@ -1,0 +1,249 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/order.css">
+<style>
+.ui-step-4 li{width:33.33%;}
+.virtual-goods-table{width:100%;text-align: center;}
+.virtual-goods-table th{font-weight: normal;padding:10px;border-bottom:1px solid #e5e5e5;}
+.virtual-goods-table td{padding:10px;}
+</style>
+{/block}
+{block name="main"}
+<div class="mod-table">
+{if condition="$order['order_status'] lt 5 && $order['order_status'] gt 0"}
+<div class="step-region">
+	<ul class="ui-step ui-step-4">
+		<li class="ui-step-done"><div class="ui-step-title">买家下单</div><div class="ui-step-number">1</div><div class="ui-step-meta">{$order['create_time'] | getTimeStampTurnTime}</div></li>
+		<li class="{if condition='$order["order_status"] gt 0'}ui-step-done{/if}"><div class="ui-step-title">买家付款</div><div class="ui-step-number">2</div><div class="ui-step-meta">{if condition='$order["order_status"] gt 0'}{$order['pay_time'] | getTimeStampTurnTime}{/if}</div></li>
+		<li class="{if condition='$order["order_status"] eq 4'}ui-step-done{/if}"><div class="ui-step-title">交易完成</div><div class="ui-step-number">4</div><div class="ui-step-meta">{if condition='$order["order_status"] eq 4'}{$order['finish_time'] | getTimeStampTurnTime}{/if}</div></li>
+	</ul>
+</div>
+{/if}
+<div class="step-region clearfix">
+	<div class="info-region">
+		<div class="info-div">订单信息<span class="secured-title">担保交易</span></div>
+		<table class="info-table">
+		<tbody>
+			<tr><th>订单编号：</th><td>{$order['order_no']}</td></tr>
+			<tr><th>订单类型：</th><td>虚拟订单</td></tr>
+			<tr><th>付款方式：</th><td>{$order['payment_type_name']}</td></tr>
+			<tr><th>买家：</th><td><span>{$order['user_name']}</span></td></tr>
+		</tbody>
+		</table>
+		<div class="dashed-line"></div>
+		<table class="info-table">
+			<tbody>
+				<tr><th>联系方式：</th><td>{$order['receiver_mobile']}</td></tr>
+				
+				{if condition="!empty($order['buyer_invoice_info'])"}
+				<tr>
+					<th>发票抬头：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][0])"}
+						{$order['buyer_invoice_info'][0]}
+						{/if}
+					</td>
+				</tr>
+				<tr>
+					<th>纳税人识别号：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][2])"}
+						{$order['buyer_invoice_info'][2]}
+						{else/}
+						-
+						{/if}
+					</td>
+				</tr>
+				<tr>
+					<th>发票内容：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][1])"}
+						{$order['buyer_invoice_info'][1]}
+						{/if}
+					</td>
+				</tr>
+				{/if}
+				<tr>
+					<th>买家留言：</th>
+					{if condition="$order['buyer_message'] !=''"}
+					<td>{$order['buyer_message']}</td>
+					{else/}
+					<td>此订单没有留言</td>
+					{/if}
+				</tr>
+				{if condition="$order['seller_memo'] != ''"}
+				<tr>
+					<th>卖家备注：</th>
+					<td>{$order['seller_memo']}</td>
+				</tr>
+				{/if}
+			</tbody>
+		</table>
+	</div>
+	<div class="state-region">
+		<div style="padding: 0 0 30px 40px;">
+			<div class="state-title"><span class="icon info">!</span>订单状态：{$order['status_name']}</div>
+			<div class="state-action">
+			{volist name="order['operation']" id="v" empty=""}
+				<button class="zent-btn zent-btn-primary test-send-goods" onclick="operation('{$v['no']}',{$order['order_id']})">{$v['name']}</button>
+			{/volist}
+			</div>
+		</div>
+<!-- 		<div class="state-remind-region"> -->
+<!-- 			<div class="dashed-line"></div> -->
+<!-- 			<div class="state-remind"><div class="tixing">{$title_name}提醒：</div> -->
+<!-- 				<ul> -->
+<!-- 					<li></li> -->
+<!-- 				</ul> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+	</div>
+</div>
+<table class="ui-table ui-table-simple goods-table order-detail-goods-table">
+	<thead>
+		<tr>
+			<th style="width:8%;">商品图</th>
+			<th class="cell-10" style="width:40%;">商品</th>
+			<th style="width:10%;text-align: center;">价格(元)</th>
+			<th style="width:10%;text-align: center;">数量</th>
+			<th style="width:10%;text-align: center;">调整金额(元)</th>
+			<th class="cell-13" style="width:10%;text-align: center;">小计(元)</th>
+			{if condition="$order['order_status'] == 4"}
+			<th style="width:10%;text-align: center;">操作</th>
+			{/if}
+		</tr>
+	</thead>
+	<tbody>
+	{if $order['order_goods_no_delive']}
+		{volist name="order['order_goods_no_delive']" id="vo"}
+			<tr class="test-item">
+				<td class="td-goods-image" rowspan="1">
+					<div class="ui-centered-image" style="width: 48px; height: 48px;">
+						<img src="{:__IMG($vo['picture_info']['pic_cover_micro'])}" style="max-width: 48px; max-height: 48px;">
+					</div>
+				</td>
+				<td class="cell-10" style="width:200px;">
+					<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$vo['goods_id'])}" target="_blank">{$vo['goods_name']}</a>
+					<p class="c-gray">{$vo['sku_name']}</p>
+				</td>
+				<td style="text-align: center;">{$vo['price']}</td>
+				<td style="text-align: center;">{$vo['num']}</td>
+				<td style="text-align: center;">{$vo['adjust_money']}</td>
+				<td style="text-align: center;"><p>{$vo['goods_money']}</p></td>
+				{if condition="$order['order_status'] == 4"}
+				<td style="text-align: center;"><a href="javascript:selectVirtualCode();">查看虚拟码</a></td>
+				{/if}
+			</tr>
+		{/volist}
+	{/if}
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="9" class="text-right">
+				<span>商品总金额：￥{$order['goods_money']}，</span>
+				
+				{if condition="$order['user_platform_money']>0"}
+				<span>余额支付：￥{$order['user_platform_money']}，</span>
+				{/if}
+				
+				{if condition="$order['coupon_money']>0"}
+				<span>优惠券：￥{$order['coupon_money']}，</span>
+				{/if}
+				
+				{if condition="$order['tax_money']>0"}
+				<span>发票税额：￥{$order['tax_money']}，</span>
+				{/if}
+				
+				{if condition="$order['promotion_money']>0"}
+				<span>满减优惠：￥{$order['promotion_money']}，</span>
+				{/if}
+				
+				{if condition="$order['point']>0"}
+				<span>使用积分：{$order['point']}，</span>
+				{/if}
+				
+				<span> 实际需支付：<b class="real-pay c-red">￥{$order['pay_money']}</b></span>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+
+<table class="ui-table ui-table-simple goods-table order-detail-goods-table" style="border-top:none;">
+	<thead>
+		<tr>
+			<th>订单日志</th>
+		</tr>
+	</thead>
+	<tbody>
+	{volist name="order['order_action']" id="v1"}
+		<tr class="test-item">
+			<td class="td-goods-image" colspan="9">
+			 操作备注：&nbsp;&nbsp; {$v1.user_name}&nbsp;&nbsp;&nbsp;于&nbsp;&nbsp;&nbsp;{$v1.action_time | getTimeStampTurnTime}&nbsp;&nbsp;&nbsp;【{$v1.action}】
+			</td>
+		</tr>
+	{/volist}
+	</tbody>
+</table>
+</div>
+{if condition="$order.virtual_goods_list"}
+<div class="modal fade hide" id="selectVirtualCode" tabindex="-1" aria-labelledby="查看虚拟码" aria-hidden="true" data-backdrop="static" style="width: 1000px; overflow: overlay;top:50%;left:50%;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3>虚拟商品</h3>
+			</div>
+			<div class="modal-body">
+				<table class="virtual-goods-table">
+					<colgroup>
+						<col width="10%">
+						<col width="15%">
+						<col width="10%">
+						<col width="10%">
+						<col width="15%">
+						<col width="7%">
+						<col width="10%">
+						<col width="7%">
+					</colgroup>
+					<tr>
+						<th style="text-align: left;">虚拟码</th>
+						<th style="text-align: left;">虚拟商品名称</th>
+						<th>金额</th>
+						<th>有效期/天</th>
+						<th>到期时间</th>
+						<th>使用次数</th>
+						<th>限制使用次数</th>
+						<th>使用状态</th>
+					</tr>
+					{foreach name="order.virtual_goods_list" item="vg"}
+					<tr>
+						<td style="text-align: left;">{$vg.virtual_code}</td>
+						<td style="text-align: left;">{$vg.virtual_goods_name}</td>
+						<td>￥{$vg.money}</td>
+						<td>{$vg.validity_period}天</td>
+						<td>{$vg.end_time|getTimeStampTurnTime}</td>
+						<td>{$vg.use_number}</td>
+						<td>{$vg.confine_use_number}</td>
+						<td>{$vg.use_status_msg}</td>
+					</tr>
+					{/foreach}
+				</table>
+			</div>
+			<!-- <div class="modal-footer">
+				温馨提示
+			</div> -->
+		</div>
+	</div>
+</div>
+{/if}
+<input type="hidden" id="order_id" value="{$order['order_id']}" />
+<script>
+function selectVirtualCode(){
+	$("#selectVirtualCode").css({
+		"margin-top" : "-" + (($('#selectVirtualCode').outerHeight())/2)+"px",
+		"margin-left" : "-" + (($('#selectVirtualCode').outerWidth())/2)+"px"
+	}).modal("show");
+}
+</script>
+{include file="admin/Order/virtualOrderAction"/}
+{/block}

@@ -3,107 +3,24 @@
 {block name="resources"}
 <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/member_index.css">
 <style>
-.head{
-	border-bottom:0;
-}
-.panel.memberhead{
-	background:url(__TEMP__/{$style}/public/images/shoptop.png);
-	background-size:100% 100%; 
-}
-.member{
-	    width: 64%;
-    float: right;
-    margin-top: 26px;
-	color:#fff;
-}
-.img{
-	width:100%;
-    margin: 5px 0;
-}
-.code{
-    background: #fff;
-	overflow: hidden;
-}
-.rec{
-	height: 17px;
-    /* margin: 5px 10px; */
-    padding: 10px 20px;
-	border-bottom: 1px solid #E2E1E1;
-	line-height:17px;
-}
-
-.module-icon.memberCoupon {
-    background:url(__TEMP__/{$style}/public/images/Coupon.png) no-repeat;
-	width: 22px;
-    height: 22px;
-	float: left;
-    margin-top: 9px;
-	    margin-right: 10px;
-    display: inline-block;
-	background-size:100% 100%;
-}
-.member-info{
-	background: rgba(255,79,79, 0.8);
-	float:left;
-	width:33%;
-	color: #fff;
-	text-align: center;
-	line-height:41px;
-}
-.vertical-bar{
-	border-left: 1px solid rgba(250,250,250,0.6);
-	height: 32px;
-	vertical-align: middle;
-	display: inline-block;
-	margin-top:5px;
-}
-.namer{
-    position: absolute;
-    left: 103px;
-    top: 30px;
-}
-.signin{
-	position: absolute;
-    left: 170px;
-    top: 61px;
-    border-radius: 3px;
-    font-size: 10px;
-    line-height: 14px;
-    padding: 1px 5px;
-}
-.no{
-	color: yellow;
-	border: 1px solid yellow;
-}
-.yes{
-	color: #fff;
-	border: 1px solid #fff;
-}
-.last a{
-	position: relative;
-}
-.tips{
-	width: 16px;
-	height: 16px;
-	background: #fff;
-	border:1px solid #F93F40; 
-	border-radius: 50%;
-	font-size: 6px;
-	line-height: 16px;
-	text-align: center;
-	color: #F93F40;
-	position: absolute;
-	z-index: 10;
-	right: -10px;
-	top: -6px;
-}
+.head{border-bottom:0;}
+.panel.memberhead{background:url(__TEMP__/{$style}/public/images/shoptop.png);background-size:100% 100%;}
+.member{width: 64%;float: right;margin-top: 26px;color:#fff;}
+.img{width:100%;margin: 5px 0;}
+.code{background: #fff;overflow: hidden;}
+.rec{height: 17px;padding: 10px 20px;border-bottom: 1px solid #E2E1E1;line-height:17px;}
+.module-icon.memberCoupon {background:url(__TEMP__/{$style}/public/images/Coupon.png) no-repeat;width: 22px;height: 22px;float: left;margin-top: 9px;margin-right: 10px;background-size:100% 100%;}
+.member-info{background: rgba(255,79,79, 0.8);float:left;width:33%;color: #fff;text-align: center;line-height:41px;}
+.vertical-bar{border-left: 1px solid rgba(250,250,250,0.6);height: 32px;vertical-align: middle;display: inline-block;margin-top:5px;}
+.namer{position: absolute;left: 103px;top: 30px;}
+.signin{position: absolute;left: 170px;top: 61px;border-radius: 3px;font-size: 10px;line-height: 14px;padding: 1px 5px;}
+.no{color: yellow;border: 1px solid yellow;}
+.yes{color: #fff;border: 1px solid #fff;}
+.last a{position: relative;}
+.tips{width: 16px;height: 16px;background: #fff;border:1px solid #F93F40;border-radius: 50%;font-size: 6px;line-height: 16px;text-align: center;color: #F93F40;position: absolute;z-index: 10;right: -10px;top: -6px;}
 </style>
-  {/block}
-{block name="main" }
-<!--  <section class="head" style="background:#222;">
-		<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)" style="width:60px;"><i class="icon-back" style="color:#fff;margin-right:10px;"></i><span style="font-size:15px;color:#fff;">返回</span></a>
-		<div class="head-title" style="color:#fff;">店铺中心</div>
-	</section> -->
+{/block}
+{block name="main"}
 <div class="panel memberhead">
 	<div class="member_head">
 		<a href="{:__URL('APP_MAIN/member/personaldata?shop_id='.$shop_id)}">
@@ -137,20 +54,26 @@
 				<span >购物币&nbsp;</span><span >{1$member_info['coin']}</span>
 			</a> -->
 			<i class="vertical-bar"></i>
-			<a href='{:__URL('APP_MAIN/member/integralwater?shop_id='.$shop_id)}' class="member-info" style="float:right;width:49.5%;"><span >{:lang('goods_integral')}&nbsp;</span><span >{$member_info['point']}</span></a>
-		 </div>
+			<a href="{:__URL('APP_MAIN/member/integralwater?shop_id='.$shop_id)}" class="member-info" style="float:right;width:49.5%;"><span >{:lang('goods_integral')}&nbsp;</span><span >{$member_info['point']}</span></a>
+		</div>
 	</div>
 </div>
+
 <div class="control">
 	<div class="control_l">
-		<span class="control_l_content">{:lang('all_orders')}</span>
+		{if condition="$is_open_virtual_goods"}
+		<span class="control_l_content selected" data-flag="regular-orders">{:lang('regular_orders')}</span>
+		<span class="control_l_content" data-flag="virtual-orders">{:lang('virtual_orders')}</span>
+		{else/}
+		<span class="control_l_content selected" data-flag="regular-orders">{:lang('all_orders')}</span>
+		{/if}
 	</div>
 	<div class="control_r"><a href="{:__URL('APP_MAIN/order/myorderlist?shop_id='.$shop_id)}" class="right_href">{:lang('member_view_all_orders')}</a></div>
 </div>
 
-<div class="panel member-nav" >
-	<ul class="fu clear" >
-		<li class="last" >
+<div class="panel member-nav js-regular-orders">
+	<ul class="fu clear">
+		<li class="last">
 			<a href="{:__URL('APP_MAIN/order/myorderlist?status=0&shop_id='.$shop_id)}">
 				<img src="__TEMP__/{$style}/public/images/pay.png">
 				{if condition="$unpaidOrder neq 0"}
@@ -195,6 +118,31 @@
 	</ul>
 </div>
 
+{if condition="$is_open_virtual_goods"}
+<div class="panel member-nav js-virtual-orders" style="display:none;">
+	<ul class="fu clear" style="background: #ffffff;">
+		<li class="last" >
+			<a href="{:__URL('APP_MAIN/order/myvirtualorderlist?status=0&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/pay.png">
+				{if condition="$unpaidOrder neq 0"}
+					<div class="tips">{$unpaidOrder}</div>
+				{/if}
+				<p>{:lang('member_pending_payment')}</p>
+			</a>
+		</li>
+		<li class="last">
+			<a href="{:__URL('APP_MAIN/order/myvirtualorderlist?status=5&shop_id='.$shop_id)}">
+				<img src="__TEMP__/{$style}/public/images/recieved.png">
+				{if condition="$virtual_wait_evaluate neq 0"}
+					<div class="tips">{$virtual_wait_evaluate}</div>
+				{/if}
+				<p>{:lang('member_pending_evaluation')}</p>
+			</a>
+		</li>
+	</ul>
+</div>
+{/if}
+
 <div class='member_list'>
 {volist name="menu_arr" id="arr_item" }
 	<ul>
@@ -206,24 +154,35 @@
 				<span class='jiantou'></span>
 			</a>
 		</li>
-		{/volist} 
+		{/volist}
 	</ul>
 {/volist}
 </div>
 
-<!--distribution contact us end-->
 <script type="text/javascript">
 $(function(){
 	bottomActive('#bottom_member');
 	//$("#wchat_binding").css("display":"none;");
+	
+	$(".control_l_content").click(function(){
+		var flag = $(this).attr("data-flag");
+		$(".js-regular-orders").hide();
+		$(".js-virtual-orders").hide();
+		$(".js-" + flag).show();
+		$(".control_l_content").removeClass("selected");
+		$(this).addClass("selected");
+		if(flag == "regular-orders"){
+			$(".right_href").attr("href","{:__URL('APP_MAIN/order/myorderlist?shop_id='.$shop_id)}");
+		}else{
+			$(".right_href").attr("href","{:__URL('APP_MAIN/order/myvirtualorderlist?shop_id='.$shop_id)}");
+		}
+	});
 })	
 function signIn(){
 	$.ajax({
 		type : "post",
 		url : "{:__URL('APP_MAIN/member/signIn')}",
-		data : {
-			"sign" : true
-		},
+		data : { "sign" : true },
 		success : function(data){
 			if(data['code']>0){
 				$(".signin").not(":hidden").removeClass("no").addClass("yes").text("已签到");

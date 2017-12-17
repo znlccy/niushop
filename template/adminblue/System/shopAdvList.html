@@ -2,36 +2,49 @@
 {block name="resources"/}
 <style>
 .adv_url{
-	width: 200px;
-	height: 30px!important;
+	max-width: 550px;
 	overflow : hidden;
   	text-overflow: ellipsis;
-  	display: -webkit-box;
-  	-webkit-line-clamp: 2;
-  	-webkit-box-orient: vertical;
+	white-space: nowrap;
+	text-align: left;
+}
+.silde_sort{
+	width: 40px;
+	margin-bottom: 0!important;
+}
+.button_active{
+	background: #FB9336;
+	outline: none;
+}
+.button_active:hover{
+	background: #FB9336;
+	opacity: 0.8;
 }
 </style>
 <script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
 {/block}
 {block name="main"}
 <div class="options-btn">
-	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/system/addshopadv','ap_id='.$ap_id)}';">添加广告</button>
+	<button class="btn-common btn-small add_adv">添加广告</button>
+	<button style="margin:0 5px 0 0 !important;" class="btn-common btn-small button_active" data-ad-type="1">PC端</button>
+		<button style="margin:0 5px 0 0 !important;" class="btn-common btn-small" data-ad-type="2">手机端</button>
 </div>
+<input type="hidden" id="ad_type" value="1">
 <table class="table-class">
 	<colgroup>
 		<col style="width: 5%;">
 		<col style="width: 19%;">
 		<col style="width: 19%;">
-		<col style="width: 19%;">
-		<col style="width: 19%;">
+		<col style="width: 30%;">
+		<col style="width: 8%;">
 		<col style="width: 19%;">
 	</colgroup>
 	<thead>
 		<tr>
 			<th><input type="checkbox" onclick="CheckAll(this)"></th>
-			<th>名称</th>
-			<th>所属广告位</th>
-			<th>链接地址</th>
+			<th align="left">名称</th>
+			<th align="left">所属广告位</th>
+			<th align="left">链接地址</th>
 			<th>排序</th>
 			<th>操作</th>
 		</tr>
@@ -40,8 +53,8 @@
 		<col style="width: 5%;">
 		<col style="width: 19%;">
 		<col style="width: 19%;">
-		<col style="width: 19%;">
-		<col style="width: 19%;">
+		<col style="width: 30%;">
+		<col style="width: 8%;">
 		<col style="width: 19%;">
 	</colgroup>
 	<tbody id="list"></tbody>
@@ -52,6 +65,18 @@
 <script type="text/javascript">
 $(function(){
 	LoadingInfo(1);
+})
+
+$("[data-ad-type]").click(function(){
+	$("#ad_type").val($(this).attr("data-ad-type"));
+	$("[data-ad-type]").removeClass("button_active");
+	$(this).addClass("button_active");
+	LoadingInfo(1);
+})
+
+$(".add_adv").click(function(){
+	var ad_type = $("#ad_type").val();
+	window.location.href=__URL("ADMIN_MAIN/system/addshopadv?type="+ad_type);
 })
 
 function CheckAll(event){
@@ -65,6 +90,7 @@ function CheckAll(event){
 function LoadingInfo(page_index) {
 	var ap_id = $("#ap_id").val();
 	var search_text = '';
+	var type = $("#ad_type").val();
 	$.ajax({
 		type : "post",
 		url : "{:__URL('ADMIN_MAIN/system/shopadvlist')}",
@@ -72,7 +98,7 @@ function LoadingInfo(page_index) {
 			"page_index" : page_index,
 			"page_size" : $("#showNumber").val(),
 			"search_text" : search_text, 
-			"ap_id" : ap_id
+			"type" : type
 		},
 		success : function(data) {
 			var html = '';
@@ -80,11 +106,11 @@ function LoadingInfo(page_index) {
 				for (var i = 0; i < data['data'].length; i++) {
 					html += '<tr align="center">';
 					html += '<td><input type="checkbox" name="sub" value="'+ data['data'][i]['adv_id']+'"></td>';
-					html += '<td>'+ data['data'][i]['adv_title']+'</td>';
-					html += '<td>' + data['data'][i]["ap_info"]['ap_name'] + '</td>';
-					html += '<td class="adv_url">' + data['data'][i]["adv_url"] + '</td>';
-					html += '<td class="center"><input type="text" class="silde_sort" fieldid="'+ data['data'][i]['adv_id']+'"  value="'+ data['data'][i]["slide_sort"] + '" onchange="updateAdvSort(this)" size="1" ></td>';
-					html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/updateshopadv?adv_id=' + data['data'][i]["adv_id"])+'">编辑</a> ';
+					html += '<td align="left">'+ data['data'][i]['adv_title']+'</td>';
+					html += '<td align="left">' + data['data'][i]['ap_name'] + '</td>';
+					html += '<td class="adv_url" title="' + data['data'][i]["adv_url"] + '">' + data['data'][i]["adv_url"] + '</td>';
+					html += '<td class="center"><input type="number" class="silde_sort" fieldid="'+ data['data'][i]['adv_id']+'"  value="'+ data['data'][i]["slide_sort"] + '" onchange="updateAdvSort(this)" size="1" ></td>';
+					html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/updateshopadv?adv_id=' + data['data'][i]["adv_id"]+'&type=' + data['data'][i]["type"])+'">编辑</a> ';
 					html += '<a href="javascript:;" onclick="delShopAdv(' + data['data'][i]["adv_id"] + ')">删除</a></td> ';
 					html += '</tr>';
 				}

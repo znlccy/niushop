@@ -57,7 +57,7 @@
 					{else /}
 						<span class="span-error" style="display:block;">暂无可选的商品标签</span> 
 					{/if}
-				</div>									
+				</div>
 			</div>
 		</dd>
 	</dl>
@@ -83,10 +83,10 @@ var group_str = '{$group_str}';//标签列表
 function changeGoodsGroup(obj){
 	if($(obj).val() > 0){
 		var exist_num = 0;
-		$(".goods-group-div .goods-group-line .goods-gruop-select").each(function() {					
+		$(".goods-group-div .goods-group-line .goods-gruop-select").each(function() {
 			if($(this).val() == 0){
 				exist_num++;
-			}			
+			}
 		})
 		if(exist_num < 1){
 			if($.trim(group_str) != "" && $.trim(group_str) != undefined){
@@ -98,10 +98,10 @@ function changeGoodsGroup(obj){
 					html +="<option value='"+ group_array[i]["group_id"] +"'>"+ group_array[i]["group_name"] +"</option>"
 				}
 				html +="</select></div>";
-				$(".goods-group-div").append(html);	
+				$(".goods-group-div").append(html);
 			}else{
 				$(".span-error").show();
-			}									
+			}
 		}
 	}else{
 		if($(".goods-group-div .goods-group-line .goods-gruop-select").length > 1){

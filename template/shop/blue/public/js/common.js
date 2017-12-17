@@ -3,9 +3,18 @@ $().ready(function() {
 	try {
 
 		$('.menu-item .menu').hover(function(){
-			if($("#hidden_uid").val() != undefined && $("#hidden_uid").val() != "") $(this).find('.menu-bd').show();
+			//判断当前浮上去的是不是login
+			if($(this).attr("data-flag")){
+				if($("#hidden_uid").val() != undefined && $("#hidden_uid").val() != "") $(this).find('.menu-bd').show();
+			}else{
+				$(this).find('.menu-bd').show();
+			}
 		},function(){
-			if($("#hidden_uid").val() != undefined && $("#hidden_uid").val() != "") $(this).find('.menu-bd').hide();
+			if($(this).attr("data-flag")){
+				if($("#hidden_uid").val() != undefined && $("#hidden_uid").val() != "") $(this).find('.menu-bd').hide();
+			}else{
+				$(this).find('.menu-bd').hide();
+			}
 		});
 	} catch (e) {
 	}
@@ -137,7 +146,6 @@ $().ready(function() {
 		});
 	} catch (e) {
 	}
-
 
 });
 // 动态、普通登录切换

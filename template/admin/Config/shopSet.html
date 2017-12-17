@@ -6,11 +6,11 @@
 <script src="ADMIN_JS/material_managedialog.js"></script>
 {/block}
 {block name="main"}
-<div class="set-style"  >
+<div class="set-style">
 	<dl>
 		<dt>自动收货时间:</dt>
 		<dd>
-			<input id="order_auto_delinery" type="number" min="0.00" step="1.00" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" value="{$shopSet['order_auto_delinery']}" /> 
+			<input id="order_auto_delinery" type="number" min="0.00" step="1.00" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" value="{$shopSet['order_auto_delinery']}" />
 			<p class="hint">订单多长时间后自动收货，单位为/天(注：若为0，则默认14天自动收货)</p>
 		</dd>
 	</dl>
@@ -26,26 +26,23 @@
 		<dt>是否开启余额支付</dt>
 		<dd>
 			<div class="controls">
-				<label class="radio inline"><input type="radio" name="order_balance_pay" value="1" checked="checked" id="balanceResultYes">启用</label> 
+				<label class="radio inline"><input type="radio" name="order_balance_pay" value="1" checked="checked" id="balanceResultYes">启用</label>
 				<label class="radio inline"><input type="radio" name="order_balance_pay" value="0" checked="checked" id="balanceResultNo">禁用</label>
 				<input type="hidden" id="is_open" value="{$shopSet['order_balance_pay']}">
 			</div>
 			<p class="hint">是否启用余额支付</p>
 		</dd>
 	</dl>
-	
 	<dl>
 		<dt>是否开启货到付款</dt>
 		<dd>
 			<div class="controls">
-				<label class="radio inline"><input type="radio" name="order_delivery_pay" value="1"  id="payResultYes" {if condition="$shopSet['order_delivery_pay'] eq 1"}checked{/if}>启用</label> 
-				<label class="radio inline"><input type="radio" name="order_delivery_pay" value="0"  id="payResultNo"  {if condition="$shopSet['order_delivery_pay'] eq 0"}checked{/if}>禁用</label>
+				<label class="radio inline"><input type="radio" name="order_delivery_pay" value="1" id="payResultYes" {if condition="$shopSet['order_delivery_pay'] eq 1"}checked{/if}>启用</label>
+				<label class="radio inline"><input type="radio" name="order_delivery_pay" value="0" id="payResultNo" {if condition="$shopSet['order_delivery_pay'] eq 0"}checked{/if}>禁用</label>
 			</div>
 			<p class="hint">是否支持货到付款</p>
 		</dd>
 	</dl>
-	
-	
 	<dl>
 		<dt>订单完成时间:</dt>
 		<dd>
@@ -69,31 +66,29 @@
 		<dt>是否显示购买记录</dt>
 		<dd>
 			<div class="controls">
-				<label class="radio inline"><input type="radio" name="order_show_buy_record" value="1" checked="checked" id="purchaseRecordYes">启用</label> 
+				<label class="radio inline"><input type="radio" name="order_show_buy_record" value="1" checked="checked" id="purchaseRecordYes">启用</label>
 				<label class="radio inline"><input type="radio" name="order_show_buy_record" value="0" checked="checked" id="purchaseRecordNo">禁用</label>
 				<input type="hidden" id="or_open" value="{$shopSet['order_show_buy_record']}">
 			</div>
 			<p class="hint">是否显示购买记录</p>
 		</dd>
 	</dl>
-	
 	<dl>
 		<dt>是否开启买家自提</dt>
 		<dd>
 			<div class="controls">
-				<label class="radio inline"><input type="radio" name="buyer_self_lifting" value="1" checked="checked" id="sinceYes">启用</label> 
+				<label class="radio inline"><input type="radio" name="buyer_self_lifting" value="1" checked="checked" id="sinceYes">启用</label>
 				<label class="radio inline"><input type="radio" name="buyer_self_lifting" value="0" id="sinceNo">禁用</label>
 				<input type="hidden" id="is_start" value="{$shopSet['buyer_self_lifting']}">
 			</div>
 			<p class="hint">是否启用买家自提</p>
 		</dd>
 	</dl>
-	
 	<dl>
 		<dt>是否开启商家配送</dt>
 		<dd>
 			<div class="controls">
-				<label class="radio inline"><input type="radio" name="seller_dispatching" value="1" checked="checked" id="dispatchingYes">启用</label> 
+				<label class="radio inline"><input type="radio" name="seller_dispatching" value="1" checked="checked" id="dispatchingYes">启用</label>
 				<label class="radio inline"><input type="radio" name="seller_dispatching" value="0" id="dispatchingNo">禁用</label>
 				<input type="hidden" id="is_dispatching" value="{$shopSet['seller_dispatching']}">
 			</div>
@@ -104,11 +99,22 @@
 		<dt>是否允许选择物流</dt>
 		<dd>
 			<div class="controls">
-				<label class="radio inline"><input type="radio" name="is_logistics" value="1" checked="checked" id="logisticsYes">启用</label> 
+				<label class="radio inline"><input type="radio" name="is_logistics" value="1" checked="checked" id="logisticsYes">启用</label>
 				<label class="radio inline"><input type="radio" name="is_logistics" value="0" id="logisticsNo">禁用</label>
 				<input type="hidden" id="is_logistics" value="{$shopSet['is_logistics']}">
 			</div>
 			<p class="hint">是否允许用户选择物流</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否开启虚拟商品</dt>
+		<dd>
+			<div class="controls">
+				<label class="radio inline"><input type="radio" name="is_open_virtual_goods" value="1" id="open_virtual_goods">启用</label> 
+				<label class="radio inline"><input type="radio" name="is_open_virtual_goods" value="0" checked="checked" id="close_virtual_goods">禁用</label>
+				<input type="hidden" id="is_open_virtual_goods" value="{$shopSet['is_open_virtual_goods']}">
+			</div>
+			<p class="hint">是否开启虚拟商品</p>
 		</dd>
 	</dl>
 	<dl>
@@ -134,8 +140,7 @@
 	<dl>
 		<dt>发票内容:</dt>
 		<dd>
-			<textarea  rows="2" id="order_invoice_content"
-				class="textarea w400" maxlength="50">{$shopSet['order_invoice_content']}</textarea>
+			<textarea rows="2" id="order_invoice_content" class="textarea w400" maxlength="50">{$shopSet['order_invoice_content']}</textarea>
 			<p class="hint">客户要求开发票时可以选择的内容，逗号分格代表一个选项，例如：办公用品,明细</p>
 		</dd>
 	</dl>
@@ -144,7 +149,6 @@
 <script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
 <script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
 <script>
-
 var validation = true;//验证余额输入
 $("#order_invoice_tax").live("keyup",function(){
 	var reg = /^\d+(.{0,1})(\d{0,2})$/;
@@ -154,108 +158,118 @@ $("#order_invoice_tax").live("keyup",function(){
 	}else{
 		validation = true;
 	}
-})
-	window.onload=function(){
-		var is_open = $("#is_open").val();
-		if(is_open == ''){
-			is_open = 0;
-		}
-		if(parseInt(is_open) == 0){
-			$("#balanceResultNo").prop("checked","checked");
-		}else{
-			$("#balanceResultYes").prop("checked","checked");
-		}
-		
-		var or_open = $("#or_open").val();
-		if(or_open == ''){
-			or_open = 0;
-		}
-		//alert(or_open);
-		if(parseInt(or_open) == 0){
-			$("purchaseRecordNo").prop("checked","checked");
-		}else{
-			$("#purchaseRecordYes").prop("checked","checked");
-		}
-		
-		$("#order_delivery_complete_time").find("option[value='" + $("#closeday").val() + "']").attr("selected", "selected");
-		
-		var is_start = $("#is_start").val();
-		if(is_start == ''){
-			is_start = 0;
-		}
-		if(parseInt(is_start) == 0){
-			$("#sinceNo").prop("checked","checked");
-		}else{
-			$("#sinceYes").prop("checked","checked");
-		}
-		
-		var is_dispatching = $("#is_dispatching").val();
-		if(is_dispatching == ''){
-			is_dispatching = 0;
-		}
-		if(parseInt(is_dispatching) == 0){
-			$("#dispatchingNo").prop("checked","checked");
-		}else{
-			$("#dispatchingYes").prop("checked","checked");
-		}
-		
-		var is_logistics = $("#is_logistics").val();
-		if(is_logistics == ''){
-			is_logistics = 0;
-		}
-		if(parseInt(is_logistics) == 0){
-			$("#logisticsNo").prop("checked","checked");
-		}else{
-			$("#logisticsYes").prop("checked","checked");
-		}
-		
-	};
-	function setConfigAjax(){
-		var order_delivery_complete_time = $('#order_delivery_complete_time').val();
-		var order_buy_close_time = $('#order_buy_close_time').val();
-		var order_balance_pay = $("input[type='radio'][name='order_balance_pay']:checked").val();
-		var order_delivery_pay = $("input[type='radio'][name='order_delivery_pay']:checked").val();
-		var order_auto_delinery = $("#order_auto_delinery").val();
-		var order_show_buy_record = $("input[type='radio'][name='order_show_buy_record']:checked").val();
-		var buyer_self_lifting = $("input[type='radio'][name='buyer_self_lifting']:checked").val();
-		var seller_dispatching = $("input[type='radio'][name='seller_dispatching']:checked").val();
-		var is_logistics = $("input[type='radio'][name='is_logistics']:checked").val();
-		var order_invoice_tax = $("#order_invoice_tax").val();
-		var order_invoice_content = $("#order_invoice_content").val();
-		var shopping_back_points = $("#shopping_back_points").val();
-		if(validation){
-			$.ajax({
-				type:"post",
-				url : "{:__URL('ADMIN_MAIN/config/shopset')}",
-				data : {
-					"order_delivery_complete_time" : order_delivery_complete_time,
-					"order_buy_close_time":order_buy_close_time,
-					"order_balance_pay" : order_balance_pay,
-					"order_delivery_pay" : order_delivery_pay,
-					"order_auto_delinery" : order_auto_delinery,
-					"order_show_buy_record" : order_show_buy_record,
-					"buyer_self_lifting" : buyer_self_lifting,
-					"seller_dispatching" : seller_dispatching,
-					"is_logistics" : is_logistics,
-					"order_invoice_tax" : order_invoice_tax,
-					"order_invoice_content" : order_invoice_content,
-					"shopping_back_points" : shopping_back_points
-				},
-				success : function(data){
-					if(data['code'] > 0)
-						{
-							showMessage('success', data["message"]);
-							location.href=__URL("ADMIN_MAIN/config/shopset");
-						}else{
-							showMessage('error', data["message"]);
-						}
-				}
-			});
-		}else{
+});
 
-			showTip("请输入大于0的数字，并且保留两位小数","warning");
-		}
-		
+window.onload=function(){
+	var is_open = $("#is_open").val();
+	if(is_open == ''){
+		is_open = 0;
 	}
+	if(parseInt(is_open) == 0){
+		$("#balanceResultNo").prop("checked","checked");
+	}else{
+		$("#balanceResultYes").prop("checked","checked");
+	}
+	
+	var or_open = $("#or_open").val();
+	if(or_open == ''){
+		or_open = 0;
+	}
+	if(parseInt(or_open) == 0){
+		$("purchaseRecordNo").prop("checked","checked");
+	}else{
+		$("#purchaseRecordYes").prop("checked","checked");
+	}
+	
+	$("#order_delivery_complete_time").find("option[value='" + $("#closeday").val() + "']").attr("selected", "selected");
+	
+	var is_start = $("#is_start").val();
+	if(is_start == ''){
+		is_start = 0;
+	}
+	if(parseInt(is_start) == 0){
+		$("#sinceNo").prop("checked","checked");
+	}else{
+		$("#sinceYes").prop("checked","checked");
+	}
+	
+	var is_dispatching = $("#is_dispatching").val();
+	if(is_dispatching == ''){
+		is_dispatching = 0;
+	}
+	if(parseInt(is_dispatching) == 0){
+		$("#dispatchingNo").prop("checked","checked");
+	}else{
+		$("#dispatchingYes").prop("checked","checked");
+	}
+	
+	var is_logistics = $("#is_logistics").val();
+	if(is_logistics == ''){
+		is_logistics = 0;
+	}
+	if(parseInt(is_logistics) == 0){
+		$("#logisticsNo").prop("checked","checked");
+	}else{
+		$("#logisticsYes").prop("checked","checked");
+	}
+	
+	//是否开启虚拟商品
+	var is_open_virtual_goods = $("#is_open_virtual_goods").val();
+	if(is_open_virtual_goods == ""){
+		is_open_virtual_goods = 0;
+	}
+	if(parseInt(is_open_virtual_goods) == 0){
+		$("#close_virtual_goods").prop("checked","checked");
+	}else{
+		$("#open_virtual_goods").prop("checked","checked");
+	}
+};
+
+function setConfigAjax(){
+	var order_delivery_complete_time = $('#order_delivery_complete_time').val();
+	var order_buy_close_time = $('#order_buy_close_time').val();
+	var order_balance_pay = $("input[type='radio'][name='order_balance_pay']:checked").val();
+	var order_delivery_pay = $("input[type='radio'][name='order_delivery_pay']:checked").val();
+	var order_auto_delinery = $("#order_auto_delinery").val();
+	var order_show_buy_record = $("input[type='radio'][name='order_show_buy_record']:checked").val();
+	var buyer_self_lifting = $("input[type='radio'][name='buyer_self_lifting']:checked").val();
+	var seller_dispatching = $("input[type='radio'][name='seller_dispatching']:checked").val();
+	var is_logistics = $("input[type='radio'][name='is_logistics']:checked").val();
+	var order_invoice_tax = $("#order_invoice_tax").val();
+	var order_invoice_content = $("#order_invoice_content").val();
+	var shopping_back_points = $("#shopping_back_points").val();
+	var is_open_virtual_goods = $("input[type='radio'][name='is_open_virtual_goods']:checked").val();//是否开启虚拟商品
+	if(validation){
+		$.ajax({
+			type:"post",
+			url : "{:__URL('ADMIN_MAIN/config/shopset')}",
+			data : {
+				"order_delivery_complete_time" : order_delivery_complete_time,
+				"order_buy_close_time":order_buy_close_time,
+				"order_balance_pay" : order_balance_pay,
+				"order_delivery_pay" : order_delivery_pay,
+				"order_auto_delinery" : order_auto_delinery,
+				"order_show_buy_record" : order_show_buy_record,
+				"buyer_self_lifting" : buyer_self_lifting,
+				"seller_dispatching" : seller_dispatching,
+				"is_logistics" : is_logistics,
+				"order_invoice_tax" : order_invoice_tax,
+				"order_invoice_content" : order_invoice_content,
+				"shopping_back_points" : shopping_back_points,
+				"is_open_virtual_goods" : is_open_virtual_goods
+			},
+			success : function(data){
+				if(data['code'] > 0){
+					showMessage('success', data["message"]);
+					location.href=__URL("ADMIN_MAIN/config/shopset");
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}else{
+		showTip("请输入大于0的数字，并且保留两位小数","warning");
+	}
+}
 </script>
 {/block}

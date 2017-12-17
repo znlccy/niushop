@@ -59,3 +59,22 @@ function platformAdvByApkeyword(ap_keyword){
 	});
 	return result;
 }
+
+//通过广告位关键字获取广告代码
+function getAdvCodebyApKeyword(ap_keyword){
+	var result = '';
+	$.ajax({
+		type : "post",
+		url : __URL(SHOPMAIN + "/components/getAdvCode"),
+		async : false,
+		data : {
+			'ap_keyword' : ap_keyword
+		},
+		dataType : 'json',
+		success : function(data) {
+			result = data;
+			return result;
+		}
+	});
+	return result;
+}

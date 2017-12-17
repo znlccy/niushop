@@ -564,19 +564,35 @@ class Express extends BaseService implements IExpress
      */
     public function expressCompanyDelete($co_id)
     {
-        $ns_express_company = new NsOrderExpressCompanyModel();
-        $conditon = array(
-            'shop_id' => $this->instance_id,
-            'co_id' => array(
-                in,
-                $co_id
-            )
-        );
-        $ns_express_company_return = $ns_express_company->destroy($conditon);
-        if ($ns_express_company_return > 0) {
+        $ns_express_company = new NsOrderExpressCompanyModel();//物流公司
+        $ns_express_shipping = new NsExpressShippingModel(); //打印模板
+        $ns_express_shipping_item = new NsExpressShippingItemsModel(); //打印模板项
+        $ns_order_shipping_fee = new NsOrderShippingFeeModel(); //运费模板
+        
+        $express_shipping_list = $ns_express_shipping->getQuery(["co_id"=>$co_id], "sid", "");
+        
+        $ns_express_company -> startTrans();
+        try {
+            $condition = array(
+                'shop_id' => $this->instance_id,
+                'co_id' => array(
+                    in,
+                    $co_id
+                )
+            );
+            $ns_express_company->destroy($condition);//删除物流公司
+            if(!empty($express_shipping_list)){
+                foreach($express_shipping_list as $v){
+                    $ns_express_shipping_item -> destroy(["sid"=>$v['sid']]); //删除打印模板项
+                }
+            }
+            $ns_express_shipping->destroy(["co_id"=>$co_id]);//删除打印模板
+            $ns_order_shipping_fee -> destroy(["co_id"=>$co_id]); //删除运费模板
+            $ns_express_company->commit();
             return 1;
-        } else {
-            return - 1;
+        }catch (\Exception $e) {
+            $ns_express_company->rollback();
+            return -1;
         }
     }
 

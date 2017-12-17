@@ -18,7 +18,6 @@ namespace app\shop\controller;
 use data\service\Express;
 use data\service\Member;
 use data\service\Order as OrderService;
-use think\Log;
 
 /**
  * 订单控制器
@@ -34,7 +33,7 @@ class Order extends BaseController
     }
 
     /**
-     * 创建订单
+     * 创建订单（实物商品）
      */
     public function orderCreate()
     {
@@ -57,6 +56,7 @@ class Order extends BaseController
         $member = new Member();
         $shipping_time = date("Y-m-d H::i:s", time());
         $address = $member->getDefaultExpressAddress();
+        $coin = 0; //购物币
         
         // 查询商品限购
         $purchase_restriction = $order->getGoodsPurchaseRestrictionForOrder($goods_sku_list);
@@ -67,7 +67,52 @@ class Order extends BaseController
             );
             return $res;
         } else {
-            $order_id = $order->orderCreate('1', $out_trade_no, $pay_type, $shipping_type, '1', 1, $leavemessage, $buyer_invoice, $shipping_time, $address['mobile'], $address['province'], $address['city'], $address['district'], $address['address'], $address['zip_code'], $address['consigner'], $integral, $use_coupon, 0, $goods_sku_list, $user_money, $pick_up_id, $express_company_id);
+            $order_id = $order->orderCreate('1', $out_trade_no, $pay_type, $shipping_type, '1', 1, $leavemessage, $buyer_invoice, $shipping_time, $address['mobile'], $address['province'], $address['city'], $address['district'], $address['address'], $address['zip_code'], $address['consigner'], $integral, $use_coupon, 0, $goods_sku_list, $user_money, $pick_up_id, $express_company_id, $coin, $address["phone"]);
+            // Log::write($order_id);
+            if ($order_id > 0) {
+                $order->deleteCart($goods_sku_list, $this->uid);
+                $_SESSION['order_tag'] = ""; // 订单创建成功会把购物车中的标记清楚
+                return AjaxReturn($out_trade_no);
+            } else {
+                return AjaxReturn($order_id);
+            }
+        }
+    }
+
+    /**
+     * 创建订单（虚拟商品）
+     */
+    public function virtualOrderCreate()
+    {
+        if ($this->getIsOpenVirtualGoodsConfig() == 0) {
+            $this->error("未开启虚拟商品功能");
+        }
+        $order = new OrderService();
+        // 获取支付编号
+        $out_trade_no = $order->getOrderTradeNo();
+        $use_coupon = request()->post('use_coupon', 0); // 优惠券
+        $integral = request()->post('integral', 0); // 积分
+        $goods_sku_list = request()->post('goods_sku_list', ''); // 商品列表
+        $leavemessage = request()->post('leavemessage', ''); // 留言
+        $user_money = request()->post("account_balance", 0); // 使用余额
+        $pay_type = request()->post("pay_type", 1); // 支付方式
+        $buyer_invoice = request()->post("buyer_invoice", ""); // 发票
+        $user_telephone = request()->post("user_telephone", ""); // 电话号码
+        $pick_up_id = 0; // 自提点
+        $shipping_type = 1; // 配送方式，1：物流，2：自提
+        $express_company_id = 0; // 物流公司
+        $member = new Member();
+        $shipping_time = date("Y-m-d H::i:s", time());
+        // 查询商品限购
+        $purchase_restriction = $order->getGoodsPurchaseRestrictionForOrder($goods_sku_list);
+        if (! empty($purchase_restriction)) {
+            $res = array(
+                "code" => 0,
+                "message" => $purchase_restriction
+            );
+            return $res;
+        } else {
+            $order_id = $order->orderCreateVirtual('2', $out_trade_no, $pay_type, $shipping_type, '1', 1, $leavemessage, $buyer_invoice, $shipping_time, $integral, $use_coupon, 0, $goods_sku_list, $user_money, $pick_up_id, $express_company_id, $user_telephone);
             // Log::write($order_id);
             if ($order_id > 0) {
                 $order->deleteCart($goods_sku_list, $this->uid);

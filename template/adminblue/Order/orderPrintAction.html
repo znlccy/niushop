@@ -451,7 +451,7 @@ function printShipping(){
 						str += '<td><div class="cell">'+item['code']+'</div></td>';
 					}
 					str += '<td class="right_border_none"><div class="cell" style="text-align:center;">';
-					for (var t = 0; t < item["order_list"].length; t++ ){				
+					for (var t = 0; t < item["order_list"].length; t++ ){
 							str += item["order_list"][t]["order_no"]+'<br>';
 					}
 					str += '</div></td>';
@@ -814,4 +814,17 @@ function handling_delivery_data(){
 	})
 	return invoiceDate;
 }
+
+//打印订单
+$("#PrintOrder").click(function(){
+	var BatchSend = new Array();
+	$("input[name='sub']:checked").each(function () {
+		BatchSend.push($(this).val());
+	});
+	if (BatchSend.length == 0) {
+		showTip("请先勾选文本框再进行批量操作！",'warning');
+	}else{
+		window.open(__URL("ADMIN_MAIN/order/printOrder?print_order_ids=" + BatchSend.toString()));
+	}
+})
 </script>

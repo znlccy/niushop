@@ -58,7 +58,7 @@ class Goods extends BaseController
         $web_info = $this->web_site->getWebSiteInfo();
         
         // 切换到PC端
-        if (! request()->isMobile() && $web_info['web_status'] != 2) {
+        if (! request()->isMobile() && $web_info['web_status'] != 2 && $web_info['web_status'] != 3) {
             $redirect = __URL(__URL__ . "/goods/goodsinfo?goodsid=" . $goods_id);
             $this->redirect($redirect);
             exit();
@@ -67,6 +67,9 @@ class Goods extends BaseController
         $goods_detail = $goods->getGoodsDetail($goods_id);
         if (empty($goods_detail)) {
             $this->error("没有获取到商品信息");
+        }
+        if ($this->getIsOpenVirtualGoodsConfig() == 0 && $goods_detail['goods_type'] == 0) {
+            $this->error("未开启虚拟商品功能");
         }
         
         // 把属性值相同的合并
@@ -966,7 +969,7 @@ class Goods extends BaseController
         $this->goods = new GoodsService();
         return $this->goods->getGoodsAttribute($goods_id);
     }
-    
+
     /**
      * 领取商品优惠劵
      */

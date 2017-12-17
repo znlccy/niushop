@@ -7,12 +7,8 @@
 .mytable.select div{display:inline-block;margin:0 10px 10px 0;}
 .mytable.select #more_search{display: block;}
 .table-class tbody td a {margin-left: 0;}
-.order-tool{
-    display: inline;
-    position: absolute;
-    margin-top: 10px;
-    margin-left: 16px;
-}
+.order-tool{display: inline;position: absolute;margin-top: 10px;margin-left: 16px;}
+.to-fixed{position: fixed;width: 85.5%;top: 50px;box-shadow: 0 2px 6px 0 rgba(0,0,0,.3);z-index: 5;}
 </style>
 {/block}
 {block name="thirdmenu"}{/block}
@@ -70,68 +66,71 @@
 	</table>
 	
 	<div class="divider"></div>
-	
-	<nav class="order-nav">
-		<ul>
-			{foreach name="child_menu_list" item="child_menu" key="k" }
-				{eq name="child_menu['active']" value="1"}
-				<li class="selected"><a href="{:__URL('ADMIN_MAIN/'.$child_menu['url'])}">{$child_menu.menu_name}</a></li>
-			{else/}
-				<li><a href="{:__URL('ADMIN_MAIN/'.$child_menu['url'])}">{$child_menu.menu_name}</a></li>
-			{/eq}
-			{/foreach}
-			
-			{if condition="$status neq '' && $status neq 0 "}
-			<table class="mytable" style="float:right;width: inherit;">
-				<tr>
-					<td>
-						{if condition="$status eq 1"}
-						<a class="btn btn-small fa-a" id="BatchShipment" href="javascript:;">
-							<span>批量发货</span>
-						</a>
-						{/if}
-						{in name="$status" value="1,2"}
-						<a class="btn btn-small fa-a" id="PrintShipping" href="javascript:;">
-							<i class="fa fa-print"></i>
-							<span>打印出库单</span>
-						</a>
-						<a class="btn btn-small fa-a" id="BatchPrint" href="javascript:;">
-							<i class="fa fa-print"></i>
-							<span>批量打印快递单</span>
-						</a>
-						<a class="btn btn-small fa-a" id="BatchPrintinvoice" href="javascript:;">
-							<i class="fa fa-print"></i>
-							<span>批量打印发货单</span>
-						</a>
-						{/in}
-						{if condition="$status eq 5 "}
-						<a class="btn btn-small fa-a" href="javascript:batchDelete();">
-							<i class="fa fa-trash"></i>
-							<span>批量删除</span>
-						</a>
-						{/if}
-					</td>
-				</tr>
-			</table>
-			{/if}
-			
-		</ul>
-		<!-- <hr style="border-top:1px solid #e5e5e5;margin:0;"/>
-		<div class="order-tool">
-			<input type="checkbox" onclick="CheckAll(this)" id="check">
-			<label for="check">全选</label>
-		</div> -->
-	</nav>
-
+	<div style="min-height: 53px;">
+		<nav class="order-nav">
+			<ul>
+				{foreach name="child_menu_list" item="child_menu" key="k" }
+					{eq name="child_menu['active']" value="1"}
+					<li class="selected"><a href="{:__URL('ADMIN_MAIN/'.$child_menu['url'])}">{$child_menu.menu_name}</a></li>
+				{else/}
+					<li><a href="{:__URL('ADMIN_MAIN/'.$child_menu['url'])}">{$child_menu.menu_name}</a></li>
+				{/eq}
+				{/foreach}
+				
+				<table class="mytable" style="float:right;width: inherit;">
+					<tr>
+						<td>
+							<a class="btn btn-small fa-a" id="PrintOrder" href="javascript:;">
+								<i class="fa fa-print"></i>
+								<span>打印订单</span>
+							</a>
+							{if condition="$status neq '' && $status neq 0 "}
+								{if condition="$status eq 1"}
+								<a class="btn btn-small fa-a" id="BatchShipment" href="javascript:;">
+									<span>批量发货</span>
+								</a>
+								{/if}
+								{in name="$status" value="1,2"}
+								<a class="btn btn-small fa-a" id="PrintShipping" href="javascript:;">
+									<i class="fa fa-print"></i>
+									<span>打印出库单</span>
+								</a>
+								<a class="btn btn-small fa-a" id="BatchPrint" href="javascript:;">
+									<i class="fa fa-print"></i>
+									<span>批量打印快递单</span>
+								</a>
+								<a class="btn btn-small fa-a" id="BatchPrintinvoice" href="javascript:;">
+									<i class="fa fa-print"></i>
+									<span>批量打印发货单</span>
+								</a>
+								{/in}
+								{if condition="$status eq 5 "}
+								<a class="btn btn-small fa-a" href="javascript:batchDelete();">
+									<i class="fa fa-trash"></i>
+									<span>批量删除</span>
+								</a>
+								{/if}
+							{/if}
+						</td>
+					</tr>
+				</table>
+			</ul>
+			<!-- <hr style="border-top:1px solid #e5e5e5;margin:0;"/>
+			<div class="order-tool">
+				<input type="checkbox" onclick="CheckAll(this)" id="check">
+				<label for="check">全选</label>
+			</div> -->
+		</nav>
+	</div>
 	<table class="table-class">
 		<colgroup>
 			<col width="25%">
 			<col width="15%">
 			<col width="10%">
 			<col width="15%">
-			<col width="10%">
-			<col width="10%">
 			<col width="15%">
+			<col width="10%">
+			<col width="10%">
 		</colgroup>
 		<thead>
 			<tr align="center">
@@ -160,6 +159,14 @@
 <!-- 订单打印 -->
 {include file="adminblue/Order/orderPrintAction"/}
 <script type="text/javascript">
+$(window).scroll(function(){
+	var scrollTop = $(window).scrollTop();
+	if(scrollTop > 140){
+		$("nav.order-nav").addClass("to-fixed");
+	}else{
+		$("nav.order-nav").removeClass("to-fixed");
+	}
+})
 $(function () { 
 	$("[data-toggle='popover']").popover();
 });
@@ -282,12 +289,15 @@ function LoadingInfo(page_index) {
 					//地址
 					var address = data["data"][i]["receiver_province_name"]+data["data"][i]["receiver_city_name"]+data["data"][i]["receiver_district_name"]+data["data"][i]["receiver_address"];
 					html += '<div style="text-align:left;"><span class="expressfee">'+data["data"][i]["receiver_name"]+'</span><br/><span class="expressfee">'+data["data"][i]["receiver_mobile"]+'</span>';
+					if(data["data"][i]["fixed_telephone"] != ""){
+						html += '<br><span>'+data["data"][i]["fixed_telephone"]+'</span>';
+					}
 					html += '<br/><span class="expressfee">'+address+'</span>';
 					html += '</div></td>';
 					
 					html += '<td rowspan="'+row+'" style="text-align:center">';
 					html += '<div class="cell"><b class="netprice" style="color:#666;">'+order_money+'</b><br/>';
-					html += '<span class="expressfee">(含快递:'+shipping_money+')</span><br/>';
+					html += '<span class="expressfee">(含快递:'+shipping_money+'元)</span><br/>';
 					html += '<span class="expressfee">'+data["data"][i]["pay_type_name"]+'</span></div></td>';
 					
 					html += '<td rowspan="'+row+'"><div class="business-status" style="text-align:center">'+data["data"][i]["status_name"]+'<br></div></td>';
@@ -296,8 +306,6 @@ function LoadingInfo(page_index) {
 
 					if(data["data"][i]["operation"] != ''){
 						for(var m = 0; m < data["data"][i]["operation"].length; m++){
-							// alert(JSON.stringify(data["data"][i]["operation"]));
-							//background:'+data["data"][i]["operation"][m]["color"]
 							if(data["data"][i]["operation"][m]['no'] == "seller_memo"){
 								if(seller_memo == ''){
 									html += '<a style="display:block;margin-bottom:5px;color:'+data["data"][i]["operation"][m]["color"]+'" href="javascript:operation(\''+data["data"][i]["operation"][m]['no']+'\','+data["data"][i]["order_id"]+')" >'+data["data"][i]["operation"][m]['name']+'</a>';

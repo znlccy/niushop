@@ -2,8 +2,7 @@
 <html>
 <head>
 <title>{$platform_shopname}{:lang('frame_system')}</title>
-<meta name="viewport"
-	content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <!-- <link rel="stylesheet" type="text/css"
@@ -86,7 +85,7 @@ ul {
 				type="hidden" id="qq_openid" value="{$qq_openid}">
 		</div>
 		<!-- <div class="xieyi-text"style="font-size:12px;">
-			<input type="checkbox" value="" />我已阅读并接受 《版权声明》 和 《隐私保护》			
+			<input type="checkbox" value="" />我已阅读并接受 《版权声明》 和 《隐私保护》
 		</div> -->
 		<div>
 			<button class="button-style" onclick="addUser()">{:lang('binding')}</button>
@@ -107,7 +106,6 @@ ul {
 					'qq_openid' : qq_openid,
 					'qq_info' : qq_info
 				},
-				async : true,
 				success : function(data) {
 					if (data['code'] > 0) {
 						location.href = '{:__URL("ADMIN_MAIN")}';

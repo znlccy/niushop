@@ -64,9 +64,9 @@ function LoadingInfo(page_index) {
 					html += '<td style="text-align: left;">'+ item["rule"] +'</td>';
 					html += '<td style="text-align: left;">'+ item["route"] +'</td>';
 					if(item["is_open"] == 0){
-						html += '<td>否</td>';
+						html += '<td><img src="ADMIN_IMG/un_checked.png" alt="" width="15"/></td>';
 					}else{
-						html += '<td>是</td>';
+						html += '<td><img src="ADMIN_IMG/checked.png" alt="" width="15"/></td>';
 					}
 					switch(item["route_model"]){
 						case 1 :

@@ -100,7 +100,6 @@ function setQiniuConfigAjax(){
 	$.ajax({
 		type:"post",
 		url : "{:__URL('ADMIN_MAIN/config/setQiniuConfig')}",
-		async : true,
 		data : {
 			"Accesskey" : Accesskey,
 			'Secretkey' : Secretkey,
@@ -108,13 +107,12 @@ function setQiniuConfigAjax(){
 			"QiniuUrl" : QiniuUrl
 		},
 		success : function(data){
-			if(data['code'] > 0)
-				{
-					showMessage('success', data["message"]);
-					location.href=__URL("ADMIN_MAIN/config/uploadtype");
-				}else{
-					showMessage('error', data["message"]);
-				}
+			if(data['code'] > 0){
+				showMessage('success', data["message"]);
+				location.href=__URL("ADMIN_MAIN/config/uploadtype");
+			}else{
+				showMessage('error', data["message"]);
+			}
 		}
 	})
 }
@@ -127,10 +125,7 @@ function selectConfig(){
 		$.ajax({
 			type:"post",
 			url : "{:__URL('ADMIN_MAIN/config/setUploadType')}",
-			async : true,
-			data : {
-				"type" : type
-			},
+			data : { "type" : type },
 			success : function(data){
 				if(data['code'] > 0){
 					showTip(data.message,"success");

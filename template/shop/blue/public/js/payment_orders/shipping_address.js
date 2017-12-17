@@ -45,8 +45,6 @@ $(function(){
 		return false;
 	});
 
-	
-	
 	/**
 	 * 删除收货地址
 	 * 2017年6月14日 14:45:20 王永杰
@@ -220,6 +218,15 @@ function validationAddress(){
 		return false;
 	}
 	
+	if(phone.length > 0){
+		var pattern=/(^[0-9]{3,4}\-[0-9]{3,8}$)|(^[0-9]{3,8}$)|(^\([0-9]{3,4}\)[0-9]{3,8}$)|(^0{0,1}13[0-9]{9}$)/; 
+		if(!pattern.test(phone)) { 
+			$.msg("请输入正确的固定电话");
+			$("#phone").focus();
+			return false; 
+		} 
+	}
+
 	if(parseInt(selProvinces.val()) == -1 || parseInt(selCities.val()) == -1 || (selDistricts.find("option").length>1 && parseInt(selDistricts.val()) == -1)){
 		selProvinces.focus();
 		$.msg('所在地区不完善');

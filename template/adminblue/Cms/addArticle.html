@@ -199,90 +199,6 @@ $("#file_upload_input").live("change",function(){
 		}
 	});
 });
-// var KE;
-// KindEditor.ready(function(K) {
-// 	KE = K.create("textarea[name='g_body']",{
-// 		items : [
-// 			'source',
-// 			'|',
-// 			'fullscreen',
-// 			'undo',
-// 			'redo',
-// 			'print',
-// 			'cut',
-// 			'copy',
-// 			'paste',
-// 			'plainpaste',
-// 			'wordpaste',
-// 			'|',
-// 			'justifyleft',
-// 			'justifycenter',
-// 			'justifyright',
-// 			'justifyfull',
-// 			'insertorderedlist',
-// 			'insertunorderedlist',
-// 			'indent',
-// 			'outdent',
-// 			'subscript',
-// 			'superscript',
-// 			'|',
-// 			'selectall',
-// 			'clearhtml',
-// 			'quickformat',
-// 			'|',
-// 			'formatblock',
-// 			'fontname',
-// 			'fontsize',
-// 			'|',
-// 			'forecolor',
-// 			'hilitecolor',
-// 			'bold',
-// 			'italic',
-// 			'underline',
-// 			'strikethrough',
-// 			'lineheight',
-// 			'removeformat',
-// 			'|',
-// 			'image',
-// 			'flash',
-// 			'media',
-// 			'table',
-// 			'hr',
-// 			'emoticons',
-// 			'link',
-// 			'unlink',
-// 			'|',
-// 			'about'
-// 		],
-// 		cssPath : "__STATIC__/kindeditor/themes/default/default.css",
-// 		allowImageUpload : false,
-// 		allowFlashUpload : false,
-// 		allowMediaUpload : false,
-// 		allowFileManager : false,
-// 		syncType : "form",
-// 		afterCreate : function() {
-// 			var self = this;
-// 			self.sync();
-// 		},
-// 		afterChange : function() {
-// 			var self = this;
-// 			self.sync();
-// 		},
-// 		afterBlur : function() {
-// 			var self = this;
-// 			self.sync();
-// 		}
-// 	});
-// 	KE.appendHtml = function(id,val) {
-// 		this.html(this.html()+ val);
-// 		if (this.isCreated) {
-// 			var cmd = this.cmd;
-// 			cmd.range.selectNodeContents(cmd.doc.body).collapse(false);
-// 			cmd.select();
-// 		}
-// 		return this;
-// 	}
-// });
 var ue = UE.getEditor('editor',{
 	toolbars : [
 		[ 'source', // 源代码
@@ -381,9 +297,7 @@ function save(type){
 	var author=$("#author").val();
 	var summary=$("#summary").val();
 	var content = UE.getEditor('editor').getContent();
-	//var content=$("#content").val();
-//	var image=$("#imgLogo").attr("data-id");
-    var image=$("#Logo").val();
+	var image=$("#Logo").val();
 	var keyword=$("#keyword").val();
 	var article_id_array=$("#article_id_array").val();
 	var click=$("#click").val();
@@ -419,7 +333,7 @@ function save(type){
 			'tag':tag,
 			'comment_count':comment_count,
 			'share_count':share_count,
-			},
+		},
 		success:function(data){
 			if (data["code"] > 0) {
 				showMessage('success', data["message"]);

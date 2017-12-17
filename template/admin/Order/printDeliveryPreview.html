@@ -35,6 +35,9 @@ body{margin:0;padding:0;}
     	    <li>订单时间：{$orderdata.create_time | getTimeStampTurnTime}</li>
     	    <li>收件人：{$orderdata.receiver_name}</li>
     	    <li>收件电话：{$orderdata.receiver_mobile}</li>
+            {notempty name="$orderdata['fixed_telephone']"}
+            <li>固定电话：{$orderdata['fixed_telephone']}</li>
+            {/notempty}
     	</ul>
     	<ul class="rowcol1" style=" margin-left: -40px;">
     		<li>收货地址：{$orderdata.address}</li>

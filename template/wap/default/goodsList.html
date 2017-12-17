@@ -5,6 +5,7 @@
 .order_div>span:nth-child(3) .ico_order_state{right:20%;}
 .cart-box{overflow: hidden;height: 30px;display: block;width: 50%;float: right;position: relative;}
 .add-cart{width: 30px;height: 30px;background: url(__TEMP__/{$style}/public/images/btn_plus_normal.png) no-repeat;background-size: contain;position: absolute;right: 2px;top: 0px;z-index: 2;cursor: pointer;}
+.add-cart.virtual-increase{background: url(__TEMP__/{$style}/public/images/virtual_goods_flag.png) no-repeat;background-size: 100%;}
 .s-buy{font-family: Helvetica, "STHeiti STXihei", "Microsoft YaHei", Tohoma,Arial;}
 </style>
 <section class="filtrate-term">
@@ -99,7 +100,11 @@ function GetgoodsList(sear_type,page){
 						html+='<p class="goods-title"><a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data['data'][i]['goods_id'])+'" >'+data['data'][i]['goods_name']+'</a></p>';
 						html+='<p class="goods-price"><em>￥'+data['data'][i]['promotion_price']+'</em></p>';
 						html+='<p style="font-size:12px;width:50%;float:left;"><em style="color: #999;">销量:'+data['data'][i]['sales']+'</em><a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data['data'][i]['goods_id'])+'"></a></p>';
-						html+='<div class="cart-box" id="number_575"><a class="add-cart increase" data-goods_id="575" href="javascript:CartGoodsInfo('+data['data'][i]['goods_id']+','+data['data'][i]['state']+')"></a><a class="decrease hide" data-goods_id="575" style="right: 60px;"></a></div>';
+						if(data['data'][i]['goods_type'] == 1){
+							html+='<div class="cart-box"><a class="add-cart increase" href="javascript:CartGoodsInfo('+data['data'][i]['goods_id']+','+data['data'][i]['state']+')"></a></div>';
+						}else{
+							html+='<div class="cart-box"><a class="add-cart virtual-increase" href="'+__URL('APP_MAIN/goods/goodsdetail?id='+data['data'][i]['goods_id'])+'"></a></div>';
+						}
 						html+='</div></li>';
 					}
 					html +='</ul>';

@@ -1,17 +1,28 @@
 {extend name="adminblue/base" /}
 {block name="resources"/}
+<style>
+.button_active{
+	background: #FB9336;
+	outline: none;
+}
+.button_active:hover{
+	background: #FB9336;	
+	opacity: 0.8;
+}
+</style>
 <script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
 {/block}
+{block name="alert_info"}
+	<p>1.点击“添加广告位”，其中带(*)为必填项，保存成功之后，需要在列表页点击管理广告，在跳转的页面中添加广告位图片等内容。</p>
+	<p>2.广告位需要在启用状态下才可以在前台显示。</p>
+{/block}
 {block name="main"}
-<div class="mb10 mlr15">
-	<div class="tiphelp-info"><strong>提示：</strong>设置广告位，方法如下：<br>
-	1.点击“添加广告位”，其中带(*)为必填项，保存成功之后，需要在列表页点击管理广告，在跳转的页面中添加广告位图片等内容。<br/>
-	2.广告位需要在启用状态下才可以在前台显示。
-	</div>
-</div>
 <table class="mytable">
 	<tr>
-		<td style="text-align:left;"><button style="margin:0 5px 0 0 !important;" class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/system/addshopadvposition')}';">添加广告位</button></td>
+		<td style="text-align:left;"><button style="margin:0 5px 0 0 !important;" class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/system/addshopadvposition')}';">添加广告位</button>
+		<button style="margin:0 5px 0 0 !important;" class="btn-common btn-small button_active" data-ad-type="1">PC端</button>
+		<button style="margin:0 5px 0 0 !important;" class="btn-common btn-small" data-ad-type="2">手机端</button>
+		</td>
 		<td style="line-height:33px;">
 			广告位名称：<input id="ap_name" class="input-medium input-common" type="text" placeholder="请输入广告位名称" >
 			广告展示方式：
@@ -66,12 +77,20 @@
 	</colgroup>
 	<tbody id="list"></tbody>
 </table>
+<input type="hidden" id="ad_type" value="1">
 {/block}
 {block name="script"}
 <script type="text/javascript">
 $(function(){
 	LoadingInfo(1);
 });
+
+$("[data-ad-type]").click(function(){
+	$("#ad_type").val($(this).attr("data-ad-type"));
+	$("[data-ad-type]").removeClass("button_active");
+	$(this).addClass("button_active");
+	LoadingInfo(1);
+})
 
 function CheckAll(event){
 	if($(event).is(":checked")){
@@ -83,8 +102,8 @@ function CheckAll(event){
 
 function LoadingInfo(page_index) {
 	var ap_name = $("#ap_name").val();
-	var type = "{$terminal}";
 	var ap_display = $("#ap_display").val();
+	var type = $("#ad_type").val();
 	$.ajax({
 		type : "post",
 		url : "{:__URL('ADMIN_MAIN/system/shopadvpositionlist')}",
@@ -108,13 +127,14 @@ function LoadingInfo(page_index) {
 					html += '<td class="center">' + data['data'][i]["ap_width"] + '</td>';
 					html += '<td class="center">' + data['data'][i]["ap_height"] + '</td>';
 					if(data['data'][i]["is_use"] == 0){
-						html += '<td class="center"><a href="javascript:;" onclick="setPlatformAdvPositionUse(this,'+ ap_id +',1,'+data['data'][i]["is_del"]+');" class data-toggle="class"><i class="fa fa-times text-danger text"></i></a></td>';
+						html += '<td class="center"><a href="javascript:;" onclick="setPlatformAdvPositionUse(this,'+ ap_id +',1,'+data['data'][i]["is_del"]+');" class data-toggle="class"><img src="ADMIN_IMG/un_checked.png" alt="" width="15"/></a></td>';
 					}else{
-						html += '<td class="center"><a href="javascript:;" onclick="setPlatformAdvPositionUse(this,'+ ap_id +',0,'+data['data'][i]["is_del"]+');" class="active" data-toggle="class"><i class="fa fa-check text-success text-active"></i></a></td>';
+						html += '<td class="center"><a href="javascript:;" onclick="setPlatformAdvPositionUse(this,'+ ap_id +',0,'+data['data'][i]["is_del"]+');" class="active" data-toggle="class"><img src="ADMIN_IMG/checked.png" alt="" width="15"/></a></td>';
 					}
-					html += data['data'][i]["type"] == 1 ? '<td class="center">PC端</td>' : '<td class="center">手机端</td>';
+					html += data['data'][i]["type"] == 1 ? '<td class="center"><i class="fa fa-television" title="PC端"></i></td>' : '<td class="center"><i class="fa fa-mobile fa-2x" title="手机端"></i></td>';
 					html += '<td>'+ data['data'][i]["ap_keyword"] +'</td>';
-					html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/shopadvlist?ap_id=' + ap_id)+'"> 管理广告</a> &nbsp;';
+					html += '<td class="center">';
+					// html += '<a href="'+__URL('ADMIN_MAIN/system/shopadvlist?ap_id=' + ap_id)+'"> 管理广告</a> &nbsp;'
 					html += '<a href="'+__URL('ADMIN_MAIN/system/updateshopadvposition?ap_id=' + ap_id)+'"> 编辑</a> &nbsp;';
 					if(data['data'][i]["is_del"] == 0){
 						html += '<a href="javascript:delShopAdvPosition(' + ap_id + ');"> 删除</a> &nbsp;';	
@@ -184,10 +204,10 @@ function setPlatformAdvPositionUse(eve,ap_id,is_use,is_del){
 			if(data["code"] > 0 ){
 				if(is_use==1){
 					showTip('启用成功','success');
-					$(eve).addClass('active').attr('onclick','setPlatformAdvPositionUse(this,'+ap_id+',0,'+is_del+')').html('<i class="fa fa-check text-success text-active"></i>');
+					$(eve).addClass('active').attr('onclick','setPlatformAdvPositionUse(this,'+ap_id+',0,'+is_del+')').html('<img src="ADMIN_IMG/checked.png" alt="" width="15"/>');
 				}else{
 					showTip('禁用成功','success');
-					$(eve).removeClass('active').attr('onclick','setPlatformAdvPositionUse(this,'+ap_id+',1,'+is_del+')').html('<i class="fa fa-times text-danger text"></i>');
+					$(eve).removeClass('active').attr('onclick','setPlatformAdvPositionUse(this,'+ap_id+',1,'+is_del+')').html('<img src="ADMIN_IMG/un_checked.png" alt="" width="15"/>');
 				}
 			}else{
 				showTip(data["message"],'error');

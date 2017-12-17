@@ -3,22 +3,9 @@
 <script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
 <!-- <script type="text/javascript" src="__STATIC__/bootstrap/css/bootstraps.css"></script> -->
 <style>
-.btnstyle{
-	color: #ffffff !important;
-	background: green;
-	display: block;
-	margin: 0 auto;
-	margin-bottom: 10px;
-}
-.modal {
-	width: 1070px;
-	top:50px;
-
-}
-.modal-backdrop{
-	 background-color: #000000;
-}
-
+.btnstyle{color: #ffffff !important;background: green;display: block;margin: 0 auto;margin-bottom: 10px;}
+.modal {width: 1070px;top:50px;}
+.modal-backdrop{background-color: #000000;}
 .btn_offline_pay{background: #FF8400;}
 .product-img{float:left;}
 .product-infor{float:left;margin-left: 10px;width:60%;}
@@ -27,34 +14,18 @@
 .title-tr td input[type="checkbox"]{margin:0 0 0 7px;}
 .title-tr td span{margin-left:10px;}
 .edit_button{display: inline-block;}
-.fun-a{
-    padding: 3px 10px;
-    border-radius: 0px;
-}
-.fa-flag{
-	cursor: pointer;
-}
-#more_search{
-	display: block;
-}
-#more_search tbody{
-	float: right;
-}
-.btn-small.fun-a [class^="icon-"]{
-	margin: -6px 0 0 0;
-}
-.icon-delete{
-	display: inline-block;
-    background: url("__STATIC__/images/icon.png") no-repeat;
-    width: 15px;
-    height: 15px;
-    vertical-align: middle;
-    background-position: -228px 8px;
-}
+.fun-a{padding: 3px 10px;border-radius: 0;}
+.fa-flag{cursor: pointer;}
+#more_search{display: block;}
+#more_search tbody{float: right;}
+.btn-small.fun-a [class^="icon-"]{margin: -6px 0 0 0;}
+.icon-delete{display: inline-block;background: url("__STATIC__/images/icon.png") no-repeat;width: 15px;height: 15px;vertical-align: middle;background-position: -228px 8px;}
 </style>
 {/block}
 {block name="main"}
 <input type="hidden" id="order_id" />
+<input type="hidden" id="print_select_ids" />
+<input type="hidden" id="order_status" value="{$status}">
 <table class="mytable">
 	<tr>
 		<th style="line-height:33px;">
@@ -66,26 +37,12 @@
 			<input type="button" onclick="searchData()" value="搜索" />
 			<input type="button" onclick="dataExcel()" value="导出数据" />
 		</th>
-		<th><input type="hidden" id="order_status" value="{$status}"></th>
-		<input type="hidden" id="print_select_ids" value="">
 	</tr>
 </table>
 <table class="mytable" id="more_search" style="display: none;">
 	<tr>
 		<th>
-			收货人手机号：<input id="receiverMobile" class="input-small" type="text" />
-<!-- 			订单状态: -->
-<!-- 			<select id="order_status"> -->
-<!-- 				<option value="">全部</option> -->
-<!-- 				<option value="0">待付款</option> -->
-<!-- 				<option value="1">待发货</option> -->
-<!-- 				<option value="2">待收货</option> -->
-<!-- 				<option value="3">已收货</option> -->
-<!-- 				<option value="4">交易成功</option> -->
-<!-- 				<option value="5">已关闭</option> -->
-<!-- 				<option value="-1">退款中</option> -->
-<!-- 				<option value="-2">已退款</option> -->
-<!-- 			</select> -->
+			收货人手机号：<input id="receiverMobile" class="input-small" type="text" />>
 			收货人姓名：<input id="userName" class="input-small" type="text" value="">
 			支付方式：
 			<select id="payment_type">
@@ -97,36 +54,40 @@
 		</th>
 	</tr>
 </table>
-{if condition="$status neq '' && $status neq 0 "}
 <table class="mytable">
 	<tr>
 		<th style="line-height:33px;">
-			{if condition="$status eq 1"}
-			<a class="btn btn-small fun-a" id="BatchShipment" href="javascript:;">
-				<span>批量发货</span>
-			</a>
-			{/if}
-			<a class="btn btn-small fun-a" id="PrintShipping" href="javascript:;">
-				<i class="icon-printer-gray"></i>
-				<span>打印出库单</span>
-			</a>
-			<a class="btn btn-small fun-a" style="line-height: 25px;" id="BatchPrint" href="javascript:void(0)">
-				<i class="icon-printer-gray"></i>批量打印快递单
-			</a>
-			<a class="btn btn-small fun-a" style="line-height: 25px;" id="BatchPrintinvoice" href="javascript:void(0)">
-				<i class="icon-printer-gray"></i>批量打印发货单
-			</a>
-			{if condition="$status eq 5 "}
-			<a class="btn btn-small fun-a" href="javascript:batchDelete();">
-				<i class="icon-delete" aria-hidden="true"></i>
-				批量删除
-			</a>
+				<a class="btn btn-small fun-a" id="PrintOrder" href="javascript:;">
+					<i class="icon-printer-gray"></i>
+					<span>打印订单</span>
+				</a>
+			{if condition="$status neq '' && $status neq 0 "}
+				{if condition="$status eq 1"}
+				<a class="btn btn-small fun-a" id="BatchShipment" href="javascript:;">
+					<span>批量发货</span>
+				</a>
+				{/if}
+				<a class="btn btn-small fun-a" id="PrintShipping" href="javascript:;">
+					<i class="icon-printer-gray"></i>
+					<span>打印出库单</span>
+				</a>
+				<a class="btn btn-small fun-a" style="line-height: 25px;" id="BatchPrint" href="javascript:void(0)">
+					<i class="icon-printer-gray"></i>批量打印快递单
+				</a>
+				<a class="btn btn-small fun-a" style="line-height: 25px;" id="BatchPrintinvoice" href="javascript:void(0)">
+					<i class="icon-printer-gray"></i>批量打印发货单
+				</a>
+				{if condition="$status eq 5 "}
+				<a class="btn btn-small fun-a" href="javascript:batchDelete();">
+					<i class="icon-delete" aria-hidden="true"></i>
+					批量删除
+				</a>
+				{/if}
 			{/if}
 		</th>
-		
 	</tr>
 </table>
-{/if}
+
 <div class="style0list">
 	<table>
 		<colgroup>
@@ -141,7 +102,7 @@
 		</colgroup>
 		<thead>
 			<tr align="center">
-				<th><label> <input type="checkbox" onclick="CheckAll(this)"></label></th>
+				<th><label><input type="checkbox" onclick="CheckAll(this)"></label></th>
 				<th>商品信息</th>
 				<th>商品清单</th>
 				<th>买家</th>
@@ -155,11 +116,8 @@
 		<tbody></tbody>
 	</table>
 </div>
-
-
 {/block} 
-{block name="script"} 
-
+{block name="script"}
 {include file="admin/Order/orderAction"/}
 {include file="admin/Order/orderRefundAction"/}
 {include file="admin/Order/orderPrintAction"/}
@@ -167,10 +125,10 @@
 $(function () { 
 	$("[data-toggle='popover']").popover();
 });
+
 function searchData(){
 	LoadingInfo(1);
 }
-//全选
 
 function LoadingInfo(page_index) {
 	var start_date = $("#startDate").val();
@@ -271,12 +229,15 @@ function LoadingInfo(page_index) {
 					//地址
 					var address = data["data"][i]["receiver_province_name"]+data["data"][i]["receiver_city_name"]+data["data"][i]["receiver_district_name"]+data["data"][i]["receiver_address"];
 					html += '<div style="text-align:left;"><span class="expressfee">'+data["data"][i]["receiver_name"]+'</span><br/><span class="expressfee">'+data["data"][i]["receiver_mobile"]+'</span>';
+					if(data["data"][i]["fixed_telephone"] != ""){
+						html += '<br><span>'+data["data"][i]["fixed_telephone"]+'</span>';
+					}
 					html += '<br/><span class="expressfee">'+address+'</span>';
 					html += '</div></td>';
 					
 					html += '<td rowspan="'+row+'" style="text-align:center">';
 					html += '<div class="cell"><b class="netprice" style="color:#666;">'+order_money+'</b><br/>';
-					html += '<span class="expressfee">(含快递:'+shipping_money+')</span><br/>';
+					html += '<span class="expressfee">(含快递:'+shipping_money+'元)</span><br/>';
 					html += '<span class="expressfee">'+data["data"][i]["pay_type_name"]+'</span></div></td>';
 					
 					html += '<td rowspan="'+row+'"><div class="business-status" style="text-align:center">'+data["data"][i]["status_name"]+'<br></div></td>';
@@ -285,7 +246,6 @@ function LoadingInfo(page_index) {
 
 					if(data["data"][i]["operation"] != ''){
 						for(var m = 0; m < data["data"][i]["operation"].length; m++){
-							 // alert(JSON.stringify(data["data"][i]["operation"]));
 							if(data["data"][i]["operation"][m]['no'] == "seller_memo"){
 								if(seller_memo == ''){
 									html += '<a class="btn btn-info shipping btnstyle" style="background:'+data["data"][i]["operation"][m]["color"]+'" href="javascript:operation(\''+data["data"][i]["operation"][m]['no']+'\','+data["data"][i]["order_id"]+')" >'+data["data"][i]["operation"][m]['name']+'</a>';
@@ -355,7 +315,6 @@ function LoadingInfo(page_index) {
 	});
 }
 
-
 function addmemo(order_id,memo){
 	$("#order_id").val(order_id);
 	$("#memo").val(memo);
@@ -374,7 +333,7 @@ function dataExcel(){
 	var order_status = $("#order_status").val();
 	var payment_type = $("#payment_type").val();
 	var order_ids= new Array();
-	$(".table-class tbody input[type = 'checkbox']:checked").each(function() {
+	$(".style0list tbody input[type = 'checkbox']:checked").each(function() {
 		if (!isNaN($(this).val())) {
 			order_ids.push($(this).val());
 		}

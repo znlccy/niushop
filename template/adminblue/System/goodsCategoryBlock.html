@@ -245,15 +245,12 @@ function LoadingInfo() {
 	});
 }
 
-
-// html += '<td class="tal"><select class="floor_goods_sort_type" onchange="setGoodsCategoryField(this, '+data[i]['id']+');"><option value="1" '+ is_selected(1,goods_sort_type); +'>按时间排序</option><option value="2" '+ is_selected(2,goods_sort_type); +'>按销量排序</option><option value="3" '+ is_selected(3,goods_sort_type); +'>按排序号排序</option><option value="4" '+ is_selected(4,goods_sort_type); +'>按人气排序</option></select></td>';
-
 function is_selected(value,goods_sort_type){
 	var select = "";
 	if(value == goods_sort_type){
 		select = "selected";
 	}
-	return select;	
+	return select;
 }
 
 /**
@@ -344,7 +341,8 @@ function addGoodsAdv(){
 			"subtitle":subtitle,
 			"picture":picture,
 			"background":background,
-			"url":url};
+			"url":url
+		};
 	var ad_picture = JSON.stringify(ad_picture);
 	if(title == ''){
 		$("#title").focus();
@@ -380,14 +378,13 @@ function addGoodsAdv(){
 		data:{
 			'ad_picture':ad_picture,
 			'id':id
-			},
-		async:true,
+		},
 		success: function (data) {
 			if(data.code > 0){
 				showTip("保存成功","success");
 				$("#id").val('');
 				LoadingInfo();
-				$('#add_adv').modal("hide");	 
+				$('#add_adv').modal("hide");
 			}else{
 				showTip("广告添加失败","error");
 			}

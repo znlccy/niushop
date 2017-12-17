@@ -7,9 +7,9 @@ $().ready(function() {
 //		})
 
 		$('.menu-item .menu').hover(function(){
-			if($("#hidden_uid").val() != undefined && $("#hidden_uid").val() != "") $(this).find('.menu-bd').show();
+			$(this).find('.menu-bd').show();
 		},function(){
-			if($("#hidden_uid").val() != undefined && $("#hidden_uid").val() != "") $(this).find('.menu-bd').hide();
+			$(this).find('.menu-bd').hide();
 		});
 	} catch (e) {
 	}

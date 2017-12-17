@@ -1,0 +1,181 @@
+{extend name="admin/base" /}
+{block name="resources"/}
+<style>
+.is-enabled{display: block;width:15px;cursor: pointer;}
+.style0list tbody td a{margin-right:5px;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="30%" style="text-align: left;">
+			<button class="btn btn-small" onclick="batchDelete()" style="margin:0 5px 0 0 !important;">批量删除</button>
+			<button class="btn btn-small" onclick="editvirtualgoodstype()" style="margin:0 5px 0 0 !important;">添加虚拟商品类型</button>
+		</th>
+		<th width="20%">
+			<input type="text" id='search_name' placeholder="输入虚拟商品类型名称" class="input-common"/>
+			<input type="button" onclick="LoadingInfo(1)" value="搜索" class="btn-common"/>
+		</th>
+	</tr>
+</table>
+		<div class="con style0list">
+<table class="table-class">
+	<colgroup>
+		<col style="width: 1%;">
+		<col style="width: 20%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 20%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th><input type="checkbox" onclick="CheckAll(this)" /></th>
+			<th>虚拟商品类型名称</th>
+			<th>有效期/天</th>
+			<th>金额</th>
+			<th>限制使用次数</th>
+<!-- 			<th>配置信息</th> -->
+			<th>是否启用</th>
+			<th>创建时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	$("img[class='is-enabled']").live("click",function(){
+		var virtual_goods_type_id = $(this).parent().attr("data-virtual-goods-type-id");
+		var is_enabled = $(this).parent().attr("data-is-enabled");
+		if(is_enabled == 1) is_enabled = 0;
+		else is_enabled = 1;
+		setVirtualGoodsTypeIsEnabled(virtual_goods_type_id,is_enabled);
+	});
+});
+
+function editvirtualgoodstype() {
+	location.href = __URL("ADMIN_MAIN/goods/editvirtualgoodstype");
+}
+
+//批量删除
+function batchDelete(){
+	var brand_ids = new Array();
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			brand_ids.push($(this).val());
+		}
+	});
+	if(brand_ids.length==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteVirtualGoodsType(brand_ids);
+}
+
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/virtualGoodsTypeList')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"search_name" : $("#search_name").val()
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+						html += '<td><input name="sub" type="checkbox" value="'+ data["data"][i]["virtual_goods_type_id"] +'" ></td>';
+						html += '<td>' + data["data"][i]["virtual_goods_type_name"] + '</td>';
+						html += '<td>' + data["data"][i]["validity_period"] + '天</td>';
+						html += '<td>' + data['data'][i]['money'] + "</td>";
+						html += '<td>' + data['data'][i]['confine_use_number'] + '</td>';
+	// 					html += '<td>' + data['data'][i]['config_info'] + '</td>';
+						html += '<td data-virtual-goods-type-id="' + data["data"][i]["virtual_goods_type_id"] + '" data-is-enabled="' + data['data'][i]['is_enabled'] + '">';
+							if(data['data'][i]['is_enabled'] == 1){
+								html += '<img src="ADMIN_IMG/checked.png" class="is-enabled"/>';
+							}else{
+								html += '<img src="ADMIN_IMG/un_checked.png" class="is-enabled" />';
+							}
+						html += '</td>';
+						html += '<td>' + timeStampTurnTime(data['data'][i]['create_time']) + "</td>";
+						html += '<td>';
+							html += '<a href="'+__URL('ADMIN_MAIN/goods/editvirtualgoodstype?virtual_goods_type_id=' + data["data"][i]["virtual_goods_type_id"] )+ '">修改</a>';
+							html += '<a href="javascript:deleteVirtualGoodsType(' + data["data"][i]["virtual_goods_type_id"] + ')">删除</a>';
+						html += '</td> ';
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+			}
+			$(".table-class tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function deleteVirtualGoodsType(virtual_goods_type_id) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/deleteVirtualGoodsType')}",
+					data : { 'virtual_goods_type_id' : virtual_goods_type_id.toString() },
+					dataType : "json",
+					success : function(data) {
+						if (data['code'] > 0) {
+							LoadingInfo(getCurrentIndex(virtual_goods_type_id,'.table-class tbody'));
+							showTip(data.message,"success");
+						}else{
+							showTip(data.message,"error");
+						}
+					}
+				});
+			},"取消,#e57373" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+}
+
+//设置虚拟商品类型启用禁用
+function setVirtualGoodsTypeIsEnabled(virtual_goods_type_id,is_enabled){
+	$.ajax({
+		type : "post",
+		async : false,
+		url : "{:__URL('ADMIN_MAIN/goods/setVirtualGoodsTypeIsEnabled')}",
+		data : { "virtual_goods_type_id" : virtual_goods_type_id , "is_enabled" : is_enabled},
+		success : function(res){
+			LoadingInfo(getCurrentIndex(virtual_goods_type_id,'.table-class tbody'));
+		}
+	});
+}
+</script>
+{/block}

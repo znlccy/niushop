@@ -19,6 +19,7 @@ use think\Hook;
 use think\Request;
 use think\response\Redirect;
 use think\Route;
+use data\extend\Barcode;
 // 错误级别
 // error_reporting(E_ERROR | E_WARNING | E_PARSE);
 // 去除警告错误
@@ -42,6 +43,10 @@ define("UPLOAD_COMMENT", UPLOAD . "/comment/");
 
 // 插件目录
 define('ADDON_PATH', ROOT_PATH . 'addons' . DS);
+//数据库路径
+define('DB_PATH', UPLOAD .'/dbspl');
+//条形码存放路径
+define("BAR_CODE", UPLOAD.'/barcode');
 urlRoute();
 
 /**
@@ -1334,4 +1339,15 @@ function cover_up_username($username)
         }
     }
     return $username;
+}
+
+/**
+ * 生成条形码
+ * @param unknown $content
+ * @return string
+ */
+function getBarcode($content){
+    $barcode = new Barcode(14, $content);
+    $path = $barcode ->generateBarcode();
+    return $path;
 }

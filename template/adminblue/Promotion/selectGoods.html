@@ -6,10 +6,10 @@ input[type="radio"] {vertical-align: middle;margin-top: -2px;}
 .controls table tr td input[type="radio"] {margin: 0px;}
 .ump-select-search select {margin-bottom: 0px}
 .ump-select-tab {min-width: 750px;margin-bottom: -1px;background: #f2f2f2;border: 1px solid #ddd;border-bottom:0;}
-.ui-nav-tab {margin: 0;}
+.ui-nav-tab {margin: 0;overflow: hidden;}
 .ui-nav-tab>li {position: relative;display: block;float: left;text-align: center;margin-bottom: -1px;}
 .ui-nav-tab:after {content: "";display: table;}
-.ump-select-tab .ui-nav-tab li.active a, .ump-select-tab .ui-nav-tab li.active a:hover{height: 24px;line-height: 24px;border-bottom: 2px solid #f60;}
+.ump-select-tab .ui-nav-tab li.active a, .ump-select-tab .ui-nav-tab li.active a:hover{height: 24px;line-height: 24px;/*border-bottom: 2px solid #f60;*/}
 .ump-select-tab .ui-nav-tab li:first-child a {border-left: 0;}
 .ump-select-tab .ui-nav-tab li a {width: 120px;border-top: 0;height: 25px;line-height: 25px;padding: 8px 20px;}
 .ui-nav-tab>li.active>a, .ui-nav-tab>li.active>a:hover, .ui-nav-tab>li.active>a:focus{color: #333;background-color: #fff;border-bottom-color: transparent;cursor: default;}
@@ -40,20 +40,22 @@ input[type=number] {-moz-appearance:textfield;}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button {-webkit-appearance: none;margin: 0;}
 button{outline:none;}
 </style>
-<dl class="type_dl">
-	<!-- <dt>选择商品:</dt> -->
-	<dt style="text-align: right;width: 310px;"><span class="error" id="notSelect">请至少选择一件商品</span></dt>
-	<dd>
-		<label style="vertical-align: middle; font-weight: normal; display: inline-block;margin-right:5px;">
-			<input type="radio" value="1" name="range_type" onclick="ShopRadio(1)" checked="checked" />
-			<span onclick="ShopRadio(1)" style="font-size: 15px; cursor: pointer;">所有商品</span>
-		</label>
-		<label style="vertical-align: middle; font-weight: normal; display: inline-block;">
-			<input type="radio" name="range_type" value="0" onclick="ShopRadio(0)">
-			<span onclick="ShopRadio(0)" style="cursor: pointer; font-size: 15px;">部分商品</span>
-		</label>
-	</dd>
-</dl>
+<div class="set-style">
+	<dl>
+		<!-- <dt>选择商品:</dt> -->
+		<dt><span class="error" id="notSelect">请至少选择一件商品</span></dt>
+		<dd>
+			<label style="vertical-align: middle; font-weight: normal; display: inline-block;margin-right:5px;">
+				<input type="radio" value="1" name="range_type" onclick="ShopRadio(1)" checked="checked" />
+				<span onclick="ShopRadio(1)" style="font-size: 15px; cursor: pointer;">所有商品</span>
+			</label>
+			<label style="vertical-align: middle; font-weight: normal; display: inline-block;">
+				<input type="radio" name="range_type" value="0" onclick="ShopRadio(0)">
+				<span onclick="ShopRadio(0)" style="cursor: pointer; font-size: 15px;">部分商品</span>
+			</label>
+		</dd>
+	</dl>
+</div>
 <dl>
 	<dd id="some_pro" style="width: 99%; display: none;">
 		<div class="js-goods-box">
@@ -71,15 +73,15 @@ button{outline:none;}
 								<div class="ump-waitting-select ump-goods-list">
 									<div class="js-list-filter-region clearfix">
 										<div class="widget-list-filter">
-											<div class="ump-select-search" style="display:none;">
-												<select name="tag" id="group_id" class="js-goods-group">
+											<div class="ump-select-search">
+												<!-- <select name="tag" id="group_id" class="js-goods-group">
 													<option value="0">所有分组</option>
 												</select>
 												<select name="keyword_type" class="js-search-type">
 													<option value="goods_title">商品标题</option>
 													<option value="goods_no">商品编码</option>
-												</select>
-												<input class="js-input" type="text" name="keyword" placeholder="请输入商品名称" data-goods-title="请输入商品名称" data-goods-no="请输入商品编码" style="width: 200px;" />
+												</select> -->
+												<input class="js-input" type="text" name="keyword" placeholder="请输入商品名称" data-goods-title="请输入商品名称" data-goods-no="请输入商品编码" style="width: 200px;" id="search_text" />
 												<a href="javascript:;" onclick="LoadingInfo(1)" class="btn btn-primary js-search" style="display: inline-block;">搜索</a>
 											</div>
 										</div>

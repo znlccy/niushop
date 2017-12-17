@@ -2,7 +2,7 @@
 {block name="resources"/}
 <style>
 .table-class input{color:#666;width:206px;margin-bottom: 0px;border: 1px solid #ccc;}
-.table-class input.sort{width: auto;text-align: center;}
+.table-class input.sort{width: 35px;text-align: center;}
 .tip-box{line-height: 150px;text-align: center;}
 </style>
 {/block}
@@ -102,7 +102,7 @@ function LoadingInfo(page_index) {
 			if (data["data"].length > 0) {
 				for (var i = 0; i < data["data"].length; i++) {
 					html +='<tr class="pid_0" style="height: 30px;">';
-					html +='<td style="text-align: center;"><input type="text" class="sort" fieldid="'+data["data"][i]['group_id']+'" fieldname="sort" value="'+data["data"][i]['sort']+'" size="1"></td>';	
+					html +='<td style="text-align: center;"><input type="number" class="sort" fieldid="'+data["data"][i]['group_id']+'" fieldname="sort" value="'+data["data"][i]['sort']+'" size="1"></td>';	
 					/* html +='<td style="text-align: center;">';
 					if(data["data"][i]['picture']['pic_cover'] != ''){
 						html +='<img src="'+__IMG(data["data"][i]['picture']['pic_cover'])+'" style="height:30px;">';	

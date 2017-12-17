@@ -21,6 +21,7 @@ namespace data\service;
  */
 use data\api\IConfig as IConfig;
 use data\model\ConfigModel as ConfigModel;
+use data\model\ModuleModel;
 use data\model\NoticeModel;
 use data\model\NoticeTemplateItemModel;
 use data\model\NoticeTemplateModel;
@@ -28,8 +29,8 @@ use data\model\NoticeTemplateTypeModel;
 use data\service\BaseService as BaseService;
 use Qiniu\json_decode;
 use think\Cache;
-use think\Db;
 use think\Config as ThinkPHPConfig;
+use think\Db;
 
 class Config extends BaseService implements IConfig
 {
@@ -48,30 +49,29 @@ class Config extends BaseService implements IConfig
      */
     public function getWchatConfig($instance_id)
     {
-//         $wchat_config = Cache::get("wchat_config" . $instance_id);
-//         if (empty($wchat_config)) {
-            $info = $this->config_module->getInfo([
-                'key' => 'WCHAT',
-                'instance_id' => $instance_id
-            ], 'value,is_use');
-            if (empty($info['value'])) {
-                $wchat_config = array(
-                    'value' => array(
-                        'APP_KEY' => '',
-                        'APP_SECRET' => '',
-                        'AUTHORIZE' => '',
-                        'CALLBACK' => ''
-                    ),
-                    'is_use' => 0
-                );
-            } else {
-                $info['value'] = json_decode($info['value'], true);
-                $wchat_config = $info;
-            }
-//             Cache::set("wchat_config" . $instance_id, $wchat_config);
-//         }
+        // $wchat_config = Cache::get("wchat_config" . $instance_id);
+        // if (empty($wchat_config)) {
+        $info = $this->config_module->getInfo([
+            'key' => 'WCHAT',
+            'instance_id' => $instance_id
+        ], 'value,is_use');
+        if (empty($info['value'])) {
+            $wchat_config = array(
+                'value' => array(
+                    'APP_KEY' => '',
+                    'APP_SECRET' => '',
+                    'AUTHORIZE' => '',
+                    'CALLBACK' => ''
+                ),
+                'is_use' => 0
+            );
+        } else {
+            $info['value'] = json_decode($info['value'], true);
+            $wchat_config = $info;
+        }
+        // Cache::set("wchat_config" . $instance_id, $wchat_config);
+        // }
         return $wchat_config;
-        // TODO Auto-generated method stub
     }
 
     /*
@@ -116,9 +116,8 @@ class Config extends BaseService implements IConfig
                 'create_time' => time()
             );
             $res = $this->config_module->save($data);
+            return $res;
         }
-        
-        // TODO Auto-generated method stub
     }
 
     /*
@@ -127,31 +126,29 @@ class Config extends BaseService implements IConfig
      */
     public function getQQConfig($instance_id)
     {
-//         $qq_config = Cache::get("qq_config" . $instance_id);
-//         if (empty($qq_config)) {
-            $info = $this->config_module->getInfo([
-                'key' => 'QQLOGIN',
-                'instance_id' => $instance_id
-            ], 'value,is_use');
-            if (empty($info['value'])) {
-                $qq_config = array(
-                    'value' => array(
-                        'APP_KEY' => '',
-                        'APP_SECRET' => '',
-                        'AUTHORIZE' => '',
-                        'CALLBACK' => ''
-                    ),
-                    'is_use' => 0
-                );
-            } else {
-                $info['value'] = json_decode($info['value'], true);
-                $qq_config = $info;
-            }
-//             Cache::set("qq_config" . $instance_id, $qq_config);
-//         }
+        // $qq_config = Cache::get("qq_config" . $instance_id);
+        // if (empty($qq_config)) {
+        $info = $this->config_module->getInfo([
+            'key' => 'QQLOGIN',
+            'instance_id' => $instance_id
+        ], 'value,is_use');
+        if (empty($info['value'])) {
+            $qq_config = array(
+                'value' => array(
+                    'APP_KEY' => '',
+                    'APP_SECRET' => '',
+                    'AUTHORIZE' => '',
+                    'CALLBACK' => ''
+                ),
+                'is_use' => 0
+            );
+        } else {
+            $info['value'] = json_decode($info['value'], true);
+            $qq_config = $info;
+        }
+        // Cache::set("qq_config" . $instance_id, $qq_config);
+        // }
         return $qq_config;
-        
-        // TODO Auto-generated method stub
     }
 
     /*
@@ -198,7 +195,6 @@ class Config extends BaseService implements IConfig
             $res = $this->config_module->save($data);
             return $res;
         }
-        // TODO Auto-generated method stub
     }
 
     public function getLoginConfig()
@@ -242,7 +238,6 @@ class Config extends BaseService implements IConfig
             $info['value'] = json_decode($info['value'], true);
             return $info;
         }
-        // TODO Auto-generated method stub
     }
 
     /*
@@ -286,7 +281,6 @@ class Config extends BaseService implements IConfig
             ]);
         }
         return $res;
-        // TODO Auto-generated method stub
     }
 
     /*
@@ -312,7 +306,6 @@ class Config extends BaseService implements IConfig
             $info['value'] = json_decode($info['value'], true);
             return $info;
         }
-        // TODO Auto-generated method stub
     }
 
     /*
@@ -355,7 +348,6 @@ class Config extends BaseService implements IConfig
             ]);
         }
         return $res;
-        // TODO Auto-generated method stub
     }
 
     /**
@@ -404,7 +396,6 @@ class Config extends BaseService implements IConfig
         } else {
             return json_decode($info['value'], true);
         }
-        // TODO Auto-generated method stub
     }
 
     /*
@@ -918,7 +909,7 @@ class Config extends BaseService implements IConfig
                 'value' => array(
                     'appid' => '',
                     'appsecret' => '',
-                    'token'=> 'TOKEN'
+                    'token' => 'TOKEN'
                 ),
                 'is_use' => 1
             );
@@ -1642,6 +1633,7 @@ class Config extends BaseService implements IConfig
         $seller_dispatching = $this->getConfig($shop_id, 'ORDER_SELLER_DISPATCHING');
         $is_logistics = $this->getConfig($shop_id, 'ORDER_IS_LOGISTICS');
         $shopping_back_points = $this->getConfig($shop_id, 'SHOPPING_BACK_POINTS');
+        $is_open_virtual_goods = $this->getConfig($shop_id, 'IS_OPEN_VIRTUAL_GOODS');
         if (empty($order_auto_delinery) || empty($order_balance_pay) || empty($order_delivery_complete_time) || empty($order_show_buy_record) || empty($order_invoice_tax) || empty($order_invoice_content) || empty($order_delivery_pay) || empty($order_buy_close_time)) {
             $this->SetShopConfig($shop_id, '', '', '', '', '', '', '', '');
             $array = array(
@@ -1656,6 +1648,7 @@ class Config extends BaseService implements IConfig
                 'buyer_self_lifting' => '',
                 'seller_dispatching' => '',
                 'is_logistics' => '1',
+                'is_open_virtual_goods' => 0,
                 'shopping_back_points' => ''
             );
         } else {
@@ -1671,6 +1664,7 @@ class Config extends BaseService implements IConfig
                 'buyer_self_lifting' => $buyer_self_lifting['value'],
                 'seller_dispatching' => $seller_dispatching['value'],
                 'is_logistics' => $is_logistics['value'],
+                'is_open_virtual_goods' => $is_open_virtual_goods['value'],
                 'shopping_back_points' => $shopping_back_points['value']
             );
         }
@@ -1757,7 +1751,7 @@ class Config extends BaseService implements IConfig
         return $res;
     }
 
-    public function SetShopConfig($shop_id, $order_auto_delinery, $order_balance_pay, $order_delivery_complete_time, $order_show_buy_record, $order_invoice_tax, $order_invoice_content, $order_delivery_pay, $order_buy_close_time, $buyer_self_lifting, $seller_dispatching, $is_logistics, $shopping_back_points)
+    public function SetShopConfig($shop_id, $order_auto_delinery, $order_balance_pay, $order_delivery_complete_time, $order_show_buy_record, $order_invoice_tax, $order_invoice_content, $order_delivery_pay, $order_buy_close_time, $buyer_self_lifting, $seller_dispatching, $is_logistics, $shopping_back_points, $is_open_virtual_goods)
     {
         $array[0] = array(
             'instance_id' => $this->instance_id,
@@ -1841,6 +1835,13 @@ class Config extends BaseService implements IConfig
             'key' => 'SHOPPING_BACK_POINTS',
             'value' => $shopping_back_points,
             'desc' => '购物返积分设置',
+            'is_use' => 1
+        );
+        $array[12] = array(
+            'instance_id' => $this->instance_id,
+            'key' => 'IS_OPEN_VIRTUAL_GOODS',
+            'value' => $is_open_virtual_goods,
+            'desc' => '是否开启虚拟商品',
             'is_use' => 1
         );
         
@@ -2367,7 +2368,7 @@ class Config extends BaseService implements IConfig
                 "upload_size" => "0",
                 "upload_ext" => "gif,jpg,jpeg,bmp,png"
             );
-            $res = $this->addConfig($shop_id, "IMG_THUMB", json_encode($data), "thumb_type(缩略)  3 居中裁剪 2 缩放后填充 4 左上角裁剪 5 右下角裁剪 6 固定尺寸缩放" , 1);
+            $res = $this->addConfig($shop_id, "IMG_THUMB", json_encode($data), "thumb_type(缩略)  3 居中裁剪 2 缩放后填充 4 左上角裁剪 5 右下角裁剪 6 固定尺寸缩放", 1);
             if (! $res > 0) {
                 return null;
             } else {
@@ -2498,18 +2499,18 @@ class Config extends BaseService implements IConfig
                 
                 $pay_info = $this->getAlipayConfig($shop_id);
                 if (empty($pay_info) || empty($pay_info['value']['ali_partnerid']) || empty($pay_info['value']['ali_seller']) || empty($pay_info['value']['ali_key'])) {
-                    $msg = "<p>请检查支付宝支付配置信息填写是否正确(<a href='" . __URL($admin_main . "/config/payaliconfig")."' target='_blank'>点击此处进行配置</a>)</p>";
+                    $msg = "<p>请检查支付宝支付配置信息填写是否正确(<a href='" . __URL($admin_main . "/config/payaliconfig") . "' target='_blank'>点击此处进行配置</a>)</p>";
                     return $msg;
                 }
                 
                 if ($pay_info['is_use'] == 0) {
-                    $msg = "<p>当前未开启支付宝支付配置(<a href='" . __URL($admin_main . "/config/payaliconfig")."' target='_blank'>点击此处去开启</a>)</p>";
+                    $msg = "<p>当前未开启支付宝支付配置(<a href='" . __URL($admin_main . "/config/payaliconfig") . "' target='_blank'>点击此处去开启</a>)</p>";
                     return $msg;
                 } else {
                     
                     // 支付配置开启后，再判断原路退款配置是否开启、填写了各项值
                     if ($refund_setting['is_use'] == 0) {
-                        $msg = "<p>当前未开启支付宝原路退款配置(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting?type=alipay")."' target='_blank'>点击此处去开启</a>)</p>";
+                        $msg = "<p>当前未开启支付宝原路退款配置(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting?type=alipay") . "' target='_blank'>点击此处去开启</a>)</p>";
                         return $msg;
                     }
                 }
@@ -2517,32 +2518,49 @@ class Config extends BaseService implements IConfig
                 
                 $pay_info = $this->getWpayConfig($shop_id);
                 if (empty($pay_info) || empty($pay_info['value']['appid']) || empty($pay_info['value']['appkey']) || empty($pay_info['value']['mch_id']) || empty($pay_info['value']['mch_key'])) {
-                    $msg = "<p>请检查微信支付配置信息填写是否正确(<a href='" . __URL($admin_main . "/config/payconfig?type=wchat")."' target='_blank'>点击此处进行配置</a>)</p>";
+                    $msg = "<p>请检查微信支付配置信息填写是否正确(<a href='" . __URL($admin_main . "/config/payconfig?type=wchat") . "' target='_blank'>点击此处进行配置</a>)</p>";
                     return $msg;
                 }
                 
                 if ($pay_info['is_use'] == 0) {
-                    $msg = "<p>当前未开启微信支付配置(<a href='" . __URL($admin_main . "/config/payconfig?type=wchat")."' target='_blank'>点击此处去开启</a>)</p>";
+                    $msg = "<p>当前未开启微信支付配置(<a href='" . __URL($admin_main . "/config/payconfig?type=wchat") . "' target='_blank'>点击此处去开启</a>)</p>";
                     return $msg;
                 } else {
                     
                     if (empty($refund_setting['apiclient_cert']) || empty($refund_setting['apiclient_key'])) {
-                        $msg = "<p>请检查微信原路退款配置信息填写是否正确(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting")."' target='_blank'>点击此处进行配置</a>)</p>";
+                        $msg = "<p>请检查微信原路退款配置信息填写是否正确(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting") . "' target='_blank'>点击此处进行配置</a>)</p>";
                         return $msg;
                     }
                     if ($refund_setting['is_use'] == 0) {
-                        $msg = "<p>当前未开启微信原路退款配置(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting")."' target='_blank'>点击此处去开启</a>)</p>";
+                        $msg = "<p>当前未开启微信原路退款配置(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting") . "' target='_blank'>点击此处去开启</a>)</p>";
                         return $msg;
                     }
                 }
             }
         } else {
             if ($type == "alipay") {
-                $msg = "<p>当前未开启支付宝原路退款配置(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting?type=alipay")."' target='_blank'>点击此处进行配置</a>)</p>";
+                $msg = "<p>当前未开启支付宝原路退款配置(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting?type=alipay") . "' target='_blank'>点击此处进行配置</a>)</p>";
             } elseif ($type == "wechat") {
-                $msg = "<p>请检查微信原路退款配置信息填写是否正确(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting")."' target='_blank'>点击此处进行配置</a>)</p>";
+                $msg = "<p>请检查微信原路退款配置信息填写是否正确(<a href='" . __URL($admin_main . "/config/originalroadrefundsetting") . "' target='_blank'>点击此处进行配置</a>)</p>";
             }
         }
         return $msg;
+    }
+
+    /**
+     * 获取是否开启虚拟商品配置信息 0:禁用，1:开启
+     * 创建时间：2017年11月27日 16:58:14
+     */
+    public function getIsOpenVirtualGoodsConfig($shop_id)
+    {
+        $info = $this->config_module->getInfo([
+            'key' => 'IS_OPEN_VIRTUAL_GOODS',
+            'instance_id' => $shop_id
+        ], 'value');
+        if (! empty($info)) {
+            return $info['value'];
+        } else {
+            return 0;
+        }
     }
 }

@@ -1,0 +1,93 @@
+{extend name="wap/default/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/group_goods_list.css">
+<style>
+.wenzhang_list a{
+	line-height: 44px;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-bottom: 1px solid #ddd;
+	padding: 3px 7px;
+	display: block;
+}
+</style>
+{/block}
+{block name="goodsHead"}
+<section class="head">
+	<a class="head_back" href="{:__URL('APP_MAIN/articlecenter')}"><i class="icon-back"></i></a>
+	<div class="head-title"><span style="margin-left: 40px;">{:lang('article_list')}</span>{include file="wap/default/controGroup" /}</div>
+</section>
+<div style="height: 45px;"></div>
+{/block}
+{block name="main"}
+<div class="custom-tag-list-goods wenzhang_list" id="article_list">
+
+</div>
+<input type="hidden" id="class_id" value="{$class_id}">
+<input type="hidden" id="page" value="1">
+<input type="hidden" id="page_count" value="0">
+<script>
+$(function(){
+	var class_id = $("#class_id").val();
+	getArticleList(class_id,1);
+})
+
+
+var is_load =true;
+function getArticleList(class_id,page){
+	$("#page").val(page); 
+	$("#class_id").val(class_id); 
+	if(is_load){
+		is_load = false;
+		$.ajax({
+			type:"post",
+			url : "{:__URL('APP_MAIN/Articlecenter/getArticleList')}",
+			data : {'class_id':class_id, 'page':page },
+			beforeSend:function(){
+				showLoadMaskLayer();
+			},
+			success : function(data){
+				$("#page_count").val(data['page_count']);
+				if(page == 1){
+					var article_list_html = '';
+				}else if(page > 1){
+					var article_list_html = $('#article_list').html();
+				}
+				if(data['data'].length >0 ){
+					for(var i =0 ;i<data['data'].length;i++){
+						article_list_html +='<a href="'+__URL('APP_MAIN/Articlecenter/articlecontent?article_id='+data['data'][i]['article_id'])+'">'+data['data'][i]['title']+'</a>';
+					}
+				}else{
+					article_list_html+= '<p style="color:#939393;text-align:center;margin-top:100px;"><img src="__TEMP__/{$style}/public/images/wap_nodata.png" height="100"><br>该分类下暂时没有文章！</p>';
+				}
+				$('#article_list').html(article_list_html);
+				is_load =true;
+				hiddenLoadMaskLayer();
+			}
+		})
+	}	
+}
+
+//滑动到底部加载
+$(window).scroll(function(){
+	var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+	var content_box_height = parseFloat($("#article_list").height()); 
+	if(totalheight - content_box_height >= 40){
+		if(is_load){
+			var page = parseInt($("#page").val()) + 1;//页数
+			var total_page_count = $("#page_count").val(); // 总页数
+			var class_id = $("#class_id").val();
+			if(page > total_page_count){
+				return false;
+			}else{
+				getArticleList(class_id,page);
+			}
+		}
+		
+	}
+})
+</script>
+{/block}
+{block name="bottom"} {/block}

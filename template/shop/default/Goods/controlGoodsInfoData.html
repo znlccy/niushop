@@ -10,6 +10,7 @@
 <input type="hidden" id="hidden_province" value="{$user_location.province}" />
 <input type="hidden" id="hidden_city" value="{$user_location.city}" />
 <input type="hidden" id="hidden_shipping_fee_name" value="{$goods_info.shipping_fee_name}" />
+<input type="hidden" id="hidden_goods_type" value="{$goods_info.goods_type}" />
 <!-- 头部右侧鼠标经过图片放大效果 _start -->
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/bubbleup.js"></script>
 <!-- 头部右侧鼠标经过图片放大效果 _end -->
@@ -18,12 +19,13 @@
 <!-- 右侧商品信息等定位切换效果 _end -->
 <!-- 放大镜 _start -->
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/magiczoom.js"></script>
+{if condition="$goods_info.goods_type == 1"}
 <!-- 地址选择 _start -->
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/ns_select_region.js"></script>
+{/if}
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/tabs.js"></script>
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/goods.js"></script>
 <script type="text/javascript">
-var SHOPMAIN = "SHOP_MAIN";
 //获取商品最小购买数量
 var min_buy = parseInt($(".amount-input").attr("data-min"));
 $().ready(function() {
@@ -40,38 +42,40 @@ $().ready(function() {
 		$(".js-buy-now").addClass("disabled");
 		$(".add-cart").addClass("disabled");
 	}
-
-	var goods_sku_list = $("#goods_sku0").attr("skuid") + ":1";
-
-	//定位查询运费
-	$.ajax({
-		type : "post",
-		data : { "goods_id" : "{$goods_info.goods_id}", goods_sku_list : goods_sku_list },
-		url : "{:__URL('SHOP_MAIN/goods/getShippingFeeNameByLocation')}",
-		success : function(data){
-			if(data.user_location != null){
-				$(".js-region").html("<font>" + data.user_location.province + data.user_location.city + "<i></i></font>").show();
-				$(".region-tab[data-region-level=1]").html(data.user_location.province + "<i></i>");
-				$(".region-tab[data-region-level=2]").html(data.user_location.city + "<i></i>");
-			}
-			
-			var html = "";
-			if(data.express !== null && data.express !== ""){
-				if(typeof data.express == "string"){
-					html = data.express;
-				}else if(typeof data.express == "object"){
-					html = "<select>";
-					for(var i=0;i<data.express.length;i++){
-						html += '<option value="' + data.express[i].co_id + '">' + data.express[i].company_name + '&nbsp;&nbsp;&nbsp;¥' + data.express[i].express_fee + '</option>';
-					}
-					html += "</select>";
+	
+	if($("#hidden_goods_type").val() == 1){
+		//实物商品才会查询运费
+		var goods_sku_list = $("#goods_sku0").attr("skuid") + ":1";
+		//定位查询运费
+		$.ajax({
+			type : "post",
+			data : { "goods_id" : "{$goods_info.goods_id}", goods_sku_list : goods_sku_list },
+			url : "{:__URL('SHOP_MAIN/goods/getShippingFeeNameByLocation')}",
+			success : function(data){
+				if(data.user_location != null){
+					$(".js-region").html("<font>" + data.user_location.province + data.user_location.city + "<i></i></font>").show();
+					$(".region-tab[data-region-level=1]").html(data.user_location.province + "<i></i>");
+					$(".region-tab[data-region-level=2]").html(data.user_location.city + "<i></i>");
 				}
-			}else{
-				html = "{:lang('goods_no_goods')}";
+				
+				var html = "";
+				if(data.express !== null && data.express !== ""){
+					if(typeof data.express == "string"){
+						html = data.express;
+					}else if(typeof data.express == "object"){
+						html = "<select>";
+						for(var i=0;i<data.express.length;i++){
+							html += '<option value="' + data.express[i].co_id + '">' + data.express[i].company_name + '&nbsp;&nbsp;&nbsp;¥' + data.express[i].express_fee + '</option>';
+						}
+						html += "</select>";
+					}
+				}else{
+					html = "{:lang('goods_no_goods')}";
+				}
+				$(".js-shipping-name").html(html);
 			}
-			$(".js-shipping-name").html(html);
-		}
-	});
+		});
+	}
 
 	$("#show_coupons").click(function(){
 		var type = $("#show_coupons").text();

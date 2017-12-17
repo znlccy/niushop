@@ -164,7 +164,7 @@
 				keywords = keyword_obj.attr("data-searchwords");
 // 			alert(keywords);
 			}
-			
+			keywords = keywords.replace(/</g,"&lt;").replace(/>/g,"&gt;");
 			$(keyword_obj).val(keywords);
 			if(keywords==null)
 			{
@@ -200,6 +200,7 @@
 					|| $.trim(keywords) == "请输入关键词") {
 				keywords = $(keyword_obj).attr("data-searchwords");
 			}
+			keywords = keywords.replace(/</g,"&lt;").replace(/>/g,"&gt;");
 			$(keyword_obj).val(keywords);
 			
 			if($.cookie("searchRecord") != undefined){

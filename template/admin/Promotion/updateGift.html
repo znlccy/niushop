@@ -165,7 +165,7 @@ input[type="radio"]{
 	<button class="edit_button" onclick="updateGift();">提交</button>
 </div>
 
-<script>	
+<script>
 $(function(){
 	$('.type_dl dd').hide();
 	$("#some_pro").show();
@@ -199,7 +199,7 @@ $(function(){
 				'end_time' : end_time,
 				'days' : days,
 				'max_num' : max_num,
-				'goods_id_array' : goods_id_array,
+				'goods_id_array' : goods_id_array
 			},
 			success : function(data) {
 				if (data["code"] > 0) {

@@ -15,6 +15,8 @@
 .status-success{display:inline-block;color:#FFF;padding-left:5px;padding-right:5px;padding-bottom:3px;padding-top:3px;background-color:#5be15b;}
 .mlr15{margin:0;}
 input{margin:0 !important;}
+.data-button{border: none;background: #eee;padding: 5px 23px;font-size: 12px;color: #777;outline: none;float: left;margin-right: 10px;} 
+.button_active{background: #01B044;color:#fff;}
 </style>
 {/block}
 {block name="right_tab"}
@@ -30,6 +32,8 @@ input{margin:0 !important;}
 <table class="mytable">
 	<tr>
 		<th style="line-height:33px;">
+			<button class="data-button button_active" data-ad-type="1">PC端</button>
+			<button class="data-button" data-ad-type="2">手机端</button>
 			广告位名称：<input id="ap_name" class="input-medium" type="text" placeholder="请输入广告位名称" >
 			广告展示方式：
 			<select id="ap_display" style="margin-left: 10px;">
@@ -91,12 +95,20 @@ input{margin:0 !important;}
 		</div>
 	</div>
 </div>
+<input type="hidden" id="ad_type" value="1">
 {/block}
 {block name="script"}
 <script type="text/javascript">
 $(function(){
 	LoadingInfo(1);
 });
+
+$("[data-ad-type]").click(function(){
+	$("#ad_type").val($(this).attr("data-ad-type"));
+	$("[data-ad-type]").removeClass("button_active");
+	$(this).addClass("button_active");
+	LoadingInfo(1);
+})
 // 全选
 function CheckAll(event){
 	if($(event).is(":checked")){
@@ -108,7 +120,7 @@ function CheckAll(event){
 
 function LoadingInfo(page_index) {
 	var ap_name = $("#ap_name").val();
-	var type = "{$terminal}";
+	var type = $("#ad_type").val();
 	var ap_display = $("#ap_display").val();
 	$.ajax({
 		type : "post",
@@ -137,9 +149,10 @@ function LoadingInfo(page_index) {
 					}else{
 						html += '<td class="center"><a href="javascript:;" onclick="setPlatformAdvPositionUse(this,'+ ap_id +',0,'+data['data'][i]["is_del"]+');" class="active" data-toggle="class"><i class="fa fa-check text-success text-active"></i></a></td>';
 					}
-					html += data['data'][i]["type"] == 1 ? '<td class="center">PC端</td>' : '<td class="center">手机端</td>';
+					html += data['data'][i]["type"] == 1 ? '<td class="center"><i class="fa fa-television" title="PC端"></i></td>' : '<td class="center"><i class="fa fa-mobile fa-2x" title="手机端"></i></td>';
 					html += '<td>'+ data['data'][i]["ap_keyword"] +'</td>';
-					html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/shopadvlist?ap_id=' + ap_id)+'"> 管理广告</a> &nbsp;';
+					html += '<td class="center">';
+					// html += '<a href="'+__URL('ADMIN_MAIN/system/shopadvlist?ap_id=' + ap_id)+'"> 管理广告</a> &nbsp;';
 					html += '<a href="'+__URL('ADMIN_MAIN/system/updateshopadvposition?ap_id=' + ap_id )+'"> 编辑</a> &nbsp;';
 					if(data['data'][i]["is_del"] == 0){
 						html += '<a href="javascript:delShopAdvPosition(' + ap_id + ');"> 删除</a> &nbsp;';	

@@ -10,6 +10,7 @@
 .brand-info .brand-info-right .main-btn {font-size: 12px;}
 .slick {max-height: 175px;}
 .custom-tag-list {margin-top: 0;}
+.slick{margin-bottom: 10px;}
 .custom-tag-list{padding-top:0;}
 </style>
 {/block}
@@ -22,33 +23,23 @@
 	</div>
 </section>
 <div style="height: 45px;"></div>
-{if condition="$discounts_adv['is_use'] eq 1"}
-    {if condition="$discounts_adv['adv_list'][0]['adv_image'] neq ''"}
-<div class="slick">
-	<a href="{$discounts_adv['adv_list'][0]['adv_url']}">
-		<img src="{:__IMG($discounts_adv['adv_list'][0]['adv_image'])}" style="max-width: 100%;max-height: 100%;">
-		<!-- style="height:{$discounts_adv.ap_height}px;" -->
-	</a>
-</div>
-   {/if}
-{/if}
 <input type="hidden" id="page_count"><!-- 总页数 -->
 <input type="hidden" id="page" value="1"><!-- 当前页数 -->
 <input type="hidden" id="ms_time" value="{$ms_time}"/>
 {/block}
 {block name="main"}
 <div class="custom-tag-list clearfix">
-<!-- 	<div class="custom-tag-list-menu-block"> -->
-<!-- 		<ul class="custom-tag-list-side-menu" style="position: relative;width:100%;" id='goods_group'> -->
-<!-- 			<li val="0"><a class="selected"  onclick="showCategorySecond(this,0)"><span>全部</span></a></li> -->
-<!-- 			{foreach name="goods_category_list_1" item = "category" key = "k"} -->
-<!-- 			<li val="{$category.category_id}"> -->
-<!-- 				<a onclick="showCategorySecond(this,{$category.category_id})"><span>{$category.category_name}</span></a> -->
-<!-- 			</li> -->
-<!-- 			{/foreach} -->
-<!-- 		</ul> -->
-<!-- 	</div> -->
 	<div class="group-list-box">
+		{if condition="$discounts_adv['is_use'] eq 1"}
+		    {if condition="$discounts_adv['adv_list'][0]['adv_image'] neq ''"}
+			<div class="slick">
+				<a href="{$discounts_adv['adv_list'][0]['adv_url']}">
+					<img src="{:__IMG($discounts_adv['adv_list'][0]['adv_image'])}" style="max-width: 100%;max-height: 100%;">
+					<!-- style="height:{$discounts_adv.ap_height}px;" -->
+				</a>
+			</div>
+		   {/if}
+		{/if}
 		<ul class="group-list" style="overflow: hidden;"></ul>
 	</div>
 <script>
@@ -117,6 +108,7 @@ function showCategorySecond(obj,category_id,page){
 					$('.group-list').html(list_html);
 				}
 				hiddenLoadMaskLayer();
+				countDown();
 			}
 		});
 	}
@@ -159,7 +151,7 @@ function countDown(){
 $(window).scroll(function(){
 	var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
 	var content_box_height = parseFloat($(".group-list-box").height());
-	if(totalheight - content_box_height >= 80){
+	if(totalheight - content_box_height >= 50){
 		if(is_load){
 			var page = parseInt($("#page").val()) + 1;//页数
 			var total_page_count = $("#page_count").val(); // 总页数

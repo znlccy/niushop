@@ -91,7 +91,6 @@ function LoadingInfo(page_index) {
 			"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text
 		},
 		success : function(data) {
-			//alert(JSON.stringify(data));
 			var html = '';
 			if (data["data"].length > 0) {
 				for (var i = 0; i < data["data"].length; i++) {

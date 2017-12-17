@@ -182,38 +182,44 @@ function getgoodlist(page){
 					for(var i=0;i<data['data'].length;i++){
 						var item=data['data'][i];
 						if(display_mode == "big_img"){
-						list_html+='<div class="product single_item info">'
-									+'<li>'
-										+'<div class="item">'
-											+'<div class="item-tag-box">'
-												+'<!--{:lang("hot_sale")}icon{:lang("position_is")}：0px 0px，{:lang("goods_new")}icon{:lang("position_is")}：0px -35px，{:lang("competitive_products")}icon{:lang("position_is")}：0px -70px-->'
-											+'</div>'
+							list_html += '<div class="product single_item info">';
+							list_html += '<li>';
+								list_html += '<div class="item">';
+									list_html += '<div class="item-tag-box">';
+									list_html += '<!--{:lang("hot_sale")}icon{:lang("position_is")}：0px 0px，{:lang("goods_new")}icon{:lang("position_is")}：0px -35px，{:lang("competitive_products")}icon{:lang("position_is")}：0px -70px-->';
+									list_html += '</div>';
+							
+									list_html += '<div class="item-pic">';
+										list_html += '<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'">';
+											list_html += '<img class="" src="'+__IMG(item.pic_cover_small)+'" alt="'+item.goods_name+'" style="display: block;max-width:100%;max-height:100%;">';
+										list_html += '</a>';
+									list_html += '</div>';
 
-											+'<div class="item-pic">'
-												+'<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'">'
-													+'<img class="" src="'+__IMG(item.pic_cover_small)+'" alt="'+item.goods_name+'" style="display: block;max-width:100%;max-height:100%;">'
-												+'</a>'
-											+'</div>'
+									list_html += '<dl>';
+										list_html += '<dt>';
+											list_html += '<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'">'+item.goods_name+'</a>';
+										list_html += '</dt>';
+										list_html += '<dd>';
+											list_html += '<i>￥'+item.promotion_price+'</i>';
+										list_html += '</dd>';
+									list_html += '</dl>';
+									
+								list_html += '</div>';
 
-											+'<dl>'
-												+'<dt>'
-													+'<a href="'+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'">'+item.goods_name+'</a>'
-												+'</dt>'
-												+'<dd>'
-													+'<i>￥'+item.promotion_price+'</i>'
-												+'</dd>'
-											+'</dl>'
-										+'</div>'
-
-										+'<div class="item-con-info">'
-											+'<span class="goods-sales"> {:lang("goods_sales_volume")}：'+item.sales+'</span>'
-											+'<div class="cart-box">'
-												+'<a class="add-cart increase" data-goods_id="575" href="javascript:CartGoodsInfo('+item.goods_id+','+item.state+')"></a>'
-												+'<a class="decrease hide" data-goods_id="575" style="right: 60px;"></a>'
-											+'</div>'
-										+'</div>'
-									+'</li>'
-								+'</div>';
+								list_html += '<div class="item-con-info">';
+									list_html += '<span class="goods-sales"> {:lang("goods_sales_volume")}：'+item.sales+'</span>';
+									list_html += '<div class="cart-box">';
+										if(item.goods_type == 1){
+											list_html += '<a class="add-cart increase" href="javascript:CartGoodsInfo('+item.goods_id+','+item.state+')"></a>';
+										}else{
+											list_html += '<a class="add-cart virtual-increase" href="'+__URL('APP_MAIN/goods/goodsdetail?id='+item.goods_id)+'"></a>';
+										}
+										list_html += '<a class="decrease hide" data-goods_id="575" style="right: 60px;"></a>';
+									list_html += '</div>';
+								list_html += '</div>';
+								
+							list_html += '</li>';
+						list_html += '</div>';
 						}else if(display_mode == "list"){
 							list_html += '<div class="goods_info">';
 							list_html +='<div class="goods_img">';

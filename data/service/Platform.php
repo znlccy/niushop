@@ -41,6 +41,7 @@ use think\Log;
 use data\model\NsGoodsGroupModel;
 use data\model\NsGoodsViewModel;
 use data\model\NsNoticeModel;
+use data\model\NsPlatformAdvViewModel;
 /**
  * 
  */
@@ -445,10 +446,12 @@ class Platform extends BaseService implements IPlatform
                 $result['data'][$k]['ap_class_name'] = '图片';
             }else if($v['ap_class'] == 1){
                 $result['data'][$k]['ap_class_name'] = '文字';
-            }else if($v['app_class'] == 2){
+            }else if($v['ap_class'] == 2){
                 $result['data'][$k]['ap_class_name'] = '幻灯';
             }else if($v['ap_class'] == 3){
                 $result['data'][$k]['ap_class_name'] = 'flash';
+            }else if($v['ap_class'] == 4){
+                $result['data'][$k]['ap_class_name'] = '代码';
             }else{
                 $result['data'][$k]['ap_class_name'] = '';
             }
@@ -468,7 +471,7 @@ class Platform extends BaseService implements IPlatform
      * (non-PHPdoc)
      * @see \data\api\IPlatform::addPlatformAdv()
      */
-    public function addPlatformAdv($ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background)
+    public function addPlatformAdv($ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background, $adv_code)
     {
         $platform_adv = new NsPlatformAdvModel();
         $data = array(
@@ -477,7 +480,8 @@ class Platform extends BaseService implements IPlatform
             'adv_url'         => $adv_url,
             'adv_image'       => $adv_image,
             'slide_sort'      => $slide_sort,
-            'background'      => $background
+            'background'      => $background,
+            'adv_code'        => $adv_code
         );
         $res = $platform_adv->save($data);
         return $res;
@@ -510,7 +514,7 @@ class Platform extends BaseService implements IPlatform
      * (non-PHPdoc)
      * @see \data\api\IPlatform::updatePlatformAdv()
      */
-    public function updatePlatformAdv($adv_id, $ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background)
+    public function updatePlatformAdv($adv_id, $ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background, $adv_code)
     {
         $platform_adv = new NsPlatformAdvModel();
         $data = array(
@@ -519,7 +523,8 @@ class Platform extends BaseService implements IPlatform
             'adv_url'         => $adv_url,
             'adv_image'       => $adv_image,
             'slide_sort'      => $slide_sort,
-            'background'      => $background
+            'background'      => $background,
+            'adv_code'        => $adv_code
         );
         $res = $platform_adv->save($data, ['adv_id' => $adv_id]);
         return $res;
@@ -617,6 +622,10 @@ class Platform extends BaseService implements IPlatform
     public function getPlatformAdDetail($adv_id){
         $platform_adv = new NsPlatformAdvModel();
         $info = $platform_adv->getInfo(['adv_id' => $adv_id]);
+        if(!empty($info["adv_code"])){
+            $info["adv_code"] = html_entity_decode($info["adv_code"]);
+            
+        }
         return $info;
     }
 	/* (non-PHPdoc)
@@ -790,6 +799,20 @@ class Platform extends BaseService implements IPlatform
         // TODO Auto-generated method stub
         
     }
+    
+    /**
+     * 修改帮助中心内容的标题与排序
+     */
+    public function updatePlatformDocumentTitleAndSort($id, $title, $sort){
+        $data = array(
+            'title'         => $title,
+            'sort'          => $sort,
+        );
+        $platform_document = new NsPlatformHelpDocumentModel();
+        $retval = $platform_document->save($data, ['id' => $id]);
+        return $retval;
+    }
+    
     /**
      * (non-PHPdoc)
      * @see \data\api\IPlatform::getPlatformDocumentDetail()
@@ -1623,5 +1646,19 @@ class Platform extends BaseService implements IPlatform
         }
         $info['adv_list'] = $platform_adv_list;
         return $info;
+    }
+    
+    /**
+     * 后台获取广告列表
+     * @param number $page_index
+     * @param number $page_size
+     * @param string $where
+     * @param string $order
+     * @param string $field
+     */
+    public function adminGetAdvList($page_index=1, $page_size=0, $condition='', $order=''){
+        $ns_platform_adv = new NsPlatformAdvViewModel();
+        $list = $ns_platform_adv -> getViewList($page_index, $page_size, $condition, $order);
+        return $list;
     }
 }

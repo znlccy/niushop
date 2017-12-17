@@ -1,5 +1,3 @@
-
-
 var submiting = false;
 
 //操作处理开始

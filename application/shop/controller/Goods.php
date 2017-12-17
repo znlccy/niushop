@@ -105,6 +105,10 @@ class Goods extends BaseController
             // 商品详情
             $goods_info = $this->goods->getGoodsDetail($goodsid);
             
+            if ($this->getIsOpenVirtualGoodsConfig() == 0 && $goods_info['goods_type'] == 0) {
+                $this->error("未开启虚拟商品功能");
+            }
+            
             // 检测商品是否限购，是否允许购买
             $goods_purchase_num = $goods_info['min_buy'] > 0 ? $goods_info['min_buy'] : 1;
             $goods_purchase_restriction = $this->goods->getGoodsPurchaseRestrictionForCurrentUser($goodsid, $goods_purchase_num);

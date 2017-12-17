@@ -21,12 +21,14 @@
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.cookie.js"></script>
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/layer.js"></script>
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.method.js"></script>
+<script type="text/javascript" src="__STATIC__/js/load_bottom.js"></script>
 <script type="text/javascript">
 var SHOPMAIN='SHOP_MAIN';//外置JS调用
 var upload = "__UPLOAD__";//外置JS调用
 var APPMAIN='APP_MAIN';//外置JS调用
 var temp = "__TEMP__/";//外置JS调用
 var UPLOADCOMMON = 'UPLOAD_COMMON';//存放公共图片、网站logo、独立图片、没有任何关联的图片
+var STATIC = "__STATIC__";
 </script>
 {block name="resources"}
 <!-- 添加css、字体文件文件 -->
@@ -69,7 +71,7 @@ var UPLOADCOMMON = 'UPLOAD_COMMON';//存放公共图片、网站logo、独立图
 {include file='shop/default/controlBottom'/}
 {/block}
 
-<script type="text/javascript"src="__TEMP__/{$style}/public/js/common.js"></script>
+<script type="text/javascript" src="__TEMP__/{$style}/public/js/common.js"></script>
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/shopping_cart.js"></script>
 {block name="javascript"}
 <!-- 添加js文件 -->

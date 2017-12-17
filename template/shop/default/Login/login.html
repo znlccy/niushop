@@ -44,7 +44,13 @@
 		width:100px;
 		height:30px;
 	}
-
+	#copyright_meta a,#web_gov_record a{
+		color: #666;
+	}
+	#web_gov_record a span{
+		position: relative;
+		top: -5px;
+	}
 	</style>
 	<script type="text/javascript">
 	var SHOPMAIN='SHOP_MAIN';//外置JS调用
@@ -167,6 +173,9 @@
 		<br/>
 			<a href="http://www.niushop.com.cn" target="_blank" style="text-decoration: none;color:#666;" id="copyright_companyname"></a>
 			<label id="copyright_meta"></label>
+			<p style="display: none;" id="web_gov_record">
+				<a href="javascript:;" target="_blank"><img src="__STATIC__/images/gov_record.png" alt="" style="width: 20px;height: 20px;"><span style="height: 20px;line-height: 20px;display: inline-block;margin-left: 5px"></span></a>
+			</p>
 		</p>
 	</div>
 </div>

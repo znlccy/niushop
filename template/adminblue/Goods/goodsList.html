@@ -28,10 +28,11 @@ i.hot,i.recommend,i.new{font-size:12px;margin-right:5px;font-style:normal;color:
 .goodsCategory::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);border-radius: 10px;background-color: #fff;}
 .goodsCategory::-webkit-scrollbar-thumb{height: 20px;border-radius: 10px;-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);background-color: #ccc;}
 .goodsCategory ul{height: 280px;margin-top: -2px;margin-left: 0;}
-.goodsCategory ul li{text-align: left;padding:0 15px;line-height: 30px;}
+.goodsCategory ul li{text-align: left;padding:0 10px;line-height: 30px;}
 .goodsCategory ul li i{float: right;line-height: 30px;}
 .goodsCategory ul li:hover{cursor: pointer;}
 .goodsCategory ul li:hover,.goodsCategory ul li.selected{background: #1C8FEF;color: #fff;}
+.goodsCategory ul li span{width: 120px;display: inline-block;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;vertical-align: middle;font-size:12px;}
 .two{left: 160px;border-left:0;}
 .three{left: 320px;width: 159px;border-left:0;}
 .selectGoodsCategory{width: 218px;height: 45px;border:1px solid #CCCCCC;position: absolute;z-index: 100;left: 0;margin-top: 299px;border-collapse: collapse;background: #fff;display: none;}
@@ -135,6 +136,7 @@ input, textarea, .uneditable-input {width: 147px;}
 				<col width="8%">
 				<col width="6%">
 				<col width="7%">
+				<col width="9%">
 				<col width="7%">
 				<col width="15%">
 			</colgroup>
@@ -148,6 +150,7 @@ input, textarea, .uneditable-input {width: 147px;}
 					<th>总库存</th>
 					<th>销量</th>
 					<th>上下架</th>
+					<th>实物类型</th>
 					<th>排序</th>
 					<th style="text-align:center;">操作</th>
 				</tr>
@@ -376,6 +379,14 @@ function LoadingInfo(page_index) {
 						}else{
 							html += '<td><a href="javascript:modifyGoodsOnline('+data["data"][i]["goods_id"]+',\'online\')" style="color:#999;">已下架</a></td>';
 						}
+						
+						html += '<td>';
+						if(data['data'][i]['goods_type'] == 1){
+							html += '<span>实物商品</span>';
+						}else{
+							html += '<span>虚拟商品</span>';
+						}
+						html += '</td>';
 
 						html += '<td>';
 							html += '<div class="cell">';
@@ -393,7 +404,7 @@ function LoadingInfo(page_index) {
 					html += '</tr>';
 				}
 			} else {
-				html += '<tr align="center"><td colspan="8" style="text-align: center;font-weight: normal;color: #999;">暂无符合条件的数据记录</td></tr>';
+				html += '<tr align="center"><td colspan="9" style="text-align: center;font-weight: normal;color: #999;">暂无符合条件的数据记录</td></tr>';
 			}
 			$("#productTbody").html(html);
 			initPageData(data["page_count"],data['data'].length,data['total_count']);

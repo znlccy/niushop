@@ -1,0 +1,14 @@
+<script>
+//打印订单
+$("#PrintOrder").click(function(){
+	var BatchSend = new Array();
+	$("input[name='sub']:checked").each(function () {
+		BatchSend.push($(this).val());
+	});
+	if (BatchSend.length == 0) {
+		showTip("请先勾选文本框再进行批量操作！",'warning');
+	}else{
+		window.open(__URL("ADMIN_MAIN/order/printVirtualOrder?print_order_ids=" + BatchSend.toString()));
+	}
+});
+</script>

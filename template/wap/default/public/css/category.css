@@ -98,7 +98,8 @@ a.shop-name i{ display:inline-block; vertical-align:middle; margin-right:3px; fo
 .openList li .item-con-info{ width:98%; margin:auto; overflow:hidden; background:#fff; padding-bottom:5px; position:relative;left:0px;bottom:0;}
 .openList li .item-con-info .cart-box{overflow: hidden; height:30px; display: block; width:85px;float:right; position:relative;}
 /* .openList .decrease {width:30px; height:30px; background:url(../images/btn_minus_normal.png) no-repeat; background-size:contain;position:absolute; right:0px; top:0px; z-index:1; cursor:pointer;} */
-.openList .increase{width:30px; height:30px;background:url(../images/btn_plus_normal.png) no-repeat; background-size:contain;position:absolute; right:5px; top:0px; z-index:2; cursor:pointer;}
+.openList .increase,.openList .virtual-increase{width:30px; height:30px;background:url(../images/btn_plus_normal.png) no-repeat; background-size:contain;position:absolute; right:5px; top:0px; z-index:2; cursor:pointer;}
+.openList .virtual-increase{background: url(../images/virtual_goods_flag.png) no-repeat;background-size: 100%;}
 .sell-out-btn{width:30px; height:30px;background:url(../images/btn_sell_out.png) no-repeat; background-size:contain;position:absolute; right:5px; top:0px; z-index:2; cursor:pointer;}
 .openList .sell-out-btn{ right:5px;}
 .increase-fly{ width:25px;height:25px;background-color: rgba(255, 255, 255, 0.95);border: 1px solid #C5C5C5;border-radius: 50%;font-size:24px; line-height:25px;color:#F8849C;background: url(../images/shop-cart.png) no-repeat -25px -27px; background-size: 60px;text-indent:-9999px;position: fixed;z-index: 9999;}

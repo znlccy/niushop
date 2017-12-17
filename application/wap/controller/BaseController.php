@@ -21,6 +21,7 @@ use data\service\Config;
 use data\service\Goods as GoodsService;
 use data\service\Member as Member;
 use data\service\Shop;
+use data\service\Config as WebConfig;
 use data\service\User;
 use data\service\WebSite as WebSite;
 use think\Controller;
@@ -51,7 +52,7 @@ class BaseController extends Controller
      * @var unknown
      */
     protected $logo;
-    
+
     protected $share_icon;
 
     public $web_site;
@@ -88,15 +89,17 @@ class BaseController extends Controller
         
         $web_info = $this->web_site->getWebSiteInfo();
         
-        //wap端关闭后
-        if($web_info['wap_status'] == 3 && $web_info['web_status'] == 1){
+        // wap端关闭后
+        if ($web_info['wap_status'] == 3 && $web_info['web_status'] == 1) {
             Cookie::set("default_client", "shop");
-            $this->redirect(__URL(\think\Config::get('view_replace_str.SHOP_MAIN')."/shop"));
-        }else if ($web_info['wap_status'] == 2) {
-            webClose($web_info['close_reason']);
-        }else if(($web_info['wap_status'] == 3 && $web_info['web_status'] == 3)||($web_info['wap_status'] == 3 && $web_info['web_status'] == 2)){
-            webClose($web_info['close_reason']);
-        }
+            $this->redirect(__URL(\think\Config::get('view_replace_str.SHOP_MAIN') . "/shop"));
+        } else 
+            if ($web_info['wap_status'] == 2) {
+                webClose($web_info['close_reason']);
+            } else 
+                if (($web_info['wap_status'] == 3 && $web_info['web_status'] == 3) || ($web_info['wap_status'] == 3 && $web_info['web_status'] == 2)) {
+                    webClose($web_info['close_reason']);
+                }
         
         $this->uid = $this->user->getSessionUid();
         $this->instance_id = $this->user->getSessionInstanceId();
@@ -428,5 +431,15 @@ class BaseController extends Controller
         $city_id = request()->post('city_id', 0);
         $district_list = $address->getDistrictList($city_id);
         return $district_list;
+    }
+
+    /**
+     * 是否开启虚拟商品功能，0：禁用，1：开启
+     */
+    public function getIsOpenVirtualGoodsConfig()
+    {
+        $config = new WebConfig();
+        $res = $config->getIsOpenVirtualGoodsConfig($this->instance_id);
+        return $res;
     }
 }

@@ -1,5 +1,4 @@
 {extend name="wap/default/base" /}
-
 {block name="resources"}
 <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/mall.css">
 <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/pre_foot.css">
@@ -8,19 +7,16 @@
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/jscommon.js" charset="gb2312"></script>
 <script src="__TEMP__/{$style}/public/js/jquery.lazyload.js" type="text/javascript"></script>
 {/block}
-
 {block name="goodsHead"}
 <section class="head">
 	<a class="head_back" onclick="window.history.go(-1)" href="javascript:void(0)"><i class="icon-back"></i></a>
 	<div class="head-title">{$shopname}</div>
 </section>
 {/block}
-
 {block name="main"}
 	{include file="wap/default/Goods/controlDetail" /}
 	{include file='wap/default/share'/}
 {/block}
-
 {block name="bottom"}
 <div class="js-bottom-opts bottom-fix">
 	<div class="responsive-wrapper">
@@ -37,8 +33,13 @@
 			<span class="desc">{:lang('goods_cart')}</span>
 		</a>
 		<div class="big-btn-2-1">
+		{if condition="$goods_detail.goods_type == 1"}
 			<a href="javascript:;" class="big-btn orange-btn" id="addCart">{:lang('goods_add_cart')}</a>
 			<a href="javascript:;" class="big-btn red-btn" id="buyBtn1">{:lang('goods_buy_now')}</a>
+		{else/}
+			<a href="javascript:;" class="big-btn red-btn" id="buyBtn1" style="width: 100%;">{:lang('goods_buy_now')}</a>
+		{/if}
+		<input type="hidden" id="hidden_goods_type" value="{$goods_detail.goods_type}" />
 		</div>
 	</div>
 </div>

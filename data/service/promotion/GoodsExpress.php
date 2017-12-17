@@ -328,12 +328,14 @@ class GoodsExpress extends BaseService
                     if ($temp['volume_xnum'] == 0) {
                         $temp['volume_xnum'] = 1;
                     }
+                    if($temp['weight_xnum'] == 0){
+                        $temp['weight_xnum'] = 1;
+                    }
                     if (($ext_volume * 100) % ($temp['volume_xnum'] * 100) == 0) {
                         $ext_data = $ext_volume / $temp['volume_xnum'];
                     } else {
                         $ext_data = floor($ext_volume / $temp['weight_xnum']) + 1;
                     }
-                    
                     return $temp['volume_sprice'] + $ext_data * $temp['volume_xprice'];
                 }
             } else {

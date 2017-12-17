@@ -19,6 +19,7 @@ function saveAddress() {
 	var mobile=$("#Moblie").val();
 	var $remark=$("#AddressInfo").val();
 	var address_id=$("#adressid").val();
+	var phone = $("#phone").val();
 	if(flag){
 		return;
 	}
@@ -27,7 +28,7 @@ function saveAddress() {
 		$.ajax({
 			type: "POST",
 			url: __URL(SHOPMAIN+"/member/addressInsert"),
-			data: {"consigner":name,"mobile":mobile,"province":province,"city":city,"district":district,"address":addressinfo},
+			data: {"consigner":name,"mobile":mobile,"province":province,"city":city,"district":district,"address":addressinfo,"phone":phone},
 			success: function (txt) {
 				if (txt["code"] >0) {
 				   window.location.href =__URL(SHOPMAIN+"/member/addressList");
@@ -43,7 +44,7 @@ function saveAddress() {
 		$.ajax({
 			type: "POST",
 			url: __URL(SHOPMAIN+"/member/updateMemberAddress"),
-			data: {"id":address_id,"consigner":name,"mobile":mobile,"province":province,"city":city,"district":district,"address":addressinfo},
+			data: {"id":address_id,"consigner":name,"mobile":mobile,"province":province,"city":city,"district":district,"address":addressinfo,"phone":phone},
 			success: function (txt) {
 				if (txt["code"] > 0) {
 					 window.location.href =__URL(SHOPMAIN+"/member/addressList");
@@ -111,7 +112,18 @@ function Check_Consignee() {
 		$("#Moblie").focus();
 		return false;
 	} 
-	
+
+	var phone = $("#phone").val();
+	if(phone.length > 0){
+		var pattern =/^0\d{2,3}-?\d{7,8}$/; 
+		if(!pattern.test(phone)) { 
+			$.msg("请输入正确的固定电话", {
+				time: 2000
+			});
+			$("#phone").focus();
+			return false; 
+		} 
+	}
 	
 	return true;
 }

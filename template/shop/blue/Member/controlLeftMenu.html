@@ -81,6 +81,12 @@
 					<span>{:lang('member_my_order')}</span>
 					<i class="icon i-arrow"></i>
 				</li>
+				{if condition="$is_open_virtual_goods"}
+				<li onclick="location.href='{:__URL('SHOP_MAIN/member/virtualorderlist')}';" data-href="{:__URL('SHOP_MAIN/member/virtualorderlist')}">
+					<span>{:lang('virtual_orders')}</span>
+					<i class="icon i-arrow"></i>
+				</li>
+				{/if}
 				<li onclick="location.href='{:__URL('SHOP_MAIN/member/backlist')}';" data-href="{:__URL('SHOP_MAIN/member/backlist')}">
 					<span>{:lang('refund_return_maintenance')}</span>
 					<i class="icon i-arrow"></i>

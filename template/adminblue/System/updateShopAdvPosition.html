@@ -31,6 +31,7 @@
 			<p>
 				<select id="ap_class" name="account" class="form-control m-b input-common">
 					<option value="0" {if condition="$info['ap_class'] eq 0"}selected{/if}>图片</option>
+					<option value="4" {if condition="$info['ap_class'] eq 4"}selected{/if}>代码</option>
 				</select>
 			</p>
 		</dd>
@@ -52,50 +53,52 @@
 			</p>
 		</dd>
 	</dl>
-	<dl>
-		<dt><span class="color-red">*</span>展示方式:</dt>
-		<dd>
-			<p id="ap_display">
-				<label style="font-weight:normal;"><input type="radio" name="ap_display" id="ap_display0" value="0"  {if condition="$info['ap_display'] eq 0"}checked{/if}> 可以发布多条并幻灯展示</label>
-				<label style="font-weight:normal;"><input type="radio" name="ap_display" id="ap_display1" value="1"  {if condition="$info['ap_display'] eq 1"}checked{/if}>  可以发布多条广告并随机展示</label>
-				<label style="font-weight:normal;"><input type="radio" name="ap_display" id="ap_display2" value="2" {if condition="$info['ap_display'] eq 2"}checked{/if}> 只允许发布并展示一条广告</label>
-			</p>
-			<p class="error">请选择展示方式</p>
-		</dd>
-	</dl>
-	<dl>
-		<dt><span class="color-red">*</span>宽度:</dt>
-		<dd>
-			<p><input id="ap_width" type="number" value="{$info['ap_width']}" class="input-common"></p>
-			<p class="error">请输入广告位宽度</p>
-		</dd>
-	</dl>
-	<dl>
-		<dt><span class="color-red">*</span>高度:</dt>
-		<dd>
-			<p><input id="ap_height" type="number" value="{$info['ap_height']}" class="input-common"></p>
-			<p class="error">请输入广告位高度</p>
-		</dd>
-	</dl>
-	<dl>
-		<dt><span class="color-red">*</span>默认图片:</dt>
-		<dd>
-			<div class="class-logo"><p><img id="imgLogo" {if condition="$info['default_content'] !=''"} src="{:__IMG($info['default_content'])}" {/if} ></p></div>
-			<div class="upload-btn">
-				<span>
-					<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
-					<input type="hidden" id="Logo"/>
-				</span>
-				<p><i class="fa fa-cloud-upload"></i>上传图片</p>
-			</div>
-		</dd>
-	</dl>
-	<dl>
-		<dt>默认背景色:</dt>
-		<dd>
-			<input id="ap_background_color" type="color" style="width:60px;height:25px;" value="{$info['ap_background_color']}" class="input-common" />
-		</dd>
-	</dl>
+	<div class="data-image">
+		<dl>
+			<dt><span class="color-red">*</span>展示方式:</dt>
+			<dd>
+				<p id="ap_display">
+					<label style="font-weight:normal;"><input type="radio" name="ap_display" id="ap_display0" value="0"  {if condition="$info['ap_display'] eq 0"}checked{/if}> 可以发布多条并幻灯展示</label>
+					<label style="font-weight:normal;"><input type="radio" name="ap_display" id="ap_display1" value="1"  {if condition="$info['ap_display'] eq 1"}checked{/if}>  可以发布多条广告并随机展示</label>
+					<label style="font-weight:normal;"><input type="radio" name="ap_display" id="ap_display2" value="2" {if condition="$info['ap_display'] eq 2"}checked{/if}> 只允许发布并展示一条广告</label>
+				</p>
+				<p class="error">请选择展示方式</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt><span class="color-red">*</span>宽度:</dt>
+			<dd>
+				<p><input id="ap_width" type="number" value="{$info['ap_width']}" class="input-common"></p>
+				<p class="error">请输入广告位宽度</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt><span class="color-red">*</span>高度:</dt>
+			<dd>
+				<p><input id="ap_height" type="number" value="{$info['ap_height']}" class="input-common"></p>
+				<p class="error">请输入广告位高度</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt><span class="color-red">*</span>默认图片:</dt>
+			<dd>
+				<div class="class-logo"><p><img id="imgLogo" {if condition="$info['default_content'] !=''"} src="{:__IMG($info['default_content'])}" {/if} ></p></div>
+				<div class="upload-btn">
+					<span>
+						<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
+						<input type="hidden" id="Logo"/>
+					</span>
+					<p><i class="fa fa-cloud-upload"></i>上传图片</p>
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>默认背景色:</dt>
+			<dd>
+				<input id="ap_background_color" type="color" style="width:60px;height:25px;" value="{$info['ap_background_color']}" class="input-common" />
+			</dd>
+		</dl>
+	</div>
 	<dl>
 		<dt></dt>
 		<dd><button class="btn-common btn-big" onclick="updateShopAdvPositionAjax();">保存</button></dd>
@@ -121,6 +124,19 @@ function imgUpload(event) {
 	});
 }
 
+$(function(){
+	$("#ap_class").change();
+})
+
+//广告位类型
+$("#ap_class").change(function(){
+	if($(this).val() == 4){
+		$(".data-image").hide();
+	}else if($(this).val() == 0){
+		$(".data-image").show();
+	}
+})
+
 var ap_keyword_is_exists = false;
 $("#ap_keyword").change(function(){
 	var ap_keyword = $(this).val();
@@ -137,7 +153,6 @@ $("#ap_keyword").change(function(){
 		}
 	})
 })
-
 
 function updateShopAdvPositionAjax() {
 	var ap_id = $("#ap_id").val();
@@ -160,7 +175,7 @@ function updateShopAdvPositionAjax() {
 	var ap_background_color = $("#ap_background_color").val();
 	var type = $("input[type='radio'][name='type']:checked").val();
 	var ap_keyword = $("#ap_keyword").val();
-	if(verify(ap_name,ap_display,ap_width,ap_height)){
+	if(verify(ap_name,ap_display,ap_width,ap_height,ap_class)){
 		$.ajax({
 			type : "post",
 			url : "{:__URL('ADMIN_MAIN/system/updateshopadvposition')}",
@@ -189,7 +204,7 @@ function updateShopAdvPositionAjax() {
 	}
 	
 }
-function verify(ap_name,ap_display,ap_width,ap_height){
+function verify(ap_name,ap_display,ap_width,ap_height,ap_class){
 	if(ap_name.length == 0){
 		$("#ap_name").parent().next(".error").show();
 		$("#ap_name").focus();
@@ -204,20 +219,20 @@ function verify(ap_name,ap_display,ap_width,ap_height){
 	}else{
 		$(".error").hide();
 	}
-	if(ap_display == undefined){
+	if(ap_display == undefined && ap_class == 0){
 		$("#ap_display").next(".error").show();
 		return false;
 	}else{
 		$(".error").hide();
 	}
-	if(ap_width.length == 0){
+	if(ap_width.length == 0 && ap_class == 0){
 		$("#ap_width").parent().next(".error").show();
 		$("#ap_width").focus();
 		return false;
 	}else{
 		$(".error").hide();
 	}
-	if(ap_height.length == 0){
+	if(ap_height.length == 0 && ap_class == 0){
 		$("#ap_height").parent().next(".error").show();
 		$("#ap_height").focus();
 		return false;

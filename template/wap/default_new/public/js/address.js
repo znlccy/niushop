@@ -12,12 +12,13 @@
 	var $remark=$("#AddressInfo").val();
 	var address_id=$("#adressid").val();
 	var data_json='',ajax_url='';
+	var phone = $("#phone").val();
 	
 	if(typeof(address_id)=='undefined'){
-		data_json = {"consigner":name,"mobile":mobile,"province":province,"city":city,"district":district,"address":addressinfo};
+		data_json = {"consigner":name,"mobile":mobile,"province":province,"city":city,"district":district,"address":addressinfo,"phone":phone};
 		ajax_url = __URL(APPMAIN+"/member/addmemberaddress");
 	}else{
-		data_json = {"id":address_id,"consigner":name,"mobile":mobile,"province":province,"city":city,"district":district,"address":addressinfo};
+		data_json = {"id":address_id,"consigner":name,"mobile":mobile,"province":province,"city":city,"district":district,"address":addressinfo,"phone":phone};
 		ajax_url = __URL(APPMAIN+"/member/updatememberaddress");
 	}
 	var flag = $("#hidden_flag").val();
@@ -59,6 +60,16 @@ function Check_Consignee() {
 		$("#Moblie").focus();
 		return false;
 	} 
+	
+	var phone = $("#phone").val();
+	if(phone.length > 0){
+		var pattern=/(^[0-9]{3,4}\-[0-9]{3,8}$)|(^[0-9]{3,8}$)|(^\([0-9]{3,4}\)[0-9]{3,8}$)|(^0{0,1}13[0-9]{9}$)/; 
+		if(!pattern.test(phone)) { 
+			showBox("请输入正确的固定电话");
+			$("#phone").focus();
+			return false; 
+		} 
+	}
 	
 	if ($("#seleAreaFouth").val() < 0 || $("#seleAreaFouth").val() == "") {
 		if ($("#seleAreaNext").val() == "" || $("#seleAreaNext").val() < 0) {

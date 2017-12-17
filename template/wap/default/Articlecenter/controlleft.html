@@ -3,9 +3,7 @@
 <style>
 .two-list-menu {
     left: 109px;
-	top:45px;
 }
-
 .wenzhang_list a{
 	line-height: 44px;
     font-size: 14px;
@@ -16,120 +14,44 @@
 	padding: 3px 7px;
 	display: block;
 }
+.custom-tag-list{
+	padding-top: 0;
+}
 </style>
 <!-- 分类 -->
 <div class="custom-tag-list clearfix">
     <div class="mask" id="grouGoodsListmask"></div>
+    {notempty name="platform_help_class"}
 	<div class="custom-tag-list-menu-block" >
 		<div style="height: 294px; display: none;"></div>
 		<ul class="custom-tag-list-side-menu" style="position: relative;" id='goods_group'>
 			{foreach name="platform_help_class" id="class_vo" key="k"}
 			<li>
-				<a href="javascript:;" data-groupid="{$class_vo.class_id}" onclick="getArticleList({$class_vo.class_id},this,1)" {if condition="$k==0"}class="selected"{/if}>
+				<a href="javascript:;" data-groupid="{$class_vo.class_id}" onclick="getSubordinateClass({$class_vo.class_id},this)" {if condition="$k==0"}class="selected"{/if}>
 					<span>{$class_vo.name}</span>
 				</a>
 			</li>
 			{/foreach}
 		</ul>
 	</div>
-		
-    <div class="custom-tag-list-goods wenzhang_list" id='article_list'>
-        
+    <div class="custom-tag-list-goods wenzhang_list">
+      	{foreach name="platform_help_class" id="class_vo" key="k"}
+      		{foreach name="class_vo['child_list']" id="class_to"}
+				<a href="{:__URL('APP_MAIN/Articlecenter/articleList','class_id='.$class_to['class_id'])}" {if condition="$k > 0"}style="display:none;"{/if} data-parent-class="{$class_vo['class_id']}">{$class_to.name}</a>
+			{/foreach}
+		{/foreach}
     </div>
+    {else/}
+		<p style="color:#939393;text-align:center;margin-top:100px;"><img src="__TEMP__/{$style}/public/images/wap_nodata.png" height="100"><br>暂无文章分类</p>
+	{/notempty}
 </div>
-<!-- 总页数 -->
-<input type="hidden" id="page_count">
-<!-- 当前页数 -->
-<input type="hidden" id="page" value="1">
-<!-- 当前所选分类 -->
-<input type="hidden" id="class_id" value="">
 <script>
-$(function(){
-	var selece_class_id = $('a.selected').attr('data-groupid');
-	getArticleList(selece_class_id,'no',1);
-})
-var is_load =true;
-function getArticleList(class_id,obj,page){
-	$("#page").val(page); 
-	$("#class_id").val(class_id); 
+function getSubordinateClass(pid,obj){
+	$('[data-parent-class]').hide();
+	$('[data-parent-class="'+pid+'"]').show();
 	if(obj != 'no'){
 		$(".custom-tag-list-side-menu li a").removeClass("selected");
-		$(obj).addClass("selected");	
+		$(obj).addClass("selected");
 	}
-	if(is_load){
-		is_load = false;
-		$.ajax({
-			type:"post",
-			url : "{:__URL('APP_MAIN/Articlecenter/getArticleList')}",
-			async : true,
-			data : {'class_id':class_id, 'page':page },
-			beforeSend:function(){
-				showLoadMaskLayer();
-			},
-			success : function(data){
-				$("#page_count").val(data['page_count']);
-				if(page == 1){
-					var article_list_html = '';
-				}else if(page > 1){
-					var article_list_html = $('#article_list').html();
-				}
-				for(var i =0 ;i<data['data'].length;i++){
-					article_list_html +='<a href="'+__URL('APP_MAIN/Articlecenter/articlecontent?article_id='+data['data'][i]['article_id'])+'">'+data['data'][i]['title']+'</a>';
-				}
-				$('#article_list').html(article_list_html);
-				is_load =true;
-				hiddenLoadMaskLayer();
-			}
-		})
-	}
-	
 }
-//通过文章ID获取文章内容
- function getgoodlist(id){
-	
-	return false;
-	$('#grouGoodsListmask').hide();
-	$('.two-list-menu').hide();
-	$('.two-list-menu li[pid]').hide();
-	$.ajax({
-		type:"post",
-		url : "{:__URL('APP_MAIN/Articlecenter/index')}",
-		async : true,
-		data : {'id':id },
-		beforeSend:function(){
-			showLoadMaskLayer();
-		},
-		success : function(data){
-			var html = '';
-			html+='<p style="padding-left: 40%;">'+data['title']+'</p>';
-			if(data['content']==''){
-				html+='<p style="font-size:12px;">{:lang("no_relevant_content")}</p>';
-			}else{
-				html+='<p style="font-size:12px;" id="content_html"></p>';
-			}
-			$('#good_list').html(html);
-			$('#content_html').html(data['content']);
-			hiddenLoadMaskLayer();
-		}
-	});
-} 
-
-//滑动到底部加载
-$(window).scroll(function(){
-	var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
-	var content_box_height = parseFloat($("#article_list").height()); 
-	if(totalheight - content_box_height >= 40){
-		if(is_load){
-			var page = parseInt($("#page").val()) + 1;//页数
-			var total_page_count = $("#page_count").val(); // 总页数
-			var class_id = $("#class_id").val();
-			if(page > total_page_count){
-				return false;
-			}else{
-				getArticleList(class_id,"no",page);
-			}
-		}
-		
-	}
-})
 </script>

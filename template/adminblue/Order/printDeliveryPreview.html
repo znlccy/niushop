@@ -5,6 +5,7 @@
 <title>打印预览</title>
 <link rel="stylesheet" type="text/css" href="ADMIN_CSS/common.css">
 <link rel="stylesheet" type="text/css" href="ADMIN_CSS/logistics.css">
+<link rel="shortcut  icon" type="image/x-icon" href="ADMIN_IMG/admin_icon.ico" media="screen"/>
 <style type="text/css">
 *{margin: 0;padding: 0;}
 .handlerA{width: 200px;height: 25px;line-height: 25px;overflow: hidden;color: #fff;background: #aaa;border: 1px solid #aaa;text-align: center;}
@@ -35,6 +36,9 @@ body{margin:0;padding:0;}
     	    <li>订单时间：{$orderdata.create_time | getTimeStampTurnTime}</li>
     	    <li>收件人：{$orderdata.receiver_name}</li>
     	    <li>收件电话：{$orderdata.receiver_mobile}</li>
+            {notempty name="$orderdata['fixed_telephone']"}
+            <li>固定电话：{$orderdata['fixed_telephone']}</li>
+            {/notempty}
     	</ul>
     	<ul class="rowcol1" style=" margin-left: -40px;">
     		<li>收货地址：{$orderdata.address}</li>

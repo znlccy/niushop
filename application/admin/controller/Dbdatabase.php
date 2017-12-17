@@ -34,7 +34,7 @@ class Dbdatabase extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->backup_path = Config::get('database_back.db_path');
+        $this->backup_path = DB_PATH;
     }
 
     /**

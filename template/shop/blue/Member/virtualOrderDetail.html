@@ -1,0 +1,271 @@
+{extend name="shop/blue/base" /}
+{block name="resources"}
+<link href="__TEMP__/{$style}/public/css/order/ns_order_detail.css" rel="stylesheet">
+<style>
+.goods-items td{padding:2px 5px;}
+.virtual-goods-list{width:500px;text-align: center;position: fixed;z-index: 99999;top:50%;left:50%;background: #ffffff;margin-left:-250px;border-radius:5px;display:none;}
+.virtual-goods-list table{width:100%;text-align: center;}
+.virtual-goods-list th{padding:10px;border-bottom:1px solid #e5e5e5;}
+.virtual-goods-list td{padding:10px;border-bottom:1px solid #e5e5e5;}
+.virtual-goods-list tr:last-child td{border:0;}
+.virtual-goods-list .items{max-height:400px;overflow-y: auto;}
+.virtual-goods-close{content:'x';display:block;position: absolute;right:10px;top:5px;font-size:18px;cursor:pointer;}
+.mask-layer-virtual-goods{position: fixed;background: rgba(0,0,0,0.7);width: 100%;height: 100%;top: 0;z-index: 99999;left: 0;display:none;}
+.tab_right{min-height: 201px;border-left: 0;}
+</style>
+{/block}
+{block name="main"}
+<div class="margin-w1210">
+	{include file='shop/blue/Member/controlLeftMenu'/}
+	<div class="member-main">
+		<div class="box">
+			<div class="tabmenu">
+				<ul class="tab">
+					<li class="active">{:lang('member_order_details')}</li>
+				</ul>
+			</div>
+			<div style="float:left;width:50%;display: inline-block;">
+				<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee" class="order_detail">
+					<tr>
+						<td width="20%" align="right" bgcolor="#ffffff">{:lang('member_order_number')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order.order_no}</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_order_status')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order.status_name}</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_payment_method')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order.payment_type_name}</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_payment_status')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order.pay_status_name}</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_phone_number')}：</td>
+						<td align="left" bgcolor="#ffffff">{$order['receiver_mobile']}</td>
+					</tr>
+				
+					{if condition="!empty($order['buyer_invoice_info'])"}
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_invoice_header')}：</td>
+						<td align="left" bgcolor="#ffffff">
+							{if condition="!empty($order['buyer_invoice_info'][0])"}
+							{$order['buyer_invoice_info'][0]}
+							{/if}
+						</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff" style="width: 22%;">{:lang('member_taxpayer_identification_number')}：</td>
+						<td align="left" bgcolor="#ffffff">
+							{if condition="!empty($order['buyer_invoice_info'][2])"}
+							{$order['buyer_invoice_info'][2]}
+							{else/}
+							-
+							{/if}
+						</td>
+					</tr>
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_invoice_content')}：</td>
+						<td align="left" bgcolor="#ffffff">
+							{if condition="!empty($order['buyer_invoice_info'][1])"}
+							{$order['buyer_invoice_info'][1]}
+							{/if}
+						</td>
+					</tr>
+					{/if}
+					{if condition="$order['buyer_message'] != ''"}
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_buyer_message')}：</td>
+						<td>{$order['buyer_message']}</td>
+					</tr>
+					{else/}
+					<tr>
+						<td align="right" bgcolor="#ffffff">{:lang('member_buyer_message')}：</td>
+						<td>{:lang('member_no_messages')}</td>
+					</tr>
+					{/if}
+					
+				</table>
+			</div>
+		
+			{if condition="$order.order_status eq 0"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+					<dd>{:lang('member_order_status')}： {:lang('member_submitted_and_payment')}</dd>
+				</dl>
+				<ul>
+					<li>1. {:lang('member_no_pay_yet')}。</li>
+					<li>2. {:lang('member_cancel_the_order')}。</li>
+					<li>3. {:lang('member_created_order')} {if condition="$order_buy_close_time eq '' || $order_buy_close_time eq 0 "}60{else /}{$order_buy_close_time}{/if}{:lang('member_automatically_closes')}。</li>
+				</ul>
+			</div>
+			{/if}
+			
+			{if condition="$order.order_status eq 4"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+				<dd>{:lang('member_order_status')}： {:lang('member_completed')}</dd>
+				</dl>
+				<ul></ul>
+			</div>
+			{/if}
+			
+			{if condition="$order.order_status eq 5"}
+			<div class="tab_right">
+				<dl>
+					<span><img src="__TEMP__/{$style}/public/images/order.jpg" style="width: 30px;height: 30px;margin-left: 30px;margin-right: 10px;"/></span>
+					<dd>{:lang('member_order_status')}： {:lang('member_closed')}</dd>
+				</dl>
+				<ul></ul>
+			</div>
+			{/if}
+			<br/>
+			{if condition="count($order['order_goods_no_delive']) >0"}
+			<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee" ></table>
+			<div class="blank"></div>
+			<div class="tabmenu">
+				<ul class="tab pngFix">
+					<li class="first active">{:lang('member_list_of_goods')}</li>
+				</ul>
+			</div>
+			<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee" class="goods-items">
+				<tr>
+					<th width="30%" align="center" bgcolor="#ffffff">{:lang('member_commodity_name')}</th>
+					<th width="20%" align="center" bgcolor="#ffffff">{:lang('member_attribute')}</th>
+					<th width="15%" align="center" bgcolor="#ffffff">{:lang('member_commodity_price')}</th>
+					<th width="10%" align="center" bgcolor="#ffffff">{:lang('member_quantity_purchased')}</th>
+					<th width="15%" align="center" bgcolor="#ffffff">{:lang('goods_subtotal')}</th>
+					{if condition="$order.order_status eq 4"}
+					<th width="10%" align="center" bgcolor="#ffffff">{:lang('goods_operation')}</th>
+					{/if}
+				</tr>
+				{volist name="order['order_goods_no_delive']" id="goodsData"}
+				<tr>
+					<td bgcolor="#ffffff">
+						<div class="ui-centered-image" style="width: 48px; height: 48px;float: left;margin-right: 10px;">
+							<img src="{:__IMG($goodsData['picture_info']['pic_cover_micro'])}" style="max-width: 48px;max-height: 48px;">
+						</div>
+						<a href="{:__URL('SHOP_MAIN/goods/goodsinfo','goodsid='.$goodsData['goods_id'])}" target="_blank">{$goodsData.goods_name}</a>
+					</td>
+					<td align="center" bgcolor="#ffffff">
+					{if condition = "$goodsData['sku_name'] neq ''"}
+						{$goodsData.sku_name}
+					{/if}
+					</td>
+					<td align="center" bgcolor="#ffffff">￥{$goodsData.price}</td>
+					<td align="center" bgcolor="#ffffff">{$goodsData.num}</td>
+					<td align="center" bgcolor="#ffffff">{$goodsData.goods_money}</td>
+					{if condition="$order.order_status eq 4"}
+					<td align="center" bgcolor="#ffffff"><a href="javascript:selectVirtualCode();" style="color: #0D84D4;">{:lang('view_virtual_code')}</a></td>
+					{/if}
+				</tr>
+				{/volist}
+			</table>
+			{/if}
+			<div class="blank"></div>
+			<div class="tabmenu">
+				<ul class="tab pngFix">
+					<li class="first active">{:lang('member_total_cost')}</li>
+				</ul>
+			</div>
+			<table width="100%" border="0" cellpadding="10" cellspacing="1" bgcolor="#eeeeee">
+				<tr>
+					<td colspan="7" align="right" >
+						<span>{:lang('member_total_commodity_value')}：￥{$order['goods_money']}，</span>
+						
+						{if condition="$order['user_platform_money']>0"}
+						<span>{:lang('member_balance_payment')}：￥{$order['user_platform_money']}，</span>
+						{/if}
+						
+						{if condition="$order['coupon_money']>0"}
+						<span>{:lang('member_coupons')}：￥{$order['coupon_money']}，</span>
+						{/if}
+						
+						{if condition="$order['tax_money']>0"}
+						<span>{:lang('member_invoice_tax')}：￥{$order['tax_money']}，</span>
+						{/if}
+						
+						{if condition="$order['promotion_money']>0"}
+						<span>{:lang('member_full_discount')}：￥{$order['promotion_money']}，</span>
+						{/if}
+						
+						{if condition="$order['point']>0"}
+						<span>{:lang('member_use_integral')}：{$order['point']}，</span>
+						{/if}
+						
+						<span> {:lang('member_actual_payment')}：<b style="color: #f44;">￥{$order['pay_money']}</b></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+{if condition="$order.virtual_goods_list"}
+<div class="mask-layer-virtual-goods"></div>
+<div class="virtual-goods-list">
+	<span class="virtual-goods-close">x</span>
+	<table>
+		<colgroup>
+		{if condition="count($order.virtual_goods_list) >10"}
+			<col width="23%">
+			<col width="30%">
+			<col width="25%">
+		{else/}
+			<col width="25%">
+			<col width="30%">
+			<col width="25%">
+		{/if}
+		</colgroup>
+		<tr>
+			<th colspan='4' align="left" style="font-size:18px;color:#0088cc;">{:lang('virtual_goods')}</th>
+		</tr>
+		<tr>
+			<th>{:lang('virtual_code')}</th>
+			<th>{:lang('virtual_goods_name')}</th>
+			<th>{:lang('expiration_time')}</th>
+		</tr>
+	</table>
+	<div class="items">
+		<table>
+			<colgroup>
+				<col width="20%">
+				<col width="30%">
+				<col width="25%">
+			</colgroup>
+			{foreach name="order.virtual_goods_list" item="vg"}
+			<tr>
+				<td>{$vg.virtual_code}</td>
+				<td>{$vg.virtual_goods_name}</td>
+				<td>{$vg.end_time|getTimeStampTurnTime}</td>
+			</tr>
+			{/foreach}
+		</table>
+	</div>
+</div>
+{/if}
+{/block}
+{block name="RightSideBar"}{/block}
+{block name="javascript"}
+<script>
+$(function(){
+
+	$("li[data-href^='{:__URL('SHOP_MAIN/member/virtualorderlist')}']").addClass('current');
+	$(".js-bread-crumb").attr("href",'{:__URL('SHOP_MAIN/member/virtualorderlist')}');
+	$(".js-bread-crumb").text("{:lang('virtual_orders')}");
+	$(".js-bread-crumb").parent().append('<span class="crumbs-arrow">&gt;</span><a href="{:__URL('SHOP_MAIN/member/virtualorderlist')}">{:lang('member_order_details')}</a>');
+
+	$(".mask-layer-virtual-goods,.virtual-goods-close").click(function(){
+		$(".virtual-goods-list").fadeOut(300);
+		$(".mask-layer-virtual-goods").fadeOut();
+	});
+});
+function selectVirtualCode(){
+	$(".virtual-goods-list").css("margin-top","-" + ($(".virtual-goods-list").outerHeight()/2) + "px").fadeIn();
+	$(".mask-layer-virtual-goods").fadeIn();
+}
+</script>
+{/block}

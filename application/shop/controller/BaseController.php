@@ -21,6 +21,7 @@ use data\service\Config;
 use data\service\GoodsCategory;
 use data\service\Member as Member;
 use data\service\Platform;
+use data\service\Config as WebConfig;
 use data\service\Shop as ShopService;
 use data\service\WebSite as WebSite;
 use think\Controller;
@@ -65,32 +66,10 @@ class BaseController extends Controller
      */
     public function init()
     {
+        $config = new Config();
         $this->user = new Member();
         $this->web_site = new WebSite();
         $web_info = $this->web_site->getWebSiteInfo();
-        
-        // 弹出框标题
-        if (empty($web_info['web_popup_title'])) {
-            $this->assign("web_popup_title", "Niushop开源商城");
-        } else {
-            $this->assign("web_popup_title", $web_info['web_popup_title']);
-        }
-        
-        if ($web_info['web_status'] == 3 && $web_info['wap_status'] == 1) {
-            Cookie::delete("default_client");
-            $this->redirect(__URL(\think\Config::get('view_replace_str.APP_MAIN')));
-        } elseif ($web_info['web_status'] == 2) {
-            Cookie::delete("default_client");
-            // 首页特殊处理
-            $controller = \think\Request::instance()->controller();
-            $action = \think\Request::instance()->action();
-            if ($controller != 'Index' || $action != 'index') {
-                webClose($web_info['close_reason']);
-            }
-        } elseif (($web_info['web_status'] == 3 && $web_info['wap_status'] == 3) || ($web_info['web_status'] == 3 && $web_info['wap_status'] == 2)) {
-            Cookie::delete("default_client");
-            webClose($web_info['close_reason']);
-        }
         
         $this->uid = $this->user->getSessionUid();
         $this->instance_id = $this->user->getSessionInstanceId();
@@ -99,36 +78,47 @@ class BaseController extends Controller
         $this->assign("title", $web_info['title']);
         $this->assign("web_info", $web_info);
         $this->assign("title_before", '');
-        $config = new Config();
-        // 获取当前使用的PC端模板
-        $use_pc_template = $config->getUsePCTemplate($this->instance_id);
-        if (empty($use_pc_template)) {
-            $use_pc_template['value'] = 'blue';
-        }
-        if (! checkTemplateIsExists("shop", $use_pc_template['value'])) {
-            $this->error("模板配置有误，请联系商城管理员");
-        }
-        $this->style = "shop/" . $use_pc_template['value'] . "/";
-        $this->assign("style", "shop/" . $use_pc_template['value']);
-        $this->getDropDownMenu();
         
         if (! request()->isAjax()) {
-            $Config = new Config();
-            $seoconfig = $Config->getSeoConfig($this->instance_id);
+            
+            // 弹出框标题
+            if (empty($web_info['web_popup_title'])) {
+                $this->assign("web_popup_title", "Niushop开源商城");
+            } else {
+                $this->assign("web_popup_title", $web_info['web_popup_title']);
+            }
+            
+            if ($web_info['web_status'] == 3 && $web_info['wap_status'] == 1) {
+                Cookie::delete("default_client");
+                $this->redirect(__URL(\think\Config::get('view_replace_str.APP_MAIN')));
+            } elseif ($web_info['web_status'] == 2) {
+                Cookie::delete("default_client");
+                // 首页特殊处理
+                $controller = \think\Request::instance()->controller();
+                $action = \think\Request::instance()->action();
+                if ($controller != 'Index' || $action != 'index') {
+                    webClose($web_info['close_reason']);
+                }
+            } elseif (($web_info['web_status'] == 3 && $web_info['wap_status'] == 3) || ($web_info['web_status'] == 3 && $web_info['wap_status'] == 2)) {
+                Cookie::delete("default_client");
+                webClose($web_info['close_reason']);
+            }
+            
+            $seoconfig = $config->getSeoConfig($this->instance_id);
             $this->assign("seoconfig", $seoconfig);
             
-            $custom_service = $Config->getcustomserviceConfig($this->instance_id);
+            $custom_service = $config->getcustomserviceConfig($this->instance_id);
             if (empty($custom_service)) {
                 $custom_service['id'] = '';
                 $custom_service['value']['service_addr'] = '';
             }
             $this->assign("custom_service", $custom_service);
             // 是否开启验证码
-            $this->login_verify_code = $Config->getLoginVerifyCodeConfig($this->instance_id);
+            $this->login_verify_code = $config->getLoginVerifyCodeConfig($this->instance_id);
             $this->assign("login_verify_code", $this->login_verify_code["value"]);
             
-            $qq_info = $Config->getQQConfig($this->instance_id);
-            $Wchat_info = $Config->getWchatConfig($this->instance_id);
+            $qq_info = $config->getQQConfig($this->instance_id);
+            $Wchat_info = $config->getWchatConfig($this->instance_id);
             $this->assign("qq_info", $qq_info);
             $this->assign("Wchat_info", $Wchat_info);
             $keyword = request()->get('keyword', '');
@@ -155,6 +145,17 @@ class BaseController extends Controller
             
             $this->assign('is_head_goods_nav', 0); // 商品分类是否显示样式
         }
+        // 获取当前使用的PC端模板
+        $use_pc_template = $config->getUsePCTemplate($this->instance_id);
+        if (empty($use_pc_template)) {
+            $use_pc_template['value'] = 'blue';
+        }
+        if (! checkTemplateIsExists("shop", $use_pc_template['value'])) {
+            $this->error("模板配置有误，请联系商城管理员");
+        }
+        $this->style = "shop/" . $use_pc_template['value'] . "/";
+        $this->assign("style", "shop/" . $use_pc_template['value']);
+        $this->getDropDownMenu();
     }
 
     public function _empty($name)
@@ -229,5 +230,15 @@ class BaseController extends Controller
     {
         $drop_down_menu = array();
         $this->assign("drop_down_menu", $drop_down_menu);
+    }
+
+    /**
+     * 是否开启虚拟商品功能，0：禁用，1：开启
+     */
+    public function getIsOpenVirtualGoodsConfig()
+    {
+        $config = new WebConfig();
+        $res = $config->getIsOpenVirtualGoodsConfig($this->instance_id);
+        return $res;
     }
 }

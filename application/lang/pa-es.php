@@ -97,6 +97,7 @@ return [
      'no_article'                     => 'No artículo',
      'home_page'                      => 'Inicio',
      'article_center'                 => 'Centro de Artículo',
+     'article_list'                   => 'Article List',
     //index
      'friendship_link'                => 'Links',
      'welcome_login'                  => 'Bienvenidos',
@@ -1046,7 +1047,19 @@ return [
     'cash_register'                                                       => '提现记录',
     'refunded'                                                            => '已退款',
     'my_collection'                                                       => 'my collection',
-    'no_notice'                                                           => '暂无公告'
+    'no_notice'                                                           => '暂无公告',
+    'view_details'                                                        => 'Para ver los',
+    'virtual_orders'                                                       => 'Ordens virtual',
+    'view_virtual_code'                                                   => 'Ver códigos virtual',
+    'virtual_goods'                                                       => 'Bienes virtuales',
+    'virtual_code'                                                        => 'Códigos virtual',
+    'virtual_goods_name'                                                  => 'Nombres de bienes virtuales',
+    'expiration_time'                                                     => 'Fecha de vencimiento',
+    'order_user_phone_tip'                                                => 'Por favor, facilitar su teléfono celular rellenar correctamente vendedores en contacto con usted',
+    'regular_orders'                                                      => 'Normal orden',
+    'order_user_phone_instruction'                                        => 'Usted la compra de bienes virtuales en esta dirección, no necesita de recepción, por favor, rellene el número de teléfonos vendidos convenientemente en contacto con usted',
+    'virtual_goods_orders_are_consumed_by_virtual_code'                   => 'Por órdenes de bienes virtuales consumo. Códigos virtual',
+    'contact_information'                                                 => 'Contactar con'
     
    
 ];

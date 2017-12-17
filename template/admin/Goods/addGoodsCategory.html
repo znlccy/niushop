@@ -139,6 +139,7 @@
 	/**
 	*添加分类
 	*/
+	var flag = false;
 	function addGoodsCategoryAjax() {
 		var category_name = $("#category_name").val();
 		var short_name = $("#short_name").val();
@@ -159,6 +160,8 @@
 			var attr_name = '';
 		}
 		if(verify(category_name,short_name, keywords, sort, description)){
+			if(flag) return;
+			flag = true;
 			$.ajax({
 				type : "post",
 				url : "{:__URL('ADMIN_MAIN/goods/addgoodscategory')}",
@@ -179,6 +182,7 @@
 						showMessage('success', "商品分类添加成功","{:__URL('ADMIN_MAIN/goods/goodscategorylist')}");
 					}else{
 						showMessage('error',"商品分类添加失败");
+						flag = false;
 					}
 				}
 			});

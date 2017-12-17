@@ -16,7 +16,6 @@
 <link rel="stylesheet" type="text/css" href="__TEMP__/{$style}/public/css/ns_shop_login_common.css" />
 <link type="text/css" rel="stylesheet" href="__TEMP__/{$style}/public/css/passport.css" />
 <link rel="stylesheet" href="__TEMP__/{$style}/public/css/layer.css" id="layuicss-skinlayercss">
-<script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery_email.js"></script>
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/jquery.validate.js"></script>
 <script type="text/javascript" src="__TEMP__/{$style}/public/js/messages_zh222.js"></script>
@@ -87,6 +86,10 @@ function erweima1(obj, sType) { var oDiv = document.getElementById(obj); if (sTy
     font-size: 12px;
     color: #999;
 }
+#web_gov_record a span{
+    position: relative;
+    top:-5px;
+}
 </style>
 
 {/block}
@@ -104,6 +107,9 @@ function erweima1(obj, sType) { var oDiv = document.getElementById(obj); if (sTy
 					<br><a href="http://www.niushop.com.cn" target="_blank" style="text-decoration: none;color:#666;" id="copyright_companyname"></a>
 						<label id="copyright_meta"></label>
 					</p>
+                    <p style="display: none;" id="web_gov_record">
+                        <a href="javascript:;" target="_blank"><img src="__STATIC__/images/gov_record.png" alt="" style="width: 20px;height: 20px;"><span style="height: 20px;line-height: 20px;display: inline-block;margin-left: 5px;font-size: 12px;"></span></a>
+                    </p>
 				</div>
 			</div>
 		</div>	

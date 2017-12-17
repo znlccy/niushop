@@ -45,6 +45,7 @@ use data\service\promotion\GoodsPreference;
 use data\service\UnifyPay;
 use data\service\WebSite;
 use think\Log;
+use data\service\VirtualGoods;
 
 /**
  * 订单操作类
@@ -92,7 +93,7 @@ class Order extends BaseService
      * @param unknown $goods_sku_list            
      * @return number|Exception
      */
-    public function orderCreate($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $coin)
+    public function orderCreate($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $receiver_mobile, $receiver_province, $receiver_city, $receiver_district, $receiver_address, $receiver_zip, $receiver_name, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $coin, $fixed_telephone = "")
     {
         $this->order->startTrans();
         
@@ -314,7 +315,8 @@ class Order extends BaseService
                 'coin_money' => $coin,
                 'create_time' => time(),
                 "give_point_type" => $give_point_type,
-                'shipping_company_id' => $shipping_company_id
+                'shipping_company_id' => $shipping_company_id,
+                'fixed_telephone' => $fixed_telephone //固定电话
             ); // datetime NOT NULL DEFAULT 'CURRENT_TIMESTAMP' COMMENT '订单创建时间',
             if ($pay_status == 2) {
                 $data_order["pay_time"] = time();
@@ -469,6 +471,280 @@ class Order extends BaseService
     }
 
     /**
+     * 订单创建（虚拟商品）
+     */
+    public function orderCreateVirtual($order_type, $out_trade_no, $pay_type, $shipping_type, $order_from, $buyer_ip, $buyer_message, $buyer_invoice, $shipping_time, $point, $coupon_id, $user_money, $goods_sku_list, $platform_money, $pick_up_id, $shipping_company_id, $user_telephone, $coin)
+    {
+        $this->order->startTrans();
+        
+        try {
+            // 设定不使用会员余额支付
+            $user_money = 0;
+            // 查询商品对应的店铺ID
+            $order_goods_preference = new GoodsPreference();
+            $shop_id = $order_goods_preference->getGoodsSkuListShop($goods_sku_list);
+            // 单店版查询网站内容
+            $web_site = new WebSite();
+            $web_info = $web_site->getWebSiteInfo();
+            $shop_name = $web_info['title'];
+            // 获取优惠券金额
+            $coupon = new MemberCoupon();
+            $coupon_money = $coupon->getCouponMoney($coupon_id);
+            
+            // 获取购买人信息
+            $buyer = new UserModel();
+            $buyer_info = $buyer->getInfo([
+                'uid' => $this->uid
+            ], 'nick_name');
+            // 订单商品费用
+            
+            $goods_money = $order_goods_preference->getGoodsSkuListPrice($goods_sku_list);
+            $point = $order_goods_preference->getGoodsListExchangePoint($goods_sku_list);
+            
+            // 积分兑换抵用金额
+            $account_flow = new MemberAccount();
+            $point_money = 0;
+            // 订单来源
+            if (isWeixin()) {
+                $order_from = 1; // 微信
+            } elseif (request()->isMobile()) {
+                $order_from = 2; // 手机
+            } else {
+                $order_from = 3; // 电脑
+            }
+            // 订单待支付
+            $order_status = 0;
+            // 购买商品获取积分数
+            $give_point = $order_goods_preference->getGoodsSkuListGivePoint($goods_sku_list);
+            // 订单满减送活动优惠
+            $goods_mansong = new GoodsMansong();
+            $mansong_array = $goods_mansong->getGoodsSkuListMansong($goods_sku_list);
+            $promotion_money = 0;
+            $mansong_rule_array = array();
+            $mansong_discount_array = array();
+            if (! empty($mansong_array)) {
+                foreach ($mansong_array as $k_mansong => $v_mansong) {
+                    foreach ($v_mansong['discount_detail'] as $k_rule => $v_rule) {
+                        $rule = $v_rule[1];
+                        $discount_money_detail = explode(':', $rule);
+                        $mansong_discount_array[] = array(
+                            $discount_money_detail[0],
+                            $discount_money_detail[1],
+                            $v_rule[0]['rule_id']
+                        );
+                        $promotion_money += $discount_money_detail[1]; // round($discount_money_detail[1],2);
+                        $mansong_rule_array[] = $v_rule[0];
+                    }
+                }
+                $promotion_money = round($promotion_money, 2);
+            }
+            
+            // 订单费用(具体计算)
+            $order_money = $goods_money - $promotion_money - $coupon_money - $point_money;
+            
+            if ($order_money < 0) {
+                $order_money = 0;
+                $user_money = 0;
+                $platform_money = 0;
+            }
+            
+            if (! empty($buyer_invoice)) {
+                // 添加税费
+                $config = new Config();
+                $tax_value = $config->getConfig(0, 'ORDER_INVOICE_TAX');
+                if (empty($tax_value['value'])) {
+                    $tax = 0;
+                } else {
+                    $tax = $tax_value['value'];
+                }
+                $tax_money = $order_money * $tax / 100;
+            } else {
+                $tax_money = 0;
+            }
+            $order_money = $order_money + $tax_money;
+            
+            if ($order_money < $platform_money) {
+                $platform_money = $order_money;
+            }
+            
+            $pay_money = $order_money - $user_money - $platform_money;
+            if ($pay_money <= 0) {
+                $pay_money = 0;
+                $order_status = 0;
+                $pay_status = 0;
+            } else {
+                $order_status = 0;
+                $pay_status = 0;
+            }
+            
+            // 积分返还类型
+            $config = new ConfigModel();
+            $config_info = $config->getInfo([
+                "instance_id" => $shop_id,
+                "key" => "SHOPPING_BACK_POINTS"
+            ], "value");
+            $give_point_type = $config_info["value"];
+            
+            $data_order = array(
+                'order_type' => $order_type,
+                'order_no' => $this->createOrderNo($shop_id),
+                'out_trade_no' => $out_trade_no,
+                'payment_type' => $pay_type,
+                'shipping_type' => $shipping_type,
+                'order_from' => $order_from,
+                'buyer_id' => $this->uid,
+                'user_name' => $buyer_info['nick_name'],
+                'buyer_ip' => $buyer_ip,
+                'buyer_message' => $buyer_message,
+                'buyer_invoice' => $buyer_invoice,
+                'shipping_time' => getTimeTurnTimeStamp($shipping_time), // datetime NOT NULL COMMENT '买家要求配送时间',
+                'receiver_mobile' => $user_telephone, // varchar(11) NOT NULL DEFAULT '' COMMENT '收货人的手机号码',
+                'receiver_province' => '', // int(11) NOT NULL COMMENT '收货人所在省',
+                'receiver_city' => '', // int(11) NOT NULL COMMENT '收货人所在城市',
+                'receiver_district' => '', // int(11) NOT NULL COMMENT '收货人所在街道',
+                'receiver_address' => '', // varchar(255) NOT NULL DEFAULT '' COMMENT '收货人详细地址',
+                'receiver_zip' => '', // varchar(6) NOT NULL DEFAULT '' COMMENT '收货人邮编',
+                'receiver_name' => '', // varchar(50) NOT NULL DEFAULT '' COMMENT '收货人姓名',
+                'shop_id' => $shop_id, // int(11) NOT NULL COMMENT '卖家店铺id',
+                'shop_name' => $shop_name, // varchar(100) NOT NULL DEFAULT '' COMMENT '卖家店铺名称',
+                'goods_money' => $goods_money, // decimal(19, 2) NOT NULL COMMENT '商品总价',
+                'tax_money' => $tax_money, // 税费
+                'order_money' => $order_money, // decimal(10, 2) NOT NULL COMMENT '订单总价',
+                'point' => $point, // int(11) NOT NULL COMMENT '订单消耗积分',
+                'point_money' => $point_money, // decimal(10, 2) NOT NULL COMMENT '订单消耗积分抵多少钱',
+                'coupon_money' => $coupon_money, // _money decimal(10, 2) NOT NULL COMMENT '订单代金券支付金额',
+                'coupon_id' => $coupon_id, // int(11) NOT NULL COMMENT '订单代金券id',
+                'user_money' => $user_money, // decimal(10, 2) NOT NULL COMMENT '订单预存款支付金额',
+                'promotion_money' => $promotion_money, // decimal(10, 2) NOT NULL COMMENT '订单优惠活动金额',
+                'shipping_money' => 0, // decimal(10, 2) NOT NULL COMMENT '订单运费',
+                'pay_money' => $pay_money, // decimal(10, 2) NOT NULL COMMENT '订单实付金额',
+                'refund_money' => 0, // decimal(10, 2) NOT NULL COMMENT '订单退款金额',
+                'give_point' => $give_point, // int(11) NOT NULL COMMENT '订单赠送积分',
+                'order_status' => $order_status, // tinyint(4) NOT NULL COMMENT '订单状态',
+                'pay_status' => $pay_status, // tinyint(4) NOT NULL COMMENT '订单付款状态',
+                'shipping_status' => 0, // tinyint(4) NOT NULL COMMENT '订单配送状态',
+                'review_status' => 0, // tinyint(4) NOT NULL COMMENT '订单评价状态',
+                'feedback_status' => 0, // tinyint(4) NOT NULL COMMENT '订单维权状态',
+                'user_platform_money' => $platform_money, // 平台余额支付
+                'coin_money' => $coin,
+                'create_time' => time(),
+                "give_point_type" => $give_point_type,
+                'shipping_company_id' => $shipping_company_id,
+                'fixed_telephone' => "" //固定电话
+            ); // datetime NOT NULL DEFAULT 'CURRENT_TIMESTAMP' COMMENT '订单创建时间',
+            if ($pay_status == 2) {
+                $data_order["pay_time"] = time();
+            }
+            $order = new NsOrderModel();
+            $order->save($data_order);
+            $order_id = $order->order_id;
+            $pay = new UnifyPay();
+            $pay->createPayment($shop_id, $out_trade_no, $shop_name . "虚拟订单", $shop_name . "虚拟订单", $pay_money, 1, $order_id);
+            // 满减送详情，添加满减送活动优惠情况
+            if (! empty($mansong_rule_array)) {
+                
+                $mansong_rule_array = array_unique($mansong_rule_array);
+                foreach ($mansong_rule_array as $k_mansong_rule => $v_mansong_rule) {
+                    $order_promotion_details = new NsOrderPromotionDetailsModel();
+                    $data_promotion_details = array(
+                        'order_id' => $order_id,
+                        'promotion_id' => $v_mansong_rule['rule_id'],
+                        'promotion_type_id' => 1,
+                        'promotion_type' => 'MANJIAN',
+                        'promotion_name' => '满减送活动',
+                        'promotion_condition' => '满' . $v_mansong_rule['price'] . '元，减' . $v_mansong_rule['discount'],
+                        'discount_money' => $v_mansong_rule['discount'],
+                        'used_time' => time()
+                    );
+                    $order_promotion_details->save($data_promotion_details);
+                }
+                // 添加到对应商品项优惠满减
+                if (! empty($mansong_discount_array)) {
+                    foreach ($mansong_discount_array as $k => $v) {
+                        $order_goods_promotion_details = new NsOrderGoodsPromotionDetailsModel();
+                        $data_details = array(
+                            'order_id' => $order_id,
+                            'promotion_id' => $v[2],
+                            'sku_id' => $v[0],
+                            'promotion_type' => 'MANJIAN',
+                            'discount_money' => $v[1],
+                            'used_time' => time()
+                        );
+                        $order_goods_promotion_details->save($data_details);
+                    }
+                }
+            }
+            // 添加到对应商品项优惠优惠券使用详情
+            if ($coupon_id > 0) {
+                $coupon_details_array = $order_goods_preference->getGoodsCouponPromoteDetail($coupon_id, $coupon_money, $goods_sku_list);
+                foreach ($coupon_details_array as $k => $v) {
+                    $order_goods_promotion_details = new NsOrderGoodsPromotionDetailsModel();
+                    $data_details = array(
+                        'order_id' => $order_id,
+                        'promotion_id' => $coupon_id,
+                        'sku_id' => $v['sku_id'],
+                        'promotion_type' => 'COUPON',
+                        'discount_money' => $v['money'],
+                        'used_time' => time()
+                    );
+                    $order_goods_promotion_details->save($data_details);
+                }
+            }
+            // 使用积分
+            if ($point > 0) {
+                $retval_point = $account_flow->addMemberAccountData($shop_id, 1, $this->uid, 0, $point * (- 1), 1, $order_id, '商城虚拟订单');
+                if ($retval_point < 0) {
+                    $this->order->rollback();
+                    return ORDER_CREATE_LOW_POINT;
+                }
+            }
+            if ($coin > 0) {
+                $retval_point = $account_flow->addMemberAccountData($shop_id, 3, $this->uid, 0, $coin * (- 1), 1, $order_id, '商城虚拟订单');
+                if ($retval_point < 0) {
+                    $this->order->rollback();
+                    return LOW_COIN;
+                }
+            }
+            if ($user_money > 0) {
+                $retval_user_money = $account_flow->addMemberAccountData($shop_id, 2, $this->uid, 0, $user_money * (- 1), 1, $order_id, '商城虚拟订单');
+                if ($retval_user_money < 0) {
+                    $this->order->rollback();
+                    return ORDER_CREATE_LOW_USER_MONEY;
+                }
+            }
+            if ($platform_money > 0) {
+                $retval_platform_money = $account_flow->addMemberAccountData(0, 2, $this->uid, 0, $platform_money * (- 1), 1, $order_id, '商城虚拟订单');
+                if ($retval_platform_money < 0) {
+                    $this->order->rollback();
+                    return ORDER_CREATE_LOW_PLATFORM_MONEY;
+                }
+            }
+            // 使用优惠券
+            if ($coupon_id > 0) {
+                $retval = $coupon->useCoupon($this->uid, $coupon_id, $order_id);
+                if (! ($retval > 0)) {
+                    $this->order->rollback();
+                    return $retval;
+                }
+            }
+            // 添加订单项
+            $order_goods = new OrderGoods();
+            $res_order_goods = $order_goods->addOrderGoods($order_id, $goods_sku_list);
+            if (! ($res_order_goods > 0)) {
+                $this->order->rollback();
+                return $res_order_goods;
+            }
+            $this->addOrderAction($order_id, $this->uid, '创建虚拟订单');
+            
+            $this->order->commit();
+            return $order_id;
+        } catch (\Exception $e) {
+            $this->order->rollback();
+            return $e->getMessage();
+        }
+    }
+
+    /**
      * 订单支付
      *
      * @param unknown $order_pay_no            
@@ -491,22 +767,23 @@ class Order extends BaseService
             $order_id_array = $this->order->where([
                 'out_trade_no' => $order_pay_no
             ])->column('order_id');
+            
+            $account = new MemberAccount();
             foreach ($order_id_array as $k => $order_id) {
                 // 赠送赠品
-                $uid = $this->order->getInfo([
+                $order_info = $this->order->getInfo([
                     'order_id' => $order_id
-                ], 'buyer_id,pay_money');
+                ], 'buyer_id,pay_money,order_type,order_no');
                 if ($pay_type == 10) {
                     // 线下支付
                     $this->addOrderAction($order_id, $this->uid, '线下支付');
                 } else {
                     // 查询订单购买人ID
                     
-                    $this->addOrderAction($order_id, $uid['buyer_id'], '订单支付');
+                    $this->addOrderAction($order_id, $order_info['buyer_id'], '订单支付');
                 }
                 // 增加会员累计消费
-                $account = new MemberAccount();
-                $account->addMmemberConsum(0, $uid['buyer_id'], $uid['pay_money']);
+                $account->addMmemberConsum(0, $order_info['buyer_id'], $order_info['pay_money']);
                 // 修改订单状态
                 $data = array(
                     'payment_type' => $pay_type,
@@ -519,13 +796,24 @@ class Order extends BaseService
                 $order->save($data, [
                     'order_id' => $order_id
                 ]);
-                if ($status == 1) {
+                if ($order_info['order_type'] == 2) {
+                    // 虚拟商品，订单自动完成
+                    $this->virtualOrderOperation($order_id, user_name, $order_info['order_no']);
                     $res = $this->orderComplete($order_id);
                     if (! ($res > 0)) {
                         $this->order->rollback();
                         return $res;
                     }
-                    // 执行订单交易完成
+                } else {
+                    
+                    if ($status == 1) {
+                        // 执行订单交易完成
+                        $res = $this->orderComplete($order_id);
+                        if (! ($res > 0)) {
+                            $this->order->rollback();
+                            return $res;
+                        }
+                    }
                 }
             }
             $this->order->commit();
@@ -535,6 +823,49 @@ class Order extends BaseService
             Log::write("订单支付出错" . $e->getMessage());
             return $e->getMessage();
         }
+    }
+
+    /**
+     * 虚拟订单，生成虚拟商品
+     * 1、根据订单id查询订单项(虚拟订单项只会有一条数据)
+     * 2、根据购买的商品获取虚拟商品类型信息
+     * 3、根据购买的商品数量添加相应的虚拟商品数量
+     */
+    public function virtualOrderOperation($order_id, $buyer_nickname, $order_no)
+    {
+        $order_goods_model = new NsOrderGoodsModel();
+        // 查询订单项信息
+        $order_goods_items = $order_goods_model->getInfo([
+            'order_id' => $order_id
+        ], 'order_goods_id,goods_id,goods_name,buyer_id,num');
+        $res = 0;
+        if (! empty($order_goods_items)) {
+            $virtual_goods = new VirtualGoods();
+            $goods_model = new NsGoodsModel();
+            // 根据goods_id查询虚拟商品类型
+            $virtual_goods_type_id = $goods_model->getInfo([
+                'goods_id' => $order_goods_items['goods_id']
+            ], 'virtual_goods_type_id');
+            if (! empty($virtual_goods_type_id)) {
+                
+                // 生成虚拟商品
+                for ($i = 0; $i < $order_goods_items['num']; $i ++) {
+                    $virtual_goods_type_info = $virtual_goods->getVirtualGoodsTypeById($virtual_goods_type_id['virtual_goods_type_id']);
+                    $virtual_goods_name = $virtual_goods_type_info['virtual_goods_type_name']; // 虚拟商品名称
+                    $money = $virtual_goods_type_info['money']; // 虚拟商品金额
+                    $buyer_id = $order_goods_items['buyer_id']; // 买家id
+                    $order_goods_id = $order_goods_items['order_goods_id']; // 关联订单项id
+                    $validity_period = $virtual_goods_type_info['validity_period']; // 有效期/天(0表示不限制)
+                    $start_time = time();
+                    $end_time = strtotime("+$validity_period days");
+                    $use_number = 0; // 使用次数，刚添加的默认0
+                    $confine_use_number = $virtual_goods_type_info['confine_use_number'];
+                    $use_status = 0; // (-1:已失效,0:未使用,1:已使用)
+                    $res = $virtual_goods->addVirtualGoods($this->instance_id, $virtual_goods_name, $money, $buyer_id, $buyer_nickname, $order_goods_id, $order_no, $validity_period, $start_time, $end_time, $use_number, $confine_use_number, $use_status);
+                }
+            }
+        }
+        return $res;
     }
 
     /**
@@ -614,7 +945,7 @@ class Order extends BaseService
      */
     public function createOrderNo($shop_id)
     {
-        $time_str = date('Ymd');
+        $time_str = date('YmdHs');
         $order_model = new NsOrderModel();
         $order_obj = $order_model->getFirstData([
             "shop_id" => $shop_id
@@ -625,8 +956,8 @@ class Order extends BaseService
             if (empty($order_no_max)) {
                 $num = 1;
             } else {
-                if (substr($time_str, 0, 8) == substr($order_no_max, 0, 8)) {
-                    $max_no = substr($order_no_max, 8, 7);
+                if (substr($time_str, 0, 12) == substr($order_no_max, 0, 12)) {
+                    $max_no = substr($order_no_max, 12, 4);
                     $num = $max_no * 1 + 1;
                 } else {
                     $num = 1;
@@ -635,7 +966,11 @@ class Order extends BaseService
         } else {
             $num = 1;
         }
-        $order_no = $time_str . sprintf("%07d", $num);
+        $order_no = $time_str . sprintf("%04d", $num);
+        $count = $order_model->getCount(['order_no'=>$order_no]);
+        if($count>0){
+            return $this->createOrderNo($shop_id);
+        }
         return $order_no;
     }
 

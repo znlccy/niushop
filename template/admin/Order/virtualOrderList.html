@@ -1,0 +1,343 @@
+{extend name="admin/base" /} 
+{block name="resources"/}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style>
+.btnstyle{color: #ffffff !important;background: green;display: block;margin: 0 auto;margin-bottom: 10px;}
+.modal {width: 1070px;top:50px;}
+.modal-backdrop{background-color: #000000;}
+.btn_offline_pay{background: #FF8400;}
+.product-img{float:left;}
+.product-infor{float:left;margin-left: 10px;width:60%;}
+.style0list table{border:1px solid #E3E3E3;}
+.style0list  tbody td {border-right: 1px solid #E3E3E3;vertical-align: middle;}
+.title-tr td input[type="checkbox"]{margin:0 0 0 7px;}
+.title-tr td span{margin-left:10px;}
+.edit_button{display: inline-block;}
+.fun-a{padding: 3px 10px;border-radius: 0px;}
+.fa-flag{cursor: pointer;}
+#more_search{display: block;}
+#more_search tbody{float: right;}
+.btn-small.fun-a [class^="icon-"]{margin: -6px 0 0 0;}
+.icon-delete{display: inline-block;background: url("__STATIC__/images/icon.png") no-repeat;width: 15px;height: 15px;vertical-align: middle;background-position: -228px 8px;}
+</style>
+{/block}
+{block name="main"}
+<input type="hidden" id="order_id" />
+<input type="hidden" id="print_select_ids" />
+<input type="hidden" id="order_status" value="{$status}">
+<table class="mytable">
+	<tr>
+		<th style="line-height:33px;">
+			下单时间：<input type="text" id="startDate" class="input-medium" placeholder="请选择开始日期" onclick="WdatePicker()" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-medium" onclick="WdatePicker()" />
+			订单编号：<input id="orderNo" class="input-medium" type="text" value="" style="display:inline-block">
+			<input type="button" class="more_search" value="更多搜索" />
+			<input type="button" onclick="searchData()" value="搜索" />
+			<input type="button" onclick="dataExcel()" value="导出数据" />
+		</th>
+	</tr>
+</table>
+<table class="mytable" id="more_search" style="display: none;">
+	<tr>
+		<th>
+			买家联系方式：<input id="receiverMobile" class="input-small" type="text" />
+			支付方式：
+			<select id="payment_type">
+				<option value="">全部</option>
+				<option value="1">微信</option>
+				<option value="2">支付宝</option>
+				<option value="10">线下支付</option>
+			</select>
+		</th>
+	</tr>
+</table>
+<table class="mytable">
+	<tr>
+		<th style="line-height:33px;">
+				<a class="btn btn-small fun-a" id="PrintOrder" href="javascript:;">
+					<i class="icon-printer-gray"></i>
+					<span>打印订单</span>
+				</a>
+			{if condition="$status neq '' && $status neq 0 "}
+				{if condition="$status eq 5 "}
+				<a class="btn btn-small fun-a" href="javascript:batchDelete();">
+					<i class="icon-delete" aria-hidden="true"></i>
+					批量删除
+				</a>
+				{/if}
+			{/if}
+		</th>
+	</tr>
+</table>
+
+<div class="style0list">
+	<table>
+		<colgroup>
+			<col width="5%">
+			<col width="30%">
+			<col width="12%">
+			<col width="10%">
+			<col width="12%">
+			<col width="10%">
+			<col width="10%">
+			<col width="10%">
+		</colgroup>
+		<thead>
+			<tr align="center">
+				<th><label> <input type="checkbox" onclick="CheckAll(this)"></label></th>
+				<th style="text-align: left;">商品信息</th>
+				<th>商品清单</th>
+				<th>买家</th>
+				<th>联系方式</th>
+				<th>订单金额</th>
+				<th>交易状态</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>
+{/block} 
+{block name="script"}
+{include file="admin/Order/virtualOrderAction"/}
+<!-- 订单打印 -->
+{include file="admin/Order/virtualOrderPrintAction"/}
+<script type="text/javascript">
+$(function () {
+	$("[data-toggle='popover']").popover();
+});
+function searchData(){
+	LoadingInfo(1);
+}
+function LoadingInfo(page_index) {
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var order_no = $("#orderNo").val();
+	var receiver_mobile = $("#receiverMobile").val();
+	var order_status = $("#order_status").val();
+	var payment_type = $("#payment_type").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/order/virtualorderlist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"start_date" : start_date,
+			"end_date" : end_date,
+			"order_no" : order_no,
+			"order_status" : order_status,
+			"receiver_mobile" : receiver_mobile,
+			"order_status" : order_status,
+			"payment_type" : payment_type
+		},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					var out_trade_no = data["data"][i]["out_trade_no"];//交易号
+					var order_id = data["data"][i]["order_id"];//订单id
+					var order_no = data["data"][i]["order_no"];//订单编号
+					var create_time = timeStampTurnTime(data["data"][i]["create_time"]);//下单时间
+					var pic_cover_micro = data["data"][i]["order_item_list"][0]["picture"]['pic_cover_micro'];//商品图
+					var goods_id = data["data"][i]["order_item_list"][0]["goods_id"];//商品id
+					var goods_name = data["data"][i]["order_item_list"][0]["goods_name"];
+					var sku_name = data["data"][i]["order_item_list"][0]["sku_name"];//商品sku
+					var price = data["data"][i]["order_item_list"][0]["price"];//商品价格
+					var num = data["data"][i]["order_item_list"][0]["num"];//购买数量
+					var order_money = data["data"][i]["order_money"];//订单金额
+					var shipping_money = data["data"][i]["shipping_money"];//运费
+					var seller_memo = data["data"][i]["seller_memo"];//订单备注
+					var goods_code = data["data"][i]["order_item_list"][0]["code"];//商品编号
+					html +="<tr><td colspan='9' style='border-left: 1px solid transparent;height:10px;padding:0px;border-right: 1px solid transparent;'></td></tr>";
+					
+					html += '<tr class="title-tr">';
+					html += '<td colspan="9"><input id="'+out_trade_no+'" type="checkbox" value="'+order_id+'" name="sub">';
+					html +='<span>订单编号：'+order_no+' 交易号：'+out_trade_no+'</span><span>下单时间：'+create_time+'</span>';
+					if(seller_memo.length == 0){
+						html += '</td></tr>';
+					}else{
+						html += '<span><i class="fa fa-flag" aria-hidden="true" style="color:red;" title="查看备注" onclick="operation(\'seller_memo\','+data["data"][i]["order_id"]+')"></i></span></td></tr>';
+					}
+					html += '<tr><td colspan="2" style="border-right:0;">';
+					html += '<div class="product-img"><img src="'+__IMG(pic_cover_micro)+'"></div>';
+					html += '<div class="product-infor">';
+					html += '<a href="'+__URL('SHOP_MAIN/goods/goodsinfo?goodsid='+goods_id)+'" target="_blank">'+goods_name+'</a>';
+					if(sku_name != null && sku_name != ""){
+						html += '<p class="specification" style="margin-bottom:0px;"><span style="color:#8e8c8c;font-size:12px;">'+sku_name+'</span></p>';
+					}
+					if(goods_code != null && goods_code != ""){
+						html += '<p class="specification"><span style="color:#8e8c8c;font-size:12px;">编码&nbsp;&nbsp;'+goods_code+'</span></p></div>';
+					}
+					html += '</div></td>';
+					
+					html += '<td style="border-right:1px solid #E3E3E3;text-align:center;">';
+					html += '<div class="cell" style="display: inline-block;"><span>'+price+'元</span></div>';
+					html += '<div class="cell">'+num+'件</div>';
+					//调价
+					if(data["data"][i]["order_item_list"][0]['adjust_money'] != 0){
+						var adjust_money = data["data"][i]["order_item_list"][0]["adjust_money"];//调教
+						html += '<div class="cell" style="display: inline-block;"><span>(调价：'+adjust_money+'元)</span></div>';
+					}
+					if(	data["data"][i]["order_item_list"][0]['refund_status'] != 0){
+						//退款
+						var order_goods_id = data["data"][i]["order_item_list"][0]["order_goods_id"];//订单项id
+						var status_name = data["data"][i]["order_item_list"][0]["status_name"];//状态
+						html +='<a href="'+__URL('ADMIN_MAIN/order/orderrefunddetail?itemid='+order_goods_id)+'" style="margin:10px 0;display:block;">'+status_name+'</a>';
+						for(var m = 0; m < data["data"][i]["order_item_list"][0]["refund_operation"].length; m++){
+							var operation_type = data["data"][i]["order_item_list"][0]["refund_operation"][m]['no'];//选项类型
+							var color = data["data"][i]["order_item_list"][0]["refund_operation"][m]['color'];
+							var order_goods_id = data["data"][i]["order_item_list"][0]['order_goods_id'];//订单项id
+							var refund_require_money = data["data"][i]['order_item_list'][0]["refund_require_money"];//退款金额
+							var name = data["data"][i]["order_item_list"][0]["refund_operation"][m]['name'];//退款状态
+							html += '<a class="btn btn-info shipping btnstyle" style="text-align:center;background-color:'+color+'" href="javascript:refundOperation(\''+operation_type+'\','+order_id+','+order_goods_id+','+refund_require_money+')">'+name+'</a>';
+						}
+					}
+					html += '</td>';
+					
+					var row=1;//订单数量，用于设置跨行
+					if(data["data"][i]["order_item_list"].length!=null)
+					{
+						row=data["data"][i]["order_item_list"].length;
+					}
+					html += '<td rowspan="'+row+'" style="text-align:center"><div class="cell">'+data["data"][i]["user_name"]+'<br/><i class="'+data["data"][i]["order_from_tag"]+'"><i></div></td>';
+					html += '<td rowspan="'+row+'" style="text-align:center">';
+					
+					//联系方式
+					html += '<div><span class="expressfee">'+data["data"][i]["receiver_mobile"]+'</span>';
+					html += '</div></td>';
+					
+					html += '<td rowspan="'+row+'" style="text-align:center">';
+					html += '<div class="cell"><b class="netprice" style="color:#666;">￥'+order_money+'</b><br/>';
+					html += '<span class="expressfee">'+data["data"][i]["pay_type_name"]+'</span></div></td>';
+					
+					html += '<td rowspan="'+row+'"><div class="business-status" style="text-align:center">'+data["data"][i]["status_name"]+'<br></div></td>';
+					html += '<td rowspan="'+row+'" style="text-align:center;">';
+					html += '<a class="btn btn-info shipping btnstyle" style="background:#27a9e3;" href="'+__URL('ADMIN_MAIN/order/virtualorderdetail?order_id='+order_id)+'">详情</a>';
+
+					if(data["data"][i]["operation"] != ''){
+						for(var m = 0; m < data["data"][i]["operation"].length; m++){
+							if(data["data"][i]["operation"][m]['no'] == "seller_memo"){
+								if(seller_memo == ''){
+									html += '<a class="btn btn-info shipping btnstyle" style="background:'+data["data"][i]["operation"][m]["color"]+'" href="javascript:operation(\''+data["data"][i]["operation"][m]['no']+'\','+data["data"][i]["order_id"]+')" >'+data["data"][i]["operation"][m]['name']+'</a>';
+								}
+							}else{
+								html += '<a class="btn btn-info shipping btnstyle" style="background:'+data["data"][i]["operation"][m]["color"]+'" href="javascript:operation(\''+data["data"][i]["operation"][m]['no']+'\','+data["data"][i]["order_id"]+')" >'+data["data"][i]["operation"][m]['name']+'</a>';
+							}
+						}
+					}
+					html +='</td></tr>';
+					//循环订单项
+					//前边已经加载过一次了，所以从第二次开始循环
+					for(var j = 1; j < data["data"][i]["order_item_list"].length; j++){
+						var pic_cover_micro = data["data"][i]["order_item_list"][j]["picture"]['pic_cover_micro'];//商品图
+						var goods_id = data["data"][i]["order_item_list"][j]["goods_id"];//商品id
+						var goods_name = data["data"][i]["order_item_list"][j]["goods_name"];//商品名称
+						var sku_name = data["data"][i]["order_item_list"][j]["sku_name"];//sku名称
+						var price = data["data"][i]["order_item_list"][j]["price"];//价格
+						var num = data["data"][i]["order_item_list"][j]["num"];//购买数量
+						var goods_code = data["data"][i]["order_item_list"][j]["code"];
+						html += '<tr calss="no-rightborder"><td colspan="2" style="border-right:0;">';
+						html += '<div class="product-img"><img src="'+__IMG(pic_cover_micro)+'"></div>';
+						html += '<div class="product-infor">';
+						html += '<a class="name" href="'+__URL('SHOP_MAIN/goods/goodsinfo?goodsid='+goods_id)+'" target="_blank">'+goods_name+'</a>';
+						if(sku_name != null && sku_name != ''){
+							html += '<p class="specification" style="margin-bottom:0px;"><span style="color:#8e8c8c;font-size:12px;">'+sku_name+'</span></p>';
+						}
+						if(goods_code != null && goods_code != ''){
+							html += '<p class="specification"><span style="color:#8e8c8c;font-size:12px;">编码&nbsp;&nbsp;'+goods_code+'</span></p></div>';
+						}
+						html += '</div></td>';
+						
+						html += '<td style="border-left:0px solid #fff">';//商品信息与商品清单的分割线
+						html += '<div class="cell" style="display: inline-block;"><span>'+price+'元</span></div>';
+						html += '<div class="cell" style="display: inline-block;float:right">'+num+'件</div>';
+						//调价
+						if(data["data"][i]["order_item_list"][j]['adjust_money'] != 0){
+							var adjust_money = data["data"][i]["order_item_list"][j]["adjust_money"];
+							html += '<div class="cell" style="display: inline-block;"><span>(调价：'+adjust_money+'元)</span></div>';
+						}
+						if(	data["data"][i]["order_item_list"][j]['refund_status'] != 0)
+						{
+							//退款
+							var order_goods_id = data["data"][i]["order_item_list"][j]["order_goods_id"];//订单项id
+							var status_name = data["data"][i]["order_item_list"][j]["status_name"];//订单状态
+							html +='<a href="'+__URL('ADMIN_MAIN/order/orderrefunddetail?itemid='+order_goods_id)+'" style="margin:10px 0;display:block;text-align:center;">'+status_name+'</a>';
+							for(var m = 0; m < data["data"][i]["order_item_list"][j]["refund_operation"].length; m++){
+								var operation_type = data["data"][i]["order_item_list"][j]["refund_operation"][m]['no'];//选项类型
+								var color = data["data"][i]["order_item_list"][j]["refund_operation"][m]['color'];
+								var order_goods_id = data["data"][i]["order_item_list"][j]['order_goods_id'];//订单项id
+								var refund_require_money = data["data"][i]['order_item_list'][j]["refund_require_money"];//退款金额
+								var name = data["data"][i]["order_item_list"][j]["refund_operation"][m]['name'];//退款状态
+								html += '<a class="btn btn-info shipping btnstyle" style="text-align:center;background-color:'+color+'" href="javascript:refundOperation(\''+operation_type+'\','+order_id+','+order_goods_id+','+refund_require_money+')" >'+name+'</a>';
+							}
+						}
+						html += '</td>';
+						html += '</tr>';
+					}
+				}
+			} else {
+				html += '<tr align="center"><th colspan="9">暂无符合条件的订单</th></tr>';
+			}
+			$(".style0list tbody").html(html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function addmemo(order_id,memo){
+	$("#order_id").val(order_id);
+	$("#memo").val(memo);
+	$("#Memobox").modal("show");
+}
+
+/**
+ * 订单数据导出
+ */
+function dataExcel(){
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var order_no = $("#orderNo").val();
+	var receiver_mobile = $("#receiverMobile").val();
+	var order_status = $("#order_status").val();
+	var payment_type = $("#payment_type").val();
+	var order_ids= new Array();
+	$(".style0list tbody input[type = 'checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			order_ids.push($(this).val());
+		}
+	});
+	window.location.href=__URL("ADMIN_MAIN/order/virtualOrderDataExcel?start_date="+start_date+"&end_date="+end_date+"&order_no="+order_no+"&order_status="+order_status+"&receiver_mobile="+receiver_mobile+"&payment_type="+payment_type+"&order_ids="+order_ids.toString()); 	
+}
+
+/**
+* 批量删除已关闭订单
+*/
+function batchDelete(){
+	var order_ids= new Array();
+	$(".style0list tbody input[type = 'checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			order_ids.push($(this).val());
+		}
+	});
+	if(order_ids.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#e57373": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	delete_order(order_ids);
+}
+// 点击显示更多搜索
+$(".more_search").click(function(){
+	$("#more_search").slideToggle();
+})
+</script>
+{/block}

@@ -40,6 +40,10 @@ select::-ms-expand { display: none; }
 	</div>
 
 	<div class="div-item">
+		<span>{:lang('member_fixed_telephone')}</span> <input type="text" id="phone" placeholder="{:lang('member_fixed_telephone')}（选填）" value="{$address_info['phone']}" />
+	</div>
+
+	<div class="div-item">
 		<span>{:lang('goods_province')}</span> <select id="seleAreaNext" onchange="GetProvince();">
 			<option value="">{:lang('member_select_province')}</option>
 		</select>

@@ -96,6 +96,7 @@ return [
      'no_article'                     => 'No article',
      'home_page'                      => 'Home',
      'article_center'                 => 'Article center',
+     'article_list'                   => 'Article list',
     //index
      'friendship_link'                => 'Friendship link',
      'welcome_login'                  => 'Welcome login',
@@ -1045,6 +1046,18 @@ return [
     'cash_register'                                                       => '提现记录',
     'refunded'                                                            => 'refunded',
     'my_collection'                                                       => 'my collection',
-    'no_notice'                                                           => '暂无公告'
+    'no_notice'                                                           => '暂无公告',
+    'view_details'                                                        => 'View details',
+    'virtual_orders'                                                       => 'Virtual orders',
+    'view_virtual_code'                                                   => 'View virtual code',
+    'virtual_goods'                                                       => 'Virtual goods',
+    'virtual_code'                                                        => 'Virtual code',
+    'virtual_goods_name'                                                  => 'Virtual goods name',
+    'expiration_time'                                                     => 'Expiration time',
+    'order_user_phone_tip'                                                => 'Please fill in the phone number correctly so that the seller can contact you',
+    'regular_orders'                                                      => 'Regular orders',
+    'order_user_phone_instruction'                                        => 'The virtual goods that you bought this time do not need to receive goods address, please fill in mobile phone number, convenient seller to contact with you',
+    'virtual_goods_orders_are_consumed_by_virtual_code'                   => 'Virtual goods orders are consumed by virtual code',
+    'contact_information'                                                 => 'Contact information'
 ];
 

@@ -187,7 +187,7 @@ interface IPlatform
      * @param unknown $adv_image
      * @param unknown $slide_sort
      */
-    function addPlatformAdv($ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background);
+    function addPlatformAdv($ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background, $adv_code);
     /**
      * 修改平台广告
      * @param unknown $adv_id
@@ -197,7 +197,7 @@ interface IPlatform
      * @param unknown $adv_image
      * @param unknown $slide_sort
      */
-    function updatePlatformAdv($adv_id, $ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background);
+    function updatePlatformAdv($adv_id, $ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background, $adv_code);
     /**
      * 删除平台广告
      * @param unknown $adv_id
@@ -276,6 +276,15 @@ interface IPlatform
      * @param unknown $image
      */
     function updatePlatformDocument($id, $uid, $class_id, $title, $link_url, $sort, $content, $image);
+    
+    /**
+     *  修改帮助中心内容的标题与排序
+     * @param unknown $id
+     * @param unknown $title
+     * @param unknown $sort
+     */
+    function updatePlatformDocumentTitleAndSort($id, $title, $sort);
+    
     /**
      * 获取帮助中心内容详情
      * @param unknown $id
@@ -473,4 +482,12 @@ interface IPlatform
      */
     function getPlatformAdvPositionDetailByApKeyword($ap_keyword);
     
+    /**
+     * 后台获取广告列表
+     * @param unknown $page_index
+     * @param unknown $page_size
+     * @param unknown $condition
+     * @param unknown $order
+     */
+    function adminGetAdvList($page_index, $page_size, $condition, $order);
 }

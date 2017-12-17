@@ -67,15 +67,30 @@
   	-webkit-line-clamp: 2;
   	-webkit-box-orient: vertical;
 }
+.data-button{
+	border: none;
+	background: #eee;
+	padding: 5px 23px;
+	font-size: 12px;
+	color: #777;
+	outline: none;
+} 
+.button_active{
+	background: #01B044;
+	color:#fff;
+}
 </style>
 
  {/block}
 {block name="right_tab"}
-<li><a class="nscs-table-handle_green" href="{:__URL('ADMIN_MAIN/system/addshopadv','ap_id='.$ap_id)}"><i class="fa fa-plus-circle"></i>&nbsp;添加广告</a></li>
+<li><a class="nscs-table-handle_green add_adv" href="javascript:;"><i class="fa fa-plus-circle"></i>&nbsp;添加广告</a></li>
 {/block}
 {block name="main"}
-
-	
+<div class="mod-table" style="margin: 10px 0;">
+	<button class="data-button button_active" data-ad-type="1">PC端</button>
+	<button class="data-button" data-ad-type="2">手机端</button>
+</div>	
+<input type="hidden" id="ad_type" value="1">
 <div class="mod-table">
 	<div class="mod-table-head">
 		<div class="con style0list">
@@ -122,6 +137,18 @@ $(function(){
 	LoadingInfo(1);
 })
 
+$(".add_adv").click(function(){
+	var ad_type = $("#ad_type").val();
+	window.location.href=__URL("ADMIN_MAIN/system/addshopadv?type="+ad_type);
+})
+
+$("[data-ad-type]").click(function(){
+	$("#ad_type").val($(this).attr("data-ad-type"));
+	$("[data-ad-type]").removeClass("button_active");
+	$(this).addClass("button_active");
+	LoadingInfo(1);
+})
+
 function CheckAll(event){
 	if($(event).is(":checked")){
 		$("input[name='sub']").prop("checked",true);
@@ -130,10 +157,16 @@ function CheckAll(event){
 	}
 }
 
+$(".add_adv").click(function(){
+	var ad_type = $("#ad_type").val();
+	window.location.href=__URL("ADMIN_MAIN/system/addshopadv?type="+ad_type);
+})
+
 //查询广告列表
 	function LoadingInfo(page_index) {
 		var ap_id = $("#ap_id").val();
 		var search_text = '';
+		var type = $("#ad_type").val();
 		$.ajax({
 			type : "post",
 			url : "{:__URL('ADMIN_MAIN/system/shopadvlist')}",
@@ -142,7 +175,7 @@ function CheckAll(event){
 				"page_index" : page_index,
 				"page_size" : $("#showNumber").val(),
 				"search_text" : search_text, 
-				"ap_id" : ap_id
+				"type" : type
 			},
 			success : function(data) {
 				var html = '';
@@ -151,10 +184,10 @@ function CheckAll(event){
 						html += '<tr>';
 						html += '<td><label style="margin-left:10px;"> <input type="checkbox" name="sub" value="'+ data['data'][i]['adv_id']+'"></label></td>';
 						html += '<td class="tal">'+ data['data'][i]['adv_title']+'</td>';
-						html += '<td class="tal">' + data['data'][i]["ap_info"]['ap_name'] + '</td>';
+						html += '<td class="tal">' + data['data'][i]['ap_name'] + '</td>';
 						html += '<td class="tal adv_url" title="' + data['data'][i]["adv_url"] + '">' + data['data'][i]["adv_url"] + '</td>';
 						html += '<td class="center"><input type="text" class="silde_sort" fieldid="'+ data['data'][i]['adv_id']+'"  value="'+ data['data'][i]["slide_sort"] + '" onchange="updateAdvSort(this)" size="1" ></td>';
-						html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/updateshopadv?adv_id=' + data['data'][i]["adv_id"])+'">编辑</a> ';
+						html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/updateshopadv?adv_id=' + data['data'][i]["adv_id"]+'&type=' + data['data'][i]["type"])+'">编辑</a> ';
 						html += '<a href="javascript:;" onclick="delShopAdv(' + data['data'][i]["adv_id"] + ')">删除</a></td> ';
 						html += '</tr>';
 					}

@@ -74,7 +74,7 @@
 					<p>
 						<span id="copyright_desc"></span>
 						<br/>
-						<span id="copyright_companyname"></span>
+						<a id="copyright_companyname" style="color: #333" target="_blank"></a>
 						<br/>
 						<span id="copyright_meta"></span>
 					</p>
@@ -167,13 +167,17 @@
 			{block name="thirdmenu"}
 			<nav class="ns-third-menu">
 				<ul>
-				{foreach name="child_menu_list" item="child_menu" key="k" }
-				{eq name="child_menu['active']" value="1"}
-					<li class="selected" onclick="location.href='{:__URL('ADMIN_MAIN/'.$child_menu['url'])}';">{$child_menu.menu_name}</li>
+				{notempty name="$child_menu_list[0]['superior_menu']"}
+					<li><span class="selected" onclick="location.href='{:__URL('ADMIN_MAIN/'.$child_menu_list[0]['superior_menu']['url'])}';" style="color: #0072D2;">{$child_menu_list.0.superior_menu.menu_name}</span>&nbsp;&nbsp;<i class="fa fa-angle-right fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;<span onmousemove="this.style.color='#333'">{$child_menu_list.0.menu_name}</span></li>
 				{else/}
-					<li onclick="location.href='{:__URL('ADMIN_MAIN/'.$child_menu['url'])}';">{$child_menu.menu_name}</li>
-				{/eq}
-				{/foreach}
+					{foreach name="child_menu_list" item="child_menu" key="k" }
+					{eq name="child_menu['active']" value="1"}
+						<li class="selected" onclick="location.href='{:__URL('ADMIN_MAIN/'.$child_menu['url'])}';">{$child_menu.menu_name}</li>
+					{else/}
+						<li onclick="location.href='{:__URL('ADMIN_MAIN/'.$child_menu['url'])}';">{$child_menu.menu_name}</li>
+					{/eq}
+					{/foreach}
+				{/notempty}
 				</ul>
 			</nav>
 			{/block}

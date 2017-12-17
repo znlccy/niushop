@@ -69,8 +69,24 @@ class Order extends BaseController
      */
     public function paymentOrder()
     {
-        $this->orderInfo();
-        return view($this->style . 'Order/paymentOrder');
+        // 判断实物类型：实物商品，虚拟商品
+        $order_tag = isset($_SESSION['order_tag']) ? $_SESSION['order_tag'] : "";
+        if (empty($order_tag)) {
+            $redirect = __URL(__URL__); // 没有商品返回到首页
+            $this->redirect($redirect);
+        }
+        $this->assign("order_tag", $order_tag); // 标识：立即购买还是购物车中进来的
+        $order_goods_type = isset($_SESSION['order_goods_type']) ? $_SESSION['order_goods_type'] : "";
+        
+        if ($order_tag == "buy_now" && $order_goods_type === "0") {
+            // 虚拟商品
+            $this->virtualOrderInfo();
+            return view($this->style . 'Order/paymentVirtualOrder');
+        } else {
+            // 实物商品
+            $this->orderInfo();
+            return view($this->style . 'Order/paymentOrder');
+        }
     }
 
     /**
@@ -86,24 +102,20 @@ class Order extends BaseController
         $promotion = new Promotion();
         $shop_service = new Shop();
         // 检测购物车
-        $order_tag = isset($_SESSION['order_tag']) ? $_SESSION['order_tag'] : '';
-        if (empty($order_tag)) {
-            $this->redirect(__URL__); // 没有商品返回到首页
-        } else {
-            switch ($order_tag) {
-                // 立即购买
-                case "buy_now":
-                    $res = $this->buyNowSession();
-                    $goods_sku_list = $res["goods_sku_list"];
-                    $list = $res["list"];
-                    break;
-                case "cart":
-                    // 加入购物车
-                    $res = $this->addShoppingCartSession();
-                    $goods_sku_list = $res["goods_sku_list"];
-                    $list = $res["list"];
-                    break;
-            }
+        $order_tag = $_SESSION['order_tag'];
+        switch ($order_tag) {
+            // 立即购买
+            case "buy_now":
+                $res = $this->buyNowSession();
+                $goods_sku_list = $res["goods_sku_list"];
+                $list = $res["list"];
+                break;
+            case "cart":
+                // 加入购物车
+                $res = $this->addShoppingCartSession();
+                $goods_sku_list = $res["goods_sku_list"];
+                $list = $res["list"];
+                break;
         }
         $this->assign('goods_sku_list', $goods_sku_list);
         
@@ -183,6 +195,68 @@ class Order extends BaseController
         $this->assign("pickup_point_list", $pickup_point_list); // 自提地址列表
         
         $this->assign("address_default", $address);
+    }
+
+    /**
+     * 待付款订单需要的数据
+     * 2017年6月28日 15:24:48 王永杰
+     */
+    public function virtualOrderInfo()
+    {
+        if ($this->getIsOpenVirtualGoodsConfig() == 0) {
+            $this->error("未开启虚拟商品功能");
+        }
+        $member = new MemberService();
+        $order = new OrderService();
+        $goods_mansong = new GoodsMansong();
+        $Config = new Config();
+        $promotion = new Promotion();
+        $shop_service = new Shop();
+        $res = $this->buyNowSession();
+        $goods_sku_list = $res["goods_sku_list"];
+        $list = $res["list"];
+        $shop_id = $this->instance_id;
+        $this->assign('goods_sku_list', $goods_sku_list);
+        
+        $discount_money = $goods_mansong->getGoodsMansongMoney($goods_sku_list);
+        $this->assign("discount_money", sprintf("%.2f", $discount_money)); // 总优惠
+        
+        $count_money = $order->getGoodsSkuListPrice($goods_sku_list);
+        $this->assign("count_money", sprintf("%.2f", $count_money)); // 商品金额
+        $count_point_exchange = 0;
+        foreach ($list as $k => $v) {
+            $list[$k]['price'] = sprintf("%.2f", $list[$k]['price']);
+            $list[$k]['subtotal'] = sprintf("%.2f", $list[$k]['price'] * $list[$k]['num']);
+            if ($v["point_exchange_type"] == 1) {
+                if ($v["point_exchange"] > 0) {
+                    $count_point_exchange += $v["point_exchange"] * $v["num"];
+                }
+            }
+        }
+        $this->assign("count_point_exchange", $count_point_exchange); // 总积分
+        $this->assign("itemlist", $list);
+        
+        $shop_config = $Config->getShopConfig($shop_id);
+        $order_invoice_content = explode(",", $shop_config['order_invoice_content']);
+        $shop_config['order_invoice_content_list'] = array();
+        foreach ($order_invoice_content as $v) {
+            if (! empty($v)) {
+                array_push($shop_config['order_invoice_content_list'], $v);
+            }
+        }
+        $this->assign("shop_config", $shop_config); // 后台配置
+        
+        $member_account = $member->getMemberAccount($this->uid, $shop_id);
+        if ($member_account['balance'] == '' || $member_account['balance'] == 0) {
+            $member_account['balance'] = '0.00';
+        }
+        $this->assign("member_account", $member_account); // 用户余额
+        
+        $coupon_list = $order->getMemberCouponList($goods_sku_list);
+        $this->assign("coupon_list", $coupon_list); // 获取优惠券
+        
+        $user_telephone = $this->user->getUserTelephone();
+        $this->assign("user_telephone", $user_telephone);
     }
 
     /**
@@ -317,12 +391,13 @@ class Order extends BaseController
         if ($tag == 'buy_now') {
             $_SESSION['order_tag'] = 'buy_now';
             $_SESSION['order_sku_list'] = request()->post('sku_id') . ':' . request()->post('num');
+            $_SESSION['order_goods_type'] = request()->post("goods_type"); // 实物类型标识
         }
         return 1;
     }
 
     /**
-     * 创建订单
+     * 创建订单（实物商品）
      */
     public function orderCreate()
     {
@@ -346,6 +421,7 @@ class Order extends BaseController
         $member = new Member();
         $address = $member->getDefaultExpressAddress();
         $shipping_time = date("Y-m-d H::i:s", time());
+        $coin = 0; //购物币
         
         // 查询商品限购
         $purchase_restriction = $order->getGoodsPurchaseRestrictionForOrder($goods_sku_list);
@@ -357,7 +433,54 @@ class Order extends BaseController
             return $res;
         } else {
             
-            $order_id = $order->orderCreate('1', $out_trade_no, $pay_type, $shipping_type, '1', 1, $leavemessage, $buyer_invoice, $shipping_time, $address['mobile'], $address['province'], $address['city'], $address['district'], $address['address'], $address['zip_code'], $address['consigner'], $integral, $use_coupon, 0, $goods_sku_list, $user_money, $pick_up_id, $shipping_company_id);
+            $order_id = $order->orderCreate('1', $out_trade_no, $pay_type, $shipping_type, '1', 1, $leavemessage, $buyer_invoice, $shipping_time, $address['mobile'], $address['province'], $address['city'], $address['district'], $address['address'], $address['zip_code'], $address['consigner'], $integral, $use_coupon, 0, $goods_sku_list, $user_money, $pick_up_id, $shipping_company_id, $coin, $address["phone"]);
+            $_SESSION['unpaid_goback'] = __URL(__URL__ . "/wap/order/orderdetail?orderId=" . $order_id);
+            if ($order_id > 0) {
+                $order->deleteCart($goods_sku_list, $this->uid);
+                $_SESSION['order_tag'] = ""; // 生成订单后，清除购物车
+                return AjaxReturn($out_trade_no);
+            } else {
+                return AjaxReturn($order_id);
+            }
+        }
+    }
+
+    /**
+     * 创建订单（虚拟商品）
+     */
+    public function virtualOrderCreate()
+    {
+        if ($this->getIsOpenVirtualGoodsConfig() == 0) {
+            $this->error("未开启虚拟商品功能");
+        }
+        $order = new OrderService();
+        // 获取支付编号
+        $out_trade_no = $order->getOrderTradeNo();
+        $use_coupon = request()->post('use_coupon', 0); // 优惠券
+        $integral = request()->post('integral', 0); // 积分
+        $goods_sku_list = request()->post('goods_sku_list', ''); // 商品列表
+        $leavemessage = request()->post('leavemessage', ''); // 留言
+        $user_money = request()->post("account_balance", 0); // 使用余额
+        $pay_type = request()->post("pay_type", 1); // 支付方式
+        $buyer_invoice = request()->post("buyer_invoice", ""); // 发票
+        $user_telephone = request()->post("user_telephone", ""); // 电话号码
+        $express_company_id = 0; // 物流公司
+        $shipping_type = 1; // 配送方式，1：物流，2：自提
+        $pick_up_id = 0;
+        $member = new Member();
+        $address = $member->getDefaultExpressAddress();
+        $shipping_time = date("Y-m-d H::i:s", time());
+        
+        // 查询商品限购
+        $purchase_restriction = $order->getGoodsPurchaseRestrictionForOrder($goods_sku_list);
+        if (! empty($purchase_restriction)) {
+            $res = array(
+                "code" => 0,
+                "message" => $purchase_restriction
+            );
+            return $res;
+        } else {
+            $order_id = $order->orderCreateVirtual('2', $out_trade_no, $pay_type, $shipping_type, '1', 1, $leavemessage, $buyer_invoice, $shipping_time, $integral, $use_coupon, 0, $goods_sku_list, $user_money, $pick_up_id, $express_company_id, $user_telephone);
             $_SESSION['unpaid_goback'] = __URL(__URL__ . "/wap/order/orderdetail?orderId=" . $order_id);
             if ($order_id > 0) {
                 $order->deleteCart($goods_sku_list, $this->uid);
@@ -379,6 +502,7 @@ class Order extends BaseController
             $status = request()->post('status', 'all');
             $condition['buyer_id'] = $this->uid;
             $condition['is_deleted'] = 0;
+            $condition['order_type'] = 1;
             if (! empty($this->shop_id)) {
                 $condition['shop_id'] = $this->shop_id;
             }
@@ -431,6 +555,52 @@ class Order extends BaseController
         } else {
             $this->assign("status", $status);
             return view($this->style . 'Order/myOrderList');
+        }
+    }
+
+    /**
+     * 获取当前会员的虚拟订单列表
+     */
+    public function myVirtualOrderList()
+    {
+        if ($this->getIsOpenVirtualGoodsConfig() == 0) {
+            $this->error("未开启虚拟商品功能");
+        }
+        $status = request()->get('status', 'all');
+        if (request()->isAjax()) {
+            $status = request()->post('status', 'all');
+            $condition['buyer_id'] = $this->uid;
+            $condition['is_deleted'] = 0;
+            $condition['order_type'] = 2;
+            if (! empty($this->shop_id)) {
+                $condition['shop_id'] = $this->shop_id;
+            }
+            
+            if ($status != 'all') {
+                switch ($status) {
+                    case 0:
+                        $condition['order_status'] = 0;
+                        break;
+                    case 5:
+                        $condition['order_status'] = array(
+                            'in',
+                            '3,4'
+                        );
+                        $condition['is_evaluate'] = array(
+                            'in',
+                            '0,1'
+                        );
+                        break;
+                }
+            }
+            $page_index = request()->post("page", 1);
+            // 还要考虑状态逻辑
+            $order = new OrderService();
+            $order_list = $order->getOrderList($page_index, PAGESIZE, $condition, 'create_time desc');
+            return $order_list;
+        } else {
+            $this->assign("status", $status);
+            return view($this->style . 'Order/myVirtualOrderList');
         }
     }
 
@@ -618,6 +788,7 @@ class Order extends BaseController
         // 通过order_id判断该订单是否属于当前用户
         $condition['order_id'] = $order_id;
         $condition['buyer_id'] = $this->uid;
+        $condition['order_type'] = 1;
         $order_count = $order_service->getOrderCount($condition);
         if ($order_count == 0) {
             $this->error("没有获取到订单信息");
@@ -645,6 +816,39 @@ class Order extends BaseController
         
         $this->assign("order", $detail);
         return view($this->style . 'Order/orderDetail');
+    }
+
+    /**
+     * 虚拟订单详情
+     *
+     * @return Ambigous <\think\response\View, \think\response\$this, \think\response\View>
+     */
+    public function virtualOrderDetail()
+    {
+        if ($this->getIsOpenVirtualGoodsConfig() == 0) {
+            $this->error("未开启虚拟商品功能");
+        }
+        
+        $order_id = request()->get('orderId', 0);
+        if (! is_numeric($order_id)) {
+            $this->error("没有获取到订单信息");
+        }
+        $order_service = new OrderService();
+        $detail = $order_service->getOrderDetail($order_id);
+        if (empty($detail)) {
+            $this->error("没有获取到订单信息");
+        }
+        // 通过order_id判断该订单是否属于当前用户
+        $condition['order_id'] = $order_id;
+        $condition['buyer_id'] = $this->uid;
+        $condition['order_type'] = 2;
+        $order_count = $order_service->getOrderCount($condition);
+        if ($order_count == 0) {
+            $this->error("没有获取到订单信息");
+        }
+        
+        $this->assign("order", $detail);
+        return view($this->style . 'Order/virtualOrderDetail');
     }
 
     /**

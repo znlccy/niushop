@@ -23,9 +23,9 @@
 			<tr style="border:1px solid #e5e5e5;border-top:0;background:none;">
 				<td style="background:none;text-align:center;">{$notify_obj.notify_name}</td>
 				{if condition="$notify_obj.is_use eq 1"}
-				<td style="text-align: center;background:none;" class="is_use_{$notify_obj.id}"><i class="fa fa-check text-success text-active"></i></td>
+				<td style="text-align: center;background:none;" class="is_use_{$notify_obj.id}"><img src="ADMIN_IMG/checked.png" alt="" width="15"/></td>
 				{else/}
-				<td style="text-align: center;background:none;"><i class="fa fa-times text-danger text"></i></td>
+				<td style="text-align: center;background:none;"><img src="ADMIN_IMG/un_checked.png" alt="" width="15"/></td>
 				{/if}
 				<td style="text-align: center;background:none;">
 					{if condition="$notify_obj.key eq 'EMAILMESSAGE'"}

@@ -165,6 +165,19 @@ class Auth extends BaseController
             $condition["instance_id"] = $this->instance_id;
             $list = $this->auth_group->getSystemUserGroupAll($condition);
             $this->assign('auth_group', $list);
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "auth/userlist",
+                        'menu_name' => "用户列表",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . 'Auth/addUser');
         }
     }
@@ -194,6 +207,19 @@ class Auth extends BaseController
             $condition["instance_id"] = $this->instance_id;
             $list = $this->auth_group->getSystemUserGroupAll($condition);
             $this->assign('auth_group', $list);
+            $child_menu_list = array(
+                array(
+                    'url' => "javascript:;",
+                    'menu_name' => $this->module_info['module_name'],
+                    'active' => 1,
+                    "superior_menu" => array(
+                        'url' => "auth/userlist",
+                        'menu_name' => "用户列表",
+                        'active' => 1,
+                    )
+                )
+            );
+            $this->assign("child_menu_list", $child_menu_list);
             return view($this->style . 'Auth/editUser');
         }
     }

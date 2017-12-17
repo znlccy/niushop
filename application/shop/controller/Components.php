@@ -124,6 +124,28 @@ class Components extends BaseController
         }
         return $advdetail;
     }
+   
+    /**
+     * 获取广告代码
+     */
+    public function getAdvCode(){
+        $platform = new Platform();
+        $ap_keyword = request()->post("ap_keyword", "");
+        $advlist = "";
+        if($ap_keyword != ""){
+            $advdetail = $platform->getPlatformAdvPositionDetailByApKeyword($ap_keyword);
+            if (empty($advdetail["adv_list"])){
+                return '';
+            }
+            if ($advdetail['is_use'] == 0 || $advdetail['ap_class'] != 4) {
+                return '';
+            }
+            foreach ($advdetail["adv_list"] as $v){
+                $advlist[] = html_entity_decode(str_replace(array("\r\n", "\n", "\r"), "", $v["adv_code"]));
+            }
+        }
+        return $advlist;
+    }
     
     /**
      * 功能：友情链接

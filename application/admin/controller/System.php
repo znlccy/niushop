@@ -42,6 +42,9 @@ class System extends BaseController
     public function deleteCache()
     {
         $retval = NiuDelDir('./runtime/cache');
+        if($retval){
+            $retval = NiuDelDir('./runtime/temp');
+        }
         return $retval;
     }
 
@@ -512,38 +515,18 @@ class System extends BaseController
     public function shopAdvPositionList()
     {
         $terminal = request()->get("terminal", 1); // PC端或手机端（终端）
-        switch ($terminal) {
-            case 1:
-                
-                $child_menu_list = array(
-                    array(
-                        'url' => "system/shopadvpositionlist?terminal=1",
-                        'menu_name' => "PC端",
-                        "active" => 1
-                    ),
-                    array(
-                        'url' => "system/shopadvpositionlist?terminal=2",
-                        'menu_name' => "手机端",
-                        "active" => 0
-                    )
-                );
-                break;
-            case 2:
-                
-                $child_menu_list = array(
-                    array(
-                        'url' => "system/shopadvpositionlist?terminal=1",
-                        'menu_name' => "PC端",
-                        "active" => 0
-                    ),
-                    array(
-                        'url' => "system/shopadvpositionlist?terminal=2",
-                        'menu_name' => "手机端",
-                        "active" => 1
-                    )
-                );
-                break;
-        }
+        $child_menu_list = array(
+            array(
+                'url' => "system/shopadvlist",
+                'menu_name' => "广告列表",
+                "active" => 0
+            ),
+            array(
+                'url' => "system/shopadvpositionlist",
+                'menu_name' => "广告位管理",
+                "active" => 1
+            )
+        );
         $this->assign("terminal", $terminal);
         $this->assign('child_menu_list', $child_menu_list);
         if (request()->isAjax()) {
@@ -592,6 +575,19 @@ class System extends BaseController
             $res = $platform->addPlatformAdvPosition($this->instance_id, $ap_name, $ap_intro, $ap_class, $ap_dis, $is_use, $ap_height, $ap_width, $default_content, $ap_background_color, $type, $ap_keyword);
             return AjaxReturn($res);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "system/shopadvpositionlist",
+                    'menu_name' => "广告位管理",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "System/addShopAdvPosition");
     }
 
@@ -623,6 +619,19 @@ class System extends BaseController
         }
         $info = $platform->getPlatformAdvPositionDetail($id);
         $this->assign('info', $info);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "system/shopadvpositionlist",
+                    'menu_name' => "广告位管理",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "System/updateShopAdvPosition");
     }
     
@@ -648,20 +657,30 @@ class System extends BaseController
      */
     public function shopAdvList()
     {
+        $child_menu_list = array(
+            array(
+                'url' => "system/shopadvlist",
+                'menu_name' => "广告列表",
+                "active" => 1
+            ),
+            array(
+                'url' => "system/shopadvpositionlist",
+                'menu_name' => "广告位管理",
+                "active" => 0
+            )       
+        );
+        $this->assign('child_menu_list', $child_menu_list);
         $ap_id = request()->get('ap_id', '');
-        $this->assign('ap_id', $ap_id);
         if (request()->isAjax()) {
             $page_index = request()->post("page_index", 1);
             $page_size = request()->post("page_size", PAGESIZE);
             $search_text = request()->post('search_text', '');
-            $ap_id = request()->post('ap_id', '');
+            $type = request()->post("type" ,1);
             $platform = new Platform();
-            $list = $platform->getPlatformAdvList($page_index, $page_size, [
-                'ap_id' => $ap_id,
-                'adv_title' => array(
-                    'like',
-                    '%' . $search_text . '%'
-                )
+            $list = $platform->adminGetAdvList($page_index, $page_size, [
+                'adv_title' => array('like','%' . $search_text . '%'),
+                'npap.instance_id' => $this->instance_id,
+                'npap.type' => $type
             ], 'slide_sort desc');
             return $list;
         }
@@ -697,11 +716,27 @@ class System extends BaseController
             $adv_image = request()->post('adv_image', '');
             $slide_sort = request()->post('slide_sort', '');
             $background = request()->post('background', '');
-            $res = $platform->addPlatformAdv($ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background);
+            $adv_code = request()->post("adv_code", "");
+            $res = $platform->addPlatformAdv($ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background, $adv_code);
             return AjaxReturn($res);
         }
-        $list = $platform->getPlatformAdvPositionList(1, 0, '', '', 'ap_id,ap_name,ap_class,ap_display');
+        $type = request()->get("type",1);
+        $platform = new Platform();
+        $list = $platform->getPlatformAdvPositionList(1, 0, ["instance_id" => $this->instance_id, "type"=>$type], '', 'ap_id,ap_name,ap_class,ap_display');
         $this->assign('platform_adv_position_list', $list['data']);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "system/shopadvlist",
+                    'menu_name' => "广告列表",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "System/addShopAdv");
     }
 
@@ -719,7 +754,8 @@ class System extends BaseController
             $adv_image = request()->post('adv_image', '');
             $slide_sort = request()->post('slide_sort', '');
             $background = request()->post('background', '');
-            $res = $platform->updatePlatformAdv($adv_id, $ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background);
+            $adv_code = request()->post("adv_code", "");
+            $res = $platform->updatePlatformAdv($adv_id, $ap_id, $adv_title, $adv_url, $adv_image, $slide_sort, $background, $adv_code);
             return AjaxReturn($res);
         }
         $adv_id = request()->get('adv_id', '');
@@ -728,8 +764,23 @@ class System extends BaseController
         }
         $adv_info = $platform->getPlatformAdDetail($adv_id);
         $this->assign('adv_info', $adv_info);
-        $list = $platform->getPlatformAdvPositionList(1, 0, '', '', 'ap_id,ap_name,ap_class,ap_display');
+        $type = request()->get("type",1);
+        $platform = new Platform();
+        $list = $platform->getPlatformAdvPositionList(1, 0, ["instance_id" => $this->instance_id, "type"=>$type], '', 'ap_id,ap_name,ap_class,ap_display');
         $this->assign('platform_adv_position_list', $list['data']);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "system/shopadvlist",
+                    'menu_name' => "广告列表",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "System/updateShopAdv");
     }
 

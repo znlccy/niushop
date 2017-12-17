@@ -293,6 +293,19 @@ class Shop extends BaseController
             $res = $shop->addPickupPoint($shop_id, $name, $address, $contact, $phone, $province_id, $city_id, $district_id, '', '');
             return AjaxReturn($res);
         }
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "shop/pickuppointlist",
+                    'menu_name' => "自提点管理",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Shop/addSince");
     }
 
@@ -319,6 +332,19 @@ class Shop extends BaseController
         $pickupPoint_detail = $shop->getPickupPointDetail($pickip_id);
         $this->assign('pickupPoint_detail', $pickupPoint_detail);
         $this->assign('pickip_id', $pickip_id);
+        $child_menu_list = array(
+            array(
+                'url' => "javascript:;",
+                'menu_name' => $this->module_info['module_name'],
+                'active' => 1,
+                "superior_menu" => array(
+                    'url' => "shop/pickuppointlist",
+                    'menu_name' => "自提点管理",
+                    'active' => 1,
+                )
+            )
+        );
+        $this->assign("child_menu_list", $child_menu_list);
         return view($this->style . "Shop/updatePickupPoint");
     }
 

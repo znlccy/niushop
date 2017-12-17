@@ -511,6 +511,15 @@ function calculateTotalAmount(){
 		tax_sum += parseFloat($("#hidden_express").val());
 		$("#express").text(parseFloat($("#hidden_express").val()).toFixed(2));
 	}
+	//有运费
+	var init_total_money = parseFloat($("#hidden_count_money").val());//商品金额
+	if($("#hidden_full_mail_is_open").val()==1){
+		//满额包邮开启
+		if(init_total_money>=parseFloat($("#hidden_full_mail_money").val())){
+			$("#hidden_express").val(0);
+		}
+		$("#express").text(parseFloat($("#hidden_express").val()).toFixed(2));//设置运费
+	}
 	
 	//满减送活动
 	if(parseFloat($("#hidden_discount_money").val())>0){

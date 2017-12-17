@@ -89,7 +89,7 @@ cmp = function( x, y ) {
 function addOrDeleteSpecObj(spec_name , spec_id , spec_value_name , spec_value_id ,spec_show_type, spec_value_data , is_selected){
 		var is_have= 0;
 		for(var i = 0; i < $specObj.length ; i ++ ){
-			if($specObj[i]["spec_name"] == spec_name &&  $specObj[i].spec_id == spec_id){
+			if($specObj[i].spec_id == spec_id){
 				if(is_selected == 1){
 					$specObj[i]["value"].push({"spec_value_name":spec_value_name, "spec_name":spec_name, "spec_id":spec_id,"spec_value_id":spec_value_id,"spec_show_type":spec_show_type, "spec_value_data":spec_value_data});
 					is_have = 1;
@@ -144,7 +144,7 @@ function editSpecValueName(event){
 			var is_continue = false;
 			for(var i = 0; i < $specObj.length ; i ++ ){
 				
-				if($specObj[i]["spec_name"] == spec_name &&  $specObj[i].spec_id == spec_id){
+				if($specObj[i].spec_id == spec_id){
 					$.each($specObj[i]["value"],function(t,m){
 						if(m["spec_value_id"] == spec_value_id){
 							$specObj[i]["value"][t]["spec_value_name"] = spec_value_name;
@@ -175,7 +175,7 @@ function editSpecValueData(spec){
 		var spec_value_data = spec.spec_value_data;
 		var is_continue = false;
 		for(var i = 0; i < $specObj.length ; i ++ ){		
-			if($specObj[i]["spec_name"] == spec_name &&  $specObj[i].spec_id == spec_id){
+			if($specObj[i].spec_id == spec_id){
 				$.each($specObj[i]["value"],function(t,m){
 					if(m["spec_value_id"] == spec_value_id){
 						$specObj[i]["value"][t]["spec_value_data"] = spec_value_data;
@@ -519,6 +519,7 @@ function goodsTypeChangeData(){
 }
 
 function editSkuData(spec_obj_str , sku_data){
+	console.log(spec_obj_str);
 	updateSpecObjData(spec_obj_str);
 	updateTempObjData(sku_data);
 	if($specObj.length > 0){
@@ -580,6 +581,7 @@ function updateSpecObjData(spec_obj_str){
 	    		$specObj[i]["value"][m]["spec_show_type"] = selected_obj.data("spec-show-type");
 	    		$specObj[i]["value"][m]["spec_value_data"] = selected_obj.data("spec-value-data");
 	    	}
+	    	$specObj[i]["spec_name"] = selected_obj.data("spec-name");
 	    	$specObj[i]["value"][m]["spec_name"] = selected_obj.data("spec-name");
 	    	if(selected_obj.data("spec-show-type") == 2){
 	    		//颜色

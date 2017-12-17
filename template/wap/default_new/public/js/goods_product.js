@@ -114,7 +114,7 @@ $(function() {
 											$.ajax({
 												url : __URL(APPMAIN + "/order/ordercreatesession"),
 												type : "post",
-												data : { "tag" : "buy_now", "sku_id" : skuid, "num" :num },
+												data : { "tag" : "buy_now", "sku_id" : skuid, "num" :num, "goods_type" : $("#hidden_goods_type").val() },
 												success : function(res){
 													window.location.href = __URL(APPMAIN+"/order/paymentorder");
 												}

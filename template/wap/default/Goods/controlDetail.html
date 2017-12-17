@@ -21,24 +21,10 @@ input{appearance:none;-moz-appearance:none;-webkit-appearance:none;outline: none
 #img-slider li a{display:block;width:100%;height:100%;}
 #img-slider li img{max-width:100%;max-height:100%;vertical-align: middle;}
 #img-slider .img-count{position: fixed;top:5%;left:0;right:0;width:100%;text-align:center;color:#9E9E9E;}
-.jiantou{
-	float: right;
-	width: 15px;
-	height: 15px;
-	background:url("__TEMP__/{$style}/public/images/assistant_right.png") no-repeat center;
-    background-size: auto 15px;	
-	margin-top: 3px;
-}
-.user_info .name-box{
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+.jiantou{float: right;width: 15px;height: 15px;background:url("__TEMP__/{$style}/public/images/assistant_right.png") no-repeat center;background-size: auto 15px;margin-top: 3px;}
+.user_info .name-box{width: 100%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
 </style>
-
 <div class="h50" style="height:45px;"></div>
-
 <section id="banner">
 
 	<div class="shop_slider shop_slider_auto" data-tag="module-slider" data-height="320px">
@@ -141,7 +127,9 @@ input{appearance:none;-moz-appearance:none;-webkit-appearance:none;outline: none
 	<hr class="with-margin-l" />
 	<div class="stock-detail" >
 		<span style="display:inline-block;width:50%;">销量:{$goods_detail['sales']}笔</span>
+		{if condition="$goods_info.goods_type == 1"}
 		<span class="js-shipping-fee-name"></span><!-- 运费 -->
+		{/if}
 	</div>
 	
 </div>
@@ -156,11 +144,14 @@ input{appearance:none;-moz-appearance:none;-webkit-appearance:none;outline: none
 <hr class="with-margin-l" />
 {/if}
 
-{if condition = "$goods_detail['baoyou_name'] neq ''"}
-<div class="price_postage">
-	<span class="price_postage_tit single"><i style="color: #fff;font-size: 12px;padding: 3px;background: #f44;border-radius: 2px;">{:lang('goods_free_shipping')}</i>&nbsp;{$goods_detail['baoyou_name']}</span>
-</div>
-<hr class="with-margin-l" />
+{if condition="$goods_info.goods_type == 1"}
+<!-- 实物商品参加包邮活动 -->
+	{if condition = "$goods_detail['baoyou_name'] neq ''"}
+	<div class="price_postage">
+		<span class="price_postage_tit single"><i style="color: #fff;font-size: 12px;padding: 3px;background: #f44;border-radius: 2px;">{:lang('goods_free_shipping')}</i>&nbsp;{$goods_detail['baoyou_name']}</span>
+	</div>
+	<hr class="with-margin-l" />
+	{/if}
 {/if}
 
 <!-- 领取优惠劵 -->
@@ -379,7 +370,7 @@ $(function () {
 			{include file='wap/default/shareContents'/}
 		}
 	});
-	
+	{if condition="$goods_info.goods_type == 1"}
 	//定位查询运费
 	$.ajax({
 		type : "post",
@@ -395,6 +386,7 @@ $(function () {
 			}
 		}
 	});
+	{/if}
 });
 
 //商品评价
@@ -486,7 +478,7 @@ function GetDataList(){
 					+'<div class="name-box">'+member_name+'</div>'
 					+'</div>'
 					+'<dl>'
-					+'<dd>'+dataitem['content']+'</dd>'
+					+'<dd style="word-wrap:break-word;">'+dataitem['content']+'</dd>'
 				if(dataitem['image']!=''){
 					var imgs_arr=dataitem['image'].split(',');
 					listhtml+='<dd style="margin:5px 0;overflow:hidden;">'
@@ -505,7 +497,7 @@ function GetDataList(){
 					listhtml+='<div style="margin-left:-1px;float:right;margin-top: 9px;width:75%;">{:lang("goods_additional_evaluation")}：</div>'
 					+'<dl>'
 					+'<div style="width: 26%;margin-right: 10px;height:auto;float: left;"></div>'
-					+'<dd>'+dataitem['again_content']+'</dd>'
+					+'<dd style="word-wrap:break-word;">'+dataitem['again_content']+'</dd>'
 					if(dataitem['again_image']!=''){
 						var imgs_arr=dataitem['again_image'].split(',');
 						listhtml+='<dd>'

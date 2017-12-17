@@ -45,7 +45,7 @@ interface IWebsite
      * @param unknown $web_style            
      * @param unknown $web_qrcode            
      */
-    function updateWebSite($title, $logo, $web_desc, $key_words, $web_icp, $web_style_pc,$web_style_admin, $visit_pattern, $web_qrcode, $web_url, $web_phone, $web_email, $web_qq, $web_weixin, $web_address,$web_status,$wap_status,$third_count,$close_reason, $web_popup_title, $web_wechat_share_logo);
+    function updateWebSite($title, $logo, $web_desc, $key_words, $web_icp, $web_style_pc,$web_style_admin, $visit_pattern, $web_qrcode, $web_url, $web_phone, $web_email, $web_qq, $web_weixin, $web_address,$web_status,$wap_status,$third_count,$close_reason, $web_popup_title, $web_wechat_share_logo, $web_gov_record, $web_gov_record_url);
 
     /**
      * 添加系统模块

@@ -311,6 +311,7 @@ input, textarea, .uneditable-input {
 				<col width="6%">
 				<col width="7%">
 				<col width="7%">
+				<col width="7%">
 				<col width="15%">
 			</colgroup>
 			<tbody>
@@ -323,7 +324,8 @@ input, textarea, .uneditable-input {
 					<th>总库存</th>
 					<th>销量</th>
 					<th>上下架</th>
-					<th>排序</th>
+					<th>实物类型</th>
+					<th style="text-align: center;">排序</th>
 					<th style="text-align:center;">操作</th>
 					<th></th>
 					<th></th>
@@ -531,6 +533,15 @@ $(function(){
 						}else{
 							html += '<td style="background: white;"><a href="javascript:void(0)" onclick="modifyGoodsOnline('+data["data"][i]["goods_id"]+',\'online\')" style="color:#999;">已下架</a></td>';
 						}
+						
+						html += '<td>';
+						if(data['data'][i]['goods_type'] == 1){
+							html += '<span>实物商品</span>';
+						}else{
+							html += '<span>虚拟商品</span>';
+						}
+						html += '</td>';
+						
 						html += '<td style="background: white;"><div class="cell"><input class="input-mini" goods_id="'
 							+ data["data"][i]["goods_id"]
 							+ '" style="width:38px;text-align:center;" value="'
@@ -550,7 +561,7 @@ $(function(){
 							+ ')" data-original-title="删除"><span class="del" style="display: inline-block; width: 19%;"><i class="icon-trash" style="width: initial;"></i>删除</span></a></div></div></td></tr>';
 					}
 				} else {
-					html += '<tr align="center"><th colspan="8" style="text-align: center;font-weight: normal;color: #999;">暂无符合条件的数据记录</th></tr>';
+					html += '<tr align="center"><th colspan="9" style="text-align: center;font-weight: normal;color: #999;">暂无符合条件的数据记录</th></tr>';
 				}
 				$("#productTbody").html(html);
 				initPageData(data["page_count"],data['data'].length,data['total_count']);

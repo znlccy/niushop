@@ -171,21 +171,24 @@ class Member extends BaseController
         $order = new OrderService();
         $unpaidOrder = $order->getOrderNumByOrderStatu([
             'order_status' => 0,
-            "buyer_id" => $this->uid
+            "buyer_id" => $this->uid,
+            'order_type' => 1
         ]);
         $this->assign("unpaidOrder", $unpaidOrder);
         
         // 待发货订单数量
         $shipmentPendingOrder = $order->getOrderNumByOrderStatu([
             'order_status' => 1,
-            "buyer_id" => $this->uid
+            "buyer_id" => $this->uid,
+            'order_type' => 1
         ]);
         $this->assign("shipmentPendingOrder", $shipmentPendingOrder);
         
         // 待收货订单数量
         $goodsNotReceivedOrder = $order->getOrderNumByOrderStatu([
             'order_status' => 2,
-            "buyer_id" => $this->uid
+            "buyer_id" => $this->uid,
+            'order_type' => 1
         ]);
         $this->assign("goodsNotReceivedOrder", $goodsNotReceivedOrder);
         
@@ -198,14 +201,28 @@ class Member extends BaseController
             ]
         );
         $condition['buyer_id'] = $this->uid;
+        $condition['order_type'] = 1;
         $refundOrder = $order->getOrderNumByOrderStatu($condition);
         $this->assign("refundOrder", $refundOrder);
+        
+        // 虚拟订单待评价
+        $wait_evaluate_condition['buyer_id'] = $this->uid;
+        $wait_evaluate_condition['order_type'] = 2;
+        $wait_evaluate_condition['is_evaluate'] = 0;
+        $wait_evaluate_condition['order_status'] = array(
+            'in',
+            '3,4'
+        ); // 已收货
+        $virtual_wait_evaluate = $order->getOrderNumByOrderStatu($wait_evaluate_condition); // 待评价
+        $this->assign("virtual_wait_evaluate", $virtual_wait_evaluate);
         
         $this->assign('member_info', $member_info);
         $this->assign('index_adv', $index_adv["adv_list"][0]);
         $this->assign('member_img', $member_img);
         $this->assign('menu_arr', $menu_arr);
         $this->assign("title_before", "会员中心");
+        $is_open_virtual_goods = $this->getIsOpenVirtualGoodsConfig($this->instance_id);
+        $this->assign("is_open_virtual_goods", $is_open_virtual_goods);
         
         return view($this->style . 'Member/memberIndexB2C');
     }
@@ -312,14 +329,6 @@ class Member extends BaseController
                 $menu_arr[$arr_key][$key] = $class_item;
             }
         }
-        $config = new Config();
-        $integralconfig = $config->getIntegralConfig($this->instance_id);
-        $this->assign('integralconfig', $integralconfig);
-        
-        // 判断用户是否签到
-        $dataMember = new MemberService();
-        $isSign = $dataMember->getIsMemberSign($this->uid, $this->instance_id);
-        $this->assign("isSign", $isSign);
         
         $index_adv = $platform->getPlatformAdvPositionDetail(1152); // 广告位
         $this->assign('counts', $count); // 我的团队
@@ -334,6 +343,50 @@ class Member extends BaseController
         $this->assign('apply_promoter_menu', $apply_promoter_menu); // 推广中心菜单项
         $this->assign("title_before", "会员中心");
         
+        // 判断是否开启了签到送积分
+        $config = new Config();
+        $integralconfig = $config->getIntegralConfig($this->instance_id);
+        $this->assign('integralconfig', $integralconfig);
+        // dump($integralconfig);
+        // 判断用户是否签到
+        $dataMember = new MemberService();
+        $isSign = $dataMember->getIsMemberSign($this->uid, $this->instance_id);
+        $this->assign("isSign", $isSign);
+        // 待支付订单数量
+        $order = new OrderService();
+        $unpaidOrder = $order->getOrderNumByOrderStatu([
+            'order_status' => 0,
+            "buyer_id" => $this->uid
+        ]);
+        $this->assign("unpaidOrder", $unpaidOrder);
+        
+        // 待发货订单数量
+        $shipmentPendingOrder = $order->getOrderNumByOrderStatu([
+            'order_status' => 1,
+            "buyer_id" => $this->uid
+        ]);
+        $this->assign("shipmentPendingOrder", $shipmentPendingOrder);
+        
+        // 待收货订单数量
+        $goodsNotReceivedOrder = $order->getOrderNumByOrderStatu([
+            'order_status' => 2,
+            "buyer_id" => $this->uid
+        ]);
+        $this->assign("goodsNotReceivedOrder", $goodsNotReceivedOrder);
+        
+        // 退款订单
+        $condition['order_status'] = array(
+            'in',
+            [
+                - 1,
+                - 2
+            ]
+        );
+        $condition['buyer_id'] = $this->uid;
+        $refundOrder = $order->getOrderNumByOrderStatu($condition);
+        $this->assign("refundOrder", $refundOrder);
+        $is_open_virtual_goods = $this->getIsOpenVirtualGoodsConfig($this->instance_id);
+        $this->assign("is_open_virtual_goods", $is_open_virtual_goods);
         return view($this->style . 'Member/memberIndexB2CFX');
     }
 

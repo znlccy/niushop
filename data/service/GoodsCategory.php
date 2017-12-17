@@ -295,12 +295,11 @@ class GoodsCategory extends BaseService implements IGoodsCategory
             }
         }
         if (! empty($array)) {
-            $brand_str = implode(',', $array);
             $goods_brand = new NsGoodsBrandModel();
             $condition = array(
                 'brand_id' => array(
                     'in',
-                    $brand_str
+                    $array
                 )
             );
             $brand_list = $goods_brand->getQuery($condition, '*', 'brand_initial asc');

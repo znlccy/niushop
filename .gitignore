@@ -1,6 +1,6 @@
 .idea
 composer.lock
 install.lock
-/runtime
-/upload
+/runtime/cache/*
+/runtime/temp/*
 *.log

@@ -1,11 +1,10 @@
 <center>
-    <img src="https://raw.githubusercontent.com/OSI-LTD/niushop-b2c/master/niushop-b2c.png" alt="niushop-b2c">
+    <img src="niushop-b2c.png" alt="niushop-b2c">
 </center>
 
-[![OSSLab](https://img.shields.io/badge/OSSLab-开源软件实验室-blue.svg?style=flat)](http://osslab.online)
-[![mysql](https://img.shields.io/badge/mysql-5.0+-blue.svg)](https://www.mysql.com/)
-[![php](https://img.shields.io/badge/php-5.6+-blue.svg)](http://www.php.net/)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+[![php](https://img.shields.io/badge/php-%3E5.4-blue.svg)](https://github.com/OSI-LTD/niushop)
+[![mysql](https://img.shields.io/badge/mysql-%3E5.0-blue.svg)](https://github.com/OSI-LTD/niushop)
+[![license](https://img.shields.io/badge/license-niushop-blue.svg)](http://www.niushop.com.cn/)
 
 团队十年电商经验汇集巨献！
 
@@ -129,6 +128,127 @@ Niushop 开源商城目录说明:
 - 安装时提示必须同意安装协议解决方案
 
     安装时出现“必须同意安装协议”，一般是使用了Chrome内核的浏览器，您可以尝试更换IE或火狐等浏览器安装也可以设置下Chrome浏览器的配置，步骤如下：在Chrome的“设置”中找到“显示高级设置”找到“隐私设置”中的“内容设置”按钮，并点开在”cookies“选项…	
+
+- 清空演示数据
+
+```
+    TRUNCATE nc_cms_article;
+    TRUNCATE nc_cms_article_class;
+    TRUNCATE nc_cms_comment;
+    TRUNCATE nc_cms_topic;
+    TRUNCATE ns_account;
+    TRUNCATE ns_account_assistant_records;
+    TRUNCATE ns_account_order_records;
+    TRUNCATE ns_account_period;
+    TRUNCATE ns_account_records;
+    TRUNCATE ns_account_return_records;
+    TRUNCATE ns_account_withdraw_records;
+    TRUNCATE ns_account_withdraw_user_records;
+    TRUNCATE ns_attribute;
+    TRUNCATE ns_attribute_value;
+    TRUNCATE ns_cart;
+    TRUNCATE ns_consult;
+    TRUNCATE ns_consult_type;
+    TRUNCATE ns_coupon;
+    TRUNCATE ns_coupon_goods;
+    TRUNCATE ns_coupon_type;
+    TRUNCATE ns_express_company;
+    TRUNCATE ns_express_shipping;
+    TRUNCATE ns_express_shipping_items;
+    TRUNCATE ns_express_shipping_items_library;
+    TRUNCATE ns_gift_grant_records;
+    TRUNCATE ns_goods;
+    TRUNCATE ns_goods_attribute;
+    TRUNCATE ns_goods_attribute_deleted;
+    TRUNCATE ns_goods_attribute_value;
+    TRUNCATE ns_goods_brand;
+    TRUNCATE ns_goods_category;
+    TRUNCATE ns_goods_deleted;
+    TRUNCATE ns_goods_evaluate;
+    TRUNCATE ns_goods_group;
+    TRUNCATE ns_goods_sku;
+    TRUNCATE ns_goods_sku_deleted;
+    TRUNCATE ns_goods_spec;
+    TRUNCATE ns_goods_spec_value;
+    TRUNCATE ns_member;
+    TRUNCATE ns_member_account;
+    TRUNCATE ns_member_account_records;
+    TRUNCATE ns_member_balance_withdraw;
+    TRUNCATE ns_member_express_address;
+    TRUNCATE ns_member_favorites;
+    TRUNCATE ns_member_gift;
+    DELETE from ns_member_level WHERE is_default != 1;
+    TRUNCATE ns_member_recharge;
+    TRUNCATE ns_offpay_area;
+    TRUNCATE ns_order;
+    TRUNCATE ns_order_action;
+    TRUNCATE ns_order_goods;
+    TRUNCATE ns_order_goods_express;
+    TRUNCATE ns_order_goods_promotion_details;
+    TRUNCATE ns_order_payment;
+    TRUNCATE ns_order_refund;
+    TRUNCATE ns_order_shipping_fee;
+    TRUNCATE ns_order_shop_return;
+    TRUNCATE ns_pickup_point;
+    
+    #针对广告位删除考虑
+    #TRUNCATE ns_platform_adv;
+    #TRUNCATE ns_platform_adv_position;
+    TRUNCATE ns_platform_block;
+    TRUNCATE ns_platform_goods_recommend;
+    TRUNCATE ns_platform_goods_recommend_class;
+    TRUNCATE ns_platform_help_class;
+    TRUNCATE ns_platform_help_document;
+    TRUNCATE ns_platform_link;
+    TRUNCATE ns_point_config;
+    TRUNCATE ns_promotion_bundling;
+    TRUNCATE ns_promotion_bundling_goods;
+    TRUNCATE ns_promotion_discount;
+    TRUNCATE ns_promotion_discount;
+    TRUNCATE ns_promotion_discount_goods;
+    TRUNCATE ns_promotion_full_mail;#清除满额包邮数据会不会有问题
+    TRUNCATE ns_promotion_gift;
+    TRUNCATE ns_promotion_gift_goods;
+    TRUNCATE ns_promotion_mansong;
+    TRUNCATE ns_promotion_mansong_goods;
+    UPDATE ns_reward_rule set sign_point = 0, share_point = 0, reg_member_self_point = 0;
+    TRUNCATE ns_shop;
+    TRUNCATE ns_shop_ad;
+    TRUNCATE ns_shop_coin_records;
+    TRUNCATE ns_shop_express_address;
+    TRUNCATE ns_shop_group;
+    TRUNCATE ns_shop_navigation;
+    TRUNCATE ns_shop_order_account_records;
+    UPDATE ns_shop_weixin_share set goods_param_1 = '', goods_param_2 = '', shop_param_1 = '', shop_param_2 = '', shop_param_3 = '', qrcode_param_1 = '', qrcode_param_2 = '';
+    DELETE FROM sys_album_class WHERE is_default != 1;
+    UPDATE sys_album_class set album_name = '默认相册', album_cover = 0;
+    UPDATE sys_config set sys_config.value = '';
+    UPDATE sys_notice set notice_message = '';
+    
+    #关于通知系统sys_notice表未处理
+    TRUNCATE sys_user;
+    TRUNCATE sys_user_admin;
+    TRUNCATE ns_promotion_mansong_rule;
+    TRUNCATE sys_user_group;
+    TRUNCATE sys_user_log;
+    TRUNCATE sys_version_devolution;
+    TRUNCATE sys_version_patch;
+    
+    #关于站点设置表未处理
+    TRUNCATE sys_weixin_auth;
+    TRUNCATE sys_weixin_default_replay;
+    TRUNCATE sys_weixin_fans;
+    TRUNCATE sys_weixin_follow_replay;
+    TRUNCATE sys_weixin_instance_msg;
+    TRUNCATE sys_weixin_key_replay;
+    TRUNCATE sys_weixin_media;
+    TRUNCATE sys_weixin_media_item;
+    TRUNCATE sys_weixin_menu;
+    TRUNCATE sys_weixin_msg_template;
+    TRUNCATE sys_weixin_qrcode_template;
+    TRUNCATE sys_weixin_user_msg;
+    TRUNCATE sys_weixin_user_msg_replay;
+```
 
 # 许可协议
 	

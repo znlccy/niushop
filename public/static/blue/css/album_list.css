@@ -1,0 +1,158 @@
+@CHARSET "UTF-8";
+
+.dislog-style {
+	width: 80%;
+	margin: 10px auto;
+}
+
+.dislog-style ul {
+	width: 100%;
+}
+
+.dislog-style ul li {
+	text-align: center;
+}
+
+.dislog-style ul li span {
+	display: inline-block;
+	width: 80px;
+	text-align: right;
+	height: 40px;
+	line-height: 30px;
+}
+
+.dislog-style ul li input {
+	width: 200px;
+}
+
+.input-file {
+	position: absolute;
+	height: 20px !important;
+	width: 80px !important;
+	filter: alpha(opacity : 0);
+	opacity: 0;
+	cursor: pointer;
+	top: 0;
+	font-size: 0;
+	right: 0;
+}
+
+#albumList {
+	border-top: 1px solid #E5E5E5;
+	margin: 0 10px;
+}
+
+#albumList li {
+	display: inline-block;
+	width: 190px;
+	height: 260px;
+	border-style: solid;
+	border-color: #E5E5E5;
+	border-width: 0;
+	position: relative;
+	z-index: 1;
+	vertical-align: top;
+}
+
+#albumList li:hover .date {
+	display: none;
+}
+
+#albumList>li:hover {
+	background-color: rgb(230, 230, 230);
+}
+
+#albumList li dl {
+	font-size: 12px;
+	height: 232px;
+	padding: 14px;
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+}
+
+#albumList li dl dt {
+	height: 185px;
+}
+
+#albumList li dl dt .covers, #albumList li dl dt .picture {
+	width: 160px;
+	height: 160px;
+	border: solid 1px #FAFAFA;
+}
+
+#albumList li dl dt h3 {
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 20px;
+	color: #555;
+	white-space: nowrap;
+	width: 150px;
+	height: 20px;
+	margin: 5px auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#albumList li dl dt .covers a, #albumList li dl dt .picture a {
+	background-color: #FFF;
+	text-align: center;
+	vertical-align: middle;
+	display: table-cell;
+	width: 160px;
+	height: 160px;
+	overflow: hidden;
+}
+
+#albumList li dl dt .covers a img, #albumList li dl dt .picture a img {
+	max-width: 160px;
+	max-height: 160px;
+	margin-top: expression(160-this .height/ 2);
+}
+
+#albumList li dl dd.date {
+	font-size: 12px;
+	line-height: 22px;
+	color: #999;
+	width: 160px;
+	height: 20px;
+	position: absolute;
+	z-index: 3;
+	top: 205px;
+}
+
+#albumList li dl dd.buttons {
+	display: none;
+	width: 170px;
+	height: 20px;
+	padding: 0;
+	position: absolute;
+	top: 205px;
+	left: 12px;
+	z-index: 3;
+	margin: 0;
+}
+
+#albumList li dl dd.buttons a {
+	font-size: 12px;
+	color: #999;
+	background-color: #FFF;
+	display: inline-block;
+	width: 65px;
+	text-align: center;
+	margin: 0 5px 5px 0;
+	padding: 2px 6px;
+}
+
+#albumList li dl dd.buttons a i {
+	margin-right: 4px;
+}
+
+#albumList li dl dd a:hover {
+	color: #1C8FEF;
+}
+
+#albumList>li:hover .buttons {
+	display: block;
+}

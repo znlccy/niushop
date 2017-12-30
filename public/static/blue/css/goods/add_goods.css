@@ -1,0 +1,127 @@
+@CHARSET "UTF-8";
+
+.ncsc-form-goods {
+	border: solid #e5e5e5;
+	border-width: 1px 1px 0 1px;
+}
+
+.ncsc-form-goods h3 {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 22px;
+	color: #000;
+	clear: both;
+	background-color: #F5F5F5;
+	padding: 5px 0 5px 12px;
+	border-bottom: solid 1px #E7E7E7;
+}
+
+.ncsc-form-goods dl {
+	font-size: 0;
+	line-height: 20px;
+	clear: both;
+	padding: 0;
+	margin: 0;
+	border-bottom: solid 1px #e5e5e5;
+	overflow: hidden;
+}
+
+.ncsc-form-goods dl dt {
+	*display: inline /*IE6,7*/;
+}
+
+.ncsc-form-goods dl dt {
+	font-size: 12px;
+	line-height: 30px;
+	color: #333;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-align: right;
+	display: inline-block;
+	width: 13%;
+	padding: 8px 1% 8px 0;
+	margin: 0;
+}
+
+.ncsc-form-goods dl dd {
+	font-size: 12px;
+	line-height: 30px;
+	vertical-align: top;
+	letter-spacing: normal;
+	word-spacing: normal;
+	display: inline-block;
+	width: 80%;
+	padding: 8px 0 8px 1%;
+	border-left: solid 1px #e5e5e5;
+	*display: inline /*IE6,7*/;
+}
+
+.category-text {
+	display: inline-block;
+	background-color: #FFF;
+	min-width: 150px;
+	height: 30px;
+	line-height: 30px;
+	border: 1px solid #dcdcdc;
+	float: left;
+}
+
+.category-button {
+	display: inline-block;
+	background-color: #FFF;
+	height: 32px;
+	line-height: 32px;
+	float: left;
+	border: 1px solid #dcdcdc;
+	border-left: none;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #eee;
+	font-size: 13px;
+}
+
+label.error {
+	font-size: 12px;
+	color: #E84723;
+	margin-left: 8px;
+}
+
+.alert {
+	line-height: 20px;
+	margin-bottom: 0;
+}
+
+.alert-info {
+	color: #3a87ad;
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+}
+
+.alert-info h4 {
+	color: #3a87ad;
+	font-size: 17.5px;
+}
+
+.alert-info p {
+	margin: 0 0 10px;
+	font-size: 14px;
+}
+
+.add-on {
+	line-height: 28px;
+	background-color: #E6E6E6;
+	vertical-align: top;
+	display: inline-block;
+	text-align: center;
+	width: 28px;
+	height: 28px;
+	border: solid #CCC;
+	border-width: 1px 1px 1px 0;
+}
+
+@media screen and (max-width:500px) {
+	#fixedNavBar {
+		display: none;
+	}
+}

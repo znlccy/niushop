@@ -1,0 +1,29 @@
+@CHARSET "UTF-8";
+/* 项目logo统一样式 */
+.weblogo {
+	display: inline-block !important;
+	vertical-align: middle !important;
+	max-width: 100% !important;
+	max-height: 100% !important;
+	height: auto !important;
+}
+
+.web-logo-a {
+	display: block;
+	width: 280px;
+	height: 50px;
+	text-align: center;
+	line-height: 50px;
+	float: left;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.logo-text {
+	width: auto;
+	height: 80px;
+	line-height: 80px;
+	font-size: 28px;
+	float: left;
+	color: #333;
+}

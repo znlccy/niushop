@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+/* 新样式-table */
+.table-class {
+	width: 100%;
+	/* 	margin-top:10px; */
+	background-color: #FFF;
+	/* 	border: 1px solid #e5e5e5; */
+	/* 	border-bottom: 0; */
+}
+
+.table-class tr:NTH-CHILD(even) {
+	/* 	background: #e4f2ff; */
+	
+}
+
+.table-class tr th, .table-class tr td {
+	/* 	height: 19px; */
+	/* 	line-height: 28px; */
+	padding: 7px;
+	font-weight: normal;
+}
+
+.table-class tr td {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.table-class tr th {
+	background-color: #fafafa;
+	padding: 10px;
+	border-top: 1px solid #F7F1F1;
+	border-bottom: 1px solid #F7F1F1;
+}
+
+.table-class tbody td a {
+	margin-left: 8px;
+}
